@@ -84,7 +84,7 @@ export const ICONS = {
   'xoai': './icons/xoai.png',
 };
 // token đã chế biến dùng ảnh của nguyên liệu gốc (sợi/tô theo loại: 'noodle-drained:bun' → bun, 'bowl-hot:soup-bowl' → soup-bowl)
-const BASE = { 'noodle-spoiled': 'pho-noodle', 'bowl-hot': 'pho-bowl', 'bowl-hot:*': 'pho-bowl', 'broth:pour-pho-broth': 'nuoc-pho', 'bo-vien-ready': 'bo-vien', 'tai-dap-ready': 'bo-tai', 'rib-hot': 'suon-cay', 'rib-cut': 'suon-cay', 'rib-ready': 'suon-cay', 'two-bowls-ready': 'extra-bowl', 'cha-ca-ready': 'cha-ca', 'cha-cua-ready': 'cha-cua', 'youtiao-ready': 'quay', 'level1-ready': 'soup-bowl' };
+const BASE = { 'noodle-spoiled': 'pho-noodle', 'bowl-hot': 'pho-bowl', 'bowl-hot:*': 'pho-bowl', 'broth:pour-pho-broth': 'nuoc-pho', 'bo-vien-ready': 'bo-vien', 'tai-dap-ready': 'bo-tai', 'rib-hot': 'suon-cay', 'rib-cut': 'suon-cay', 'rib-ready': 'suon-cay', 'two-bowls-ready': 'extra-bowl', 'cha-ca-ready': 'cha-ca', 'thi-la-ready': 'thi-la', 'veg-ready-x': 'rau-muong', 'cha-cua-ready': 'cha-cua', 'youtiao-ready': 'quay', 'level1-ready': 'soup-bowl' };
 export function iconUrl(tok) {
   if (!tok) return null;
   if (ICONS[tok]) return ICONS[tok];

@@ -188,3 +188,6 @@
 - Repo GitHub `kentjuno/quan-bun` (public — GitHub Pages miễn phí cần public). `scripts/deploy_pages.cmd`: build → đẩy `dist` lên nhánh `gh-pages` → https://kentjuno.github.io/quan-bun/ (HTTPS → cài PWA được). `.gitignore` bỏ dist, ảnh thô, log.
 - 0.5.2b: Chém — tung TỪNG món (món kế chỉ tung khi món trước bị chém hoặc đang rơi nửa dưới), bay chậm hơn (~3 s, đỉnh 72–84% màn), hình to hơn, có tên dưới hình; 7 món + 3–4 đồ lạ.
 - 0.5.2c: nút ‹ (góc trên trái HUD) về menu giữa ca — không ghi kết quả.
+
+## 0.5.3 — 2026-09-13 · Bún cá Hải Phòng theo Kent
+- Cà chua → cần nước trụng → cá chiên (4) → chả cá 2 miếng cắt đôi (thớt) → **hành lá trước nước** → chan nước cá → **thì là cắt 3 khúc** (thớt, action mới `cut-dill`) bỏ sau. Bỏ dòng bao tử cá basa trong cooking-note. Bún riêu: cooking-note đổi huyết vào nồi nước (game vốn đúng). SW cooking-note v0.44.4.

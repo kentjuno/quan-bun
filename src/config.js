@@ -25,7 +25,7 @@ export const ACTION_TIME = {
   'pour-bun-bo-broth': 1.5,
   'microwave-rib': 5,        // passive (thật 6 phút)
   'cut-rib': 2, 'warm-rib': 2, 'prepare-two-bowls': 1.5, 'pound-beef': 2.5,
-  'blanch-veg': 2, 'cut-crab-cake': 1.5, 'cut-fish-cake': 1.5, 'blanch-banh-hoi': 3,
+  'blanch-veg': 2, 'cut-crab-cake': 1.5, 'cut-dill': 2, 'cut-fish-cake': 1.5, 'blanch-banh-hoi': 3,
   'prepare-tray': 1.5, 'cut-salad': 2.5, 'cut-youtiao': 1.5, 'pour-porridge': 1.5, 'heat-porridge': 6,
   'make-chen-chanh': 1.5, 'make-chen-dau-phong': 1.5, 'make-chen-ot': 1.5, 'make-chen-mam-tom': 2, 'pick-herbs': 2, 'make-dia-thi-la': 2, 'fill-ca-pan': 2,
   default: 1.5,

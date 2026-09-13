@@ -244,8 +244,8 @@ Sinh tự động bởi `scripts/gen_optimize.mjs` từ dữ liệu bếp thật
 
 - Sợi: **Bún** — trụng nóng → xả lạnh → trụng nóng lại → ráo. Tô: **Tô món nước** (trụng/ trữ trong nồi nóng).
 - Nước lèo: **Nước cá** nấu ở lò: Nước cá → Miếng nước trắng → đun.
-- Thứ tự ráp: tô + sợi → Cà chua → Rau đã trụng → Cá chiên → Chả cá đã cắt → Đổ nước cá → Thì là → Hành
-- Bot: **40.4s / tô, 26 chạm**. Lộ trình:
+- Thứ tự ráp: tô + sợi → Cà chua → Rau đã trụng → Cá chiên → Chả cá đã cắt → Hành → Đổ nước cá → Thì là đã cắt 3 khúc
+- Bot: **42.4s / tô, 27 chạm**. Lộ trình:
 
   1. Kệ tô: lấy Tô món nước
   2. Nồi: thả Tô món nước
@@ -264,15 +264,16 @@ Sinh tự động bởi `scripts/gen_optimize.mjs` từ dữ liệu bếp thật
   15. Quầy ráp: bỏ Rau đã trụng + Cá chiên
   16. Kệ topping: lấy Chả cá chiên
   17. Thớt: đặt Chả cá chiên
-  18. Quầy ráp: bỏ Chả cá đã cắt
-  19. Lò đun 1: nấu
-  20. Kệ topping: lấy Thì là
-  21. Kệ nước: lấy nước cá đã nóng
-  22. Quầy ráp: bỏ Thì là + Nước cá đã nóng
-  23. Kệ topping: lấy Hành
-  24. Quầy ráp: bỏ Hành
-  25. Quầy ráp: cầm tô
-  26. Bàn khách: giao
+  18. Kệ topping: lấy Hành
+  19. Quầy ráp: bỏ Chả cá đã cắt + Hành
+  20. Lò đun 1: nấu
+  21. Kệ topping: lấy Thì là
+  22. Kệ nước: lấy nước cá đã nóng
+  23. Quầy ráp: bỏ Thì là + Nước cá đã nóng
+  24. Thớt: đặt Thì là
+  25. Quầy ráp: bỏ Thì là đã cắt 3 khúc
+  26. Quầy ráp: cầm tô
+  27. Bàn khách: giao
 
 ## Chả Cá Lã Vọng
 
