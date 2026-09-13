@@ -64,7 +64,7 @@ export class Puzzle {
   }
   // ---- (4) chém: nguyên liệu tung lên, vuốt chém đúng thành phần của món; chém đồ lạ hoặc để sót đồ của món = lỗi ----
   buildNinja(dish) {
-    const mine = recipeFor(dish).shelfItems.filter((it) => D.items[it] && !/tray-paper|noodle-basket/.test(it)); const good = shuffle(mine).slice(0, 8); const bad = intruders(dish, Math.max(3, Math.round(good.length * 0.6)));
+    const mine = recipeFor(dish).shelfItems.filter((it) => D.items[it] && !/tray-paper|noodle-basket/.test(it)); const good = shuffle(mine).slice(0, 7); const bad = intruders(dish, Math.max(2, Math.round(good.length * 0.5)));
     this._sol = good.map(label);
     $('pzTitle').textContent = `Vuốt chém đúng thành phần của ${D.recipes[dish].name} (${good.length} thứ) — chừa đồ lạ`; $('pzAnswer').classList.add('hidden'); $('pzGrid').classList.add('hidden');
     const cv = $('pzCanvas'); cv.classList.remove('hidden');
@@ -109,12 +109,10 @@ class Ninja {
   }
   stop() { cancelAnimationFrame(this.raf); const cv = this.cv; cv.removeEventListener('pointerdown', this.onDown); cv.removeEventListener('pointermove', this.onMove); cv.removeEventListener('pointerup', this.onUp); cv.removeEventListener('pointercancel', this.onUp); this.done = true; }
   spawn() {
-    const n = Math.random() < 0.35 && this.queue.length > 1 ? 2 : 1;
-    for (let k = 0; k < n && this.queue.length; k++) {
-      const q = this.queue.shift(); const r = Math.min(34, this.W * 0.085); const x = r + Math.random() * (this.W - 2 * r);
-      const vy = -(this.H * 0.95 + Math.random() * this.H * 0.25); const vx = (this.W / 2 - x) * (0.25 + Math.random() * 0.35) + (Math.random() - 0.5) * 60;
-      this.objs.push({ ...q, x, y: this.H + r, vx, vy, r, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 3, sliced: false });
-    }
+    const q = this.queue.shift(); const r = Math.min(46, this.W * 0.115); const x = r + 20 + Math.random() * (this.W - 2 * r - 40);
+    const g = this.H * 0.7; const vy = -Math.sqrt(2 * g * this.H * (0.72 + Math.random() * 0.12));   // đỉnh 72–84% màn
+    const vx = (this.W / 2 - x) * 0.18 + (Math.random() - 0.5) * 30;
+    this.objs.push({ ...q, x, y: this.H + r, vx, vy, r, rot: (Math.random() - 0.5) * 0.6, vr: (Math.random() - 0.5) * 0.8, sliced: false });
   }
   slice(a, b) {
     for (const o of this.objs) {
@@ -129,8 +127,11 @@ class Ninja {
   frame(now) {
     if (this.done) return;
     const dt = Math.min(0.05, (now - this.last) / 1000); this.last = now; this.t += dt;
-    if (this.queue.length && this.t >= this.nextSpawn) { this.spawn(); this.nextSpawn = this.t + 0.75; }
-    const g = this.H * 1.15;
+    // tung TỪNG món: món kế chỉ tung khi món trước đã bị chém / đang rơi xuống nửa dưới màn / hết
+    const live = this.objs.filter((o) => !o.sliced && !o.missed);
+    const canSpawn = !live.length || live.every((o) => o.vy > 0 && o.y > this.H * 0.55);
+    if (this.queue.length && canSpawn && this.t >= this.nextSpawn) { this.spawn(); this.nextSpawn = this.t + 0.6; }
+    const g = this.H * 0.7;   // chậm: bay lên ~3 s, đỉnh ~80% chiều cao
     for (const o of this.objs) { o.vy += g * dt; o.x += o.vx * dt; o.y += o.vy * dt; o.rot += o.vr * dt; if (o.sliced) { o.vx *= 0.98; } }
     for (const o of this.objs) if (!o.sliced && !o.missed && o.y - o.r > this.H && o.vy > 0) { o.missed = true; if (o.good) this.o.onMiss(o.tok); }
     this.objs = this.objs.filter((o) => o.y - o.r < this.H + 80 || o.vy < 0);
@@ -151,6 +152,7 @@ class Ninja {
       } else if (im.complete && im.naturalWidth) { c.shadowColor = 'rgba(0,0,0,.35)'; c.shadowBlur = 8; c.shadowOffsetY = 4; c.drawImage(im, -o.r, -o.r, s, s); }
       else { c.fillStyle = '#e8a33c'; c.beginPath(); c.arc(0, 0, o.r * 0.8, 0, Math.PI * 2); c.fill(); }
       c.restore();
+      if (!o.sliced) { c.font = '700 12px "Be Vietnam Pro", system-ui, sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(255,247,234,.95)'; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 4; c.fillText(label(o.tok), o.x, o.y + o.r + 16); c.shadowBlur = 0; }
     }
     for (const p of this.parts) { c.globalAlpha = Math.max(0, p.life * 2); c.fillStyle = p.col; c.beginPath(); c.arc(p.x, p.y, 4, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1;
     if (this.trail.length > 1) { c.lineCap = 'round'; c.lineJoin = 'round'; for (let i = 1; i < this.trail.length; i++) { c.strokeStyle = `rgba(255,247,234,${i / this.trail.length})`; c.lineWidth = 2 + 6 * i / this.trail.length; c.beginPath(); c.moveTo(this.trail[i - 1].x, this.trail[i - 1].y); c.lineTo(this.trail[i].x, this.trail[i].y); c.stroke(); } }
