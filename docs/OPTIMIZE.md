@@ -375,46 +375,46 @@ Sinh tự động bởi `scripts/gen_optimize.mjs` từ dữ liệu bếp thật
 ## Bún Nem Cua, Thịt Nướng, Tôm Nướng
 
 - Món không có sợi trụng kiểu phở (mẹt / tô khô / cháo / chả cá): xem lộ trình.
-- Thứ tự ráp: Tô bún khô → Bún đã trụng + để ráo → Rau salad + dưa leo + đồ chua đã cắt → Hoàn tất món
+- Thứ tự ráp: Tô bún khô → Bún đã trụng + để ráo → Xà lách + dưa leo + đồ chua đã cắt → Hoàn tất món
 - Bot: **22.2s / tô, 16 chạm**. Lộ trình:
 
   1. Kệ tô: lấy Tô bún khô
   2. Quầy ráp: bỏ Tô bún khô
   3. Kệ sợi: lấy Bún
   4. Nồi: thả Bún
-  5. Kệ topping: lấy Rau salad
+  5. Kệ topping: lấy Xà lách
   6. Nồi: lấy rọ 1
   7. Bồn: xả lạnh
   8. Nồi: thả Bún đã xả lạnh
-  9. Quầy ráp: bỏ Rau salad + Bún đã trụng + ráo
+  9. Quầy ráp: bỏ Xà lách + Bún đã trụng + ráo
   10. Kệ topping: lấy Dưa leo
-  11. Thớt: đặt Rau salad + Dưa leo
+  11. Thớt: đặt Xà lách + Dưa leo
   12. Kệ topping: lấy Đồ chua
   13. Thớt: đặt Đồ chua
-  14. Quầy ráp: bỏ Rau salad + dưa leo + đồ chua đã cắt
+  14. Quầy ráp: bỏ Xà lách + dưa leo + đồ chua đã cắt
   15. Quầy ráp: cầm tô
   16. Bàn khách: giao
 
 ## Bún Gà Nướng
 
 - Món không có sợi trụng kiểu phở (mẹt / tô khô / cháo / chả cá): xem lộ trình.
-- Thứ tự ráp: Tô bún khô → Bún đã trụng + để ráo → Rau salad + dưa leo + đồ chua đã cắt → Hoàn tất món
+- Thứ tự ráp: Tô bún khô → Bún đã trụng + để ráo → Xà lách + dưa leo + đồ chua đã cắt → Hoàn tất món
 - Bot: **22.2s / tô, 16 chạm**. Lộ trình:
 
   1. Kệ tô: lấy Tô bún khô
   2. Quầy ráp: bỏ Tô bún khô
   3. Kệ sợi: lấy Bún
   4. Nồi: thả Bún
-  5. Kệ topping: lấy Rau salad
+  5. Kệ topping: lấy Xà lách
   6. Nồi: lấy rọ 1
   7. Bồn: xả lạnh
   8. Nồi: thả Bún đã xả lạnh
-  9. Quầy ráp: bỏ Rau salad + Bún đã trụng + ráo
+  9. Quầy ráp: bỏ Xà lách + Bún đã trụng + ráo
   10. Kệ topping: lấy Dưa leo
-  11. Thớt: đặt Rau salad + Dưa leo
+  11. Thớt: đặt Xà lách + Dưa leo
   12. Kệ topping: lấy Đồ chua
   13. Thớt: đặt Đồ chua
-  14. Quầy ráp: bỏ Rau salad + dưa leo + đồ chua đã cắt
+  14. Quầy ráp: bỏ Xà lách + dưa leo + đồ chua đã cắt
   15. Quầy ráp: cầm tô
   16. Bàn khách: giao
 

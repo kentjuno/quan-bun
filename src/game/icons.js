@@ -65,7 +65,6 @@ export const ICONS = {
   'quay': './icons/quay.png',
   'rau-muong': './icons/rau-muong.png',
   'rau-ram': './icons/rau-ram.png',
-  'rau-salad': './icons/rau-salad.png',
   'salad-cut-ready': './icons/salad-cut-ready.png',
   'serving-plate': './icons/serving-plate.png',
   'soup-bowl': './icons/soup-bowl.png',

@@ -239,7 +239,7 @@ describe('đủ 16 món (ca 5–9): thớt gom nhiều nguyên liệu, lò vi s�
     const w = new World({ ...sh, prep: 0, seconds: 60, arrivals: [{ t: 0, type: 'tourist', dish: 'bun-ga-nuong' }] }, {}); w.update(0.1);
     const toasts = []; w.ev.onToast = (m) => toasts.push(m);
     const pr = w.stationById['prep']; w.chef.x = pr.stand.x; w.chef.z = pr.stand.z;
-    w.chef.hand = ['rau-salad', 'dua-leo']; w.tap('prep'); w.update(1 / 30);
+    w.chef.hand = ['xa-lach', 'dua-leo']; w.tap('prep'); w.update(1 / 30);
     expect(pr.slots[0].have.filter(Boolean).length).toBe(2); expect(w.chef.hand).toEqual([]);
     w.tap('prep:0'); w.update(1 / 30); expect(toasts.at(-1)).toMatch(/còn thiếu Đồ chua/);
     w.chef.hand = ['do-chua']; w.tap('prep'); w.update(1 / 30); expect(w.chef.busy).toBeGreaterThan(0);

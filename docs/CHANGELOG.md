@@ -195,3 +195,4 @@
 ## 0.5.4 — 2026-09-13 · Minigame ⚡ Phản xạ + lọc "Chỉ món bún"
 - **Phản xạ** (Kent: hay quên các món bún, muốn tập phản xạ): lưới topping **cố định** theo thứ tự kệ thật (không xáo, để nhớ vị trí), tên món hiện ra → bấm đủ topping trước khi hết giờ (3 s + 1.6 s/topping), thanh đếm ngược; hết giờ = lỗi bằng số còn thiếu, tô vàng thứ bị sót; 10 món liên tục, món yếu ra nhiều hơn. Nút "Chỉ món bún" ở tab Luyện chọn nhanh 7 món bún để tập chéo (interleaving).
 - Cooking-note: tiệm không dùng cần tây (ghi AGENTS).
+- 0.5.5: "rau salad" = xà lách (Kent 13/09) → gộp item `rau-salad` vào `xa-lach` (sim-data, kệ, icon, cooking-note recipes/level1/menu/AGENTS; SW v0.44.5).
