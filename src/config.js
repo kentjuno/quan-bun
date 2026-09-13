@@ -25,7 +25,7 @@ export const ACTION_TIME = {
   'pour-bun-bo-broth': 1.5,
   'microwave-rib': 5,        // passive (thật 6 phút)
   'cut-rib': 2, 'warm-rib': 2, 'prepare-two-bowls': 1.5, 'pound-beef': 2.5,
-  'blanch-veg': 2, 'cut-crab-cake': 1.5, 'cut-dill': 2, 'cut-fish-cake': 1.5, 'blanch-banh-hoi': 3,
+  'blanch-veg': 2, 'cut-crab-cake': 1.5, 'cut-dill': 2, 'deep-fry': 8, 'cut-diagonal': 2, 'soak-rice-paper': 2, 'cut-fish-cake': 1.5, 'blanch-banh-hoi': 3,
   'prepare-tray': 1.5, 'cut-salad': 2.5, 'cut-youtiao': 1.5, 'pour-porridge': 1.5, 'heat-porridge': 6,
   'make-chen-chanh': 1.5, 'make-chen-dau-phong': 1.5, 'make-chen-ot': 1.5, 'make-chen-mam-tom': 2, 'pick-herbs': 2, 'make-dia-thi-la': 2, 'fill-ca-pan': 2,
   default: 1.5,
@@ -55,7 +55,7 @@ export const CUSTOMERS = {
   tourist: { name: 'Du khách',   patience: 130, tipMult: 1.6, color: 0xf4a261 },
 };
 
-export const PRICES = { 'pho-tai-nam': 45, 'pho-dac-biet': 60, 'bun-rieu-cua': 50, 'bun-bo-hue': 55, 'pho-tai-dap': 50, 'pho-suon-tai': 65, 'banh-da-cua': 55, 'bun-ca-hai-phong': 50, 'cha-ca-la-vong': 120, 'bun-dau-mam-tom': 70, 'banh-hoi-thit-heo': 80, 'bun-nem-cua-thit-nuong-tom-nuong': 55, 'bun-ga-nuong': 45, 'bun-cha-ha-noi': 50, 'chao-long': 45, 'chao-suon': 40 };
+export const PRICES = { 'cha-gio-viet-nam': 30, 'goi-cuon-tom-thit': 32, 'pho-tai-nam': 45, 'pho-dac-biet': 60, 'bun-rieu-cua': 50, 'bun-bo-hue': 55, 'pho-tai-dap': 50, 'pho-suon-tai': 65, 'banh-da-cua': 55, 'bun-ca-hai-phong': 50, 'cha-ca-la-vong': 120, 'bun-dau-mam-tom': 70, 'banh-hoi-thit-heo': 80, 'bun-nem-cua-thit-nuong-tom-nuong': 55, 'bun-ga-nuong': 45, 'bun-cha-ha-noi': 50, 'chao-long': 45, 'chao-suon': 40 };
 
 // Level: khách tới lúc nào, loại gì; món ngẫu nhiên trong `dishes` (hoặc `dish` cố định). Mỗi level thêm món để nhớ dần; qua level (≥1★) mở level kế; tiền + tip → điểm mua trang trí quán.
 export const ALL_DISHES = Object.keys(PRICES);
@@ -72,6 +72,7 @@ export const LEVELS = [
   { id: 7, name: 'Level 7 — Hải Phòng', seconds: 240, dishes: ['bun-rieu-cua', 'banh-da-cua', 'bun-ca-hai-phong'], moneyTargets: [150, 250, 340], arrivals: ARR_LONG },
   { id: 8, name: 'Level 8 — Cháo', seconds: 240, dishes: ['chao-long', 'chao-suon'], moneyTargets: [120, 200, 280], arrivals: ARR_LONG },
   { id: 9, name: 'Level 9 — Chả cá Lã Vọng', seconds: 240, dishes: ['cha-ca-la-vong'], moneyTargets: [120, 240, 360], arrivals: ARR_LONG.slice(0, 4) },
+  { id: 10, name: 'Level 10 — Khai vị', seconds: 240, dishes: ['cha-gio-viet-nam', 'goi-cuon-tom-thit'], moneyTargets: [90, 150, 210], arrivals: ARR_LONG },
 ];
 export const SHIFTS = LEVELS;   // tên cũ (tests, par)
 // Survival: đủ 16 món, khách tới mãi, càng lâu càng dày (gap giảm mỗi khách), `lives` khách bỏ đi là thua. Điểm ×1.5.
@@ -89,11 +90,12 @@ export const DECOR = [
 ];
 // Kệ (danh sách đầy đủ; mỗi ca chỉ bày thứ các món trong ca cần + alwaysShow)
 const SHELF_NOODLE = ['pho-noodle', 'bun', 'bun-to', 'banh-da', 'banh-hoi'];
-const SHELF_BOWL = ['pho-bowl', 'soup-bowl', 'dry-bowl', 'extra-bowl', 'serving-plate', 'dia-lon', 'tray', 'tray-paper', 'chao-ap-ca'];
+const SHELF_BOWL = ['pho-bowl', 'soup-bowl', 'dry-bowl', 'extra-bowl', 'serving-plate', 'dia-lon', 'dia-dai', 'tray', 'tray-paper', 'chao-ap-ca', 'banh-trang'];
 export const SHELF_TOPPING = ['nam', 'bo-tai', 'la-sach', 'bo-vien', 'thit-luoc', 'bap-bo', 'cha-lua', 'cha-re', 'ca-chua', 'dau-hu', 'tom', 'hanh-tay', 'ngo-ri-ngo-gai', 'hanh-la', 'rau-ram',
   'gung', 'suon-cay', 'rau-muong', 'can-nuoc', 'cha-cua', 'bo-la-lot', 'cha-hap', 'cha-chien', 'top-mo', 'hanh-phi', 'ca-chien', 'cha-ca', 'thi-la',
-  'nuoc-cot-chanh', 'dau-phong-rang', 'ot-do', 'mam-tom', 'mo-hanh', 'kinh-gioi', 'tia-to', 'bac-ha', 'goc-hanh-la', 'xa-lach', 'dua-leo', 'xoai', 'thit-nuong', 'do-chua', 'quay', 'chao-long', 'chao-suon'];
-const PREP_DISHES = ['pho-tai-dap', 'pho-suon-tai', 'banh-da-cua', 'bun-ca-hai-phong', 'cha-ca-la-vong', 'bun-dau-mam-tom', 'banh-hoi-thit-heo', 'bun-cha-ha-noi', 'bun-nem-cua-thit-nuong-tom-nuong', 'bun-ga-nuong', 'chao-long', 'chao-suon'];
+  'nuoc-cot-chanh', 'dau-phong-rang', 'ot-do', 'mam-tom', 'mo-hanh', 'kinh-gioi', 'tia-to', 'bac-ha', 'goc-hanh-la', 'xa-lach', 'dua-leo', 'xoai', 'thit-nuong', 'do-chua', 'quay', 'chao-long', 'chao-suon', 'cha-gio', 'tom-luoc'];
+const FRYER_DISHES = ['cha-gio-viet-nam'];
+const PREP_DISHES = ['cha-gio-viet-nam', 'goi-cuon-tom-thit', 'pho-tai-dap', 'pho-suon-tai', 'banh-da-cua', 'bun-ca-hai-phong', 'cha-ca-la-vong', 'bun-dau-mam-tom', 'banh-hoi-thit-heo', 'bun-cha-ha-noi', 'bun-nem-cua-thit-nuong-tom-nuong', 'bun-ga-nuong', 'chao-long', 'chao-suon'];
 const BURNER_DISHES = ['bun-rieu-cua', 'bun-bo-hue', 'banh-da-cua', 'bun-ca-hai-phong', 'chao-long', 'chao-suon'];
 
 // Bố trí bếp (lưới mét, gốc ở giữa sàn; +z hướng về phía khách/camera).
@@ -105,6 +107,7 @@ export const KITCHEN_LANDSCAPE = {
     { id: 'shelf-noodle',  type: 'shelf', label: 'Kệ sợi',   x: -4.5, z: -2.6, w: 1, d: 1.9, items: SHELF_NOODLE, alwaysShow: ['pho-noodle', 'bun', 'bun-to'] },
     { id: 'shelf-bowl',    type: 'shelf', label: 'Kệ tô',    x: -4.5, z: 0.3, w: 1, d: 2.4, items: SHELF_BOWL, alwaysShow: ['pho-bowl', 'soup-bowl'] },
     { id: 'microwave',     type: 'microwave', label: 'Lò vi sóng', x: -3.0, z: 0.6, w: 0.8, d: 0.8, dishes: ['pho-suon-tai'] },
+    { id: 'fryer',         type: 'fryer',     label: 'Chảo chiên', x: -3.0, z: 1.8, w: 0.8, d: 0.8, dishes: FRYER_DISHES },
     { id: 'prep',          type: 'prep',  label: 'Thớt',     x: 4.7,  z: 0.0, w: 1, d: 5.2, boards: 2, dishes: PREP_DISHES, onTable: 'shelf-topping' },   // thớt nằm trên mặt tủ topping (như tiệm)
     { id: 'pot',           type: 'pot',   label: 'Nồi trụng', x: -2.6, z: -2.7, w: 2.0, d: 1 },   // rộng để 3 rọ + chồng tô xếp một hàng
     { id: 'sink',          type: 'sink',  label: 'Bồn xả lạnh', x: -0.9, z: -2.7, w: 1.1, d: 1 },
@@ -132,6 +135,7 @@ export const KITCHEN_PORTRAIT = {
     { id: 'shelf-bowl',    type: 'shelf', label: 'Kệ tô',    x: -3.1, z: 0.9,  w: 0.8, d: 2.6, items: SHELF_BOWL, alwaysShow: ['pho-bowl', 'soup-bowl'] },
     { id: 'shelf-topping', type: 'shelf', label: 'Kệ topping', x: 3.1, z: -0.4, w: 0.8, d: 7.0, items: SHELF_TOPPING, alwaysShow: ['la-sach', 'bo-vien'] },
     { id: 'microwave',     type: 'microwave', label: 'Lò vi sóng', x: -1.7, z: -2.9, w: 0.8, d: 0.8, dishes: ['pho-suon-tai'] },
+    { id: 'fryer',         type: 'fryer',     label: 'Chảo chiên', x: -0.6, z: -2.9, w: 0.8, d: 0.8, dishes: FRYER_DISHES },
     { id: 'prep',          type: 'prep',  label: 'Thớt',     x: 3.1,  z: -0.4, w: 0.8, d: 7.0, boards: 2, dishes: PREP_DISHES, onTable: 'shelf-topping' },
     { id: 'counter',       type: 'counter', label: 'Quầy ráp', x: 0, z: -1.0, w: 2.0, d: 1, slots: 2 },
     { id: 'trash',         type: 'trash', label: 'Thùng rác', x: -3.1, z: -1.0, w: 0.6, d: 0.6 },   // giữa kệ sợi và kệ tô

@@ -3,7 +3,7 @@ import { readdirSync, writeFileSync } from 'node:fs';
 const files = readdirSync('public/icons').filter((f) => f.endsWith('.png')).sort();
 const lines = files.map((f) => `  '${f.slice(0, -4)}': './icons/${f}',`);
 writeFileSync('src/game/icons.js', `// Sinh tự động bởi scripts/gen_icons_map.mjs — ảnh item (Flow → cắt nền) dùng cho card và ô tay\nexport const ICONS = {\n${lines.join('\n')}\n};\n// token đã chế biến dùng ảnh của nguyên liệu gốc (sợi/tô theo loại: 'noodle-drained:bun' → bun, 'bowl-hot:soup-bowl' → soup-bowl)
-const BASE = { 'noodle-spoiled': 'pho-noodle', 'bowl-hot': 'pho-bowl', 'bowl-hot:*': 'pho-bowl', 'broth:pour-pho-broth': 'nuoc-pho', 'bo-vien-ready': 'bo-vien', 'tai-dap-ready': 'bo-tai', 'rib-hot': 'suon-cay', 'rib-cut': 'suon-cay', 'rib-ready': 'suon-cay', 'two-bowls-ready': 'extra-bowl', 'cha-ca-ready': 'cha-ca', 'thi-la-ready': 'thi-la', 'veg-ready-x': 'rau-muong', 'cha-cua-ready': 'cha-cua', 'youtiao-ready': 'quay', 'level1-ready': 'soup-bowl' };
+const BASE = { 'noodle-spoiled': 'pho-noodle', 'bowl-hot': 'pho-bowl', 'bowl-hot:*': 'pho-bowl', 'broth:pour-pho-broth': 'nuoc-pho', 'bo-vien-ready': 'bo-vien', 'tai-dap-ready': 'bo-tai', 'rib-hot': 'suon-cay', 'rib-cut': 'suon-cay', 'rib-ready': 'suon-cay', 'two-bowls-ready': 'extra-bowl', 'cha-ca-ready': 'cha-ca', 'thi-la-ready': 'thi-la', 'cha-gio-fried': 'cha-gio', 'cha-gio-cut': 'cha-gio', 'banh-trang-ready': 'banh-trang', 'tom-luoc': 'tom', 'veg-ready-x': 'rau-muong', 'cha-cua-ready': 'cha-cua', 'youtiao-ready': 'quay', 'level1-ready': 'soup-bowl' };
 export function iconUrl(tok) {
   if (!tok) return null;
   if (ICONS[tok]) return ICONS[tok];

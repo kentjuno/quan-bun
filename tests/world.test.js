@@ -300,7 +300,7 @@ describe('survival', () => {
     const arrivals = []; for (let i = 0; i < 400 * 10; i++) { const n = w.arrivalIdx; w.update(0.1); if (w.arrivalIdx > n) arrivals.push(+w.time.toFixed(1)); if (w.state !== 'running') break; }
     expect(arrivals.length).toBeGreaterThanOrEqual(3);
     expect(w.state).toBe('over'); expect(w.left).toBe(SURVIVAL.lives);
-    expect(w.shift.dishes.length).toBe(16);
+    expect(w.shift.dishes.length).toBe(18);
   });
 });
 

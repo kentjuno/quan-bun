@@ -171,14 +171,14 @@ export class View {
     else { this.handItems.position.set(0, 0.85, 0.42); this.chef.add(this.handItems); }
     this.handLabel = lbl('', 'hand'); this.handLabel.position.set(0, 2.05, 0); this.chef.add(this.handLabel);
     // khói cho nồi và bếp
-    for (const s of world.stations) if (s.type === 'pot' || s.type === 'stove') this.addSteam(s.x, s.type === 'pot' ? 1.45 : 1.6, s.z, s.type === 'stove' ? 0.45 : 0.32);
+    for (const s of world.stations) if (s.type === 'pot' || s.type === 'stove' || s.type === 'fryer') this.addSteam(s.x, s.type === 'pot' ? 1.45 : 1.6, s.z, s.type === 'stove' ? 0.45 : 0.32);
   }
   buildStation(s) {
     const L = this.lib; const g = new THREE.Group(); g.position.set(s.x, 0, s.z); g.userData.id = s.id;
     const dyn = { group: g }; const edge = this.kitchenSize.w / 2 - 1.2;
     const side = s.x > edge ? 1 : s.x < -edge ? -1 : 0;   // kệ bên phải/trái quay mặt vào giữa
     if (s.type === 'serve') return;   // không còn quầy giao: bưng tô ra thẳng bàn khách
-    const model = L.station[s.type] || (s.type === 'burner' ? L.station.stove : s.type === 'prep' ? L.station.counter : s.type === 'microwave' ? L.station.pot : null); if (!model) return;
+    const model = L.station[s.type] || (s.type === 'burner' ? L.station.stove : s.type === 'prep' ? L.station.counter : s.type === 'microwave' || s.type === 'fryer' ? L.station.pot : null); if (!model) return;
     const m = clone(model);
     if (s.type === 'burner') {   // lò: 2 bếp = 2 model bếp thu nhỏ đặt cạnh nhau
       m.scale.set(s.w / 2 * 0.95, 0.85, s.d); m.position.x = -s.w / 4; const m2 = clone(model); m2.scale.copy(m.scale); m2.position.x = s.w / 4; g.add(m2);
@@ -193,6 +193,7 @@ export class View {
     }
     if (s.type === 'pot') m.scale.set(s.w / 1.4, 1, 1);   // model nồi chuẩn 1.4 m
     if (s.type === 'microwave') { m.scale.set(s.w / 1.4, 0.75, s.d / 1.0); }
+    if (s.type === 'fryer') { m.scale.set(s.w / 1.4, 0.6, s.d / 1.0); m.traverse((o) => { if (o.isMesh && o.material) { o.material = o.material.clone(); o.material.color.multiply(new THREE.Color(0.55, 0.5, 0.45)); } }); }   // chảo chiên: nồi thấp, sẫm màu
     if (s.type === 'prep' && s.onTable) {   // thớt nằm trên mặt thớt trắng của tủ topping: 2 tấm thớt gỗ dọc theo tủ, chạm riêng
       dyn.boards = []; dyn.boardPos = []; const along = side ? 'z' : 'x', across = side ? 'x' : 'z'; const L = side ? s.d : s.w, Dp = side ? s.w : s.d; const back = side ? side : -1; const n = s.boards || 2; const pitch = L / n;
       for (let i = 0; i < n; i++) {

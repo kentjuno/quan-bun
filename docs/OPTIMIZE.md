@@ -444,6 +444,42 @@ Sinh tự động bởi `scripts/gen_optimize.mjs` từ dữ liệu bếp thật
   18. Quầy ráp: cầm tô
   19. Bàn khách: giao
 
+## Chả Giò Việt Nam
+
+- Món không có sợi trụng kiểu phở (mẹt / tô khô / cháo / chả cá): xem lộ trình.
+- Thứ tự ráp: Dĩa dài → Chả giò đã cắt chéo → Đồ chua → Hoàn tất món
+- Bot: **22.5s / tô, 10 chạm**. Lộ trình:
+
+  1. Kệ tô: lấy Dĩa dài
+  2. Quầy ráp: bỏ Dĩa dài
+  3. Kệ topping: lấy Chả giò (2 cây)
+  4. Chảo chiên: chiên Chả giò (2 cây)
+  5. Kệ topping: lấy Đồ chua
+  6. Chảo chiên: lấy
+  7. Thớt: đặt Đồ chua + Chả giò đã chiên
+  8. Quầy ráp: bỏ Đồ chua + Chả giò đã cắt chéo
+  9. Quầy ráp: cầm tô
+  10. Bàn khách: giao
+
+## Gỏi Cuốn Tôm Thịt
+
+- Món không có sợi trụng kiểu phở (mẹt / tô khô / cháo / chả cá): xem lộ trình.
+- Thứ tự ráp: Bánh tráng đã nhúng → Thịt luộc → Tôm luộc → Bún → Xà lách → Dĩa dài → Hoàn tất món
+- Bot: **18.9s / tô, 12 chạm**. Lộ trình:
+
+  1. Kệ tô: lấy Bánh tráng
+  2. Bồn: xả lạnh
+  3. Kệ topping: lấy Thịt luộc
+  4. Quầy ráp: bỏ Bánh tráng đã nhúng + Thịt luộc
+  5. Kệ topping: lấy Tôm luộc
+  6. Kệ sợi: lấy Bún
+  7. Quầy ráp: bỏ Tôm luộc + Bún
+  8. Kệ topping: lấy Xà lách
+  9. Kệ tô: lấy Dĩa dài
+  10. Quầy ráp: bỏ Xà lách + Dĩa dài
+  11. Quầy ráp: cầm tô
+  12. Bàn khách: giao
+
 ## Cháo Lòng
 
 - Món không có sợi trụng kiểu phở (mẹt / tô khô / cháo / chả cá): xem lộ trình.

@@ -196,3 +196,8 @@
 - **Phản xạ** (Kent: hay quên các món bún, muốn tập phản xạ): lưới topping **cố định** theo thứ tự kệ thật (không xáo, để nhớ vị trí), tên món hiện ra → bấm đủ topping trước khi hết giờ (3 s + 1.6 s/topping), thanh đếm ngược; hết giờ = lỗi bằng số còn thiếu, tô vàng thứ bị sót; 10 món liên tục, món yếu ra nhiều hơn. Nút "Chỉ món bún" ở tab Luyện chọn nhanh 7 món bún để tập chéo (interleaving).
 - Cooking-note: tiệm không dùng cần tây (ghi AGENTS).
 - 0.5.5: "rau salad" = xà lách (Kent 13/09) → gộp item `rau-salad` vào `xa-lach` (sim-data, kệ, icon, cooking-note recipes/level1/menu/AGENTS; SW v0.44.5).
+
+## 0.6.0 — 2026-09-13 · Hai món khai vị mới (Kent học 13/09) + trạm Chảo chiên
+- **Chả Giò Việt Nam (A3)**: chả giò 2 cây → **Chảo chiên** (trạm mới `fryer`, chiên ngập dầu lửa nhỏ, nền, thật 5 phút / game 8 s) → thớt cắt chéo → ráp: dĩa dài → chả giò → đồ chua.
+- **Gỏi Cuốn Tôm Thịt (A6)**: bồn: nhúng bánh tráng → ráp theo thứ tự: bánh tráng đã nhúng → thịt luộc (2, xếp ngang) → tôm luộc (4) → bún (lên thịt) → xà lách (2, sau khi gấp 2 mép) → dĩa dài (gấp lên, ép, cuốn, cắt đôi). Chưa hỏi: bún có trụng không.
+- Item mới: chả giò, bánh tráng, tôm luộc, dĩa dài (chưa có ảnh Flow — server AudioBook đang tắt; dùng emoji/ảnh tôm). Level 10 — Khai vị. 18 món. cooking-note v0.45.0 (sim-data, recipes, level1, menu A3/A6 → recipe).

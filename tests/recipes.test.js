@@ -40,8 +40,8 @@ describe('phở đặc biệt', () => {
 });
 
 describe('dữ liệu nguồn còn nguyên', () => {
-  it('có 16 món, workflows đúng tên', () => {
-    expect(Object.keys(D.recipes).length).toBe(16);
+  it('có 18 món, workflows đúng tên', () => {
+    expect(Object.keys(D.recipes).length).toBe(18);
     expect(Object.keys(D.workflows)).toEqual(['noodle-base', 'noodle-hot-only']);
   });
 });

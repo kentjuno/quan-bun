@@ -94,6 +94,8 @@ export function transformsFor(dishId) {
 /** Trạm theo hành động. pot: trụng/ủ ấm · sink: xả · microwave · prep (thớt/bàn soạn): cắt, đập, làm chén, lót mẹt, múc cháo… */
 function stationForAction(actionId) {
   if (/microwave/.test(actionId)) return 'microwave';
+  if (/fry/.test(actionId)) return 'fryer';
+  if (/soak/.test(actionId)) return 'sink';
   if (/blanch|reblanch|warm/.test(actionId)) return 'pot';
   if (/rinse/.test(actionId)) return 'sink';
   if (/heat|stock|water|blood|porridge-in-pot/.test(actionId)) return 'stove';   // (không dùng: chuỗi nước lèo đi qua soupRecipe)

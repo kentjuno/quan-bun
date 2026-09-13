@@ -166,7 +166,7 @@ export class World {
     const c = this.chef; const s = tg.station; this.stats.trips++;
     switch (s.type) {
       case 'shelf': return this.takeFromShelf(s, tg.item);
-      case 'pot': case 'sink': case 'stove': case 'microwave': return this.useStation(s, tg.slot);
+      case 'pot': case 'sink': case 'stove': case 'microwave': case 'fryer': return this.useStation(s, tg.slot);
       case 'prep': return this.usePrep(s, tg.slot);
       case 'counter': return this.useCounter(s, tg.slot);
       case 'serve': case 'seat': return this.serve(s);
@@ -175,7 +175,7 @@ export class World {
       default: c.target = null;
     }
   }
-  arrive(tg) { /* gọi sau khi việc active xong */ const s = tg.station; if (s.type === 'pot' || s.type === 'sink') { this.collectJobs(s, s.activeJobs || []); s.activeJobs = null; } else if (s.type === 'microwave') this.collectJobs(s, s.activeJobs || []); else if (s.type === 'stove') this.finishStove(s); else if (s.type === 'burner') this.finishBurner(s, tg.slot); else if (s.type === 'prep') this.finishPrep(s); }
+  arrive(tg) { /* gọi sau khi việc active xong */ const s = tg.station; if (s.type === 'pot' || s.type === 'sink') { this.collectJobs(s, s.activeJobs || []); s.activeJobs = null; } else if (s.type === 'microwave' || s.type === 'fryer') this.collectJobs(s, s.activeJobs || []); else if (s.type === 'stove') this.finishStove(s); else if (s.type === 'burner') this.finishBurner(s, tg.slot); else if (s.type === 'prep') this.finishPrep(s); }
 
   // ---------- kệ ----------
   /** Lấy ĐÚNG nguyên liệu người chơi chạm; lấy 2 cái giống nhau được (vd. 2 tô cho 2 khách). Tay đầy mà chạm thứ đang cầm = trả lại kệ; muốn bỏ 1 thứ thì dùng nút × ở ô tay. Không tự đoán. */

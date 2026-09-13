@@ -30,6 +30,7 @@ function describe(w, target) {
   if (s.type === 'stove') return `${s.label}: múc`;
   if (s.type === 'burner') { if (arg && arg.startsWith('ready')) return `Kệ nước: lấy ${arg.includes('.') ? label(arg.slice(6)).toLowerCase() : 'nước'}`; return `${s.label} ${Number(arg) + 1}: nấu`; }
   if (s.type === 'prep') { const hand = w.chef.hand.filter((h) => typeof h === 'string'); return hand.length ? `Thớt: đặt ${hand.map(label).join(' + ')}` : `Thớt${arg !== undefined ? ' ' + (Number(arg) + 1) : ''}: lấy`; }
+  if (s.type === 'fryer') { const hand = w.chef.hand.filter((h) => typeof h === 'string' && w.transformAt('fryer', h)); return hand.length ? `Chảo chiên: chiên ${hand.map(label).join(' + ')}` : 'Chảo chiên: lấy'; }
   if (s.type === 'microwave') { const hand = w.chef.hand.filter((h) => typeof h === 'string' && w.transformAt('microwave', h)); return hand.length ? `Lò vi sóng: quay ${hand.map(label).join(' + ')}` : 'Lò vi sóng: lấy'; }
   if (s.type === 'counter') { const hand = w.chef.hand.filter((h) => typeof h === 'string'); return hand.length ? `Quầy ráp: bỏ ${hand.map(label).join(' + ')}` : 'Quầy ráp: cầm tô'; }
   if (s.type === 'serve' || s.type === 'seat') return 'Bàn khách: giao';
