@@ -3,7 +3,7 @@
 // Kết quả ghi vào Tiến độ nhớ món (mastery) như một tô: sạch = không bấm sai lần nào.
 import { D, recipeFor, label } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
-import { ALL_DISHES } from './config.js';
+import { ALL_DISHES, SHELF_TOPPING } from './config.js';
 
 const $ = (id) => document.getElementById(id);
 const shuffle = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -20,14 +20,14 @@ export class Puzzle {
   /** @param {{ dishes: string[], weights: Object, rounds: number, kinds?: string[], onDone: (result) => void, sfx: any }} o — kinds: ['order','intruder','missing'] (Đố nhanh) hoặc ['ninja'] (Chém) */
   constructor(o) { this.o = o; this.i = 0; this.results = []; this.el = $('puzzle'); }
   start() { this.i = 0; this.results = []; this.t0 = performance.now(); this.el.classList.remove('hidden'); this.next(); }
-  stop() { this.el.classList.add('hidden'); this.ninja?.stop(); }
+  stop() { this.el.classList.add('hidden'); this.ninja?.stop(); cancelAnimationFrame(this._raf); }
   next() {
     if (this.i >= this.o.rounds) return this.finish();
     const dish = pickW(this.o.weights); const kinds = this.o.kinds || ['order', 'intruder', 'missing']; const kind = kinds[this.i % kinds.length];
     this.cur = { dish, kind, mistakes: 0, t0: performance.now(), taps: 0 }; this.i++;
     $('pzProgress').textContent = `${this.i}/${this.o.rounds}`; $('pzDish').textContent = D.recipes[dish].name;
-    $('pzCanvas').classList.add('hidden'); $('pzGrid').classList.remove('hidden');
-    ({ order: this.buildOrder, intruder: this.buildIntruder, missing: this.buildMissing, ninja: this.buildNinja })[kind].call(this, dish);
+    $('pzCanvas').classList.add('hidden'); $('pzGrid').classList.remove('hidden'); $('pzGrid').classList.remove('reflex'); cancelAnimationFrame(this._raf);
+    ({ order: this.buildOrder, intruder: this.buildIntruder, missing: this.buildMissing, ninja: this.buildNinja, reflex: this.buildReflex })[kind].call(this, dish);
   }
   steps(dish) { return recipeFor(dish).assembly; }
   // ---- (1) xếp thứ tự: bấm các bước theo đúng thứ tự ráp ----
@@ -72,6 +72,24 @@ export class Puzzle {
     for (const t of [...good, ...bad]) { const im = new Image(); im.src = iconUrl(t) || ''; }   // nạp ảnh trước khi tung
     this.ninja = new Ninja(cv, { good, bad, onHit: (ok, tok) => { this.cur.taps++; if (!ok) this.wrong(cv, `"${label(tok)}" không có trong ${D.recipes[dish].name}`); else { this.o.sfx?.place?.(); $('pzMsg').textContent = ''; } }, onMiss: (tok) => { this.cur.mistakes++; $('pzMsg').textContent = `Sót "${label(tok)}" — có trong món này`; this.o.sfx?.mistake?.(); }, onEnd: () => this.solved() });
     this.ninja.start();
+  }
+  // ---- (5) phản xạ: LƯỚI CỐ ĐỊNH (thứ tự như kệ thật, không xáo) — tên món hiện ra, bấm thật nhanh đủ topping của món (thứ tự tự do) trước khi hết giờ ----
+  buildReflex(dish) {
+    // lưới = mọi topping của các món trong nhóm đang luyện, xếp theo thứ tự kệ topping cố định → tập nhớ VỊ TRÍ + phản xạ
+    if (!this._grid) { const pool = new Set(); for (const d of this.o.dishes) for (const it of recipeFor(d).shelfItems) if (SHELF_TOPPING.includes(it)) pool.add(it); this._grid = SHELF_TOPPING.filter((it) => pool.has(it)); }
+    const need = new Set(recipeFor(dish).shelfItems.filter((it) => this._grid.includes(it))); const total = need.size; this._sol = [...need].map(label);
+    const limit = 3 + total * 1.6;   // giây
+    $('pzTitle').textContent = `Bấm đủ ${total} topping của món — càng nhanh càng tốt`; $('pzAnswer').classList.remove('hidden');
+    $('pzAnswer').innerHTML = `<span class="ans timer"><i id="pzBar"></i><b id="pzLeft">${limit.toFixed(0)}s</b></span><span class="ans" id="pzGot">0/${total}</span>`;
+    const t0 = performance.now(); let got = 0; let over = false;
+    const tick = () => { if (over) return; const el = (performance.now() - t0) / 1000; const left = Math.max(0, limit - el); const bar = $('pzBar'); if (bar) { bar.style.width = `${(left / limit) * 100}%`; $('pzLeft').textContent = `${left.toFixed(1)}s`; } if (left <= 0) { over = true; this.cur.mistakes += need.size; $('pzMsg').textContent = `Hết giờ — còn thiếu: ${[...need].map(label).join(', ')}`; for (const b of $('pzGrid').children) { if (need.has(b.dataset.it)) b.classList.add('missed'); } this.o.sfx?.mistake?.(); setTimeout(() => this.solved(), 1400); return; } this._raf = requestAnimationFrame(tick); };
+    $('pzGrid').classList.add('reflex');
+    $('pzGrid').replaceChildren(...this._grid.map((it) => {
+      const el = document.createElement('button'); el.className = 'pz sm'; el.dataset.it = it; el.innerHTML = `${icon(it)}<span>${label(it)}</span>`;
+      el.onclick = () => { if (over) return; this.cur.taps++; if (need.has(it)) { need.delete(it); got++; el.classList.add('ok'); el.disabled = true; $('pzGot').textContent = `${got}/${total}`; this.o.sfx?.place?.(); if (!need.size) { over = true; cancelAnimationFrame(this._raf); this.solved(); } } else this.wrong(el, `"${label(it)}" không có trong ${D.recipes[dish].name}`); };
+      return el;
+    }));
+    this._raf = requestAnimationFrame(tick);
   }
   /** (test) nhãn các nút cần bấm theo thứ tự để giải câu hiện tại */
   solution() { return this._sol || []; }

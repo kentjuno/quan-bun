@@ -191,3 +191,7 @@
 
 ## 0.5.3 — 2026-09-13 · Bún cá Hải Phòng theo Kent
 - Cà chua → cần nước trụng → cá chiên (4) → chả cá 2 miếng cắt đôi (thớt) → **hành lá trước nước** → chan nước cá → **thì là cắt 3 khúc** (thớt, action mới `cut-dill`) bỏ sau. Bỏ dòng bao tử cá basa trong cooking-note. Bún riêu: cooking-note đổi huyết vào nồi nước (game vốn đúng). SW cooking-note v0.44.4.
+
+## 0.5.4 — 2026-09-13 · Minigame ⚡ Phản xạ + lọc "Chỉ món bún"
+- **Phản xạ** (Kent: hay quên các món bún, muốn tập phản xạ): lưới topping **cố định** theo thứ tự kệ thật (không xáo, để nhớ vị trí), tên món hiện ra → bấm đủ topping trước khi hết giờ (3 s + 1.6 s/topping), thanh đếm ngược; hết giờ = lỗi bằng số còn thiếu, tô vàng thứ bị sót; 10 món liên tục, món yếu ra nhiều hơn. Nút "Chỉ món bún" ở tab Luyện chọn nhanh 7 món bún để tập chéo (interleaving).
+- Cooking-note: tiệm không dùng cần tây (ghi AGENTS).

@@ -129,13 +129,13 @@ function start(bot = false, mode = playMode) {
 function showResult(r) {
   running = false; $('hud').classList.add('hidden'); $('result').classList.remove('hidden'); $('card').classList.remove('show');
   const isPz = !!r.puzzle; const st = r.stats || { bowls: [], idle: 0, taps: 0, trips: 0 };
-  const sh = isPz ? { id: 'puzzle', name: lastPuzzle.kinds[0] === 'ninja' ? 'Chém' : 'Đố nhanh', dishes: [...new Set(st.bowls.map((b) => b.dish))] } : world.shift; const kitchen = world.kitchen;
+  const sh = isPz ? { id: 'puzzle', name: lastPuzzle.kinds[0] === 'ninja' ? 'Chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Phản xạ' : 'Đố nhanh', dishes: [...new Set(st.bowls.map((b) => b.dish))] } : world.shift; const kitchen = world.kitchen;
   const par = (dish) => isPz ? { seconds: null, taps: 0, route: [] } : parFor(sh, kitchen, dish);
   let pts = null;
   if (!botMode) { recordResult(r); pts = playMode === 'level' ? recordLevel(sh.id, r) : playMode === 'survival' ? recordSurvival(r) : recordPlay(r); renderMenu(); }
   const clean = st.bowls.filter((b) => !b.mistakes).length;
   $('stars').textContent = playMode === 'level' ? '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars) : playMode === 'survival' ? `${r.served} khách` : isPz ? `${clean}/${st.bowls.length} sạch` : (r.mistakes === 0 ? '✓ Sạch' : `${r.mistakes} lỗi`);
-  $('rTitle').textContent = playMode === 'drill' ? 'Hết 8 đơn' : playMode === 'rush' ? 'Hết rush' : playMode === 'survival' ? (pts?.record ? '🏆 Kỷ lục mới!' : 'Hết Survival') : isPz ? (lastPuzzle.kinds[0] === 'ninja' ? 'Hết chém' : 'Hết đố') : 'Hết level';
+  $('rTitle').textContent = playMode === 'drill' ? 'Hết 8 đơn' : playMode === 'rush' ? 'Hết rush' : playMode === 'survival' ? (pts?.record ? '🏆 Kỷ lục mới!' : 'Hết Survival') : isPz ? (lastPuzzle.kinds[0] === 'ninja' ? 'Hết chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Hết phản xạ' : 'Hết đố') : 'Hết level';
   $('rDishes').textContent = playMode === 'level' ? `${sh.name} · mục tiêu ${sh.moneyTargets.join(' / ')}k` : playMode === 'survival' ? `Trụ ${Math.floor((st.time || 0) / 60)}:${String(Math.floor((st.time || 0) % 60)).padStart(2, '0')} · ${sh.dishes.length} món` : sh.dishes.map((d) => D.recipes[d].name).join(' · ');
   $('rPoints').textContent = pts ? `+${pts.earned} điểm${pts.starBonus ? ` +${pts.starBonus} thưởng ${pts.newStars}★ mới` : ''} → có ${pointsAvailable()} điểm mua trang trí` : '';
   $('btnNext').classList.toggle('hidden', playMode !== 'level' || levelIdx >= LEVELS.length - 1 || !isUnlocked(LEVELS, levelIdx + 1));
@@ -163,7 +163,7 @@ function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9) {
   puzzle = new Puzzle({ dishes, weights, rounds, kinds, sfx, onDone: (r) => showResult(r) }); puzzle.start();
 }
 let lastPuzzle = { kinds: ['order', 'intruder', 'missing'], rounds: 9 };
-$('btnPuzzle').onclick = () => startPuzzle(['order', 'intruder', 'missing'], 9); $('btnNinja').onclick = () => startPuzzle(['ninja'], 6); $('pzQuit').onclick = () => { puzzle?.stop(); $('menu').classList.remove('hidden'); };
+$('btnPuzzle').onclick = () => startPuzzle(['order', 'intruder', 'missing'], 9); $('btnNinja').onclick = () => startPuzzle(['ninja'], 6); $('btnReflex').onclick = () => startPuzzle(['reflex'], 10); $('pzQuit').onclick = () => { puzzle?.stop(); $('menu').classList.remove('hidden'); };
 $('btnDrill').onclick = () => start(false, 'drill'); $('btnRush').onclick = () => start(false, 'rush'); $('btnSurvival').onclick = () => start(false, 'survival');
 $('btnResetMastery').onclick = () => { if (confirm('Xoá toàn bộ tiến độ (nhớ món, level, điểm, trang trí)?')) { resetMastery(); resetProgress(); renderMenu(); world = newWorld(); rebuild(); } };
 // ---- menu: tab ----
@@ -195,6 +195,7 @@ $('lvPrev').onclick = () => stepLevel(-1); $('lvNext').onclick = () => stepLevel
 { let x0 = null; const car = document.querySelector('.carousel'); car.addEventListener('pointerdown', (e) => { x0 = e.clientX; }); car.addEventListener('pointerup', (e) => { if (x0 == null) return; const dx = e.clientX - x0; x0 = null; if (Math.abs(dx) > 40) stepLevel(dx < 0 ? 1 : -1); }); }
 $('pickAll').onclick = () => { practice = [...ALL_DISHES]; setPractice(practice); renderMenu(); };
 $('pickNone').onclick = () => { practice = []; setPractice(practice); renderMenu(); };
+$('pickBun').onclick = () => { practice = ALL_DISHES.filter((d) => /^bun-/.test(d)); setPractice(practice); renderMenu(); };
 $('pickWeak').onclick = () => { practice = ALL_DISHES.filter((d) => !isMastered(d)); setPractice(practice); renderMenu(); };
 function selectLevel(i) { levelIdx = i; safeSet('qb.level', String(i)); renderMenu(); if (!running) { world = newWorld(); rebuild(); } }
 renderMenu();

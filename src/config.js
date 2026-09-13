@@ -90,7 +90,7 @@ export const DECOR = [
 // Kệ (danh sách đầy đủ; mỗi ca chỉ bày thứ các món trong ca cần + alwaysShow)
 const SHELF_NOODLE = ['pho-noodle', 'bun', 'bun-to', 'banh-da', 'banh-hoi'];
 const SHELF_BOWL = ['pho-bowl', 'soup-bowl', 'dry-bowl', 'extra-bowl', 'serving-plate', 'dia-lon', 'tray', 'tray-paper', 'chao-ap-ca'];
-const SHELF_TOPPING = ['nam', 'bo-tai', 'la-sach', 'bo-vien', 'thit-luoc', 'bap-bo', 'cha-lua', 'cha-re', 'ca-chua', 'dau-hu', 'tom', 'hanh-tay', 'ngo-ri-ngo-gai', 'hanh-la', 'rau-ram',
+export const SHELF_TOPPING = ['nam', 'bo-tai', 'la-sach', 'bo-vien', 'thit-luoc', 'bap-bo', 'cha-lua', 'cha-re', 'ca-chua', 'dau-hu', 'tom', 'hanh-tay', 'ngo-ri-ngo-gai', 'hanh-la', 'rau-ram',
   'gung', 'suon-cay', 'rau-muong', 'can-nuoc', 'cha-cua', 'bo-la-lot', 'cha-hap', 'cha-chien', 'top-mo', 'hanh-phi', 'ca-chien', 'cha-ca', 'thi-la',
   'nuoc-cot-chanh', 'dau-phong-rang', 'ot-do', 'mam-tom', 'mo-hanh', 'kinh-gioi', 'tia-to', 'bac-ha', 'goc-hanh-la', 'xa-lach', 'dua-leo', 'xoai', 'thit-nuong', 'rau-salad', 'do-chua', 'quay', 'chao-long', 'chao-suon'];
 const PREP_DISHES = ['pho-tai-dap', 'pho-suon-tai', 'banh-da-cua', 'bun-ca-hai-phong', 'cha-ca-la-vong', 'bun-dau-mam-tom', 'banh-hoi-thit-heo', 'bun-cha-ha-noi', 'bun-nem-cua-thit-nuong-tom-nuong', 'bun-ga-nuong', 'chao-long', 'chao-suon'];

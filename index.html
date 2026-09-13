@@ -140,6 +140,10 @@
       .pz.ok { border-color: var(--green); background: #eef8ec; opacity: .55; } .pz.bad-found { border-color: var(--red); background: #ffe9e5; } .pz:disabled { cursor: default; }
       .pz.shake { animation: shake .35s; border-color: var(--red); } @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
       .pz-canvas { display: block; width: 100%; height: min(58vh, 520px); border-radius: 14px; background: linear-gradient(#3a2c26, #241a16); touch-action: none; cursor: crosshair; }
+      .pz-grid.reflex { grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 5px; }
+      .pz.sm { padding: 5px 2px; font-size: 10px; border-width: 2px; border-radius: 10px; } .pz.sm img { width: 36px; height: 36px; } .pz.sm .emo { font-size: 24px; line-height: 36px; }
+      .pz.missed { border-color: var(--broth); background: #fff3d6; }
+      .ans.timer { position: relative; overflow: hidden; min-width: 120px; background: #eee2d0; } .ans.timer i { position: absolute; left: 0; top: 0; bottom: 0; background: #dff2df; transition: width .1s linear; } .ans.timer b { position: relative; }
       .pz-msg { min-height: 20px; margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--red); text-align: center; }
       .lbl.sign      .lbl.sign { font-size: 15px; font-weight: 800; letter-spacing: 3px; color: #ffe08a; text-shadow: 0 1px 0 #7a2e1a, 0 0 8px rgba(0,0,0,.6); }
       .opt { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; margin: 6px 0 10px; }
@@ -214,13 +218,14 @@
           <button id="btnSurvival">Bắt đầu Survival</button>
         </section>
         <section id="tab-practice" class="tab hidden">
-          <div class="pickbar"><span id="pickCount"></span><button id="pickAll" class="ghost small">Hết</button><button id="pickWeak" class="ghost small">Chưa thuộc</button><button id="pickNone" class="ghost small">Bỏ</button></div>
+          <div class="pickbar"><span id="pickCount"></span><button id="pickAll" class="ghost small">Hết</button><button id="pickWeak" class="ghost small">Chưa thuộc</button><button id="pickBun" class="ghost small">Chỉ món bún</button><button id="pickNone" class="ghost small">Bỏ</button></div>
           <div class="dishpick" id="dishPick"></div>
           <div class="row"><button id="btnDrill" class="secondary">Luyện 8 đơn</button><button id="btnRush" class="secondary">Rush 3 đơn</button></div>
         </section>
         <section id="tab-puzzle" class="tab hidden">
           <div class="mini"><div class="lvcard solo"><b>🧩 Đố nhanh</b><small>9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary">Chơi</button></div>
-          <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div></div>
+          <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div>
+          <div class="lvcard solo" style="grid-column:1/-1"><b>⚡ Phản xạ</b><small>Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục. Chữa bệnh quên món bún: chọn "Chỉ món bún" ở tab Luyện.</small><button id="btnReflex">Chơi</button></div></div>
           <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — chọn món ở tab Luyện. Kết quả ghi vào Tiến độ nhớ món, +10 điểm/câu sạch.</div>
         </section>
         <section id="tab-decor" class="tab hidden">
