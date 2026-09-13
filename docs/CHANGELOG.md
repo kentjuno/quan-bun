@@ -187,3 +187,4 @@
 - Tab "Đố" → **Mini**: hai minigame riêng — *Đố nhanh* (9 câu: xếp thứ tự, kẻ lạ, bước giấu) và *Chém* (6 món, chỉ kiểu chém). `Puzzle` nhận `kinds`; "Chơi lại" giữ đúng minigame vừa chơi.
 - Repo GitHub `kentjuno/quan-bun` (public — GitHub Pages miễn phí cần public). `scripts/deploy_pages.cmd`: build → đẩy `dist` lên nhánh `gh-pages` → https://kentjuno.github.io/quan-bun/ (HTTPS → cài PWA được). `.gitignore` bỏ dist, ảnh thô, log.
 - 0.5.2b: Chém — tung TỪNG món (món kế chỉ tung khi món trước bị chém hoặc đang rơi nửa dưới), bay chậm hơn (~3 s, đỉnh 72–84% màn), hình to hơn, có tên dưới hình; 7 món + 3–4 đồ lạ.
+- 0.5.2c: nút ‹ (góc trên trái HUD) về menu giữa ca — không ghi kết quả.

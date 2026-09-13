@@ -206,6 +206,7 @@ $('btnTakeover').onclick = takeover;
 // nút loa
 const btnMute = $('btnMute'); const paintMute = () => { btnMute.textContent = isMuted() ? '🔇' : '🔊'; btnMute.title = isMuted() ? 'Mở tiếng' : 'Tắt tiếng'; }; paintMute();
 btnMute.onclick = () => { ensureAudio(); setMuted(!isMuted()); paintMute(); };
+$('btnBack').onclick = () => { if (!running) return; running = false; botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
 $('btnMenu').onclick = () => { running = false; $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); };
 $('loading').classList.add('hidden'); $('btnStart').classList.remove('hidden');
 
