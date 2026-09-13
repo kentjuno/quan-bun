@@ -77,7 +77,7 @@ export const SIM_DATA={
       extraStages:[{id:"cg-fry",kind:"action",action:"deep-fry",requires:["cha-gio"],creates:"cha-gio-fried"},{id:"cg-cut",kind:"action",action:"cut-diagonal",requires:["cha-gio-fried"],creates:"cha-gio-cut"}],
       assembly:["dia-dai","cha-gio-cut","do-chua","@finish"]},
     "goi-cuon-tom-thit":{name:"Gỏi Cuốn Tôm Thịt",category:"Khai vị",menuCode:"A6",requiredItems:["banh-trang","thit-luoc","tom-luoc","bun","xa-lach","dia-dai"],
-      note:"Kent học 13/09: nhúng bánh tráng, để ra thớt → 2 miếng thịt luộc xếp ngang nhau → 4 miếng tôm → bún lên thịt → gấp 2 mép bên → 2 miếng xà lách lên trên → gấp bánh tráng lên cố định, ép chặt, cuốn → cắt đôi → dĩa dài. Game: các bước gấp/cuốn/cắt gộp vào bước cuối 'dĩa dài'. CHƯA HỎI: bún có trụng không (tạm lấy thẳng từ kệ).",
+      note:"Kent học 13/09: nhúng bánh tráng, để ra thớt → 2 miếng thịt luộc xếp ngang nhau → 4 miếng tôm → bún lên thịt → gấp 2 mép bên → 2 miếng xà lách lên trên → gấp bánh tráng lên cố định, ép chặt, cuốn → cắt đôi → dĩa dài. Game: các bước gấp/cuốn/cắt gộp vào bước cuối 'dĩa dài'. Bún: trụng sẵn để nguội từ trước, lúc cuốn lấy thẳng (Kent xác nhận 13/09).",
       counts:{"thit-luoc":"2 miếng, xếp ngang","tom-luoc":"4 miếng","xa-lach":"2 miếng"},
       extraStages:[{id:"gc-soak",kind:"action",action:"soak-rice-paper",requires:["banh-trang"],creates:"banh-trang-ready"}],
       assembly:["banh-trang-ready","thit-luoc","tom-luoc","bun","xa-lach","dia-dai","@finish"]},
