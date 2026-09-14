@@ -10,6 +10,7 @@ import { iconUrl } from './game/icons.js';
 import { ensureAudio, startMusic, setMuted, isMuted, sfx, setMood, setBoil } from './audio.js';
 import { parFor } from './game/par.js';
 import { Puzzle, assembleOk } from './puzzle.js';
+import { Pov, povOk } from './pov.js';
 import { recordResult, masteryOf, isMastered, weightsFor, allMastery, resetMastery } from './game/mastery.js';
 
 const $ = (id) => document.getElementById(id);
@@ -145,7 +146,7 @@ function start(bot = false, mode = playMode) {
 function showResult(r) {
   running = false; setBoil(false); setMood(playMode === 'day' ? 'close' : 'calm'); if (r.stars >= 1 || (r.puzzle)) setTimeout(() => sfx.cheer(), 300); $('hud').classList.add('hidden'); $('result').classList.remove('hidden'); $('card').classList.remove('show');
   const isPz = !!r.puzzle; const st = r.stats || { bowls: [], idle: 0, taps: 0, trips: 0 }; const isDay = playMode === 'level';
-  const sh = isPz ? { id: 'puzzle', name: lastPuzzle.kinds[0] === 'ninja' ? 'Chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Phản xạ' : lastPuzzle.kinds[0] === 'assemble' ? 'Ráp tô' : 'Đố nhanh', dishes: [...new Set(st.bowls.map((b) => b.dish))] } : world.shift; const kitchen = world.kitchen;
+  const sh = isPz ? { id: 'puzzle', name: lastPuzzle.kinds[0] === 'ninja' ? 'Chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Phản xạ' : lastPuzzle.kinds[0] === 'assemble' ? 'Ráp tô' : lastPuzzle.kinds[0] === 'pov' ? 'Quầy POV' : 'Đố nhanh', dishes: [...new Set(st.bowls.map((b) => b.dish))] } : world.shift; const kitchen = world.kitchen;
   const par = (dish) => isPz ? { seconds: null, taps: 0, route: [] } : parFor(sh, kitchen, dish);
   let pts = null; const wasNew = isDay && bestStars(sh.id) === 0;
   if (!botMode) { recordResult(r); pts = isDay ? recordLevel(sh.id, r) : playMode === 'survival' ? recordSurvival(r) : recordPlay(r); renderMenu(); }
@@ -155,7 +156,7 @@ function showResult(r) {
   if (isDay) { starsEl.innerHTML = [0, 1, 2].map((i) => `<span class="s">${i < r.stars ? '★' : '☆'}</span>`).join(''); [...starsEl.children].forEach((el, i) => setTimeout(() => { el.classList.add('in'); if (i < r.stars) sfx.done(); }, 350 + i * 380)); }
   else starsEl.textContent = playMode === 'survival' ? `${r.served} khách` : isPz ? `${clean}/${st.bowls.length} sạch` : (r.mistakes === 0 ? '✓ Sạch' : `${r.mistakes} lỗi`);
   countUp($('rMoney'), r.money, isDay ? 1400 : 0);
-  $('rTitle').textContent = playMode === 'drill' ? 'Hết 8 đơn' : playMode === 'rush' ? 'Hết rush' : playMode === 'survival' ? (pts?.record ? '🏆 Kỷ lục mới!' : 'Hết Survival') : isPz ? (lastPuzzle.kinds[0] === 'ninja' ? 'Hết chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Hết phản xạ' : lastPuzzle.kinds[0] === 'assemble' ? 'Đóng quầy — Ráp tô' : 'Hết đố') : `${sh.name} — ${sh.title}${r.stars ? '' : ' · chưa đạt, chơi lại'}`;
+  $('rTitle').textContent = playMode === 'drill' ? 'Hết 8 đơn' : playMode === 'rush' ? 'Hết rush' : playMode === 'survival' ? (pts?.record ? '🏆 Kỷ lục mới!' : 'Hết Survival') : isPz ? (lastPuzzle.kinds[0] === 'ninja' ? 'Hết chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Hết phản xạ' : lastPuzzle.kinds[0] === 'assemble' ? 'Đóng quầy — Ráp tô' : lastPuzzle.kinds[0] === 'pov' ? 'Đóng quầy — POV' : 'Hết đố') : `${sh.name} — ${sh.title}${r.stars ? '' : ' · chưa đạt, chơi lại'}`;
   $('rDishes').textContent = isDay ? `${goalText(sh)} · ${sh.whatsNew}` : playMode === 'survival' ? `Trụ ${Math.floor((st.time || 0) / 60)}:${String(Math.floor((st.time || 0) % 60)).padStart(2, '0')} · ${sh.dishes.length} món` : sh.dishes.map((d) => D.recipes[d].name).join(' · ');
   $('rPoints').textContent = pts ? `+${pts.earned}k${pts.starBonus ? ` +${pts.starBonus}k thưởng ${pts.newStars}★ mới` : ''} → quán có ${pointsAvailable()}k` : '';
   // khách quen nhận xét cuối ngày
@@ -203,6 +204,15 @@ function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9) {
   puzzle = new Puzzle({ dishes, weights, rounds, kinds, sfx, onDone: (r) => showResult(r) }); puzzle.start();
 }
 let lastPuzzle = { kinds: ['order', 'intruder', 'missing'], rounds: 9 };
+let pov = null;
+function startPov(rounds = 8) {
+  ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
+  let dishes = (practice.length ? practice : ALL_DISHES).filter(povOk); if (!dishes.length) dishes = ALL_DISHES.filter(povOk);
+  $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
+  lastPuzzle = { kinds: ['pov'], rounds };
+  pov = new Pov({ dishes, weights: weightsFor(dishes), rounds, sfx, onDone: (r) => showResult(r), onQuit: () => { $('menu').classList.remove('hidden'); } }); pov.start();
+}
+$('btnPov').onclick = () => startPov(8);
 $('btnPuzzle').onclick = () => startPuzzle(['order', 'intruder', 'missing'], 9); $('btnAssemble').onclick = () => startPuzzle(['assemble'], 10); $('btnNinja').onclick = () => startPuzzle(['ninja'], 6); $('btnReflex').onclick = () => startPuzzle(['reflex'], 10); $('pzQuit').onclick = () => { puzzle?.stop(); $('menu').classList.remove('hidden'); };
 $('btnDrill').onclick = () => start(false, 'drill'); $('btnRush').onclick = () => start(false, 'rush'); $('btnSurvival').onclick = () => start(false, 'survival');
 $('btnResetMastery').onclick = () => { if (confirm('Xoá toàn bộ tiến độ (nhớ món, level, điểm, trang trí)?')) { resetMastery(); resetProgress(); renderMenu(); world = newWorld(); rebuild(); } };
@@ -290,7 +300,7 @@ $('pickBun').onclick = () => { practice = ALL_DISHES.filter((d) => /^bun-/.test(
 $('pickWeak').onclick = () => { practice = ALL_DISHES.filter((d) => !isMastered(d)); setPractice(practice); renderMenu(); };
 function selectLevel(L) { if (!L) return; level = L; worldIdx = Math.max(0, WORLDS.findIndex((w) => w.id === L.world)); renderMenu(); if (!running) { world = newWorld(); rebuild(); } }
 renderMenu();
-$('btnStart').onclick = () => { if (levelUnlocked(level)) start(false, 'level'); }; $('btnRetry').onclick = () => playMode === 'puzzle' ? startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds) : start(botMode, playMode);
+$('btnStart').onclick = () => { if (levelUnlocked(level)) start(false, 'level'); }; $('btnRetry').onclick = () => playMode === 'puzzle' ? (lastPuzzle.kinds[0] === 'pov' ? startPov(lastPuzzle.rounds) : startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds)) : start(botMode, playMode);
 $('btnNext').onclick = () => { const n = nextLevel(level); if (n) selectLevel(n); else { const w = WORLDS[WORLDS.indexOf(worldById(level.world)) + 1]; if (w) selectLevel(w.levels[0]); } start(false, 'level'); };
 $('btnBot').onclick = () => start(true);
 function takeover() { if (!botMode) return; botMode = false; $('btnTakeover').classList.add('hidden'); showHint('Bạn cầm lái. Kệ → lấy · nồi/bồn → làm · quầy ráp → quầy giao', 4000); }
@@ -365,4 +375,4 @@ requestAnimationFrame(frame);
 if (import.meta.env.PROD && 'serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/claude\.ai/.test(location.host)) {
   navigator.serviceWorker.register('./sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const nw = reg.installing; nw?.addEventListener('statechange', () => { if (nw.state === 'installed' && navigator.serviceWorker.controller) toast('Có bản mới — tải lại để cập nhật', 3000); }); }); }).catch(() => {});
 }
-window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, view, start, botDecide, tick, startPuzzle, D, recipeFor };
+window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, tick, startPuzzle, D, recipeFor };
