@@ -44,7 +44,7 @@ export class Pov {
         <div class="pv-stack">${this.bowlTypes.map((b) => `<div class="pv-src dragsrc" data-kind="bowl" data-tok="${b}">${img(b)}<small>${label(b)}</small></div>`).join('')}${this.noodleTypes.map((n) => `<div class="pv-src dragsrc" data-kind="noodle" data-tok="${n}">${img(n)}<small>${label(n)}</small></div>`).join('')}</div>
         <div class="pv-slots">${[0, 1].map((i) => `<div class="pv-slot drop" data-zone="slot" data-i="${i}"><small>chỗ tô ${i + 1}</small></div>`).join('')}</div>
       </div>
-      <div class="pv-msg" id="pvMsg">Kéo tô vô nồi để trụng · kéo sợi vô rọ · kéo topping vô tô · kéo tô lên phiếu để giao</div>`;
+      <div class="pv-msg" id="pvMsg">Kéo (hoặc chạm đôi) tô vô nồi để trụng · sợi vô rọ · topping vô tô · tô xong lên phiếu để giao</div>`;
     $('pvQuit').onclick = () => { this.stop(); this.o.onQuit?.(); };
     this.bindDrag();
   }
@@ -86,13 +86,45 @@ export class Pov {
     root.onpointerdown = (e) => {
       const src = e.target.closest('.dragsrc'); if (!src || this.over) return;
       e.preventDefault(); root.setPointerCapture?.(e.pointerId);
+      // double tap = tự đi tới đích hợp lý nhất (Kent: kéo chính xác trên điện thoại khó — cho phép kéo HOẶC chạm đôi)
+      const now = performance.now(); const key = src.dataset.kind + ':' + (src.dataset.tok || src.dataset.i);
+      if (this._lastTap && this._lastTap.key === key && now - this._lastTap.t < 340) { this._lastTap = null; const d = { kind: src.dataset.kind, tok: src.dataset.tok, i: Number(src.dataset.i), src }; const zone = this.autoTarget(d); if (zone) { this.flyTo(src, zone, () => this.drop(d, zone)); } return; }
+      this._lastTap = { key, t: now };
       const ghost = document.createElement('div'); ghost.className = 'pv-ghost'; ghost.innerHTML = src.querySelector('img,.emo')?.outerHTML || '•'; document.body.appendChild(ghost);
-      drag = { kind: src.dataset.kind, tok: src.dataset.tok, i: Number(src.dataset.i), ghost, src }; src.classList.add('lift'); this.moveGhost(e, ghost);
+      drag = { kind: src.dataset.kind, tok: src.dataset.tok, i: Number(src.dataset.i), ghost, src, x0: e.clientX, y0: e.clientY, moved: false }; src.classList.add('lift'); this.moveGhost(e, ghost);
     };
-    root.onpointermove = (e) => { if (drag) this.moveGhost(e, drag.ghost); };
+    root.onpointermove = (e) => { if (!drag) return; if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) drag.moved = true; this.moveGhost(e, drag.ghost); };
     const end = (e) => { if (!drag) return; const d = drag; drag = null; d.ghost.remove(); d.src.classList.remove('lift'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
+      if (!d.moved) return;   // chạm nhẹ (không kéo) = không thả gì — chờ chạm đôi
       const zone = document.elementsFromPoint(e.clientX, e.clientY).find((z) => z.classList?.contains('drop')); if (zone) this.drop(d, zone); };
     root.onpointerup = end; root.onpointercancel = end;
+  }
+  /** Đích mặc định cho chạm đôi: tô sạch → nồi · tô nóng → chỗ tô trống · sợi → rọ trống · rọ nóng → tô cần / bồn · rọ đã xả → nồi · rọ nóng lại → tô cần · topping/nước → tô đang cần · tô xong → phiếu khớp. */
+  autoTarget(d) {
+    const q = (sel) => this.el.querySelector(sel); const slotEl = (i) => q(`.pv-slot[data-i="${i}"]`);
+    const slotNeeding = (tok) => this.bowls.findIndex((b) => b && this.fits([...b.placed, tok]).length);
+    const emptySlot = () => this.bowls.findIndex((b) => !b);
+    if (d.kind === 'bowl') return q('.pv-pot');
+    if (d.kind === 'hotbowl') { const i = emptySlot(); return slotEl(i >= 0 ? i : 0); }
+    if (d.kind === 'noodle') { const i = this.baskets.findIndex((b) => !b); return i >= 0 ? q(`.pv-basket[data-i="${i}"]`) : q('.pv-pot'); }
+    if (d.kind === 'basket') {
+      const bk = this.baskets[d.i]; if (!bk || /ing$/.test(bk.state)) return null; const tok = `noodle-drained:${bk.noodle}`;
+      const wf = (dish) => D.recipes[dish]?.base?.workflow || 'noodle-base';
+      const si = slotNeeding(tok); const cands = si >= 0 ? this.fits(this.bowls[si].placed) : [];
+      if (bk.state === 'hot') { const hotOnly = cands.some((t) => wf(t.dish) === 'noodle-hot-only' && this.recs[t.dish].noodle === bk.noodle); return hotOnly && si >= 0 ? slotEl(si) : q('.pv-sink'); }
+      if (bk.state === 'rinsed') return q('.pv-pot');
+      return slotEl(si >= 0 ? si : 0);
+    }
+    if (d.kind === 'top' || d.kind === 'broth') { const si = slotNeeding(d.tok); if (si >= 0) return slotEl(si); const only = this.bowls.findIndex(Boolean); return slotEl(only >= 0 ? only : 0); }
+    if (d.kind === 'madebowl') { const b = this.bowls[d.i]; if (!b) return null; const t = this.tickets.find((x) => x.steps.length === b.placed.length && x.steps.every((s, i) => s === b.placed[i])) || this.tickets[0]; return t ? q(`.pv-tickets .tk[data-id="${t.id}"]`) : null; }
+    return null;
+  }
+  /** Hiệu ứng bay từ nguồn tới đích rồi gọi done (để chạm đôi vẫn thấy vật thể di chuyển). */
+  flyTo(src, zone, done) {
+    const a = src.getBoundingClientRect(), b = zone.getBoundingClientRect(); const g = document.createElement('div'); g.className = 'pv-ghost fly'; g.innerHTML = src.querySelector('img,.emo')?.outerHTML || '•'; document.body.appendChild(g);
+    g.style.transform = `translate(${a.left + a.width / 2 - 28}px, ${a.top + a.height / 2 - 28}px)`; zone.classList.add('over');
+    requestAnimationFrame(() => { g.style.transition = 'transform .22s cubic-bezier(.3,.7,.3,1)'; g.style.transform = `translate(${b.left + b.width / 2 - 28}px, ${b.top + b.height / 2 - 28}px) scale(.85)`; });
+    setTimeout(() => { g.remove(); zone.classList.remove('over'); done(); }, 230);
   }
   moveGhost(e, ghost) { ghost.style.transform = `translate(${e.clientX - 28}px, ${e.clientY - 28}px)`; this.el.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over')); const zone = document.elementsFromPoint(e.clientX, e.clientY).find((z) => z.classList?.contains('drop')); if (zone) zone.classList.add('over'); }
   drop(d, zone) {
