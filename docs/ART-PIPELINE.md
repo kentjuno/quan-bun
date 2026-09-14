@@ -1,0 +1,109 @@
+# ART PIPELINE — lớp, animation, danh sách asset cần gen (Quầy POV)
+
+Đi kèm `art/ART-BIBLE.md` (phong cách C: ký hoạ màu nước, nét mực nâu `#3b2a1e`, viền trắng sticker) và `docs/PLAN-CORE.md` (bước 3).
+Concept duyệt 14/09: `art/ui-concepts/ui-pov-portrait.png` (bố cục tổng), `ui-pov-closeup.png` (tủ prep + phiếu), `ui-map-notebook.png` (bản đồ sổ tay).
+Chữ trong 3 tấm concept là **rác do AI bịa** — mọi chữ trong game do code vẽ bằng font chữ tay, lấy tên từ `sim-data.js`.
+
+---
+
+## 1. Chia lớp (z-order) — màn Quầy POV
+
+Màn chơi = 7 lớp DOM chồng nhau, mỗi lớp một ảnh hoặc một nhóm sprite. Toạ độ theo **phần trăm** khung (`src/data/counter-layout.js`), nên một bộ ảnh chạy được cả dọc lẫn ngang.
+
+| z | Lớp | Nội dung | Ảnh | Parallax khi kéo |
+|---|---|---|---|---|
+| 0 | `bg` | Tường gạch men, sàn, kệ chén phía sau, cửa sổ — KHÔNG có gì bấm được | 1 ảnh nền full-bleed (dọc + ngang) | 0.02 (gần như đứng yên) |
+| 1 | `far` | Nồi trụng · bồn xả · dãy nồi nước lèo · chảo chiên · lò vi sóng | 5 ảnh rời, nền trong | 0.05 |
+| 2 | `far-dyn` | Rọ sợi trong nồi, tô nóng trữ, nồi đang đun, đồ trong chảo/lò | sprite item (đã có 81 icon) | 0.05 |
+| 3 | `mid` | Thân tủ prep (inox, cửa, khay GN rỗng) | 1 ảnh | 0.10 |
+| 4 | `mid-dyn` | Đồ trong từng khay + nhãn tên (chữ do code vẽ) | sprite item | 0.10 |
+| 5 | `near` | Mặt thớt inox, chồng tô, bin sợi, thùng rác | 1 ảnh | 0.16 |
+| 6 | `near-dyn` | Tô đang ráp (tô + các lớp topping), thớt đang làm, bàn tay | sprite + ảnh tay | 0.16 |
+| 7 | `ui` | Phiếu khách, nút, thông báo, thanh kiên nhẫn | SVG/CSS + ảnh giấy | 0 |
+
+**Vùng thả (hitbox)** là `div` trong suốt đặt theo toạ độ %, KHÔNG cắt theo hình — dễ trúng ngón tay hơn. Ảnh chỉ để nhìn.
+`counter-layout.js` dạng:
+```js
+export const LAYOUT = {
+  portrait: { pot: { x: 4, y: 13, w: 52, h: 20 }, baskets: [{x:7,y:17,w:13,h:12}, …], sink: {…}, burner: {…},
+              prepPans: { x: 4, y: 40, w: 92, h: 16, cols: 6, rows: 2 }, slots: [{…},{…}], trash: {…}, tickets: { x: 4, y: 2, w: 92, h: 9 } },
+  landscape: { … },
+};
+```
+
+---
+
+## 2. Animation — cái gì động, làm bằng gì, bao lâu
+
+Nguyên tắc: **không dùng sprite-sheet nhân vật** (đắt, khó gen đồng nhất). Mọi chuyển động = CSS transform trên sprite tĩnh + vài ảnh overlay lặp. Tất cả ≤ 8 KB/cái.
+
+| # | Animation | Khi nào | Cách làm | Thời lượng |
+|---|---|---|---|---|
+| A1 | Hơi nước nồi | luôn, khi nồi bật | 1 PNG khói (512²) × 3 bản sao, `translateY(-24px)` + `opacity 1→0` + `scaleX(1.15)`, lệch pha | 2.2 s loop |
+| A2 | Mặt nước sôi | luôn | PNG bọt trong suốt, `background-position` chạy + `opacity` nhấp nháy nhẹ | 1.6 s loop |
+| A3 | Thả rọ vô nồi | drop vào `pot` | sprite rọ `translateY(0→+18px)` ease-in 160 ms, kèm A4 | 0.16 s |
+| A4 | Nước bắn | cùng A3 | PNG splash, `scale(.6→1.3)` + fade | 0.35 s |
+| A5 | Rọ đang trụng | `left > 0` | rọ `translateY` ±3px sin, vòng tròn tiến độ quanh rọ | loop |
+| A6 | Rọ xong | `left = 0` | viền vàng nhấp nháy + nảy nhẹ `scale 1→1.06` | 0.5 s ×2 |
+| A7 | Vật bay (chạm đôi) | double-tap | ghost `translate` theo bezier `.3,.7,.3,1` + `scale .85` | 0.21 s (đã có) |
+| A8 | Topping rơi vô tô | drop vào `slot` | sprite từ vị trí thả → tâm tô theo cung parabol, xoay 12°, đáp `scale 1.15→1` | 0.28 s |
+| A9 | Lớp trong tô hiện | sau A8 | lớp mới `opacity 0→1` + `translateY(-6px→0)` | 0.18 s |
+| A10 | Chan nước | drop `broth`/`ready` | **ảnh bàn tay cầm vá** trượt vào từ mép dưới, nghiêng 25°, dòng nước (PNG) `scaleY 0→1`, tô sáng lên | 0.8 s |
+| A11 | Tô đủ bước | `fits` = đủ | tô nảy `scale` 1→1.05 loop + quầng sáng giấy | loop tới khi giao |
+| A12 | Giao tô lên phiếu | drop vào `ticket` | tô bay lên phiếu, phiếu **xé rời** (`rotate 6° + translateY(-120%)` + fade), dấu mộc chất lượng đóng xuống (`scale 2→1`, xoay −8°) | 0.55 s |
+| A13 | Phiếu sắp hết giờ | patience < 25 % | phiếu rung `translateX ±2px` 3 nhịp mỗi 2 s, thanh đỏ | loop |
+| A14 | Khách bỏ đi | expire | phiếu trôi xuống + xám hoá | 0.5 s |
+| A15 | Chiên xèo | `fryer.left > 0` | PNG bọt dầu nhỏ nhấp nháy + rung chảo 1px | loop |
+| A16 | Lò vi sóng chạy | `microwave.left > 0` | ô cửa sáng vàng nhấp nháy 0.9 s | loop |
+| A17 | Dao cắt trên thớt | `board.left > 0` | PNG dao `rotate -25°↔0` 2 nhịp/s + vụn bay | loop |
+| A18 | Nồi nước đang đun | `burner.pot.left > 0` | A1 nhỏ + viền nồi ấm dần (filter hue nhẹ) | loop |
+| A19 | Sợi hư | spoiled | sprite xám hoá + dấu ✖ mực đỏ vẽ nét | 0.4 s |
+| A20 | Vào màn | start | ba lớp far/mid/near trượt lên lệch pha (0 / 60 / 120 ms) | 0.5 s |
+
+Tất cả bọc trong `@media (prefers-reduced-motion: reduce)` → tắt A1/A2/A5/A15–A18.
+
+---
+
+## 3. Danh sách asset cần GEN (Flow) — 41 ảnh
+
+Quy ước: nền **magenta `#FF00FF`** để cắt bằng `scripts/process_icons.py`, trừ nhóm BG (nền đầy đủ).
+Đặt ở `art/raw/<nhóm>/`, xử lý ra `public/art/<nhóm>/`.
+
+### 3.1 Nền (2 ảnh, KHÔNG magenta)
+| file | tỉ lệ | nội dung |
+|---|---|---|
+| `bg-counter-portrait.png` | 9:16 | Tường gạch men xanh ngọc, kệ chén phía sau, cửa sổ mờ, sàn gạch bông — **trống ở giữa** để đặt trạm, không vẽ nồi/tủ |
+| `bg-counter-landscape.png` | 16:9 | như trên, bố cục ngang |
+
+### 3.2 Trạm (7 ảnh, magenta)
+`st-pot.png` (nồi trụng inox 3 rọ rỗng, nhìn chéo từ trên) · `st-sink.png` (bồn xả nước lạnh) · `st-burner.png` (bếp 2 lò + nồi nhỏ rỗng) · `st-fryer.png` (chảo chiên ngập dầu) · `st-microwave.png` (lò vi sóng nhỏ) · `st-preptable.png` (tủ lạnh prep, **khay GN rỗng**, 2 hàng 6 cột, cửa dưới) · `st-worktop.png` (mặt thớt inox + thớt nhựa trắng).
+
+### 3.3 Bàn tay (4 ảnh, magenta) — làm POV thật
+`hand-empty.png` · `hand-ladle.png` (cầm vá) · `hand-chopsticks.png` (cầm đũa) · `hand-basket.png` (cầm rọ). Góc: từ mép dưới màn hình chếch lên, cổ tay áo xám.
+
+### 3.4 Hiệu ứng (6 ảnh, magenta hoặc alpha)
+`fx-steam.png` (512², khói mềm) · `fx-splash.png` · `fx-bubbles.png` (mặt nước sôi, tile ngang) · `fx-oil-bubbles.png` · `fx-pour.png` (dòng nước lèo đổ) · `fx-chop.png` (dao + vụn).
+
+### 3.5 Mặt khách (14 ảnh, magenta, vuông 512²)
+6 khách quen theo `sketch` trong `src/data/customers.js`: `cus-cau-hai` (áo sơ mi xắn tay, tờ báo) · `cus-di-ba` (khăn rằn, giỏ chợ) · `cus-thim-bay` (nón lá) · `cus-chu-tu` (kính lão) · `cus-ut-muoi` (trẻ, tai nghe) · `cus-ong-nam` (mũ bảo hiểm).
+8 khách lạ: `cus-x1..x8` (cô công sở, anh áo đỏ, bác gái, học sinh, chú xe ôm, du khách, ông già, chị bầu).
+Chỉ **chân dung vai trở lên**, để dán lên phiếu.
+
+### 3.6 UI giấy (8 ảnh, magenta)
+`ui-ticket.png` (tờ phiếu giấy + kẹp bướm) · `ui-panel.png` (khung giấy có băng keo) · `ui-btn.png` (nút viền mực) · `ui-tape.png` · `ui-star.png` · `ui-lock.png` · `ui-badge.png` (huy hiệu tròn cho world) · `ui-stamp.png` (dấu mộc "HOÀN HẢO").
+
+### 3.7 Icon còn thiếu (4 ảnh) — theo bible §3
+`dia-dai`, `cha-gio`, `tom-luoc`, `banh-trang` (81 icon đã có, 57 item cần dùng đủ trừ 4 cái này).
+
+**Tổng: 41 ảnh.** Flow ~60–90 s/ảnh → chạy 5 mẻ, mỗi mẻ 8–9 ảnh, khoảng 1 giờ tổng.
+
+---
+
+## 4. Font & chữ
+Chữ tay: **Patrick Hand** (Google Fonts, có tiếng Việt). Tiêu đề/bảng hiệu cỡ lớn; số liệu (tiền, giây) dùng `Be Vietnam Pro` đang có để không lem.
+Artifact claude.ai chỉ cho `fonts.googleapis.com`; bản Pages nhúng `.woff2` vào `public/fonts/` để chạy offline.
+
+## 5. Ngân sách & kiểm tra
+- Tổng ảnh sau xử lý phải < 3 MB (nền 2×250 KB, trạm 7×80 KB, còn lại < 40 KB/ảnh) để PWA vẫn cài offline nhanh.
+- Mỗi mẻ gen xong: chạy `process_icons.py`, ghép lên màn thật, chụp 1 ảnh gửi Kent duyệt **trước khi gen mẻ sau**.
+- Kiểm tra bắt buộc: icon đọc được ở 48 px (bible §2), nền không nuốt chữ trắng, hitbox vẫn trúng khi đổi từ dọc sang ngang.
