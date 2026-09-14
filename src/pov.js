@@ -11,12 +11,13 @@ const src1 = (kind, tok, i) => `data-k="${kind}"${tok != null ? ` data-t="${tok}
 const bar = (left, total) => (left > 0 && total ? `<i class="pv-bar" style="--p:${(1 - left / total) * 100}%"></i>` : '');
 
 export class Pov {
-  /** @param {{dishes,weights,rounds,level?,simplify?,constraints?,burners?,sfx,onDone,onQuit}} o */
+  /** @param {{dishes,weights,rounds,level?,arrivals?,simplify?,constraints?,goal?,moneyTargets?,events?,burners?,patience?,sfx,onDone,onQuit}} o */
   constructor(o) { this.o = o; this.el = $('pov'); }
   start() {
     const o = this.o;
     this.C = new Counter({
-      dishes: o.dishes, rounds: o.rounds ?? 8, simplify: o.simplify, constraints: o.constraints, burners: o.burners ?? 1,
+      dishes: o.dishes, rounds: o.rounds ?? 8, arrivals: o.arrivals, simplify: o.simplify, constraints: o.constraints,
+      goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1,
       patience: o.patience ?? 90, gap: o.gap ?? 16, weights: o.weights,
       ev: { onSfx: (k) => o.sfx?.[k]?.(), onMsg: (m, c) => this.msg(m, c), onEnd: (r) => this.finish(r),
         onServe: (t, r) => this.msg(`${t.name}: “${r.say}” · ${r.sec.toFixed(0)}s · ${r.quality === 100 ? 'hoàn hảo' : r.quality >= 60 ? 'được' : 'ẩu'}`, r.quality === 100 ? 'good' : 'mid'),

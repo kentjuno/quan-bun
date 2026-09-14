@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Counter, counterMove, povOk } from '../src/game/counter.js';
-import { ALL_DISHES, levelById } from '../src/config.js';
+import { ALL_DISHES, levelById, WORLDS } from '../src/config.js';
+import { makeLevelArrivals } from '../src/game/levels.js';
 import { recipeFor, D } from '../src/game/recipes.js';
 
 /** Chạy quầy bằng bot: mỗi 0.35 s làm một nước đi, còn lại để đồng hồ chạy. */
@@ -128,5 +129,52 @@ describe('Counter — lõi quầy POV', () => {
   it('khách chờ quá lâu thì bỏ đi', () => {
     const C = mk(['pho-tai-nam'], { rounds: 1, patience: 10 }); C.spawn('pho-tai-nam');
     C.update(11); expect(C.done).toBe(1); expect(C.results[0].quality).toBe(0);
+  });
+});
+
+// ---- level chạy trên quầy POV (docs/PLAN-CORE.md bước 2) ----
+describe('Quầy POV chạy được world/level', () => {
+  const lvCounter = (L) => new Counter({
+    dishes: L.dishes, arrivals: makeLevelArrivals(L), simplify: L.simplify,
+    constraints: L.constraints, goal: L.goal, moneyTargets: L.moneyTargets,
+    patience: L.patience, rnd: () => 0.37,
+  });
+
+  it('CẢ 124 level đều chơi được ở quầy: bot phục vụ được khách, không kẹt', () => {
+    const bad = [];
+    for (const w of WORLDS) for (const L of w.levels) {
+      const C = lvCounter(L); play(C, L.seconds + 240);
+      const r = C.result();
+      if (r.served < 1) bad.push(`${L.id}: phục vụ ${r.served}/${C.rounds}`);
+      if (r.mistakes > C.rounds * 3) bad.push(`${L.id}: ${r.mistakes} lỗi`);
+    }
+    expect(bad, bad.slice(0, 8).join(' | ')).toEqual([]);
+  }, 180000);
+
+  it('level trả về đủ số liệu để chấm sao như bếp 3D', () => {
+    const L = WORLDS[0].levels[0];
+    const C = lvCounter(L); play(C, L.seconds + 240);
+    const r = C.result();
+    for (const k of ['money', 'tips', 'served', 'left', 'mistakes', 'wasted', 'errors', 'stars', 'regulars', 'stats'])
+      expect(r, k).toHaveProperty(k);
+    expect(r.stars).toBeGreaterThanOrEqual(0); expect(r.stars).toBeLessThanOrEqual(3);
+    expect(r.money).toBeGreaterThan(0);
+  });
+
+  it('khách tới đúng lịch của level, không phải rải đều', () => {
+    const L = WORLDS[0].levels[3];
+    const arr = makeLevelArrivals(L);
+    const C = new Counter({ dishes: L.dishes, arrivals: arr, simplify: L.simplify, patience: L.patience, rnd: () => 0.5 });
+    expect(C.rounds).toBe(arr.length);
+    C.update(0.05);
+    expect(C.spawned).toBe(arr[0].t <= 0.05 ? 1 : 0);
+  });
+
+  it('mục tiêu riêng của level được chấm (clean / no-waste / streak / before)', () => {
+    const mkGoal = (goal) => { const C = new Counter({ dishes: ['pho-tai-nam'], rounds: 4, goal, patience: 600, rnd: () => 0.9 }); return C; };
+    const C1 = mkGoal({ kind: 'clean', bowls: 4 }); play(C1, 900);
+    expect(C1.result().stars).toBeGreaterThanOrEqual(1);
+    const C2 = mkGoal({ kind: 'no-waste' }); play(C2, 900);
+    expect(C2.result().wasted).toBe(0);
   });
 });

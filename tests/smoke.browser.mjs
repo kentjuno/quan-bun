@@ -11,7 +11,7 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
   const page = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
   page.on('pageerror', (e) => errors.push(vp.tag + ' pageerror: ' + e.message));
   page.on('console', (m) => { if (m.type() === 'error' && !/ERR_CONNECTION_RESET|fonts\.g/.test(m.text())) errors.push(vp.tag + ' console: ' + m.text()); });
-  await page.goto('http://localhost:4175/?card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 });
+  await page.goto('http://localhost:4175/?card=0&bep3d=1'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 });
   await page.screenshot({ path: `tests/out/${vp.tag}_01_menu.png` });
   await page.click('#btnStart'); await page.waitForTimeout(1200);
   // chạm bằng chuột thật vào kệ tô (raycast) rồi nồi
@@ -49,7 +49,7 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
   console.log(vp.tag, 'DOM_CLEAN', JSON.stringify(dom), dom.bubbles <= dom.waiting ? 'OK' : 'LEAK');
   if (dom.bubbles > dom.waiting) errors.push(vp.tag + ' bubble leak');
   if (vp.tag === 'port') {   // chế độ card: chạm cả kệ → đầu bếp tới → card mở → chọn 2 → lên tay
-    await page.goto('http://localhost:4175/?card=1'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
+    await page.goto('http://localhost:4175/?bep3d=1&card=1'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
     const pt = await page.evaluate(() => { const { view, world } = window.__qb; const s = world.stationById['shelf-topping']; const v = new (Object.getPrototypeOf(view.camera.position).constructor)(s.x, 0.9, s.z); v.project(view.camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; });
     console.log('CARD_PT', pt, await page.evaluate(([x, y]) => JSON.stringify({ pick: window.__qb.view.pick(x, y), running: !document.querySelector('#hud').classList.contains('hidden'), shift: window.__qb.world.shift.id, el: document.elementFromPoint(x, y)?.id || document.elementFromPoint(x, y)?.className }), pt));
     await page.mouse.click(...pt);
@@ -60,7 +60,7 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
     console.log(vp.tag, 'CARD', opened, hand);
     if (!opened || hand !== '["nam","nam"]') errors.push('card mode');
     // lò đun (ca 3): chạm bếp lò 0 → card nước lèo → bấm cốt cua, huyết, nước → Đun → lò có nồi "Nước riêu cua"
-    await page.goto('http://localhost:4175/?world=bun-rieu&level=3'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
+    await page.goto('http://localhost:4175/?bep3d=1&world=bun-rieu&level=3'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
     const bp = await page.evaluate(() => { const { view, world } = window.__qb; const s = world.stationById['burner']; const v = new (Object.getPrototypeOf(view.camera.position).constructor)(s.x - s.w / 4, 1.0, s.z); v.project(view.camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; });
     await page.mouse.click(...bp);
     const sopen = await page.waitForSelector('#card.show', { timeout: 20000 }).then(() => true).catch(() => false);
@@ -68,28 +68,28 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
     const soup = await page.evaluate(() => JSON.stringify(window.__qb.world.stationById['burner'].slots.map((b) => b && b.name)));
     console.log(vp.tag, 'SOUP', sopen, soup); if (!sopen || !soup.includes('Nước riêu cua')) errors.push('soup card');
     // ca 5 (mẹt/tô khô, thớt) — bot làm 60 s để có đồ trên thớt rồi chụp
-    await page.goto('http://localhost:4175/?world=mon-kho&level=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
+    await page.goto('http://localhost:4175/?bep3d=1&world=mon-kho&level=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
     const s5 = await page.evaluate(() => { const { botDecide } = window.__qb; const w = window.__qb.world; for (let i = 0; i < 40 * 30; i++) { const t = botDecide(w); if (t) w.tap(t); w.update(1 / 30); } return { served: w.served, prep: !!w.stationById.prep, mistakes: w.mistakes }; });
     await page.waitForTimeout(800); await page.screenshot({ path: 'tests/out/port_shift5.png' });
     console.log(vp.tag, 'SHIFT5', JSON.stringify(s5)); if (!s5.prep || s5.mistakes) errors.push('shift5');
     // world bún riêu level 4: có lò đun + kệ topping bày đúng đồ của món nước riêu
-    await page.goto('http://localhost:4175/?world=bun-rieu&level=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/port_rieu4.png' });
+    await page.goto('http://localhost:4175/?bep3d=1&world=bun-rieu&level=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/port_rieu4.png' });
     const st4 = await page.evaluate(() => ({ st: window.__qb.world.stations.map((s) => s.id).filter((i) => /burner/.test(i)), items: window.__qb.world.stationById['shelf-topping'].items.filter((i) => /ca-chua|dau-hu|tom/.test(i)), sim: window.__qb.world.sim }));
     console.log(vp.tag, 'RIEU4', JSON.stringify(st4)); if (!st4.st.length || st4.items.length < 3 || st4.sim) errors.push('bun-rieu-4 stations');
-    await page.goto('http://localhost:4175/?hit=1&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(400); await page.screenshot({ path: 'tests/out/port_hitboxes.png' }); }
+    await page.goto('http://localhost:4175/?bep3d=1&hit=1&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(400); await page.screenshot({ path: 'tests/out/port_hitboxes.png' }); }
   await page.waitForTimeout(400); await page.screenshot({ path: `tests/out/${vp.tag}_02_play.png` });
   if (vp.tag === 'land') {   // luyện đơn lẻ: bot lái 5 đơn → báo cáo tổng kết có bảng tô / so với bot / lộ trình
-    await page.goto('http://localhost:4175/?world=pho&level=2&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.evaluate(() => document.getElementById('btnDrill').click()); await page.waitForTimeout(600);
+    await page.goto('http://localhost:4175/?bep3d=1&world=pho&level=2&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.evaluate(() => document.getElementById('btnDrill').click()); await page.waitForTimeout(600);
     const drill = await page.evaluate(() => { const { botDecide } = window.__qb; const w = window.__qb.world; let taps = 0; for (let i = 0; i < 400 * 30 && w.state === 'running'; i++) { const t = botDecide(w); if (t) { w.tap(t); taps++; } w.update(1 / 30); } return { state: w.state, served: w.served, taps, bowls: w.result?.stats?.bowls?.length, idle: w.result?.stats?.idle }; });
     await page.waitForTimeout(800);
     const rep = await page.evaluate(() => ({ visible: !document.querySelector('#result').classList.contains('hidden'), rows: document.querySelectorAll('#report table tbody tr').length, route: !!document.querySelector('#report ol.route'), title: document.querySelector('#rTitle').textContent }));
     console.log(vp.tag, 'DRILL', JSON.stringify(drill), JSON.stringify(rep));
     if (drill.state !== 'over' || drill.served !== 8 || !rep.visible || rep.rows !== 8) errors.push('drill/report');
     await page.screenshot({ path: 'tests/out/land_report.png' });
-    await page.goto('http://localhost:4175/?world=pho&level=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/land_shift4.png' });
+    await page.goto('http://localhost:4175/?bep3d=1&world=pho&level=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/land_shift4.png' });
     // survival + trang trí: mua hết đồ (điểm giả) → dựng quán có cây/đèn/bảng → bot chơi 90 s → ép 3 khách bỏ đi → kết quả
     await page.evaluate(() => localStorage.setItem('qb.progress.v1', JSON.stringify({ stars: { 'pho-1': 3, 'pho-2': 2, 'pho-3': 1, 'pho-4': 2 }, points: 5000, spent: 0, decor: ['cay-canh', 'den-long', 'bang-hieu', 'tranh', 'gach-hoa', 'be-ca', 'tuong-vang', 'hoa-mai'] })));
-    await page.goto('http://localhost:4175/?card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 });
+    await page.goto('http://localhost:4175/?card=0&bep3d=1'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 });
     const menu = await page.evaluate(() => ({ worlds: document.querySelectorAll('#worldRow .wd').length, locked: document.querySelectorAll('#worldRow .wd.locked').length, cells: document.querySelectorAll('#lvGrid .lvb').length, lockedCells: document.querySelectorAll('#lvGrid .lvb.locked').length, ch: document.querySelectorAll('#lvGrid .lvb.ch').length, card: document.getElementById('lvCard').textContent, upg: document.querySelectorAll('#upgrades .sh').length, shop: document.querySelectorAll('#shop .sh.owned').length, decor: window.__qb.view.scene.getObjectByName('decor')?.children.length }));
     console.log(vp.tag, 'MAP', JSON.stringify(menu));
     if (menu.worlds !== 8 || menu.locked !== 7 || menu.cells !== 20 || menu.ch !== 4 || !menu.card.includes('Phở 5') || menu.upg !== 5 || menu.shop !== 8 || !menu.decor) errors.push('world map');
@@ -136,5 +136,36 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
   await page.screenshot({ path: `tests/out/${vp.tag}_03_result.png` });
   await page.close();
 }
+
+// ---- level chính giờ chơi ở QUẦY POV (docs/PLAN-CORE.md bước 2) ----
+{
+  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  page.on('pageerror', (e) => errors.push('pov pageerror: ' + e.message));
+  page.on('console', (m) => { if (m.type() === 'error' && !/ERR_CONNECTION_RESET|fonts\.g/.test(m.text())) errors.push('pov console: ' + m.text()); });
+  await page.goto('http://localhost:4175/?card=0');
+  await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 });
+  await page.click('#btnStart');
+  const opened = await page.waitForSelector('#pov:not(.hidden)', { timeout: 15000 }).then(() => true).catch(() => false);
+  if (!opened) errors.push('pov: bấm Bắt đầu không mở quầy');
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: 'tests/out/pov_level1.png' });
+  // bot chơi hết level ngay trong trang
+  const res = await page.evaluate(async () => {
+    const P = window.__qb.pov; const counterMove = window.__qb.counterMove;
+    if (!P || !counterMove) return { err: 'no pov' };
+    const C = P.C; let acc = 0;
+    for (let i = 0; i < 600 * 20 && !C.over; i++) { C.update(0.05); acc += 0.05;
+      if (acc >= 0.35) { acc = 0; const m = counterMove(C); if (m) C.drop(m.src, m.zone); } }
+    return C.result();
+  });
+  console.log('POV_LEVEL', JSON.stringify({ served: res.served, left: res.left, stars: res.stars, money: res.money, mistakes: res.mistakes }));
+  if (res.err || res.served < 1) errors.push('pov: bot không phục vụ được khách — ' + (res.err || ''));
+  await page.waitForTimeout(800);
+  const rv = await page.evaluate(() => !document.querySelector('#result').classList.contains('hidden'));
+  console.log('POV_RESULT_VISIBLE', rv);
+  await page.screenshot({ path: 'tests/out/pov_result.png' });
+  await page.close();
+}
+
 console.log('ERRORS', errors.length ? errors : 'none');
 await browser.close(); preview.kill(); process.exit(errors.length ? 1 : 0);

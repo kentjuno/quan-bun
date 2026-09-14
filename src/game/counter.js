@@ -2,7 +2,7 @@
 // Mọi thao tác là "đem VẬT A tới CHỖ B" (kéo hoặc chạm đôi) — đúng như đứng trước quầy prep thật.
 // Công thức lấy từ recipeFor(dish, simplify): KHÔNG bịa bước; mọi `transform` của món đều phải có một chỗ thả tương ứng.
 import { D, recipeFor, soupRecipeFor, label, tokenMatches, actionTime } from './recipes.js';
-import { POT, SOUP, SHELF_TOPPING } from '../config.js';
+import { POT, SOUP, SHELF_TOPPING, PRICES } from '../config.js';
 import { REGULARS, STRANGER_LINES, lineFor } from '../data/customers.js';
 
 const isBroth = (t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t);
@@ -29,9 +29,17 @@ export class Counter {
     this.dishes = (o.dishes || []).filter(povOk);
     this.recs = Object.fromEntries(this.dishes.map((d) => [d, recipeFor(d, sim)]));
     this.soups = Object.fromEntries(this.dishes.map((d) => [d, soupRecipeFor(d)]).filter(([, v]) => v));
-    this.rounds = o.rounds ?? 8; this.patience = o.patience ?? 90; this.gap = o.gap ?? 16;
+    // lịch khách của level (makeLevelArrivals) — không có thì rải đều theo `gap`
+    this.arrivals = (o.arrivals || []).filter((a) => !a.dish || this.dishes.includes(a.dish));
+    this.rounds = this.arrivals.length || (o.rounds ?? 8);
+    this.patience = o.patience ?? 90; this.gap = o.gap ?? 16;
     this.time = 0; this.spawned = 0; this.done = 0; this.over = false; this.results = [];
     this.nextSpawn = 1;
+    // ---- level (docs/PLAN-WORLDS.md): mục tiêu riêng, tiền, chuỗi tô đúng ----
+    this.goal = o.goal || null; this.moneyTargets = o.moneyTargets || null;
+    this.money = 0; this.tips = 0; this.left = 0;
+    this.streak = 0; this.bestStreak = 0; this.clearedAt = null;
+    this.errors = []; this.regulars = {};
     // ---- chỗ trên quầy ----
     this.slots = Array.from({ length: c?.slots ?? 2 }, () => null);            // tô đang ráp trên mặt thớt
     this.baskets = Array.from({ length: c?.potSlots ?? POT.noodleSlots }, () => null);   // rọ trong nồi trụng
@@ -64,10 +72,14 @@ export class Counter {
   // ---------- phiếu khách ----------
   pickDish() { const w = this.o.weights || {}; const sum = this.dishes.reduce((n, k) => n + (w[k] ?? 1), 0); let r = this.rnd() * sum; for (const k of this.dishes) { r -= (w[k] ?? 1); if (r <= 0) return k; } return this.dishes[this.dishes.length - 1]; }
   who(dish) { const rs = REGULARS.filter((x) => x.dish === dish); if (rs.length && this.rnd() < 0.5) { const g = rs[Math.floor(this.rnd() * rs.length)]; return { name: g.name, regular: g.id }; } const ns = ['Khách', 'Cô áo xanh', 'Anh áo đỏ', 'Bác nón lá', 'Bé học sinh', 'Chị công sở']; return { name: ns[Math.floor(this.rnd() * ns.length)], regular: null }; }
-  spawn(dish = null) {
+  spawn(dish = null, arr = null) {
     if (this.spawned >= this.rounds || this.tickets.length >= 3) return null;
-    const d = dish || this.pickDish(); const w = this.who(d);
-    const t = { id: this.spawned++, dish: d, ...w, steps: this.recs[d].assembly, born: this.time, pat: this.patience, mistakes: 0, taps: 0 };
+    if (!arr && this.arrivals.length) arr = this.arrivals[this.spawned];
+    const d = dish || arr?.dish || this.pickDish();
+    const reg = arr?.regular ? REGULARS.find((x) => x.id === arr.regular) : null;
+    const w = reg ? { name: reg.name, regular: reg.id } : this.who(d);
+    const t = { id: this.spawned++, dish: d, ...w, steps: this.recs[d].assembly, born: this.time,
+      pat: arr?.patience || this.patience, tipMult: reg?.tipMult || 1, mistakes: 0, taps: 0 };
     this.tickets.push(t); this.ev.onSpawn?.(t); return t;
   }
   /** Tô đã bỏ `placed` còn khớp phiếu nào đang treo? */
@@ -75,9 +87,12 @@ export class Counter {
 
   // ---------- tiện ích ----------
   ok(msg) { this.ev.onMsg?.(msg, 'good'); return { ok: true, msg }; }
+  /** Vứt/hư đồ — không phải lỗi thứ tự, nhưng tính cho mục tiêu `no-waste`. */
+  waste(tag) { this.errors.push({ t: +this.time.toFixed(1), tag, waste: true }); }
   err(msg, slotIdx = null) {
     const b = slotIdx != null ? this.slots[slotIdx] : null;
     if (b) b.mistakes = (b.mistakes || 0) + 1; else if (this.tickets[0]) this.tickets[0].mistakes++;
+    this.errors.push({ t: +this.time.toFixed(1), tag: msg, waste: false });
     this.ev.onMsg?.(msg, 'bad'); this.ev.onSfx?.('mistake'); return { ok: false, msg };
   }
   /** Phép biến đổi tại trạm nhận token này (ưu tiên món của phiếu đang treo). */
@@ -233,21 +248,30 @@ export class Counter {
   }
   toTrash(src, tok) {
     if (src.kind === 'item') return this.err('Đồ trên kệ khỏi vứt');
-    if (src.kind === 'madebowl') { this.slots[src.i] = null; this.ev.onSfx?.('trash'); return this.ok('Đã đổ tô đi'); }
-    this.take(src); this.ev.onSfx?.('trash'); return this.ok(`Đã vứt ${tok ? label(tok) : 'đồ'}`);
+    if (src.kind === 'madebowl') { this.slots[src.i] = null; this.waste('đổ tô đang ráp'); this.ev.onSfx?.('trash'); return this.ok('Đã đổ tô đi'); }
+    this.take(src); this.waste(`vứt ${tok ? label(tok) : 'đồ'}`); this.ev.onSfx?.('trash'); return this.ok(`Đã vứt ${tok ? label(tok) : 'đồ'}`);
   }
 
   // ---------- giao / hết giờ ----------
   serve(t, bowl) {
     const sec = this.time - t.born; const q = Math.max(0, 100 - 20 * t.mistakes - (sec > (this.o.par || 1e9) ? 10 : 0));
     this.results.push({ dish: t.dish, mistakes: t.mistakes, sec, taps: t.taps, quality: q });
+    const price = PRICES[t.dish] || 30;
+    const tipRate = t.mistakes ? 0 : sec <= t.pat * 0.45 ? 0.2 : sec <= t.pat * 0.7 ? 0.1 : 0;
+    const tip = Math.round(price * tipRate * (t.tipMult || 1));
+    this.money += price + tip; this.tips += tip;
+    if (t.mistakes) this.streak = 0; else { this.streak++; this.bestStreak = Math.max(this.bestStreak, this.streak); }
+    if (t.regular) this.regulars[t.regular] = { id: t.regular, name: t.name, served: true };
     this.tickets.splice(this.tickets.indexOf(t), 1); this.done++; this.ev.onSfx?.('serve');
+    if (this.done >= this.rounds && this.clearedAt == null) this.clearedAt = +this.time.toFixed(1);
     const say = t.mistakes ? (t.regular ? lineFor({ regular: t.regular }, 'wrong') : 'Ừ… cũng được.') : (t.regular ? lineFor({ regular: t.regular }, 'good') : STRANGER_LINES.good[Math.floor(this.rnd() * STRANGER_LINES.good.length)]);
     this.ev.onServe?.(t, { sec, quality: q, say });
     this.checkEnd(); return { ok: true, msg: `${t.name}: “${say}”`, served: t };
   }
   expire(t) {
     this.results.push({ dish: t.dish, mistakes: t.mistakes + 3, sec: t.pat, taps: t.taps, quality: 0 });
+    this.left++; this.streak = 0;
+    if (t.regular) this.regulars[t.regular] = { id: t.regular, name: t.name, served: false };
     this.tickets.splice(this.tickets.indexOf(t), 1); this.done++; this.ev.onSfx?.('mistake'); this.ev.onExpire?.(t); this.checkEnd();
   }
   checkEnd() { if (this.done >= this.rounds && !this.over) { this.over = true; this.ev.onEnd?.(this.result()); } }
@@ -255,13 +279,16 @@ export class Counter {
   // ---------- đồng hồ ----------
   update(dt) {
     if (this.over) return; this.time += dt;
-    if (this.time >= this.nextSpawn && this.tickets.length < 3 && this.spawned < this.rounds) { this.spawn(); this.nextSpawn = this.time + this.gap; }
+    if (this.arrivals.length) {
+      // khách tới theo lịch; quầy chỉ treo 3 phiếu nên người tới sớm phải đợi chỗ trống
+      while (this.spawned < this.rounds && this.tickets.length < 3 && this.time >= this.arrivals[this.spawned].t) this.spawn(null, this.arrivals[this.spawned]);
+    } else if (this.time >= this.nextSpawn && this.tickets.length < 3 && this.spawned < this.rounds) { this.spawn(); this.nextSpawn = this.time + this.gap; }
     const tickJob = (j) => { if (j && j.left > 0) { j.left = Math.max(0, j.left - dt); if (j.left === 0) this.ev.onSfx?.('done'); } };
     for (const b of this.baskets) { if (!b) continue; tickJob(b);
       if (b.left === 0 && b.state !== 'rinsed') { b.state = b.state === 'blanching' ? 'hot' : b.state === 'reblanching' ? 'hot2' : b.state; }
       if (b.left === 0 && b.state === 'rinsing') b.state = 'rinsed';
       // sợi chín để lâu trong nồi thì hư (như bếp thật); tô thì để bao lâu cũng được
-      if (b.left === 0 && /noodle/.test(b.output) && !this.sim?.noSpoil && !b.spoiled) { b.hold += dt; if (b.hold >= POT.noodleSpoilAfter) { b.spoiled = true; b.output = 'noodle-spoiled'; this.ev.onSpoil?.(b); } }
+      if (b.left === 0 && /noodle/.test(b.output) && !this.sim?.noSpoil && !b.spoiled) { b.hold += dt; if (b.hold >= POT.noodleSpoilAfter) { b.spoiled = true; b.output = 'noodle-spoiled'; this.waste('sợi để lâu bị hư'); this.ev.onSpoil?.(b); } }
     }
     for (const h of this.hot) tickJob(h);
     for (const b of this.boards) tickJob(b);
@@ -273,12 +300,31 @@ export class Counter {
   /** Còn bao nhiêu phần trăm kiên nhẫn (để vẽ thanh). */
   patienceOf(t) { return Math.max(0, 1 - (this.time - t.born) / t.pat); }
 
+  /** Mục tiêu riêng của level — cùng luật với World.starsForGoal (docs/PLAN-WORLDS.md §2b·4). */
+  starsForGoal(moneyStars, stats) {
+    const g = this.goal; if (!g) return moneyStars;
+    const clean = stats.bowls.filter((b) => !b.mistakes).length;
+    const waste = this.errors.filter((e) => e.waste).length;
+    const st = (ok3, ok2, ok1) => (ok3 ? 3 : ok2 ? 2 : ok1 ? 1 : 0);
+    if (g.kind === 'clean') { const n = g.bowls; return st(clean >= n, clean >= Math.ceil(n * 0.75), clean >= Math.ceil(n * 0.5)); }
+    if (g.kind === 'no-waste') return Math.min(Math.max(moneyStars, 1), st(waste === 0, waste <= 1, waste <= 2));
+    if (g.kind === 'streak') { const n = g.n; return st(this.bestStreak >= n, this.bestStreak >= n - 1, this.bestStreak >= Math.max(1, n - 2)); }
+    if (g.kind === 'before') { const c = this.clearedAt; if (c == null || this.left) return st(false, false, this.results.length > 0 && !this.left); return st(c <= g.seconds, c <= g.seconds * 1.15, true); }
+    return moneyStars;
+  }
   result() {
     let acc = 0; const bowls = this.results.map((r) => { acc += r.sec; return { dish: r.dish, name: D.recipes[r.dish].name, arrivedAt: +(acc - r.sec).toFixed(1), servedAt: +acc.toFixed(1), wait: +r.sec.toFixed(1), mistakes: r.mistakes, taps: r.taps, quality: r.quality }; });
-    const mistakes = this.results.reduce((n, r) => n + r.mistakes, 0); const clean = this.results.filter((r) => !r.mistakes).length;
-    return { puzzle: true, pov: true, money: clean * 10, tips: 0, served: this.results.length, left: 0, mistakes, wasted: 0, errors: [], stars: 0,
+    const mistakes = this.results.reduce((n, r) => n + r.mistakes, 0);
+    const served = this.results.length - this.left;
+    const stats = { bowls, idle: 0, taps: this.results.reduce((n, r) => n + r.taps, 0), trips: 0, time: +this.time.toFixed(1) };
+    let stars = 0;
+    if (this.moneyTargets) { const t = this.moneyTargets; stars = this.money >= t[2] ? 3 : this.money >= t[1] ? 2 : this.money >= t[0] ? 1 : 0; if (this.left >= 3) stars = Math.min(stars, 1); }
+    stars = this.starsForGoal(stars, stats);
+    return { puzzle: !this.moneyTargets, pov: true, money: this.money, tips: this.tips, served, left: this.left, mistakes,
+      wasted: this.errors.filter((e) => e.waste).length, errors: this.errors, stars,
+      regulars: Object.values(this.regulars), goal: this.goal, bestStreak: this.bestStreak, clearedAt: this.clearedAt,
       quality: this.results.length ? Math.round(this.results.reduce((n, r) => n + r.quality, 0) / this.results.length) : 0,
-      stats: { bowls, idle: 0, taps: this.results.reduce((n, r) => n + r.taps, 0), trips: 0, time: +this.time.toFixed(1) } };
+      stats };
   }
 }
 
@@ -312,11 +358,15 @@ function findReady(C, need) {
   for (let i = 0; i < C.burner.ready.length; i++) if (m(C.burner.ready[i].output)) return { kind: 'ready', i };
   for (let i = 0; i < C.burner.pots.length; i++) { const p = C.burner.pots[i]; if (p && p.left === 0 && m(p.output)) return { kind: 'burnerpot', i }; }
   if (D.items[need]) return { kind: 'item', tok: need };
+  // bản tập bỏ bước: lấy thẳng đồ trên kệ là ra luôn token kết quả (vd tô đã nóng sẵn)
+  const sub = Object.entries(C.shelfSubs || {}).find(([it, out]) => D.items[it] && tokenMatches(need, out));
+  if (sub) return { kind: 'item', tok: sub[0] };
   if (C.brothSrc.some((b) => tokenMatches(need, b))) return { kind: 'broth', tok: C.brothSrc.find((b) => tokenMatches(need, b)) };
   return null;
 }
 /** Nước lèo/cháo phải nấu ở lò: nước đi kế tiếp để nấu ra `need` (null nếu không phải soup hoặc đang đun). */
 function soupMove(C, need) {
+  if (C.sim?.soupReady) return null;                                          // bản tập: nước nấu sẵn, lò tắt — lấy ở kệ nước
   const soup = Object.values(C.soups).find((s) => tokenMatches(need, s.output)); if (!soup) return null;
   if (C.burner.pots.some((p) => p && p.output === soup.output && p.left > 0)) return null;   // đang đun → chờ
   let pi = C.burner.pots.findIndex((p) => p && p.left === null && soup.items.every((it, k) => k >= p.items.length || p.items[k] === it));
