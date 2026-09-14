@@ -134,7 +134,7 @@ function renderSoupSel() {
   $('cardTake').textContent = cardSel.length ? 'Đun ♨️' : 'Không nấu';
 }
 function start(bot = false, mode = playMode) {
-  ensureAudio(); startMusic(); playMode = mode; povLevel = null;
+  ensureAudio(); startMusic(); playMode = mode; povLevel = null; set3D(true);
   botMode = bot === true; world = newWorld();
   rebuild();   // mỗi level có thể khác trạm (bếp lớn dần) → dựng lại
   $('card').classList.remove('show');
@@ -210,7 +210,7 @@ function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9) {
 let lastPuzzle = { kinds: ['order', 'intruder', 'missing'], rounds: 9 };
 let pov = null;
 function startPov(rounds = 8) {
-  ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
+  ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false; set3D(false);
   let dishes = (practice.length ? practice : ALL_DISHES).filter(povOk); if (!dishes.length) dishes = ALL_DISHES.filter(povOk);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
   lastPuzzle = { kinds: ['pov'], rounds }; povLevel = null; armBackGuard();
@@ -222,8 +222,15 @@ function levelOnPov(L) {
   return L.dishes.every(povOk);
 }
 let povLevel = null;                      // level đang chơi ở quầy POV (null = đang chơi bếp 3D)
+let show3d = false;                       // khung 3D chỉ bật khi thật sự chơi "Bếp thật"
+/** Bếp 3D là phần phụ: ẩn hẳn canvas (và ngưng vẽ) khi không chơi nó. */
+function set3D(on) {
+  show3d = !!on;
+  $('app').classList.toggle('hidden', !show3d);
+  document.body.classList.toggle('flat', !show3d);
+}
 function startLevelPov(L) {
-  ensureAudio(); startMusic(); playMode = 'level'; running = false; botMode = false; povLevel = L;
+  ensureAudio(); startMusic(); playMode = 'level'; running = false; botMode = false; povLevel = L; set3D(false);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden'); $('card').classList.remove('show');
   armBackGuard();
   const mods = playerMods(); const con = { ...(L.constraints || {}) };
@@ -328,7 +335,10 @@ $('pickWeak').onclick = () => { practice = ALL_DISHES.filter((d) => !isMastered(
 function selectLevel(L) { if (!L) return; level = L; worldIdx = Math.max(0, WORLDS.findIndex((w) => w.id === L.world)); renderMenu(); if (!running) { world = newWorld(); rebuild(); } }
 renderMenu();
 $('btnStart').onclick = () => { if (!levelUnlocked(level)) return; levelOnPov(level) ? startLevelPov(level) : start(false, 'level'); }; $('btnRetry').onclick = () => playMode === 'puzzle' ? (lastPuzzle.kinds[0] === 'pov' ? startPov(lastPuzzle.rounds) : startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds)) : playMode === 'level' && levelOnPov(level) ? startLevelPov(level) : start(botMode, playMode);
-$('btnNext').onclick = () => { const n = nextLevel(level); if (n) selectLevel(n); else { const w = WORLDS[WORLDS.indexOf(worldById(level.world)) + 1]; if (w) selectLevel(w.levels[0]); } start(false, 'level'); };
+$('btnNext').onclick = () => {
+  const n = nextLevel(level); if (n) selectLevel(n); else { const w = WORLDS[WORLDS.indexOf(worldById(level.world)) + 1]; if (w) selectLevel(w.levels[0]); }
+  levelOnPov(level) ? startLevelPov(level) : start(false, 'level');
+};
 $('btnBot').onclick = () => start(true);
 function takeover() { if (!botMode) return; botMode = false; $('btnTakeover').classList.add('hidden'); showHint('Bạn cầm lái. Kệ → lấy · nồi/bồn → làm · quầy ráp → quầy giao', 4000); }
 $('btnTakeover').onclick = takeover;
@@ -336,7 +346,7 @@ $('btnTakeover').onclick = takeover;
 const btnMute = $('btnMute'); const paintMute = () => { btnMute.textContent = isMuted() ? '🔇' : '🔊'; btnMute.title = isMuted() ? 'Mở tiếng' : 'Tắt tiếng'; }; paintMute();
 btnMute.onclick = () => { ensureAudio(); setMuted(!isMuted()); paintMute(); };
 $('btnBack').onclick = () => { if (!running) return; running = false; setBoil(false); setMood('calm'); botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
-$('btnMenu').onclick = () => { running = false; $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'level'; if (bestStars(level.id) >= 1) level = currentLevel(); selectLevel(level); };
+$('btnMenu').onclick = () => { running = false; set3D(false); $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'level'; if (bestStars(level.id) >= 1) level = currentLevel(); selectLevel(level); };
 $('loading').classList.add('hidden'); $('btnStart').classList.remove('hidden');
 
 // ---- chặn nút/cử chỉ Back của trình duyệt khi đang chơi (Kent: quẹt trái/phải trên điện thoại bị back ra khỏi game) ----
@@ -399,11 +409,11 @@ function tick(dt) {
     $('money').textContent = world.money; $('served').textContent = world.served; $('left').textContent = world.left;
     const rem = world.shift.survival ? world.time : Math.max(0, world.shift.seconds - world.time); $('clock').textContent = `${Math.floor(rem / 60)}:${String(Math.floor(rem % 60)).padStart(2, '0')}`;
     const inPrep = running && world.prep > 0; $('prep').classList.toggle('hidden', !inPrep); if (inPrep) $('prepNum').textContent = Math.ceil(world.prep);
-    view.sync(world, dt); if (running) syncHands();
-  } else view.renderer.render(view.scene, view.camera);
+    if (show3d) { view.sync(world, dt); if (running) syncHands(); }
+  } else if (show3d) view.renderer.render(view.scene, view.camera);
 }
 // dựng bếp sẵn để menu có nền
-world = newWorld(); rebuild();
+world = newWorld(); rebuild(); set3D(false);
 if (new URLSearchParams(location.search).has('bot')) start(true);
 requestAnimationFrame(frame);
 

@@ -3,6 +3,7 @@
 import { D, label, tokenMatches } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
+import { dishArt } from './game/art.js';
 export { povOk };
 
 const $ = (id) => document.getElementById(id);
@@ -89,8 +90,15 @@ export class Pov {
     }).join('');
     $('pvSlots').innerHTML = C.slots.map((b, i) => {
       if (!b) return `<div class="pv-slot drop" data-zone="slot" data-i="${i}"><small>chỗ tô ${i + 1}</small></div>`;
-      const full = C.fits(b.placed).some((t) => t.steps.length === b.placed.length);
-      return `<div class="pv-slot drop has" data-zone="slot" data-i="${i}"><div class="pv-bowl dragsrc${full ? ' full' : ''}" ${src1('madebowl', null, i)}>${img(b.placed[0].replace(/^bowl-hot:/, ''))}${b.placed.slice(1).map((t, k) => `<i class="lay" style="--k:${k}">${img(t)}</i>`).join('')}</div><small>${full ? 'Xong — lên phiếu' : `${b.placed.length}/${(C.fits(b.placed)[0]?.steps.length) || '?'} bước`}</small></div>`;
+      const fit = C.fits(b.placed); const full = fit.some((t) => t.steps.length === b.placed.length);
+      // Chỉ khi CÒN ĐÚNG MỘT món khớp mới biết vẽ tô nào; trước đó vẫn xếp icon như cũ.
+      const only = fit.length === 1 ? fit[0].dish : null;
+      const wet = !!only && b.placed.some((t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t));
+      const art = only ? dishArt(only, wet || full) : null;
+      const inner = art
+        ? `<img class="pv-art" src="${art}" alt="" draggable="false" onerror="this.remove()">`
+        : `${img(b.placed[0].replace(/^bowl-hot:/, ''))}${b.placed.slice(1).map((t, k) => `<i class="lay" style="--k:${k}">${img(t)}</i>`).join('')}`;
+      return `<div class="pv-slot drop has" data-zone="slot" data-i="${i}"><div class="pv-bowl dragsrc${full ? ' full' : ''}" ${src1('madebowl', null, i)}>${inner}</div><small>${full ? 'Xong — lên phiếu' : `${b.placed.length}/${(fit[0]?.steps.length) || '?'} bước`}</small></div>`;
     }).join('');
   }
 

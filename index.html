@@ -17,6 +17,20 @@
         font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
       html, body { margin: 0; height: 100%; background: #2e2420; color: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }   /* overscroll none: chặn quẹt trái/phải thành Back / kéo xuống thành Reload trên Chrome Android */
       #app { position: fixed; inset: 0; }
+      /* NỀN 2D (docs/PLAN-CORE.md bước 3): bếp 3D là phần phụ, mọi màn khác đứng trên nền giấy art C.
+         Giấy kẻ ô mờ + vệt màu nước ấm, không dùng ảnh nên nhẹ và không bao giờ chờ tải. */
+      #bg2d { position: fixed; inset: -2px; z-index: 0; display: none; background:
+          radial-gradient(60% 40% at 18% 8%, rgba(214,168,104,.20), transparent 70%),
+          radial-gradient(55% 45% at 86% 92%, rgba(168,124,74,.18), transparent 70%),
+          repeating-linear-gradient(0deg, rgba(90,66,44,.045) 0 1px, transparent 1px 22px),
+          repeating-linear-gradient(90deg, rgba(90,66,44,.045) 0 1px, transparent 1px 22px),
+          linear-gradient(170deg, #f3e9d6 0%, #ece0c9 55%, #e2d4ba 100%);
+        }
+      body.flat #bg2d { display: block; }
+      body.flat { color: var(--ink); }
+      body.flat #vignette { opacity: .14; }
+      /* không còn bếp 3D phía sau để làm mờ → lớp phủ trong suốt, thấy thẳng nền giấy */
+      body.flat .overlay { background: transparent; }
       canvas { display: block; }
       /* viền tối nhẹ quanh khung (vignette) */
       #vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(20,14,10,.55) 100%); }
@@ -189,8 +203,12 @@
       .pz.busy { opacity: .55; } .pz.busy .opt button { pointer-events: none; }
       .pz.bw { border-color: #c9d9e8; } .pz.br { border-color: #f1c27d; }
       /* ===== Quầy POV — kéo thả / chạm đôi (lõi mới, docs/PLAN-CORE.md) ===== */
-      #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; overscroll-behavior: none; background: linear-gradient(#5b7d78 0%, #6d8f88 22%, #c9d2d5 23%, #b3bcc0 42%, #dcd5c6 43%, #efe7d6 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
+      #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; overscroll-behavior: none; background: linear-gradient(#cdbb98 0%, #c4b18d 20%, #d7cdb5 21%, #cfc3a8 40%, #ece0c9 41%, #f5ecda 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
       #pov.shake { animation: shake .3s; }
+      /* art C: ảnh tô thật trong ô ráp — thay cho chồng icon */
+      #pov .pv-art { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 2px 3px rgba(40,28,18,.28)); }
+      #pov .pv-bowl.full .pv-art { animation: bowlDone 1.1s ease-in-out infinite; }
+      @keyframes bowlDone { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
       #pov .pv-lbl { font-size: 8.5px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.55); margin-bottom: 2px; }
       #pov .pv-lbl.dark { color: #2b2118; text-shadow: none; opacity: .6; }
       #pov .hint { font-size: 8.5px; opacity: .6; }
@@ -300,6 +318,7 @@
     </style>
   </head>
   <body>
+    <div id="bg2d"></div>
     <div id="app"></div>
     <div id="vignette"></div>
 
