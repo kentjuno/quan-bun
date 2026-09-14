@@ -3,7 +3,8 @@ import os, sys
 from PIL import Image, ImageFilter
 import numpy as np
 
-SRC = r"F:\AntiGravity\Games\quan-bun\art\raw\hands"
+import sys
+SRC = sys.argv[1] if len(sys.argv) > 1 else r"F:\AntiGravity\Games\quan-bun\art\raw\hands"
 DST = r"F:\AntiGravity\Games\quan-bun\art\cut"
 os.makedirs(DST, exist_ok=True)
 

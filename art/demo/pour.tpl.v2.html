@@ -172,12 +172,12 @@ $('#go').onclick = () => {
   wet.style.opacity = 0;
 
   hand.animate([
-    { transform:`translate(${H0.x}px,${H0.y}px) rotate(0deg)`, offset:0,   easing:'cubic-bezier(.22,.9,.3,1)' },
-    { transform:`translate(${P.x}px,${P.y}px) rotate(${T*.65}deg)`, offset:.30, easing:'ease-out' },
-    { transform:`translate(${P.x}px,${P.y}px) rotate(${T}deg)`,  offset:.42, easing:'linear' },
-    { transform:`translate(${P.x}px,${P.y}px) rotate(${T}deg)`,  offset:.80, easing:'cubic-bezier(.5,0,.75,.45)' },
-    { transform:`translate(${H0.x}px,${H0.y}px) rotate(0deg)`,   offset:1 }
-  ], { duration:D, easing:'linear' });
+    { transform:`translate(${H0.x}px,${H0.y}px) rotate(0deg)`,          offset:0 },
+    { transform:`translate(${P.x}px,${P.y}px) rotate(${T*.65}deg)`,     offset:.30 },
+    { transform:`translate(${P.x}px,${P.y}px) rotate(${T}deg)`,         offset:.42 },
+    { transform:`translate(${P.x}px,${P.y}px) rotate(${T}deg)`,         offset:.80 },
+    { transform:`translate(${H0.x}px,${H0.y}px) rotate(0deg)`,          offset:1 }
+  ], { duration:D, easing:'cubic-bezier(.25,.85,.35,1)' });
 
   const len = Math.max(6, rimY() - P.sy);
   stream.style.left = (P.sx / stage.clientWidth * 100) + '%';
@@ -188,7 +188,7 @@ $('#go').onclick = () => {
     { opacity:1, transform:'translateX(-50%) scaleY(1)', offset:.20 },
     { opacity:1, transform:'translateX(-50%) scaleY(1)', offset:.82 },
     { opacity:0, transform:'translateX(-50%) scaleY(1)' }
-  ], { duration:D*.56, delay:D*.32, easing:'linear' });
+  ], { duration:D*.56, delay:D*.32, easing:'ease-out' });
 
   splash.style.left = stream.style.left;
   splash.style.top  = (rimY() / stage.clientHeight * 100) + '%';
@@ -197,7 +197,7 @@ $('#go').onclick = () => {
     { opacity:.95, transform:'translate(-50%,-60%) scale(1)',    offset:.3 },
     { opacity:.7,  transform:'translate(-50%,-60%) scale(1.06)', offset:.75 },
     { opacity:0,   transform:'translate(-50%,-60%) scale(.9)' }
-  ], { duration:D*.54, delay:D*.38, easing:'linear' });
+  ], { duration:D*.54, delay:D*.38, easing:'ease-out' });
 
   bowl.animate([{ filter:'brightness(1)' },{ filter:'brightness(1.12)', offset:.5 },{ filter:'brightness(1)' }],
                { duration:D*.6, delay:D*.3 });
@@ -208,5 +208,4 @@ $('#go').onclick = () => {
   setTimeout(() => busy = false, D + 60);
 };
 hand.style.transform = `translate(${home().x}px,${home().y}px)`;
-if (HANDS[0].preset) for (const k in HANDS[0].preset) { const el = $('#'+k); el.value = HANDS[0].preset[k]; el.oninput(); }
 </script>
