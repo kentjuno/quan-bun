@@ -7,7 +7,7 @@ Tài liệu bàn giao, tự đủ như `docs/PLAN-WORLDS.md`. Kent duyệt hư�
 | Bước (mục 6) | Trạng thái | Ghi chú |
 |---|---|---|
 | 0 chạm đôi + drop-zone rộng | ✅ 0.8.3 | `autoTarget`, `flyTo`; chạm nhẹ không thả |
-| 1 Pov thành engine đủ món (thớt, chảo, lò vi sóng, nấu nước ở lò) | chưa | |
+| 1 Pov thành engine đủ món (thớt, chảo, lò vi sóng, nấu nước ở lò) | ✅ 0.9.0 | `src/game/counter.js` (state thuần) + `pov.js` chỉ vẽ; `povOk` 18/18; `tests/counter.test.js` 11 test, bot làm xong cả 18 món |
 | 2 World/level chạy trên Pov (thay bếp 3D) | chưa | |
 | 3 Giao diện art C (nền ký hoạ, sprite, chữ tay) | chưa | |
 | 4 Juice + âm thanh cho kéo thả | chưa | |
@@ -45,7 +45,8 @@ Mọi bước trong `recipeFor(d).transforms` phải có một **trạm kéo-th�
 - Sau khi có nền: **bỏ CSS-gradient tạm** trong `#pov`.
 
 ## 6. Thứ tự làm & tiêu chí
-1. Tách `Counter` (state thuần) khỏi `pov.js`; thêm thớt/chảo/lò vi sóng/lò đun; `povOk` = 18/18. Test: `tests/pov.test.js` — bot Counter làm được cả 18 món đúng chuỗi, 0 lỗi; sai thứ tự nấu nước bị bắt; hot-only vs nóng-lạnh-nóng bị bắt.
+1. ✅ Tách `Counter` (state thuần, `src/game/counter.js`) khỏi `pov.js`; thêm thớt/chảo/lò vi sóng/lò đun nước/bồn nhúng; `povOk` = 18/18. `tests/counter.test.js` (11): bot `counterMove` làm xong cả 18 món 0 lỗi; nóng-lạnh-nóng vs trụng-một-lần bị kiểm; nấu nước sai thứ tự bị bắt; thớt gom đủ nguyên liệu mới làm; giao nhầm phiếu bị bắt; cờ rút gọn + ràng buộc level dùng lại được; sợi để lâu hư; khách bỏ đi.
+   **API cho bước sau**: `new Counter({dishes, rounds, simplify, constraints:{slots,potSlots,brothCap,noStack,boards}, burners, patience, gap, weights, ev})` · `C.drop(src, zone)` với src `{kind:'item'|'basket'|'hotbowl'|'board'|'fryer'|'microwave'|'sink'|'ready'|'burnerpot'|'broth'|'madebowl', tok?, i?}` và zone `{kind:'pot'|'sink'|'prep'|'fryer'|'microwave'|'burner'|'slot'|'ticket'|'trash', i?, id?}` · `C.update(dt)` · `counterMove(C)` (bot/par).
 2. Level chạy trên Counter: `startLevelPov`; simplify/constraints/events/goal/layout đủ; smoke: chơi Phở 1 bằng bot-DOM (chạm đôi) → kết quả có sao; Phở 9 (1 rọ) và Bún riêu 3 (nấu nước) chạy.
 3. Art C: nền + hitbox theo toạ độ; ảnh chụp 3 màn (bản đồ, quầy, kết) gửi Kent duyệt trước khi gen sprite hàng loạt.
 4. Juice: tiếng theo vật (thả tô = cạch, rọ vô nồi = xèo, trút sợi = soạt, vá nước = ục), ghost nghiêng theo hướng kéo, phiếu rung khi sắp hết kiên nhẫn, tô rung + sáng khi đủ.

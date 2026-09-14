@@ -188,48 +188,67 @@
       .pz .opt button { font: inherit; font-size: 10.5px; font-weight: 800; padding: 5px 7px; margin: 0; border-radius: 8px; background: var(--teal); box-shadow: 0 2px 0 #1f7a70; }
       .pz.busy { opacity: .55; } .pz.busy .opt button { pointer-events: none; }
       .pz.bw { border-color: #c9d9e8; } .pz.br { border-color: #f1c27d; }
-      /* ===== Quầy POV — kéo thả (bản thử #2) ===== */
-      #pov { position: fixed; inset: 0; z-index: 6; overscroll-behavior: none; display: flex; flex-direction: column; background: linear-gradient(#5b7d78 0%, #6d8f88 26%, #cfd6d8 27%, #b9c1c4 46%, #d9d3c4 47%, #efe7d6 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
+      /* ===== Quầy POV — kéo thả / chạm đôi (lõi mới, docs/PLAN-CORE.md) ===== */
+      #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; overscroll-behavior: none; background: linear-gradient(#5b7d78 0%, #6d8f88 22%, #c9d2d5 23%, #b3bcc0 42%, #dcd5c6 43%, #efe7d6 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
       #pov.shake { animation: shake .3s; }
-      .pv-top { display: flex; align-items: flex-start; gap: 6px; padding: calc(max(8px, env(safe-area-inset-top)) + 4px) 10px 6px; background: rgba(43,33,24,.35); }
-      .pv-top .pill-dark { margin-top: 4px; } .pv-top .ghost { background: rgba(255,247,234,.85); margin: 0; padding: 6px 10px; }
-      .pv-tickets { flex: 1; display: flex; gap: 6px; min-height: 52px; }
-      .pv-tickets .tk { flex: 1; background: #fff8ec; border: 2px solid #d8cbb6; border-radius: 10px; padding: 4px 7px 6px; font-size: 11px; line-height: 1.25; max-width: 33%; transition: transform .12s; }
-      .pv-tickets .tk b { display: block; font-size: 11px; } .pv-tickets .tk span { display: block; font-weight: 700; color: var(--red); font-size: 11px; } .pv-tickets .tk.reg b { color: #b07a20; }
-      .pv-tickets .tk .bar { display: block; height: 5px; background: rgba(0,0,0,.12); border-radius: 3px; margin-top: 5px; overflow: hidden; } .pv-tickets .tk .bar u { display: block; height: 100%; background: var(--green); width: 100%; }
-      .pv-back { flex: 0 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; grid-template-rows: auto auto; gap: 6px 8px; padding: 8px 10px 4px; }
-      .pv-potlbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; opacity: .75; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.5); margin-bottom: 3px; }
-      .pv-pot { background: radial-gradient(ellipse at 50% 30%, #6b7378, #3d4448 75%); border: 4px solid #8a9297; border-radius: 40% 40% 18px 18px / 30% 30% 12px 12px; padding: 6px 8px 8px; min-height: 96px; box-shadow: inset 0 10px 24px rgba(0,0,0,.45), 0 6px 14px rgba(0,0,0,.35); position: relative; }
-      .pv-pot::after { content: ''; position: absolute; inset: 22px 12px auto 12px; height: 34px; background: radial-gradient(ellipse, rgba(255,255,255,.35), transparent 70%); pointer-events: none; animation: steamy 2.2s infinite alternate; } @keyframes steamy { to { transform: translateY(-6px) scaleX(1.1); opacity: .5; } }
-      .pv-baskets { display: flex; gap: 6px; }
-      .pv-basket { flex: 1; min-height: 56px; border: 2px dashed rgba(255,255,255,.55); border-radius: 10px; display: grid; place-items: center; position: relative; }
-      .pv-basket.hot, .pv-basket.hot2 { border-color: #ffd166; border-style: solid; } .pv-basket.rinsed { border-color: #7fd3ff; border-style: solid; }
-      .pv-rk { text-align: center; font-size: 9.5px; color: #fff; position: relative; } .pv-rk img { width: 34px; height: 34px; } .pv-rk small { display: block; }
-      .pv-rk .ring { position: absolute; inset: -4px; border: 3px solid transparent; border-top-color: var(--broth); border-radius: 50%; animation: spin .9s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
-      .pv-hot { margin-top: 6px; min-height: 30px; display: flex; gap: 6px; align-items: center; padding: 3px 6px; border-radius: 8px; background: rgba(255,255,255,.12); }
-      .pv-hot .hint { color: rgba(255,255,255,.7); font-size: 9.5px; } .pv-hb { text-align: center; font-size: 9px; color: #fff; } .pv-hb img { width: 26px; height: 26px; } .pv-hb.busy { opacity: .55; } .pv-hb small { display: block; }
-      .pv-sink { background: linear-gradient(#b9c4cc, #8b979f); border: 3px solid #d5dce1; border-radius: 12px; padding: 6px 8px; min-height: 96px; box-shadow: inset 0 8px 18px rgba(0,0,0,.25); }
-      .pv-sink .pv-potlbl { color: #2b2118; text-shadow: none; }
-      .pv-sinkin { height: 56px; border-radius: 8px; background: linear-gradient(#5aa9d6, #3b7fa8); box-shadow: inset 0 4px 10px rgba(0,0,0,.25); }
-      .pv-broths { grid-column: 1 / -1; display: flex; gap: 8px; justify-content: center; }
-      .pv-broth { background: radial-gradient(ellipse at 50% 35%, #e2a23f, #8a4f10 80%); border: 3px solid #c99a55; border-radius: 45% 45% 14px 14px / 40% 40% 10px 10px; padding: 4px 8px; text-align: center; color: #fff; font-size: 9.5px; font-weight: 700; min-width: 74px; box-shadow: 0 4px 10px rgba(0,0,0,.3); cursor: grab; }
-      .pv-broth img { width: 32px; height: 32px; } .pv-broth small { display: block; }
-      .pv-prep { flex: 0 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 5px; padding: 8px 10px; background: linear-gradient(#a9b1b6, #8d979d); border-top: 5px solid #d9dee1; border-bottom: 5px solid #d9dee1; }
-      .pv-pan { background: #eef1f2; border: 2px solid #6f7a80; border-radius: 6px; text-align: center; font-size: 9.5px; font-weight: 700; padding: 3px 2px; line-height: 1.1; cursor: grab; box-shadow: inset 0 3px 6px rgba(0,0,0,.18); }
-      .pv-pan img { width: 30px; height: 30px; } .pv-pan small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .pv-front { flex: 1; display: flex; gap: 10px; padding: 10px 10px 4px; background: linear-gradient(#e6e9eb, #cfd4d7); align-items: flex-start; }
-      .pv-stack { display: flex; flex-direction: column; gap: 6px; width: 74px; }
-      .pv-src { background: #fff; border: 2px solid #d8cbb6; border-radius: 10px; text-align: center; font-size: 9.5px; font-weight: 700; padding: 4px 2px; cursor: grab; box-shadow: 0 3px 0 #cdbfa8; } .pv-src img { width: 34px; height: 34px; } .pv-src small { display: block; }
-      .pv-slots { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-      .pv-slot { min-height: 150px; border: 3px dashed rgba(43,33,24,.3); border-radius: 50% / 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #6a5d4e; text-align: center; padding: 6px; transition: transform .12s, background .12s; }
-      .pv-slot.has { border-style: solid; border-color: #b9c9d6; background: rgba(255,255,255,.35); }
-      .pv-bowl { position: relative; width: 118px; height: 118px; cursor: grab; } .pv-bowl img.base { width: 118px; height: 118px; }
-      .pv-bowl .lay { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; transform: translate(calc(-50% + (var(--k) - 2) * 11px), calc(-58% + (var(--k) % 2) * 9px)) rotate(calc(var(--k) * 23deg)); } .pv-bowl .lay img { width: 40px; height: 40px; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+      #pov .pv-lbl { font-size: 8.5px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.55); margin-bottom: 2px; }
+      #pov .pv-lbl.dark { color: #2b2118; text-shadow: none; opacity: .6; }
+      #pov .hint { font-size: 8.5px; opacity: .6; }
+      #pov small { display: block; line-height: 1.1; }
+      .pv-bar { position: absolute; left: 4px; right: 4px; bottom: 2px; height: 3px; border-radius: 2px; background: rgba(0,0,0,.25); overflow: hidden; }
+      .pv-bar::after { content: ''; display: block; height: 100%; width: var(--p); background: var(--broth); }
+      /* phiếu khách */
+      .pv-top { display: flex; align-items: flex-start; gap: 6px; padding: calc(max(6px, env(safe-area-inset-top)) + 2px) 8px 5px; background: rgba(43,33,24,.4); }
+      .pv-top .pill-dark { margin-top: 3px; } .pv-top .ghost { background: rgba(255,247,234,.9); margin: 0; padding: 5px 9px; font-size: 11px; }
+      .pv-tickets { flex: 1; display: flex; gap: 5px; min-height: 46px; }
+      .pv-tickets .tk { flex: 1; max-width: 34%; background: #fff8ec; border: 2px solid #d8cbb6; border-radius: 9px; padding: 3px 6px 5px; font-size: 10px; line-height: 1.2; transition: transform .12s; }
+      .pv-tickets .tk:first-child { border-color: var(--red); box-shadow: 0 3px 10px rgba(232,74,59,.25); }
+      .pv-tickets .tk b { display: block; font-size: 10.5px; } .pv-tickets .tk span { display: block; font-weight: 700; color: var(--red); font-size: 10.5px; } .pv-tickets .tk.reg b { color: #b07a20; }
+      .pv-tickets .tk .bar { display: block; height: 4px; background: rgba(0,0,0,.12); border-radius: 2px; margin-top: 3px; overflow: hidden; } .pv-tickets .tk .bar u { display: block; height: 100%; }
+      /* lớp xa: nồi · bồn · chảo · lò · lò đun nước */
+      .pv-back { flex: 0 0 auto; display: flex; gap: 6px; align-items: stretch; padding: 6px 8px 4px; }
+      .pv-pot { flex: 1.4; background: radial-gradient(ellipse at 50% 26%, #6b7378, #3a4145 78%); border: 3px solid #8a9297; border-radius: 34% 34% 14px 14px / 26% 26% 10px 10px; padding: 4px 6px 6px; box-shadow: inset 0 8px 20px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.3); position: relative; }
+      .pv-pot::after { content: ''; position: absolute; inset: 16px 10px auto 10px; height: 26px; background: radial-gradient(ellipse, rgba(255,255,255,.3), transparent 70%); pointer-events: none; animation: steamy 2.2s infinite alternate; } @keyframes steamy { to { transform: translateY(-5px) scaleX(1.1); opacity: .45; } }
+      .pv-baskets { display: flex; gap: 4px; } .pv-basket { flex: 1; min-height: 46px; border: 2px dashed rgba(255,255,255,.5); border-radius: 8px; display: grid; place-items: center; }
+      .pv-basket.hot, .pv-basket.hot2 { border-color: #ffd166; border-style: solid; } .pv-basket.rinsed { border-color: #7fd3ff; border-style: solid; } .pv-basket.bad { border-color: var(--red); border-style: solid; }
+      .pv-rk { position: relative; text-align: center; font-size: 8.5px; color: #fff; padding-bottom: 4px; } .pv-rk img { width: 28px; height: 28px; }
+      .pv-hot { margin-top: 4px; min-height: 26px; display: flex; gap: 5px; align-items: center; padding: 2px 5px; border-radius: 6px; background: rgba(255,255,255,.12); color: #fff; }
+      .pv-hb { position: relative; text-align: center; font-size: 8px; padding-bottom: 4px; } .pv-hb img { width: 24px; height: 24px; }
+      .pv-col { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+      .pv-sink { background: linear-gradient(#b9c4cc, #8b979f); border: 2px solid #d5dce1; border-radius: 10px; padding: 4px 6px; flex: 1; box-shadow: inset 0 6px 14px rgba(0,0,0,.22); }
+      .pv-sink .pv-lbl { color: #2b2118; text-shadow: none; } .pv-sinkin { min-height: 30px; border-radius: 6px; background: linear-gradient(#5aa9d6, #3b7fa8); box-shadow: inset 0 3px 8px rgba(0,0,0,.25); display: grid; place-items: center; }
+      .pv-st { border-radius: 10px; padding: 4px 6px; min-height: 44px; } .pv-st.fry { background: linear-gradient(#3f3a35, #29241f); border: 2px solid #6b6158; } .pv-st.mw { background: linear-gradient(#dfe3e5, #b9bfc2); border: 2px solid #8e9599; } .pv-st.mw .pv-lbl { color: #2b2118; text-shadow: none; }
+      .pv-job { position: relative; text-align: center; font-size: 8.5px; color: #fff; padding-bottom: 4px; } .pv-st.mw .pv-job, .pv-sink .pv-job { color: #2b2118; } .pv-job img { width: 26px; height: 26px; }
+      .pv-burner { flex: 1.1; background: linear-gradient(#4a4440, #332e2b); border: 2px solid #6b6158; border-radius: 10px; padding: 4px 6px; }
+      .pv-pots { display: flex; gap: 4px; } .pv-pt { flex: 1; min-height: 38px; border: 2px dashed rgba(255,255,255,.45); border-radius: 8px; padding: 2px 3px; text-align: center; color: #fff; font-size: 8px; position: relative; }
+      .pv-pt.done { border-style: solid; border-color: var(--green); } .pv-pt b { font-size: 8.5px; }
+      .pv-ready { margin-top: 4px; min-height: 26px; display: flex; gap: 4px; align-items: center; color: #fff; } .pv-rd { text-align: center; font-size: 8px; } .pv-rd img { width: 24px; height: 24px; }
+      .pv-broths { display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+      .pv-broth { background: radial-gradient(ellipse at 50% 32%, #e2a23f, #8a4f10 82%); border: 2px solid #c99a55; border-radius: 40% 40% 10px 10px / 34% 34% 8px 8px; padding: 3px 6px; text-align: center; color: #fff; font-size: 8px; font-weight: 700; box-shadow: 0 3px 8px rgba(0,0,0,.3); } .pv-broth img { width: 26px; height: 26px; }
+      /* kệ topping / kệ nước */
+      .pv-shelf { flex: 0 0 auto; max-height: 32vh; overflow-y: auto; padding: 5px 8px; background: linear-gradient(#a9b1b6, #8d979d); border-top: 4px solid #d9dee1; }
+      .pv-shelf.soup { background: linear-gradient(#9aa6ac, #7f8b91); border-top-width: 3px; }
+      .pv-pans { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 4px; }
+      .pv-pan { background: #eef1f2; border: 2px solid #6f7a80; border-radius: 5px; text-align: center; font-size: 8.5px; font-weight: 700; padding: 2px 1px; cursor: grab; box-shadow: inset 0 2px 5px rgba(0,0,0,.18); }
+      .pv-pan img { width: 26px; height: 26px; } .pv-pan small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      /* lớp gần: kệ tô/sợi · thớt · chỗ tô · thùng rác */
+      .pv-front { flex: 1; display: flex; gap: 6px; padding: 6px 8px 4px; background: linear-gradient(#e6e9eb, #cfd4d7); align-items: flex-end; min-height: 0; }
+      .pv-stack { display: flex; flex-direction: column; gap: 4px; width: 62px; max-height: 196px; overflow-y: auto; }
+      .pv-src { background: #fff; border: 2px solid #d8cbb6; border-radius: 8px; text-align: center; font-size: 8.5px; font-weight: 700; padding: 3px 1px; cursor: grab; box-shadow: 0 2px 0 #cdbfa8; } .pv-src img { width: 28px; height: 28px; }
+      .pv-work { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+      .pv-boards { display: flex; gap: 5px; height: 46px; } .pv-board { flex: 1; min-height: 42px; border: 2px dashed rgba(43,33,24,.35); border-radius: 7px; background: rgba(255,255,255,.5); text-align: center; font-size: 8.5px; padding: 2px; position: relative; }
+      .pv-board.done { border-style: solid; border-color: var(--green); background: #eef8ec; } .pv-board img { width: 24px; height: 24px; }
+      .pv-slots { height: 146px; display: grid; grid-auto-flow: column; gap: 6px; }
+      .pv-slot { border: 3px dashed rgba(43,33,24,.28); border-radius: 46% / 38%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #6a5d4e; text-align: center; padding: 4px; transition: transform .12s, background .12s; }
+      .pv-slot.has { border-style: solid; border-color: #b9c9d6; background: rgba(255,255,255,.45); }
+      .pv-bowl { position: relative; width: 88px; height: 88px; cursor: grab; } .pv-bowl > img, .pv-bowl > .emo { width: 88px; height: 88px; }
+      .pv-bowl .lay { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; transform: translate(calc(-50% + (var(--k) - 2) * 9px), calc(-56% + (var(--k) % 2) * 8px)) rotate(calc(var(--k) * 21deg)); } .pv-bowl .lay img { width: 30px; height: 30px; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
       .pv-bowl.full { animation: pop .5s infinite alternate; }
-      .drop.over { outline: 3px solid var(--broth); outline-offset: 2px; transform: scale(1.04); background: rgba(255,209,102,.25); }
+      .pv-trash { width: 44px; border: 2px dashed rgba(43,33,24,.3); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; color: #6a5d4e; } .pv-trash small { font-size: 8px; }
+      .drop.over { outline: 3px solid var(--broth); outline-offset: 1px; background: rgba(255,209,102,.28); }
       .dragsrc.lift { opacity: .4; }
       .pv-ghost { position: fixed; left: 0; top: 0; width: 56px; height: 56px; pointer-events: none; z-index: 9; filter: drop-shadow(0 8px 10px rgba(0,0,0,.45)); } .pv-ghost img { width: 56px; height: 56px; } .pv-ghost .emo { font-size: 40px; }
-      .pv-msg { flex: 0 0 auto; padding: 8px 12px calc(max(8px, env(safe-area-inset-bottom)) + 6px); text-align: center; font-size: 12.5px; font-weight: 700; color: var(--ink); background: var(--paper); min-height: 36px; line-height: 1.3; }
+      .pv-msg { flex: 0 0 auto; padding: 6px 10px calc(max(6px, env(safe-area-inset-bottom)) + 4px); text-align: center; font-size: 12px; font-weight: 700; background: var(--paper); min-height: 32px; line-height: 1.25; }
       .pv-msg.bad { color: var(--red); } .pv-msg.good { color: #2f8a3a; } .pv-msg.mid { color: #b07a20; }
       .pz-msg { min-height: 18px; margin: 4px 0 6px; font-size: 12.5px; font-weight: 700; color: var(--red); text-align: center; line-height: 1.25; }
       .pz-sticky { position: sticky; top: -16px; background: var(--paper); z-index: 2; padding-top: 4px; margin: 0 -4px; padding-left: 4px; padding-right: 4px; }
@@ -332,7 +351,7 @@
           <section id="tab-puzzle" class="tab sub hidden">
             <div class="mini"><div class="lvcard solo"><b>🧩 Đố nhanh</b><small>9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary">Chơi</button></div>
             <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div>
-            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🧑‍🍳 Quầy POV — kéo thả <small style="display:inline;color:var(--red)">· bản thử lõi #2</small></b><small>Đứng trước quầy prep như ở tiệm. Kéo hoặc <b>chạm đôi</b> (tự bay tới đích). Kéo tô vô nồi để trụng → kéo xuống thớt → kéo sợi vô rọ, rọ qua bồn, rọ vô nồi, trút vô tô → kéo topping, kéo vá nước → kéo tô lên phiếu để giao. Hai chỗ tô, phiếu tới dần.</small><button id="btnPov">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🧑‍🍳 Quầy POV — kéo thả <small style="display:inline;color:var(--red)">· lõi mới</small></b><small>Đứng trước quầy prep như ở tiệm, <b>đủ 18 món</b>: nồi trụng · bồn xả · thớt · chảo chiên · lò vi sóng · lò đun nước. Kéo hoặc <b>chạm đôi</b> để vật tự bay tới đích. Tô xong kéo lên đúng phiếu.</small><button id="btnPov">Chơi</button></div>
             <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🥣 Ráp tô <small style="display:inline;color:var(--red)">· bản thử lõi mới</small></b><small>Phiếu khách treo dần, ráp ngay trên kệ không cần đi lại: tô → sợi (nóng · xả lạnh · nóng lại) → topping đúng thứ tự → nước. 10 phiếu, chấm từng bước.</small><button id="btnAssemble">Chơi</button></div>
             <div class="lvcard solo" style="grid-column:1/-1"><b>⚡ Phản xạ</b><small>Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục.</small><button id="btnReflex">Chơi</button></div></div>
             <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — chọn món ở Luyện. Kết quả ghi vào Tiến độ nhớ món, +10k/câu sạch.</div>

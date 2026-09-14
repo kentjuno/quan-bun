@@ -246,3 +246,10 @@ Kent sau khi thử Ráp tô: "ok, nhưng kéo thả vô tô sẽ có cảm giác
 ## 0.8.4 — 2026-09-14 · Chặn quẹt Back khi đang chơi
 - Kent: trên điện thoại quẹt trái/phải bị Back ra khỏi game. `overscroll-behavior: none` cho html/body/#pov (Chrome Android không còn quẹt-Back / kéo-Reload) + history guard: vào màn chơi (level, minigame, POV) đẩy một state; Back → popstate → đẩy lại, toast "dùng nút ‹ để về menu". iPhone Safari quẹt mép trái không chặn được → nhắc thêm vào Màn hình chính (PWA) một lần.
 - Chữ tay: Kent chọn dùng font (ghi PLAN-CORE §6b).
+
+## 0.9.0 — 2026-09-14 · Quầy POV thành ENGINE đủ 18 món (PLAN-CORE bước 1)
+- **`src/game/counter.js` — `Counter`: lõi quầy thuần state, không đụng DOM** (test được không cần trình duyệt). `pov.js` chỉ còn vẽ + bắt kéo thả/chạm đôi rồi gọi `C.drop(src, zone)`.
+- Trạm đầy đủ, mỗi `transform` của sim-data đều có chỗ thả: **nồi trụng** (rọ sợi/bò viên/rau trụng + trữ tô nóng ≤5, sợi để lâu hư) · **bồn** (xả lạnh rọ, nhúng bánh tráng) · **thớt** (gom đủ 1..n nguyên liệu mới làm: cắt chả cá, thì là, đập tái, cắt salad, cuốn gỏi, pha chén Lã Vọng, lót mẹt, múc cháo) · **chảo chiên** · **lò vi sóng** · **lò đun nước** (kéo cốt → huyết → nước đúng thứ tự, đun ra MỘT phần, stack kệ nước) · **thùng rác**. `povOk` = 18/18 món.
+- Kiểm kiến thức ngay tại chỗ thả: phở chưa xả lạnh mà trút vô tô, bún bò đem xả lạnh, nấu nước sai thứ tự, sai bước ráp, giao nhầm phiếu — đều báo lý do cụ thể và tính lỗi cho TÔ đó.
+- Giao diện quầy dựng theo món của màn (trạm nào không dùng thì ẩn), chia lớp xa/giữa/gần; chạm đôi báo lý do khi chưa biết đem đi đâu ("Chưa có tô nào trên thớt", "Chưa cần X — kế tiếp: Y").
+- `counterMove(C)` = bot cho quầy (dùng cho test và sẽ dùng cho par). `tests/counter.test.js`: 11 test, trong đó **bot làm xong cả 18 món, 0 lỗi**. Tổng 75 unit test pass, smoke 0 lỗi.
