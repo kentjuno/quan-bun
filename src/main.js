@@ -1,8 +1,8 @@
 import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
-import { SURVIVAL, DECOR, UPGRADES, ALL_DISHES, kitchenFor } from './config.js';
+import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
-import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, dayFor, currentDay, dayUnlocked, upgradeLevel, upgradeCost, buyUpgrade, playerMods, unlocksAt } from './game/progress.js';
+import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter } from './game/progress.js';
 import { D } from './game/recipes.js';
 import { botDecide } from './game/bot.js';
 import { label } from './game/recipes.js';
@@ -28,7 +28,7 @@ function banner(big, small = '', ms = 2200) { const el = $('banner'); el.innerHT
 const PHASES = [[0.42, 'lunch', 'busy', 'Giờ cao điểm', 'Khách vô dồn — làm song song, trụng sẵn tô'], [0.62, 'lull', 'calm', 'Xế chiều', 'Thở một chút — nấu bù nước lèo, trụng tô sẵn'], [0.92, 'afternoon', 'busy', 'Đợt chiều', 'Đông lần hai — khách quen ghé'], [9, 'closing', 'close', 'Sắp đóng cửa', 'Hết khách mới — giao nốt mấy tô còn lại']];
 let phase = '';
 function syncPhase() {
-  if (!world?.shift.day || world.prep > 0) { if (phase) { phase = ''; setMood('calm'); } return; }
+  if (!world?.shift.world || world.prep > 0) { if (phase) { phase = ''; setMood('calm'); } return; }
   const f = world.time / world.shift.seconds; const ph = PHASES.find((p) => f < p[0]);
   if (ph && ph[1] !== phase) { const first = !phase; phase = ph[1]; setMood(ph[2]); if (!first || ph[1] !== 'lunch') banner(ph[3], ph[4]); }
 }
@@ -43,12 +43,14 @@ function safeSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
 $('optCard').checked = opts.shelfCard; $('optHideName').checked = opts.hideName;
 $('optCard').onchange = (e) => { opts.shelfCard = e.target.checked; safeSet('qb.card', opts.shelfCard ? '1' : '0'); if (!running) { world = newWorld(); rebuild(); } };
 $('optHideName').onchange = (e) => { opts.hideName = e.target.checked; safeSet('qb.hidename', opts.hideName ? '1' : '0'); };
-let dayN = Math.max(1, Number(qs.get('day')) || currentDay());   // ngày đang chọn (1-based); ?day=5
-let playMode = 'day';   // 'day' | 'survival' | 'drill' | 'rush' | 'puzzle' (drill/rush dùng món đã chọn ở Luyện)
-let practice = (progress().practice || []).filter((d) => ALL_DISHES.includes(d)); if (!practice.length) practice = [...dayFor(dayN).dishes];
+// level đang chọn: ?world=pho&level=5 (dev) hoặc level đang tới
+let level = levelById(`${qs.get('world') || 'pho'}-${qs.get('level') || 0}`) || currentLevel();
+let worldIdx = Math.max(0, WORLDS.findIndex((w) => w.id === level.world));
+let playMode = 'level';   // 'level' | 'survival' | 'drill' | 'rush' | 'puzzle' (drill/rush dùng món đã chọn ở Luyện)
+let practice = (progress().practice || []).filter((d) => ALL_DISHES.includes(d)); if (!practice.length) practice = [...level.dishes];
 function shiftFor(mode) {
   if (mode === 'survival') return { ...SURVIVAL, weights: weightsFor(SURVIVAL.dishes) };
-  const base = dayFor(dayN);
+  const base = level;
   if (mode === 'drill' || mode === 'rush') {
     const dishes = practice.length ? practice : base.dishes; const weights = weightsFor(dishes); const nm = dishes.length > 3 ? `${dishes.length} món` : dishes.map((d) => D.recipes[d].name).join(' · ');
     if (mode === 'drill') return { id: 'drill', name: `Luyện đơn lẻ — ${nm}`, dishes, drill: true, drillCount: 8, seconds: 900, prep: 5, arrivals: [], weights, moneyTargets: [1e9, 1e9, 1e9] };
@@ -68,7 +70,7 @@ function newWorld() {
     onBurnerOpen: (s, slot) => openSoupCard(s, slot),
     onPick: () => sfx.pick(), onJobStart: (s) => (s.type === 'fryer' || s.type === 'burner' ? sfx.sizzle() : s.type === 'pot' ? sfx.splash() : sfx.drop()), onJobDone: () => sfx.done(), onPlace: (bowl) => (bowl?.done ? sfx.clink() : sfx.place()), onTrash: () => sfx.trash(),
     onSpeak: (cu, kind, text) => { view.say(cu, text); if (kind === 'wait' || kind === 'good') sfx.hum(kind); },
-  }, kitchenFor(isPortrait()), playerMods());
+  }, kitchenFor(isPortrait(), playMode === 'level' ? level.layout : 'default'), playerMods());
   return w;
 }
 function rebuild() { view.clearAll(); view.build(world, { ...opts, decor: progress().decor }); }
@@ -134,7 +136,7 @@ function start(bot = false, mode = playMode) {
   rebuild();   // mỗi level có thể khác trạm (bếp lớn dần) → dựng lại
   $('card').classList.remove('show');
   running = true; $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.remove('hidden');
-  showHint(botMode ? 'Bot làm mẫu — bấm "Tự chơi" để cầm lái' : playMode === 'drill' ? 'Luyện 8 đơn nối tiếp, không giới hạn giờ — đúng rồi mới nhanh' : playMode === 'rush' ? 'Rush 3 đơn — dùng đủ 3 rọ + chồng tô, làm song song' : playMode === 'survival' ? 'Survival — 3 khách bỏ đi là hết; rảnh thì trụng tô, sợi sẵn' : world.shift.newDish ? `Hôm nay có món mới: ${D.recipes[world.shift.newDish].name} — trụng tô, sợi sẵn rồi mở cửa` : world.shift.weekend ? 'Cuối tuần — có đoàn khách tới cùng lúc, chuẩn bị nhiều tô sẵn' : 'Chuẩn bị trước khi mở cửa: trụng tô, trụng sợi, nấu sẵn một nồi nước');
+  showHint(botMode ? 'Bot làm mẫu — bấm "Tự chơi" để cầm lái' : playMode === 'drill' ? 'Luyện 8 đơn nối tiếp, không giới hạn giờ — đúng rồi mới nhanh' : playMode === 'rush' ? 'Rush 3 đơn — dùng đủ 3 rọ + chồng tô, làm song song' : playMode === 'survival' ? 'Survival — 3 khách bỏ đi là hết; rảnh thì trụng tô, sợi sẵn' : (level.hint || level.whatsNew), playMode === 'level' ? 9000 : 6000);
   // ẩn tên trên card khi mọi món trong ca đã thuộc (≥3 tô sạch liên tiếp), trừ khi Kent tự tick
   opts.hideNameAuto = world.shift.dishes.every(isMastered);
   $('btnTakeover').classList.toggle('hidden', !botMode);
@@ -142,7 +144,7 @@ function start(bot = false, mode = playMode) {
 }
 function showResult(r) {
   running = false; setBoil(false); setMood(playMode === 'day' ? 'close' : 'calm'); if (r.stars >= 1 || (r.puzzle)) setTimeout(() => sfx.cheer(), 300); $('hud').classList.add('hidden'); $('result').classList.remove('hidden'); $('card').classList.remove('show');
-  const isPz = !!r.puzzle; const st = r.stats || { bowls: [], idle: 0, taps: 0, trips: 0 }; const isDay = playMode === 'day';
+  const isPz = !!r.puzzle; const st = r.stats || { bowls: [], idle: 0, taps: 0, trips: 0 }; const isDay = playMode === 'level';
   const sh = isPz ? { id: 'puzzle', name: lastPuzzle.kinds[0] === 'ninja' ? 'Chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Phản xạ' : 'Đố nhanh', dishes: [...new Set(st.bowls.map((b) => b.dish))] } : world.shift; const kitchen = world.kitchen;
   const par = (dish) => isPz ? { seconds: null, taps: 0, route: [] } : parFor(sh, kitchen, dish);
   let pts = null; const wasNew = isDay && bestStars(sh.id) === 0;
@@ -153,20 +155,23 @@ function showResult(r) {
   if (isDay) { starsEl.innerHTML = [0, 1, 2].map((i) => `<span class="s">${i < r.stars ? '★' : '☆'}</span>`).join(''); [...starsEl.children].forEach((el, i) => setTimeout(() => { el.classList.add('in'); if (i < r.stars) sfx.done(); }, 350 + i * 380)); }
   else starsEl.textContent = playMode === 'survival' ? `${r.served} khách` : isPz ? `${clean}/${st.bowls.length} sạch` : (r.mistakes === 0 ? '✓ Sạch' : `${r.mistakes} lỗi`);
   countUp($('rMoney'), r.money, isDay ? 1400 : 0);
-  $('rTitle').textContent = playMode === 'drill' ? 'Hết 8 đơn' : playMode === 'rush' ? 'Hết rush' : playMode === 'survival' ? (pts?.record ? '🏆 Kỷ lục mới!' : 'Hết Survival') : isPz ? (lastPuzzle.kinds[0] === 'ninja' ? 'Hết chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Hết phản xạ' : 'Hết đố') : `Đóng cửa — ${sh.name}${r.stars ? '' : ' · chưa đạt, chơi lại ngày này'}`;
-  $('rDishes').textContent = isDay ? `${sh.note} · mục tiêu ${sh.moneyTargets.join(' / ')}k · bỏ đi tối đa 2 / 1 / 0` : playMode === 'survival' ? `Trụ ${Math.floor((st.time || 0) / 60)}:${String(Math.floor((st.time || 0) % 60)).padStart(2, '0')} · ${sh.dishes.length} món` : sh.dishes.map((d) => D.recipes[d].name).join(' · ');
+  $('rTitle').textContent = playMode === 'drill' ? 'Hết 8 đơn' : playMode === 'rush' ? 'Hết rush' : playMode === 'survival' ? (pts?.record ? '🏆 Kỷ lục mới!' : 'Hết Survival') : isPz ? (lastPuzzle.kinds[0] === 'ninja' ? 'Hết chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Hết phản xạ' : 'Hết đố') : `${sh.name} — ${sh.title}${r.stars ? '' : ' · chưa đạt, chơi lại'}`;
+  $('rDishes').textContent = isDay ? `${goalText(sh)} · ${sh.whatsNew}` : playMode === 'survival' ? `Trụ ${Math.floor((st.time || 0) / 60)}:${String(Math.floor((st.time || 0) % 60)).padStart(2, '0')} · ${sh.dishes.length} món` : sh.dishes.map((d) => D.recipes[d].name).join(' · ');
   $('rPoints').textContent = pts ? `+${pts.earned}k${pts.starBonus ? ` +${pts.starBonus}k thưởng ${pts.newStars}★ mới` : ''} → quán có ${pointsAvailable()}k` : '';
   // khách quen nhận xét cuối ngày
   const regs = r.regulars || []; const rc = $('rRecap');
   if (isDay && regs.length) { const pick = regs[Math.floor(Math.random() * regs.length)]; rc.textContent = recapLine(pick.id, pick.served); rc.classList.toggle('hidden', !rc.textContent); } else rc.classList.add('hidden');
-  // thẻ mở khoá: ngày mai có gì mới (chỉ khi lần đầu qua ngày này)
-  const nextUnlocks = isDay && r.stars >= 1 && wasNew ? unlocksAt(sh.day + 1).concat(REGULARS.filter((x) => x.unlockDay === sh.day + 1 && dayFor(sh.day + 1).dishes.includes(x.dish)).map((x) => ({ kind: 'regular', id: x.id }))) : [];
+  // thẻ mở khoá: level sau có gì mới (chỉ khi lần đầu qua level này)
+  const nextUnlocks = isDay && r.stars >= 1 && wasNew ? unlocksAfter(sh) : [];
   $('rUnlock').replaceChildren(...nextUnlocks.map((u, i) => { const el = document.createElement('div'); el.className = 'u'; el.style.animationDelay = `${1.4 + i * 0.25}s`;
     if (u.kind === 'dish') { const ic = iconUrl(D.recipes[u.id]?.base?.bowl || 'soup-bowl'); el.innerHTML = `${ic ? `<img src="${ic}" alt="">` : '<span class="ic">🍜</span>'}<div><b>Món mới ngày mai</b><small>${D.recipes[u.id].name}</small></div>`; }
     else if (u.kind === 'upgrade') { const up = UPGRADES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${up.icon}</span><div><b>Mở bán: ${up.name}</b><small>${up.desc}</small></div>`; }
+    else if (u.kind === 'world') { const wd = worldById(u.id); el.innerHTML = `<span class="ic">${wd.icon}</span><div><b>Mở world mới: ${wd.name}</b><small>${wd.sub} · ${wd.levels.length} level</small></div>`; }
     else { const rg = REGULARS.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">🙋</span><div><b>Khách quen mới: ${rg.name}</b><small>${rg.sketch} · ruột ${D.recipes[rg.dish].name}</small></div>`; }
     return el; }));
-  const nb = $('btnNext'); nb.classList.toggle('hidden', !isDay || r.stars < 1); nb.textContent = `Sang ngày ${sh.day + 1} →`;
+  const nxt = isDay ? nextLevel(sh) : null; const nw = isDay && !nxt ? WORLDS[WORLDS.indexOf(worldById(sh.world)) + 1] : null;
+  const nb = $('btnNext'); nb.classList.toggle('hidden', !isDay || r.stars < 1 || (!nxt && !(nw && worldStars(sh.world) >= nw.starsToUnlock)));
+  nb.textContent = nxt ? `Level ${nxt.n} →` : nw ? `Sang ${nw.name} →` : '';
   $('rTips').textContent = r.tips; $('rServed').textContent = r.served; $('rLeft').textContent = r.left; $('rMistakes').textContent = r.mistakes;
   // --- báo cáo để tối ưu cách làm thật (gấp trong <details>) ---
   const rows = st.bowls.map((b) => { const pr = par(b.dish); const d = pr.seconds ? b.wait - pr.seconds : null;
@@ -207,20 +212,48 @@ for (const b of document.querySelectorAll('.tabs.sub button')) b.onclick = () =>
 (document.querySelector(`.tabs.three button[data-tab="${safeGet('qb.tab') || 'day'}"]`) || document.querySelector('.tabs.three button')).click();
 (document.querySelector(`.tabs.sub button[data-sub="${safeGet('qb.sub') || 'survival'}"]`) || document.querySelector('.tabs.sub button')).click();
 const dishName = (d) => D.recipes[d].name;
-let slideDir = 0;
 function renderMenu() {
-  // ngày: carousel (‹ ›, vuốt) — một thẻ ngày; ngày mở khi ngày trước ≥1★
-  const lv = dayFor(dayN); const un = dayUnlocked(dayN); const st = bestStars(lv.id); const M = allMastery(); const cur = currentDay();
-  const learned = lv.dishes.filter((d) => (M[d]?.streak || 0) >= 3).length;
-  const regs = REGULARS.filter((r) => r.unlockDay <= dayN && lv.dishes.includes(r.dish));
-  const card = $('lvCard'); card.className = 'lvcard daycard' + (un ? '' : ' locked') + (slideDir ? (slideDir > 0 ? ' slide-r' : ' slide-l') : '');
-  card.innerHTML = `<b>${un ? '' : '🔒 '}${lv.name}${lv.weekend ? ' · cuối tuần' : ''}${dayN === cur ? '<span class="new">hôm nay</span>' : ''}</b><span class="st">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span><small class="note">${lv.note}</small><small class="dish">${lv.dishes.length > 5 ? `${lv.dishes.length} món trong menu` : lv.dishes.map(dishName).join(' · ')}</small><small>${un ? `${regs.length ? `Khách quen: ${regs.map((r) => r.name).join(', ')} · ` : ''}${lv.seconds}s · mục tiêu ${lv.moneyTargets[0]}k${learned ? ` · thuộc ${learned}/${lv.dishes.length} món` : ''}` : `Đạt ≥1★ ở Ngày ${dayN - 1} để mở`}</small>`;
-  if (slideDir) { requestAnimationFrame(() => requestAnimationFrame(() => card.classList.remove('slide-l', 'slide-r'))); slideDir = 0; }
-  $('lvPrev').disabled = dayN <= 1; $('lvNext').disabled = !dayUnlocked(dayN + 1) && dayN >= cur;
-  $('btnStart').disabled = !un; $('btnStart').textContent = un ? (st ? `Chơi lại ${lv.name}` : `Mở quán — ${lv.name}`) : '🔒 Chưa mở';
+  // --- bản đồ: hàng world + lưới level + thẻ chi tiết (docs/PLAN-WORLDS.md §6) ---
+  const cur = currentLevel(); const M = allMastery();
+  $('worldRow').replaceChildren(...WORLDS.map((w, i) => {
+    const un = worldUnlocked(w.id); const el = document.createElement('div');
+    el.className = 'wd' + (i === worldIdx ? ' on' : '') + (un ? '' : ' locked');
+    el.innerHTML = `<div class="ic">${un ? w.icon : '🔒'}</div><b>${w.name}</b><small>${un ? `${worldStars(w.id)}/${w.maxStars} ★` : `cần ${w.starsToUnlock}★`}</small>`;
+    el.onclick = () => { worldIdx = i; const first = w.levels.find((L) => !levelUnlocked(L)) || w.levels[0]; selectLevel(w.levels.find((L) => L.id === cur.id) ? cur : (levelUnlocked(first) ? first : w.levels[0])); };
+    return el;
+  }));
+  const W = WORLDS[worldIdx];
+  $('lvGrid').replaceChildren(...W.levels.map((L) => {
+    const un = levelUnlocked(L); const st = bestStars(L.id); const el = document.createElement('button');
+    el.className = 'lvb' + (L.id === level.id ? ' on' : '') + (un ? '' : ' locked') + (L.challenge ? ' ch' : '') + (st ? ' done' : '') + (L.id === cur.id ? ' next' : '');
+    el.innerHTML = `${un ? L.n : '🔒'}<span class="st">${'★'.repeat(st)}${un ? '☆'.repeat(3 - st) : ''}</span>`;
+    el.onclick = () => selectLevel(L);
+    return el;
+  }));
+  const un = levelUnlocked(level); const st = bestStars(level.id);
+  const learned = level.dishes.filter((d) => (M[d]?.streak || 0) >= 3).length;
+  const card = $('lvCard'); card.className = 'lvcard daycard' + (un ? '' : ' locked');
+  const tags = [
+    level.training ? `<span class="tag train">Bản tập — ${simplifyLabel(level.simplify)}</span>` : '',
+    level.challenge ? `<span class="tag new">⭐ Thử thách</span>` : '',
+    level.goal ? `<span class="tag goal">${goalText(level)}</span>` : '',
+    ...conTags(level.constraints),
+    level.layout !== 'default' ? `<span class="tag">🍳 ${KITCHEN_VARIANTS[level.layout].name}</span>` : '',
+    ...(level.events || []).map((e) => `<span class="tag">${e.kind === 'rain' ? '🌧️ Mưa' : e.kind === 'vip' ? '💰 Khách sộp' : e.kind === 'tour' ? '👥 Đoàn khách' : '🔄 Khách đổi ý'}</span>`),
+    level.regulars.length ? `<span class="tag">🙋 ${level.regulars.map((id) => REGULARS.find((r) => r.id === id)?.name).join(', ')}</span>` : '',
+  ].filter(Boolean).join('');
+  card.innerHTML = un
+    ? `<b>${level.name} — ${level.title}</b><span class="st">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span>
+       <small class="whatsnew">${level.whatsNew}</small>
+       <small class="dish">${level.dishes.length > 4 ? `${level.dishes.length} món` : level.dishes.map(dishName).join(' · ')}</small>
+       <div class="tags">${tags}</div>
+       <small>${level.seconds}s · ${level.count} khách · mục tiêu ${level.moneyTargets[0]}k${learned ? ` · thuộc ${learned}/${level.dishes.length} món` : ''}</small>`
+    : `<b>🔒 ${level.name}</b><small>${worldUnlocked(level.world) ? `Đạt ≥1★ ở ${W.name} ${level.n - 1} để mở` : `Cần ${W.starsToUnlock}★ ở ${WORLDS[worldIdx - 1].name} để mở world này`}</small>`;
+  $('btnStart').disabled = !un; $('btnStart').textContent = un ? (st ? `Chơi lại ${level.name}` : `Vô bếp — ${level.name}`) : '🔒 Chưa mở';
   // nâng cấp bếp
-  $('upgrades').replaceChildren(...UPGRADES.map((u) => { const lv2 = upgradeLevel(u.id); const cost = upgradeCost(u.id); const locked = cur < u.unlockDay; const el = document.createElement('div'); el.className = 'sh' + (cost == null ? ' max' : '') + (locked ? ' locked' : '');
-    el.innerHTML = `<span class="ic">${u.icon}</span><div><b>${u.name} <span class="lv">${'●'.repeat(lv2)}${'○'.repeat(u.levels.length - lv2)}</span></b><small>${u.desc}</small>${locked ? `<small>Mở bán từ Ngày ${u.unlockDay}</small>` : cost == null ? '<small style="color:#2f8a3a;font-weight:700">Tối đa ✓</small>' : `<button ${cost > pointsAvailable() ? 'disabled' : ''}>💰 ${cost}k</button>`}</div>`;
+  const total = totalStars();
+  $('upgrades').replaceChildren(...UPGRADES.map((u) => { const lv2 = upgradeLevel(u.id); const cost = upgradeCost(u.id); const locked = !upgradeUnlocked(u.id); const el = document.createElement('div'); el.className = 'sh' + (!locked && cost == null ? ' max' : '') + (locked ? ' locked' : '');
+    el.innerHTML = `<span class="ic">${u.icon}</span><div><b>${u.name} <span class="lv">${'●'.repeat(lv2)}${'○'.repeat(u.levels.length - lv2)}</span></b><small>${u.desc}</small>${locked ? `<small>Mở bán khi đủ ${u.unlockStars}★ (đang có ${total}★)</small>` : cost == null ? '<small style="color:#2f8a3a;font-weight:700">Tối đa ✓</small>' : `<button ${cost > pointsAvailable() ? 'disabled' : ''}>💰 ${cost}k</button>`}</div>`;
     const b = el.querySelector('button'); if (b) b.onclick = () => { if (buyUpgrade(u.id)) { sfx.done(); toast(`${u.name} lên cấp ${upgradeLevel(u.id)}!`); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
   // survival
   const sv = progress().survival; $('survRecord').textContent = sv ? `Kỷ lục: ${sv.served} khách · ${Math.floor(sv.time / 60)}:${String(Math.floor(sv.time % 60)).padStart(2, '0')} · ${sv.money}k` : 'Chưa có kỷ lục';
@@ -228,28 +261,45 @@ function renderMenu() {
   $('dishPick').replaceChildren(...ALL_DISHES.map((d) => { const el = document.createElement('div'); const m = masteryOf(d); el.className = 'dp' + (practice.includes(d) ? ' on' : ''); el.innerHTML = `<span>${dishName(d)}</span><small>${m.plays ? `${m.clean}/${m.plays}${m.streak >= 3 ? ' ✓' : ''}` : '—'}</small>`; el.onclick = () => { practice = practice.includes(d) ? practice.filter((x) => x !== d) : [...practice, d]; setPractice(practice); renderMenu(); }; return el; }));
   $('pickCount').textContent = `${practice.length}/${ALL_DISHES.length} món`; $('pzScope').textContent = practice.length ? `${practice.length} món: ${practice.slice(0, 4).map(dishName).join(', ')}${practice.length > 4 ? '…' : ''}` : 'Đủ 16 món'; $('btnDrill').disabled = $('btnRush').disabled = practice.length === 0;
   // trang trí
-  $('ptsNow').textContent = pointsAvailable(); $('ptsTotal').textContent = progress().points; $('ptsBadge').textContent = DECOR.some((d) => !hasDecor(d.id) && d.cost <= pointsAvailable()) || UPGRADES.some((u) => currentDay() >= u.unlockDay && upgradeCost(u.id) != null && upgradeCost(u.id) <= pointsAvailable()) ? '!' : '';
+  $('ptsNow').textContent = pointsAvailable(); $('ptsTotal').textContent = progress().points; $('ptsBadge').textContent = DECOR.some((d) => !hasDecor(d.id) && d.cost <= pointsAvailable()) || UPGRADES.some((u) => upgradeCost(u.id) != null && upgradeCost(u.id) <= pointsAvailable()) ? '!' : '';
   $('shop').replaceChildren(...DECOR.map((d) => { const own = hasDecor(d.id); const el = document.createElement('div'); el.className = 'sh' + (own ? ' owned' : ''); el.innerHTML = `<span class="ic">${d.icon}</span><div><b>${d.name}</b><small>${d.desc}</small>${own ? '<small style="color:#2f8a3a;font-weight:700">Đã mua ✓</small>' : `<button ${d.cost > pointsAvailable() ? 'disabled' : ''}>💰 ${d.cost}k</button>`}</div>`; if (!own) el.querySelector('button').onclick = () => { if (buyDecor(d.id)) { sfx.done(); toast(`Đã mua ${d.name}!`); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
 }
-function stepLevel(d) { const n = Math.max(1, dayN + d); if (n === dayN || (d > 0 && !dayUnlocked(n) && n > currentDay())) return; slideDir = d; selectLevel(n); }
-$('lvPrev').onclick = () => stepLevel(-1); $('lvNext').onclick = () => stepLevel(1);
-{ let x0 = null; const car = document.querySelector('.carousel'); car.addEventListener('pointerdown', (e) => { x0 = e.clientX; }); car.addEventListener('pointerup', (e) => { if (x0 == null) return; const dx = e.clientX - x0; x0 = null; if (Math.abs(dx) > 40) stepLevel(dx < 0 ? 1 : -1); }); }
+/** Nhãn ngắn cho phần công thức được rút gọn ở level tập. */
+function simplifyLabel(sim) {
+  if (!sim) return '';
+  const miss = []; if (sim.skipRinse) miss.push('xả lạnh'); if (sim.hotBowl) miss.push('trụng tô'); if (sim.skipPrep) miss.push('thớt'); if (sim.skipFry) miss.push('chiên'); if (sim.soupReady) miss.push('nấu nước'); if (sim.toppings || sim.maxSteps) miss.push('bớt topping');
+  return miss.length ? `chưa có ${miss.join(', ')}` : 'rút gọn';
+}
+function goalText(L) {
+  const g = L.goal; if (!g) return `Mục tiêu ${L.moneyTargets.join(' / ')}k`;
+  if (g.kind === 'clean') return `🎯 ${g.bowls} tô không sai thứ tự`;
+  if (g.kind === 'no-waste') return '🎯 Không vứt/hư thứ gì';
+  if (g.kind === 'streak') return `🎯 ${g.n} tô đúng liên tiếp`;
+  if (g.kind === 'before') return `🎯 Xong hết khách trước ${g.seconds}s`;
+  return '';
+}
+function conTags(c) {
+  if (!c) return [];
+  const out = []; if (c.potSlots) out.push(`<span class="tag">🧺 ${c.potSlots} rọ trụng`); if (c.handCapacity === 1) out.push('<span class="tag">✋ Một tay');
+  if (c.brothCap) out.push(`<span class="tag">🥘 Kệ nước ${c.brothCap} phần`); if (c.noStack) out.push('<span class="tag">🔥 Lò xong phải lấy liền');
+  return out.map((x) => x + '</span>');
+}
 $('pickAll').onclick = () => { practice = [...ALL_DISHES]; setPractice(practice); renderMenu(); };
 $('pickNone').onclick = () => { practice = []; setPractice(practice); renderMenu(); };
 $('pickBun').onclick = () => { practice = ALL_DISHES.filter((d) => /^bun-/.test(d)); setPractice(practice); renderMenu(); };
 $('pickWeak').onclick = () => { practice = ALL_DISHES.filter((d) => !isMastered(d)); setPractice(practice); renderMenu(); };
-function selectLevel(n) { dayN = n; renderMenu(); if (!running) { world = newWorld(); rebuild(); } }
+function selectLevel(L) { if (!L) return; level = L; worldIdx = Math.max(0, WORLDS.findIndex((w) => w.id === L.world)); renderMenu(); if (!running) { world = newWorld(); rebuild(); } }
 renderMenu();
-$('btnStart').onclick = () => { if (dayUnlocked(dayN)) start(false, 'day'); }; $('btnRetry').onclick = () => playMode === 'puzzle' ? startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds) : start(botMode, playMode);
-$('btnNext').onclick = () => { selectLevel(dayN + 1); start(false, 'day'); };
+$('btnStart').onclick = () => { if (levelUnlocked(level)) start(false, 'level'); }; $('btnRetry').onclick = () => playMode === 'puzzle' ? startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds) : start(botMode, playMode);
+$('btnNext').onclick = () => { const n = nextLevel(level); if (n) selectLevel(n); else { const w = WORLDS[WORLDS.indexOf(worldById(level.world)) + 1]; if (w) selectLevel(w.levels[0]); } start(false, 'level'); };
 $('btnBot').onclick = () => start(true);
 function takeover() { if (!botMode) return; botMode = false; $('btnTakeover').classList.add('hidden'); showHint('Bạn cầm lái. Kệ → lấy · nồi/bồn → làm · quầy ráp → quầy giao', 4000); }
 $('btnTakeover').onclick = takeover;
 // nút loa
 const btnMute = $('btnMute'); const paintMute = () => { btnMute.textContent = isMuted() ? '🔇' : '🔊'; btnMute.title = isMuted() ? 'Mở tiếng' : 'Tắt tiếng'; }; paintMute();
 btnMute.onclick = () => { ensureAudio(); setMuted(!isMuted()); paintMute(); };
-$('btnBack').onclick = () => { if (!running) return; running = false; setBoil(false); setMood('calm'); botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'day'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
-$('btnMenu').onclick = () => { running = false; $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'day'; dayN = Math.max(dayN, 1); if (bestStars(dayFor(dayN).id) >= 1 && dayUnlocked(dayN + 1)) dayN = currentDay(); renderMenu(); world = newWorld(); rebuild(); };
+$('btnBack').onclick = () => { if (!running) return; running = false; setBoil(false); setMood('calm'); botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
+$('btnMenu').onclick = () => { running = false; $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'level'; if (bestStars(level.id) >= 1) level = currentLevel(); selectLevel(level); };
 $('loading').classList.add('hidden'); $('btnStart').classList.remove('hidden');
 
 // chạm là đi

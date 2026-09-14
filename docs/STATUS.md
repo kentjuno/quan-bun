@@ -1,8 +1,9 @@
-# KJ's Choices (mã nguồn `quan-bun`) — trạng thái (2026-09-14, bản 0.7.0)
+# KJ's Choices (mã nguồn `quan-bun`) — trạng thái (2026-09-14, bản 0.8.0)
 
 ## Hướng mới (Kent duyệt 14/09) — xem `docs/GAME-DESIGN.md`, `art/ART-BIBLE.md`
 Kent: "làm hết mà game vẫn nhàm chán, người ta kêu AI slop" → phân tích: thiếu vòng chơi, thiếu lý do chơi tiếp, khách là đồng hồ, không có juice, art mặc định. Quyết định: **game thật**, chế độ luyện = extra modes (tab Thêm). Tên quán **KJ's Choices**. Art: 3 mood board (A tiệm tối, B giấy cắt, C ký hoạ màu nước) → chốt **C** ("lạ, dễ cuốn hút"); thử 5 sprite kiểu C ở 48 px đọc được (`art/test-c/`).
 - 0.7.0: ngày ở quán 21 ngày (3 pha trưa/xế/chiều, seed), 6 khách quen tên quê + thoại (`src/data/customers.js` — Kent sửa thoại ở đây), menu một nút, kết ngày (sao rơi, tiền chạy, nhận xét khách quen, thẻ mở khoá), 5 nâng cấp bếp data-driven + trang trí tăng kiên nhẫn, nhạc theo pha + nồi sôi + sfx + banner + tiền bay + rung.
+- 0.8.0 (thay vòng chơi theo ngày): **8 world · 124 level** kiểu Overcooked theo `docs/PLAN-WORLDS.md` — L1 cực dễ, L4 đủ bước thật, 4 trục biến thiên (bố trí bếp / ràng buộc / sự kiện / mục tiêu), bản đồ world + lưới level, nâng cấp mở theo tổng sao. Công thức gốc không đụng: chế độ **Thêm** vẫn đủ bước.
 - **Còn lại theo GAME-DESIGN §6**: (5) art C — gen icon 3 món đầu theo bible → nhân vật → nền bếp → khách ký hoạ; chữ viết tay của Kent cho bảng hiệu/tên món (đang chờ Kent chụp); (6) Kent chơi thử 3 ngày đầu trên điện thoại, ghi 3 điều chán nhất. Chưa làm: animation cầm/đặt thật, giọng người thật "cảm ơn nghe".
 - Flow gen ảnh hiện dùng **flowkit gốc** (extension của Kent bật): `POST 127.0.0.1:8100/api/flow/generate-image {prompt, project_id:"c20ed4c0-…", aspect_ratio:"IMAGE_ASPECT_RATIO_SQUARE"}` → `media[0].image.generatedImage.fifeUrl` (KHÔNG còn lớp `data`). Mỗi ảnh ~1–2 phút; chạy trong thread Blender, ghi json trạng thái.
 

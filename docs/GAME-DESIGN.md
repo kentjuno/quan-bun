@@ -6,7 +6,9 @@ Nguyên tắc không đổi: **mọi công thức, thứ tự, định lượng 
 
 ---
 
-## 1. Vòng chơi = một ngày ở quán
+> **Cập nhật 14/09 (0.8.0)**: vòng chơi theo NGÀY ở §1/§5 đã được thay bằng **world/level** — xem `docs/PLAN-WORLDS.md` (Kent: ngày đầu quá nhiều bước, người mới bị ngộp). Các mục 2, 3, 4 (nâng cấp, khách quen, juice) vẫn đúng và đang chạy; "ngày" ở dưới đọc là "level", nhịp 3 pha giờ là tuỳ chọn `lunch` của level đông khách.
+
+## 1. Vòng chơi = một ngày ở quán (ĐÃ THAY — xem PLAN-WORLDS)
 
 Mở game chỉ có một nút lớn **Mở quán**. Một ngày gồm 5 pha, mỗi pha có việc để làm và cảm giác riêng:
 
@@ -75,7 +77,7 @@ Khách lạ không tên, ký hoạ ngẫu nhiên từ bộ 8–10 nét, gọi m�
 - Hiệu ứng: hơi nước từ nồi và tô nóng, số tiền bay lên khi giao, tô rung nhẹ khi khách sắp hết kiên nhẫn, rung máy 1 nhịp khi giao đúng.
 - Bảng hiệu **KJ's Choices** viết tay treo trước cửa, thấy ngay khi vào game.
 
-## 5. Độ khó có nhịp (curve)
+## 5. Độ khó có nhịp (ĐÃ THAY bằng bậc thang world/level — xem PLAN-WORLDS §2)
 
 | Ngày | Mở | Cơ chế mới |
 |---|---|---|

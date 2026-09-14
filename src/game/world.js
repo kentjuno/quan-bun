@@ -1,7 +1,8 @@
 // Trạng thái game thuần (không Three.js): bếp, đầu bếp, trạm, tô, khách, ca.
 // Render (view.js) chỉ đọc state này và vẽ. Test được không cần trình duyệt.
-import { CHEF, RULES, CUSTOMERS, KITCHEN, POT, SOUP, makeDayArrivals } from '../config.js';
-import { REGULARS, regularsFor, lineFor } from '../data/customers.js';
+import { CHEF, RULES, CUSTOMERS, KITCHEN, POT, SOUP } from '../config.js';
+import { REGULARS, lineFor } from '../data/customers.js';
+import { makeLevelArrivals } from './levels.js';
 import { recipeFor, nextStep, label, D, soupRecipeFor, actionTime, tokenMatches } from './recipes.js';
 import { NavGrid } from './nav.js';
 
@@ -11,11 +12,22 @@ export class World {
   /** `mods`: thông số bếp sau nâng cấp (config.modsFor) — null = mặc định trong bố trí bếp. */
   constructor(shift, events = {}, kitchen = KITCHEN, mods = null) {
     this.shift = shift; this.ev = events; this.kitchen = kitchen; this.mods = mods;
-    this.pot = { ...POT, bowlSlots: mods?.bowlSlots ?? POT.bowlSlots }; this.speed = CHEF.speed * (mods?.speedMult ?? 1);
-    // ngày ở quán: khách sinh theo pha + khách quen ghé (docs/GAME-DESIGN.md)
-    this.regulars = shift.day ? regularsFor(shift.day, shift.dishes).map((r) => r.id) : [];
-    if (shift.day && !shift.arrivals) this.shift = shift = { ...shift, arrivals: makeDayArrivals(shift.day, shift.dishes, shift.newDish, this.regulars, shift.seconds) };
-    this.recipes = Object.fromEntries(shift.dishes.map((d) => [d, recipeFor(d)]));
+    // ---- bậc thang level (docs/PLAN-WORLDS.md): cờ rút gọn + ràng buộc + sự kiện + mục tiêu ----
+    const sim = shift.simplify || null; const con = shift.constraints || null;
+    this.sim = sim; this.con = con;
+    this.pot = { ...POT, bowlSlots: mods?.bowlSlots ?? POT.bowlSlots, noodleSlots: con?.potSlots ?? POT.noodleSlots };
+    this.handCap = con?.handCapacity ?? CHEF.handCapacity;
+    this.stackMax = con?.brothCap ?? SOUP.stackMax;
+    this.noStack = !!con?.noStack;                  // lò xong KHÔNG tự đẩy sang kệ nước
+    this.events = (shift.events || []).map((e) => ({ ...e, fired: false }));
+    this.goal = shift.goal || null; this.streak = 0; this.bestStreak = 0; this.clearedAt = null;
+    this.speed = CHEF.speed * (mods?.speedMult ?? 1);
+    // khách quen ghé level này (src/data/customers.js)
+    this.regulars = shift.regulars || [];
+    if (shift.world && !shift.arrivals) this.shift = shift = { ...shift, arrivals: makeLevelArrivals(shift) };
+    this.recipes = Object.fromEntries(shift.dishes.map((d) => [d, recipeFor(d, sim)]));
+    // bản tập bỏ bước: lấy item nào trên kệ thì nhận thẳng token kết quả (vd "chả cá" → "chả cá đã cắt")
+    this.shelfSubs = Object.assign({}, ...Object.values(this.recipes).map((r) => r.shelfSubs || {}));
     // trạm có `dishes` chỉ xuất hiện khi ca có món đó (bếp lớn dần theo ca)
     // kệ chỉ bày nguyên liệu các món trong ca (+ `alwaysShow` để có thứ gây nhiễu) → một kệ chung cho cả thịt lẫn rau như bếp thật
     const used = new Set(Object.values(this.recipes).flatMap((r) => r.shelfItems));
@@ -28,6 +40,8 @@ export class World {
     this.soups = Object.fromEntries(shift.dishes.map((d) => [d, soupRecipeFor(d)]).filter(([, v]) => v));
     this.chef = { x: kitchen.chefStart.x, z: kitchen.chefStart.z, hand: [], queue: [], busy: 0, busyLabel: '', target: null, facing: 0 };
     for (const s of this.stations) if (s.type === 'burner') s.ready = [];   // kệ nước: các phần nước lèo đã đun xong (nhiều loại, stack)
+    // bản tập `soupReady`: nước lèo (hoặc cháo) đã nấu sẵn, để sẵn trên kệ nước — level sau mới học nấu
+    if (sim?.soupReady) { const b = this.stations.find((x) => x.type === 'burner'); if (b) for (const r of Object.values(this.soups)) for (let i = 0; i < (sim.soupReady === true ? 2 : sim.soupReady); i++) b.ready.push({ name: r.name, brothAction: r.brothAction, output: r.output, left: 0, total: 1, servings: SOUP.servings, items: r.items }); }
     this.customers = []; this.seats = this.stations.filter((s) => s.type === 'seat').map((s) => ({ station: s, customer: null }));
     this.time = 0; this.money = 0; this.tips = 0; this.served = 0; this.left = 0; this.mistakes = 0; this.state = 'running';
     this.prep = shift.prep ?? RULES.prepSeconds;
@@ -68,7 +82,7 @@ export class World {
     if (st.type === 'pot' && arg) { if (arg.startsWith('bowl')) return { station: st, slot: arg }; /* 'bowl' = chồng tô (tự chọn loại đang cần), 'bowl.soup-bowl' = đúng loại */ const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= POT.noodleSlots) return null; return { station: st, slot: i }; }   // 'pot:0..2' = rọ sợi cụ thể, 'pot:bowl' = chồng tô nóng
     if (st.type === 'prep') { if (!arg) return { station: st }; const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= st.slots.length) return null; return { station: st, slot: i }; }   // 'prep:0' = một thớt
     if (st.type === 'burner') { if (arg && arg.startsWith('ready')) return { station: st, slot: 'ready', want: arg.includes('.') ? arg.slice(6) : null }; const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= st.slots.length) return null; return { station: st, slot: i }; }   // 'burner:0' = một bếp lò · 'burner:ready' / 'burner:ready.<token>' = kệ nước đã đun
-    if (st.type === 'trash' && arg) { const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= CHEF.handCapacity) return null; return { station: st, slot: i }; }   // 'trash:0' = vứt riêng ô tay 0
+    if (st.type === 'trash' && arg) { const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= this.handCap) return null; return { station: st, slot: i }; }   // 'trash:0' = vứt riêng ô tay 0
     return { station: st };
   }
   /** Ghi lỗi với tag cụ thể (dùng cho phần Tiến độ sau này). */
@@ -83,6 +97,7 @@ export class World {
       return;
     }
     this.time += dt;
+    this.fireEvents();
     this.spawnCustomers();
     this.updateStations(dt);
     this.updateChef(dt);
@@ -124,7 +139,7 @@ export class World {
       const reg = a.regular ? REGULARS.find((r) => r.id === a.regular) : null; const type = CUSTOMERS[reg?.type || a.type] || CUSTOMERS.office;
       const dish = reg ? reg.dish : (a.dish || this.pickDish());
       const pat = (a.patience ?? type.patience) * (reg?.patienceMult ?? 1) * (this.mods?.patienceMult ?? 1);
-      const c = { id: `c${this.arrivalIdx}`, type: reg?.type || a.type, name: reg ? reg.name : type.name, regular: reg?.id || null, group: a.group || null, dish, patience: pat, maxPatience: pat, tipMult: reg?.tipMult ?? type.tipMult, seat, state: 'waiting', arrivedAt: this.time };
+      const c = { id: `c${this.arrivalIdx}`, type: reg?.type || a.type, name: reg ? reg.name : type.name, regular: reg?.id || null, group: a.group || null, vip: !!a.vip, dish, patience: pat, maxPatience: pat, tipMult: (reg?.tipMult ?? type.tipMult) * (a.vip ? 3 : 1), seat, state: 'waiting', arrivedAt: this.time };
       seat.customer = c; this.customers.push(c); this.arrivalIdx++;
       this.speak(c, 'sit');
       const orphan = this.stations.find((x) => x.type === 'counter').slots.find((b) => b && !b.customer && b.recipe.id === dish);
@@ -140,11 +155,11 @@ export class World {
   }
   updateStations(dt) {
     for (const s of this.stations) if (s.type === 'prep') for (const b of s.slots) { if (b && b.left > 0) { b.left -= dt; if (b.left <= 0) { b.left = 0; this.ev.onJobDone?.(s, b); } } }
-    for (const s of this.stations) if (s.type === 'burner') s.slots.forEach((b, i) => { if (b && b.left > 0) { b.left -= dt; if (b.left <= 0) { b.left = 0; this.ev.onJobDone?.(s, b); if (s.ready.length < SOUP.stackMax) { s.ready.push(b); s.slots[i] = null; this.toast(`${b.name} đã nóng — để sẵn trên kệ nước`); } else this.toast(`${b.name} đã nóng — kệ nước đầy, còn trên lò`); } } });
+    for (const s of this.stations) if (s.type === 'burner') s.slots.forEach((b, i) => { if (b && b.left > 0) { b.left -= dt; if (b.left <= 0) { b.left = 0; this.ev.onJobDone?.(s, b); if (!this.noStack && s.ready.length < this.stackMax) { s.ready.push(b); s.slots[i] = null; this.toast(`${b.name} đã nóng — để sẵn trên kệ nước`); } else this.toast(this.noStack ? `${b.name} đã nóng — lấy ra khỏi lò đi` : `${b.name} đã nóng — kệ nước đầy, còn trên lò`); } } });
     for (const s of this.stations) for (const j of s.jobs) {
       if (j.left > 0) { j.left -= dt; if (j.left <= 0) { j.left = 0; this.ev.onJobDone?.(s, j); } continue; }
       // sợi chín nằm trong nồi lâu quá → hư (tô thì để bao lâu cũng được)
-      if (s.type === 'pot' && j.kind === 'noodle' && /noodle/.test(j.action) && !j.taken && !j.spoiled) { /* chỉ sợi mới hư */ j.hold = (j.hold || 0) + dt; if (j.hold >= POT.noodleSpoilAfter) { j.spoiled = true; j.output = 'noodle-spoiled'; this.errors.push({ t: +this.time.toFixed(1), tag: `Sợi hư trong nồi: ${label(j.input)}`, waste: true }); this.ev.onSpoil?.(s, j); this.toast(`${label(j.input)} để lâu bị hư — lấy ra vứt`); } }
+      if (s.type === 'pot' && j.kind === 'noodle' && /noodle/.test(j.action) && !j.taken && !j.spoiled) { /* chỉ sợi mới hư */ j.hold = (j.hold || 0) + dt; if (!this.sim?.noSpoil && j.hold >= POT.noodleSpoilAfter) { j.spoiled = true; j.output = 'noodle-spoiled'; this.errors.push({ t: +this.time.toFixed(1), tag: `Sợi hư trong nồi: ${label(j.input)}`, waste: true }); this.ev.onSpoil?.(s, j); this.toast(`${label(j.input)} để lâu bị hư — lấy ra vứt`); } }
     }
   }
 
@@ -190,22 +205,26 @@ export class World {
   takeFromShelf(s, item) {
     const c = this.chef; c.target = null;
     if (item === null) { c.waiting = s.id; this.ev.onShelfOpen?.(s); return; }   // chế độ card: đứng lại, UI mở card
-    if (c.hand.length < CHEF.handCapacity) { c.hand.push(item); this.ev.onPick?.(item, s); return; }
+    if (c.hand.length < this.handCap) { c.hand.push(this.shelfToken(item)); this.ev.onPick?.(item, s); return; }
     const held = c.hand.indexOf(item);
     if (held >= 0) { c.hand.splice(held, 1); this.ev.onReturn?.(item, s); return this.toast(`Trả lại: ${label(item)}`); }
-    this.toast('Tay đầy (2 thứ) — bấm × ở ô tay để vứt');
+    this.toast(this.handCap > 1 ? 'Tay đầy (2 thứ) — bấm × ở ô tay để vứt' : 'Một tay thôi — bấm × ở ô tay để vứt');
   }
   /** Chế độ card: chọn xong trên card → lấy các thứ đã chọn (trong giới hạn tay) rồi đi tiếp. items=[] = đóng card không lấy. */
   pickFromShelf(items) {
     const c = this.chef; const s = this.stationById[c.waiting]; if (!s) return false;
-    for (const it of items) { if (!s.items.includes(it)) continue; if (c.hand.length >= CHEF.handCapacity) { this.toast('Tay đầy (2 thứ)'); break; } c.hand.push(it); this.ev.onPick?.(it, s); }
+    for (const it of items) { if (!s.items.includes(it)) continue; if (c.hand.length >= this.handCap) { this.toast(this.handCap > 1 ? 'Tay đầy (2 thứ)' : 'Một tay thôi'); break; } c.hand.push(this.shelfToken(it)); this.ev.onPick?.(it, s); }
     c.waiting = null; return true;
   }
+  /** Token nhận được khi lấy một item trên kệ (bản tập có thể phát thẳng token đã chế biến). */
+  shelfToken(item) { return this.shelfSubs?.[item] || item; }
   /** Item trên kệ tạo ra token này (qua chuỗi transforms) */
   sourceItem(r, tok) {
     if (D.items[tok]) return tok;
+    const fromShelf = (t) => Object.keys(r.shelfSubs || {}).find((k) => tokenMatches(t, r.shelfSubs[k]));   // bản tập: token này lấy thẳng trên kệ
     let cur = tok;
-    for (let g = 0; g < 6; g++) { const t = r.transforms.find((x) => tokenMatches(cur, x.output)); if (!t) break; cur = t.inputs[0].split('|')[0]; if (D.items[cur]) return cur; }
+    if (fromShelf(cur)) return fromShelf(cur);
+    for (let g = 0; g < 6; g++) { const t = r.transforms.find((x) => tokenMatches(cur, x.output)); if (!t) break; cur = t.inputs[0].split('|')[0]; if (D.items[cur]) return cur; if (fromShelf(cur)) return fromShelf(cur); }
     return null;
   }
 
@@ -238,13 +257,13 @@ export class World {
     const took = this.collectDone(s, slot);
     if (took) return;
     // 3) không thả, không lấy → giải thích
-    if (slot !== undefined) { const isBowl = typeof slot === 'string'; const j = s.jobs.find((x) => (isBowl ? x.kind === 'bowl' : x.kind === 'noodle' && x.slot === slot) && !x.taken); if (!j) return this.toast(isBowl ? 'Chưa có tô nào trong nồi' : 'Rọ trống'); if (j.left > 0) return this.toast(`${D.actions[j.action]?.name}: còn ${j.left.toFixed(0)} s`); if (c.hand.length >= CHEF.handCapacity) return this.toast('Tay đầy — không lấy được'); }
+    if (slot !== undefined) { const isBowl = typeof slot === 'string'; const j = s.jobs.find((x) => (isBowl ? x.kind === 'bowl' : x.kind === 'noodle' && x.slot === slot) && !x.taken); if (!j) return this.toast(isBowl ? 'Chưa có tô nào trong nồi' : 'Rọ trống'); if (j.left > 0) return this.toast(`${D.actions[j.action]?.name}: còn ${j.left.toFixed(0)} s`); if (c.hand.length >= this.handCap) return this.toast('Tay đầy — không lấy được'); }
     if (c.hand.includes('noodle-spoiled')) return this.toast('Sợi hư — đem vứt thùng rác');
     if (c.hand.some((t) => typeof t === 'string' && (t.startsWith('broth:') || /-broth-ready$/.test(t)))) return this.toast('Nước lèo đem ra quầy ráp');
     const wrong = c.hand.find((tok) => typeof tok === 'string' && Object.values(this.recipes).some((r) => r.transforms.some((x) => x.inputs.some((req) => tokenMatches(req, tok)))));
     if (wrong) { const t = Object.values(this.recipes).flatMap((r) => r.transforms).find((x) => x.inputs.some((req) => tokenMatches(req, wrong))); const st = this.stations.find((x) => x.type === t.station); this.err(`Sai trạm: ${label(wrong)} phải đem tới ${st?.label || t.station}`); return; }
     const pending = s.jobs.find((j) => j.left > 0);
-    if (pending && c.hand.length >= CHEF.handCapacity) return this.toast('Tay đầy — không lấy được');
+    if (pending && c.hand.length >= this.handCap) return this.toast('Tay đầy — không lấy được');
     if (pending) return this.toast(`${D.actions[pending.action]?.name}: còn ${pending.left.toFixed(0)} s`);
     this.toast(c.hand.length ? `${s.label}: không làm gì với thứ đang cầm` : 'Tay trống');
   }
@@ -271,7 +290,7 @@ export class World {
     const c = this.chef; let n = 0;
     for (const j of list) {
       if (j.left > 0 || j.taken || !s.jobs.includes(j)) continue;
-      if (c.hand.length >= CHEF.handCapacity) { this.toast('Tay đầy — còn đồ trong ' + s.label); break; }
+      if (c.hand.length >= this.handCap) { this.toast('Tay đầy — còn đồ trong ' + s.label); break; }
       if (j.spoiled) this.wasted = (this.wasted || 0) + 1;
       j.taken = true; s.jobs.splice(s.jobs.indexOf(j), 1); c.hand.push(j.output); this.ev.onPick?.(j.output, s); n++;
     }
@@ -319,18 +338,18 @@ export class World {
     // 2) không thả gì → lấy kết quả đã xong (thớt chỉ định hoặc bất kỳ)
     const cand = slot !== undefined ? [s.slots[slot]] : s.slots;
     const done = cand.find((b) => b && b.left === 0);
-    if (done) { if (c.hand.length >= CHEF.handCapacity) return this.toast('Tay đầy — không lấy được'); this.takePrep(s, done); return; }
+    if (done) { if (c.hand.length >= this.handCap) return this.toast('Tay đầy — không lấy được'); this.takePrep(s, done); return; }
     const partial = cand.find((b) => b && b.left === null);
     if (partial) return this.toast(`${partial.name}: còn thiếu ${partial.tf.inputs.filter((_, i) => !partial.have[i]).map(label).join(', ')}`);
     const cooking = cand.find((b) => b && b.left > 0); if (cooking) return this.toast(`${cooking.name}: còn ${cooking.left.toFixed(0)} s`);
     this.toast(c.hand.length ? `${s.label}: không làm gì với thứ đang cầm` : `${s.label} trống`);
   }
   takePrep(s, b) { const i = s.slots.indexOf(b); s.slots[i] = null; this.chef.hand.push(b.output); this.ev.onPick?.(b.output, s); }
-  finishPrep(s) { for (const b of s.activeSlots || []) if (s.slots.includes(b) && b.left === 0) { if (this.chef.hand.length >= CHEF.handCapacity) { this.toast('Tay đầy — còn đồ trên ' + s.label); break; } this.takePrep(s, b); } s.activeSlots = null; }
+  finishPrep(s) { for (const b of s.activeSlots || []) if (s.slots.includes(b) && b.left === 0) { if (this.chef.hand.length >= this.handCap) { this.toast('Tay đầy — còn đồ trên ' + s.label); break; } this.takePrep(s, b); } s.activeSlots = null; }
   useStove(s) {
     const c = this.chef; const tok = `broth:${s.broth}`;
     if (c.hand.includes(tok)) { c.target = null; return this.toast(`Đang cầm ${label(tok).toLowerCase()} rồi`); }
-    if (c.hand.length >= CHEF.handCapacity) { c.target = null; return this.toast('Tay đầy'); }
+    if (c.hand.length >= this.handCap) { c.target = null; return this.toast('Tay đầy'); }
     c.busy = 0.6; c.busyLabel = `Múc ${label(tok).toLowerCase()}`; // arrive() → finishStove
   }
   finishStove(s) { const tok = `broth:${s.broth}`; this.chef.hand.push(tok); this.ev.onPick?.(tok, s); }
@@ -342,15 +361,16 @@ export class World {
     if (slot === 'ready') {   // kệ nước: lấy MỘT phần — đúng loại đang cần (tô đang ráp / khách chờ), hoặc loại chỉ định
       const pick = this.wantedBroth(s, want); c.target = null;
       if (pick < 0) return this.toast(s.ready.length ? 'Kệ nước không có loại đang cần' : 'Kệ nước trống — đun ở lò trước');
-      if (c.hand.length >= CHEF.handCapacity) return this.toast('Tay đầy');
+      if (c.hand.length >= this.handCap) return this.toast('Tay đầy');
       s.readyPick = pick; c.target = `${s.id}:ready`; c.busy = 0.6; c.busyLabel = `Lấy ${s.ready[pick].name.toLowerCase()}`;   // arrive() → finishBurner
       return;
     }
     const b = s.slots[slot];
+    if (!b && this.sim?.soupReady) { c.target = null; return this.toast('Hôm nay nước đã nấu sẵn — lấy ở kệ nước'); }   // bản tập: chưa học nấu
     if (!b) { c.target = null; c.waiting = `${s.id}:${slot}`; this.ev.onBurnerOpen?.(s, slot); return; }
     if (b.left > 0) { c.target = null; return this.toast(`${b.name}: còn ${b.left.toFixed(0)} s`); }
     // đã nóng mà còn trên lò (kệ nước đầy) → cầm luôn
-    if (c.hand.length >= CHEF.handCapacity) { c.target = null; return this.toast('Tay đầy'); }
+    if (c.hand.length >= this.handCap) { c.target = null; return this.toast('Tay đầy'); }
     c.busy = 0.6; c.busyLabel = `Múc ${b.name.toLowerCase()}`;   // arrive() → finishBurner
   }
   finishBurner(s, slot) {
@@ -395,7 +415,7 @@ export class World {
     let bowl = s.slots[slot];
     // a) tô xong → cầm lên
     if (bowl && bowl.done) {
-      if (c.hand.length >= CHEF.handCapacity) return this.toast('Tay đầy, không cầm tô được');
+      if (c.hand.length >= this.handCap) return this.toast('Tay đầy, không cầm tô được');
       s.slots[slot] = null; c.hand.push(bowl); this.ev.onPick?.('bowl', s); return;
     }
     const items = c.hand.filter((t) => typeof t === 'string');
@@ -464,6 +484,9 @@ export class World {
     const since = this.stats.bowls.length ? this.stats.bowls[this.stats.bowls.length - 1].servedAt : 0;
     const mistakes = this.errors.filter((e) => !e.waste && e.t > since).length;   // lỗi thứ tự kể từ tô trước
     this.stats.bowls.push({ dish: bowl.recipe.id, name: bowl.recipe.name, arrivedAt: +(cu.arrivedAt ?? 0).toFixed(1), servedAt: +this.time.toFixed(1), wait: +(this.time - (cu.arrivedAt ?? 0)).toFixed(1), mistakes, taps: this.stats.tapTimes.filter((t) => t > since).length });
+    // chuỗi tô đúng liên tiếp (mục tiêu `streak`) + mốc phục vụ hết khách (mục tiêu `before`)
+    if (mistakes) this.streak = 0; else { this.streak++; if (this.streak > this.bestStreak) this.bestStreak = this.streak; }
+    if (!this.customers.some((x) => x.state === 'waiting' && x !== cu) && this.arrivalIdx >= (this.shift.arrivals?.length || 0)) this.clearedAt = this.time;
     cu.state = 'served'; cu.servedAt = this.time; this.ev.onServe?.(cu, price, tip); this.speak(cu, 'good'); if (!cu.linger) cu.seat.customer = null;   // có thoại → ngồi thêm ~2.6 s rồi mới trả ghế
   }
 
@@ -486,10 +509,47 @@ export class World {
     this.state = 'over';
     const t = this.shift.moneyTargets; let stars = 0;
     for (let i = 0; i < 3; i++) if (this.money >= t[i] && this.left <= RULES.leaveLimitFor[i]) stars = i + 1;
+    stars = this.starsForGoal(stars);
     const regulars = this.customers.filter((c) => c.regular).map((c) => ({ id: c.regular, name: c.name, served: c.state === 'served' }));
-    this.result = { money: this.money, tips: this.tips, served: this.served, left: this.left, mistakes: this.mistakes, wasted: this.wasted || 0, errors: this.errors, stars, regulars, day: this.shift.day || null, stats: { ...this.stats, idle: +this.stats.idle.toFixed(1), time: +this.time.toFixed(1) } };
+    this.result = { money: this.money, tips: this.tips, served: this.served, left: this.left, mistakes: this.mistakes, wasted: this.wasted || 0, errors: this.errors, stars, regulars,
+      level: this.shift.world ? this.shift.id : null, goal: this.goal, bestStreak: this.bestStreak, clearedAt: this.clearedAt, stats: { ...this.stats, idle: +this.stats.idle.toFixed(1), time: +this.time.toFixed(1) } };
     this.ev.onFinish?.(this.result);
   }
+  /**
+   * Mục tiêu riêng của level (docs/PLAN-WORLDS.md §2b·4). Không có `goal` → theo tiền + khách bỏ đi như cũ.
+   *  clean n   : n tô KHÔNG lỗi thứ tự · no-waste: không vứt/hư · streak n: chuỗi tô đúng liên tiếp · before s: xong hết khách trước giây s
+   */
+  starsForGoal(moneyStars) {
+    const g = this.goal; if (!g) return moneyStars;
+    const clean = this.stats.bowls.filter((b) => !b.mistakes).length;
+    const waste = this.errors.filter((e) => e.waste).length;
+    const st = (ok3, ok2, ok1) => (ok3 ? 3 : ok2 ? 2 : ok1 ? 1 : 0);
+    if (g.kind === 'clean') { const n = g.bowls; return st(clean >= n, clean >= Math.ceil(n * 0.75), clean >= Math.ceil(n * 0.5)); }
+    if (g.kind === 'no-waste') return Math.min(Math.max(moneyStars, 1), st(waste === 0, waste <= 1, waste <= 2));
+    if (g.kind === 'streak') { const n = g.n; return st(this.bestStreak >= n, this.bestStreak >= n - 1, this.bestStreak >= Math.max(1, n - 2)); }
+    if (g.kind === 'before') { const c = this.clearedAt; if (c == null || this.left) return st(false, false, this.served > 0 && !this.left); return st(c <= g.seconds, c <= g.seconds * 1.15, true); }
+    return moneyStars;
+  }
+  /** Sự kiện giữa level: đoàn khách · khách sộp · mưa · khách đổi ý. */
+  fireEvents() {
+    const f = this.time / this.shift.seconds;
+    for (const e of this.events) {
+      if (e.fired || f < (e.at ?? 0.5)) continue;
+      if (e.kind === 'change-order' && !(this.shift.dishes.length > 1 && this.customers.some((x) => x.state === 'waiting' && !x.regular))) continue;   // chờ có khách để đổi
+      e.fired = true;
+      if (e.kind === 'tour') { const t0 = this.time; for (let k = 0; k < (e.n || 4); k++) this.shift.arrivals.push({ t: t0 + k, type: 'tourist', patience: Math.round((this.shift.patience || 150) * 1.2), group: 'tour' }); this.sortPending(); this.ev.onEvent?.('tour', 'Đoàn khách tới!', `${e.n || 4} người vô một lượt`); }
+      else if (e.kind === 'vip') { const a = this.shift.arrivals[this.arrivalIdx]; if (a) { a.vip = true; a.patience = 60; } else { const cu = this.customers.find((x) => x.state === 'waiting'); if (cu) { cu.vip = true; cu.tipMult *= 3; } } this.ev.onEvent?.('vip', 'Khách sộp!', 'Tip gấp ba nhưng chờ được ít'); }
+      else if (e.kind === 'rain') { const cut = this.time + 40; const tail = this.shift.arrivals.slice(this.arrivalIdx); let k = 0; for (const a of tail) if (a.t < cut) { a.t = cut + (k++) * 2; a.patience = Math.round(a.patience * 1.1); } this.sortPending(); this.ev.onEvent?.('rain', 'Mưa rồi', 'Quán vắng một lúc — tranh thủ chuẩn bị'); }
+      else if (e.kind === 'change-order') {
+        const cu = this.shift.dishes.length > 1 ? this.customers.find((x) => x.state === 'waiting' && !x.regular) : null;
+        if (cu) { const other = this.shift.dishes.filter((d) => d !== cu.dish); const nd = other[Math.floor(this.time) % other.length];
+          const b = this.bowlFor(cu); if (b) b.customer = null;
+          cu.dish = nd; cu.changed = true; this.ev.onChangeOrder?.(cu); this.ev.onEvent?.('change-order', 'Khách đổi ý', `${cu.name} đổi sang ${this.recipes[nd]?.name || label(nd)}`); this.speak(cu, 'sit'); }
+      }
+    }
+  }
+  /** Sắp xếp lại các arrival chưa tới (sau khi sự kiện dời giờ). */
+  sortPending() { const head = this.shift.arrivals.slice(0, this.arrivalIdx); const tail = this.shift.arrivals.slice(this.arrivalIdx).sort((a, b) => a.t - b.t); this.shift.arrivals = [...head, ...tail]; }
   toast(msg) { this.ev.onToast?.(msg); this.log.push(msg); }
   /** Khách nói một câu (khách quen: thoại riêng; khách lạ: thoại chung). Chỉ chế độ có khách thật (không drill/par). */
   speak(cu, kind) { if (cu.type === 'drill' || cu.maxPatience >= 1e8 || !this.ev.onSpeak) return; const t = lineFor(cu, kind); if (!t) return; if (kind === 'good') cu.linger = 2.6; this.ev.onSpeak(cu, kind, t); }

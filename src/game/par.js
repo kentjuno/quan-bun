@@ -8,9 +8,10 @@ const cache = new Map();
  * @returns {{ seconds:number, taps:number, route:string[] }} route = các bước gộp theo chuyến ("Kệ tô: Tô phở", "Nồi: thả", …)
  */
 export function parFor(shift, kitchen, dishId) {
-  const key = `${kitchen.size.w}x${kitchen.size.d}:${shift.id}:${dishId}`;
+  const key = `${kitchen.size.w}x${kitchen.size.d}:${kitchen.layout || 'default'}:${shift.id}:${dishId}`;
   if (cache.has(key)) return cache.get(key);
-  const w = new World({ ...shift, survival: false, drill: false, prep: 0, seconds: 300, arrivals: [{ t: 0, type: 'tourist', dish: dishId, patience: 1e9 }] }, {}, kitchen);
+  // bot chạy đúng công thức của level (kể cả bản tập rút gọn) và đúng ràng buộc bếp; bỏ sự kiện/mục tiêu vì chỉ đo một tô
+  const w = new World({ ...shift, survival: false, drill: false, events: null, goal: null, challenge: null, prep: 0, seconds: 300, arrivals: [{ t: 0, type: 'tourist', dish: dishId, patience: 1e9 }] }, {}, kitchen);
   const route = []; let servedAt = null;
   w.ev.onServe = () => { servedAt = w.time; };
   for (let i = 0; i < 300 * 30 && servedAt === null; i++) {

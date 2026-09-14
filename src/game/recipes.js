@@ -52,15 +52,32 @@ function soupChainIds(stages) {
  * passive = bỏ vào rồi đi làm việc khác; active = đứng làm. `input` = inputs[0] (tương thích cũ).
  * Từ SIM_DATA: workflow sợi (gộp theo bếp thật) + từng extraStage (giữ nguyên từng bước để nhớ).
  */
-export function transformsFor(dishId) {
+/**
+ * Cờ RÚT GỌN của một level (docs/PLAN-WORLDS.md §3). KHÔNG đụng sim-data: chỉ bỏ bớt bước khi DỰNG công thức cho level.
+ * Mọi chế độ khác (Luyện/Rush/Survival/Đố/Chém/Phản xạ) gọi recipeFor(d) không tham số → luôn đủ bước thật.
+ *   skipRinse  bún/phở chỉ trụng nóng một lần (bỏ xả lạnh + trụng lại)
+ *   hotBowl    tô ở kệ đã nóng sẵn (bỏ bước trụng tô)
+ *   skipPrep   bỏ các bước ở thớt (đồ đã cắt/pha sẵn) · skipFry bỏ bước chiên
+ *   toppings   danh sách topping được giữ lại trong chuỗi ráp (giữ nguyên thứ tự gốc)
+ *   maxSteps   chỉ lấy n bước ráp đầu
+ *   noSpoil / soupReady  do World xử lý (sợi không hư · nước lèo có sẵn trên kệ)
+ */
+const skippedStations = (sim) => [...(sim?.skipPrep ? ['prep'] : []), ...(sim?.skipFry ? ['fryer'] : [])];
+
+export function transformsFor(dishId, sim = null) { return buildTransforms(dishId, sim).out; }
+
+/** Dựng chuỗi chế biến + bảng thay thế token của các bước bị bỏ (bản tập). */
+function buildTransforms(dishId, sim) {
   const r = D.recipes[dishId];
   if (!r) throw new Error(`Không có món ${dishId} trong sim-data`);
-  const out = [];
+  const out = []; const subs = {};                       // subs: token của bước bị bỏ → token kết quả
   const push = (t) => { t.inputs = t.inputs.map(canon); t.output = canon(t.output); t.input = t.inputs[0]; t.time = actionTime(t.action); out.push(t); };
   if (r.base) {
     const wf = r.base.workflow || 'noodle-base';
     const noodle = r.base.noodle, bowl = r.base.bowl;
-    if (wf === 'noodle-base') {
+    if (wf === 'noodle-base' && sim?.skipRinse) {
+      push({ station: 'pot', inputs: [noodle], output: `noodle-drained:${noodle}`, action: 'blanch-noodle-once', passive: true });   // bản tập: trụng một lần là xong
+    } else if (wf === 'noodle-base') {
       // nóng → xả lạnh → nóng lại (+ để ráo). Ba lần ghé trạm, đúng bếp thật.
       push({ station: 'pot', inputs: [noodle], output: `noodle-blanched:${noodle}`, action: 'blanch-noodle', passive: true });
       push({ station: 'sink', inputs: [`noodle-blanched:${noodle}`], output: `noodle-rinsed:${noodle}`, action: 'cold-rinse', passive: false });
@@ -68,10 +85,12 @@ export function transformsFor(dishId) {
     } else if (wf === 'noodle-hot-only') {
       push({ station: 'pot', inputs: [noodle], output: `noodle-drained:${noodle}`, action: 'blanch-noodle-once', passive: true });
     } else throw new Error(`workflow lạ: ${wf}`);
-    push({ station: 'pot', inputs: [bowl], output: `bowl-hot:${bowl}`, action: 'blanch-bowl', passive: true });   // tô nằm trong nồi nóng, trữ được
+    if (sim?.hotBowl) subs[bowl] = `bowl-hot:${bowl}`;   // tô ở kệ đã nóng sẵn
+    else push({ station: 'pot', inputs: [bowl], output: `bowl-hot:${bowl}`, action: 'blanch-bowl', passive: true });   // tô nằm trong nồi nóng, trữ được
   }
   const stages = (r.extraStages || []).filter((s) => s.kind === 'action' && D.actions[s.action]);
   const soupIds = soupChainIds(stages);
+  const skipSt = [...(sim?.skipPrep ? ['prep'] : []), ...(sim?.skipFry ? ['fryer'] : [])];
   for (const st of stages) {
     if (soupIds.has(st.id) || GLUE_IN.has(st.action) || GLUE_OUT.has(st.action)) continue;
     // inputs: item giữ nguyên; token do bước "glue" tạo → thay bằng item của bước glue; bỏ dụng cụ
@@ -86,10 +105,16 @@ export function transformsFor(dishId) {
     const drain = stages.find((g) => GLUE_OUT.has(g.action) && (g.requires || []).includes(st.creates)); if (drain) output = drain.creates;
     if (st.action === 'blanch-bowl') output = `bowl-hot:${inputs[0]}`;   // tô nóng theo loại, như base
     const station = stationForAction(st.action); if (!station) continue;
+    // bản tập: bỏ bước → ghi lại "token vào → token ra" để bước trước (hoặc kệ) phát thẳng token kết quả
+    const skipRinseStage = sim?.skipRinse && /^(cold-rinse|reblanch)$/.test(st.action);
+    const skipBowlStage = sim?.hotBowl && st.action === 'blanch-bowl';
+    if (skipSt.includes(station) || skipRinseStage || skipBowlStage) { const src = canon(inputs.find((i) => D.items[i]) ?? inputs[0]); if (src) subs[src] = canon(output); continue; }
     push({ station, inputs, output, action: st.action, passive: !!D.actions[st.action]?.passive || st.action === 'blanch-bowl' });
   }
-  return out;
+  return { out, subs };
 }
+/** Nối chuỗi thay thế: a→b, b→c ⇒ a→c (chả giò: chiên rồi cắt, bỏ cả hai thì kệ phát thẳng token cuối). */
+function chase(subs, tok) { let cur = tok; for (let g = 0; g < 6 && subs[cur] && subs[cur] !== cur; g++) cur = subs[cur]; return cur; }
 
 /** Trạm theo hành động. pot: trụng/ủ ấm · sink: xả · microwave · prep (thớt/bàn soạn): cắt, đập, làm chén, lót mẹt, múc cháo… */
 function stationForAction(actionId) {
@@ -103,7 +128,7 @@ function stationForAction(actionId) {
 }
 
 /** Chuỗi ráp cho game: base-ready → [tô nóng, sợi ráo]; @pour-X → token nước lèo (nồi lò: output của heat-*; phở: broth:pour-pho-broth); bỏ @finish. */
-export function assemblyFor(dishId) {
+export function assemblyFor(dishId, sim = null) {
   const r = D.recipes[dishId]; const soup = soupRecipeFor(dishId);
   const steps = [];
   for (const tok of r.assembly) {
@@ -112,19 +137,40 @@ export function assemblyFor(dishId) {
     else if (tok.startsWith('@')) steps.push(soup ? soup.output : 'broth:' + tok.slice(1));
     else steps.push(canon(tok));
   }
-  return steps;
+  if (!sim) return steps;
+  let out = steps;
+  // toppings: chỉ giữ các nguyên liệu "rời" có trong danh sách (tô, sợi, nước, token đã chế biến luôn được giữ)
+  if (sim.toppings) out = out.filter((t) => !D.items[t] || sim.toppings.includes(t));
+  if (sim.maxSteps) out = out.slice(0, sim.maxSteps);
+  return out;
 }
 
-export function recipeFor(dishId) {
+export function recipeFor(dishId, sim = null) {
   const r = D.recipes[dishId];
-  const transforms = transformsFor(dishId);
-  const assembly = assemblyFor(dishId);
+  if (sim && !Object.keys(sim).length) sim = null;
+  const { out: transforms, subs } = buildTransforms(dishId, sim);
+  const assembly = assemblyFor(dishId, sim);
   const brothAction = (r.assembly.find((t) => t.startsWith('@') && t !== '@finish') || '').slice(1) || null;
   const items = (toks) => toks.flatMap((t) => t.includes('|') ? t.split('|') : [t]).filter((t) => D.items[t]);
-  return { id: dishId, name: r.name, price: PRICES[dishId] ?? 40, transforms, assembly, brothAction,
+  // bản tập bỏ bước: token kết quả "dời lên" bước còn lại phía trước (hoặc lên kệ)
+  for (const t of transforms) t.output = chase(subs, t.output);
+  // bản tập: bỏ bước có thể làm một bước khác thành thừa (vd bỏ bước múc cháo thì khỏi cần trụng tô) → cắt luôn cho gọn
+  if (sim) for (let g = 0; g < 5; g++) {
+    const needed = new Set([...assembly, ...transforms.flatMap((t) => t.inputs)]);
+    const dead = transforms.filter((t) => ![...needed].some((n) => tokenMatches(n, t.output)));
+    if (!dead.length) break; for (const d of dead) transforms.splice(transforms.indexOf(d), 1);
+  }
+  const made = new Set(transforms.map((t) => t.output));
+  const needTok = new Set([...assembly, ...transforms.flatMap((t) => t.inputs)]);
+  // kệ: item nguồn của bước bị bỏ (lấy ra là token kết quả, nếu token đó còn được dùng) + item thật trong chuỗi ráp / đầu vào các bước còn lại
+  const shelfSubs = {};
+  for (const k of Object.keys(subs)) { if (!D.items[k] || made.has(k)) continue; const v = chase(subs, k); if ([...needTok].some((t) => tokenMatches(t, v))) shelfSubs[k] = v; }
+  const need = [r.base?.noodle, sim?.hotBowl ? null : r.base?.bowl, ...items(assembly), ...items(transforms.flatMap((t) => t.inputs))].filter(Boolean);
+  const shelfItems = [...new Set([...Object.keys(shelfSubs), ...need])].filter((it) => !made.has(it));
+  return { id: dishId, name: r.name, price: PRICES[dishId] ?? 40, transforms, assembly, brothAction, simplify: sim || null, shelfSubs,
     noodle: r.base?.noodle, bowl: r.base?.bowl, opener: assembly[0], menuCode: r.menuCode || null,
     /** Nguyên liệu người chơi phải lấy từ kệ (item id) */
-    shelfItems: [...new Set([r.base?.noodle, r.base?.bowl, ...items(assembly), ...items(transforms.flatMap((t) => t.inputs))].filter(Boolean))] };
+    shelfItems };
 }
 
 /**

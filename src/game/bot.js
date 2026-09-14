@@ -23,7 +23,7 @@ export function botDecide(w) {
   if (c.hand.includes('noodle-spoiled')) return `trash:${c.hand.indexOf('noodle-spoiled')}`;   // vứt riêng sợi hư, giữ thứ kia
   const pot = w.stations.find((s) => s.type === 'pot');
   const spoiled = pot.jobs.find((j) => j.spoiled && !j.taken);
-  if (spoiled && c.hand.length < 2) return `pot:${spoiled.slot}`;
+  if (spoiled && c.hand.length < w.handCap) return `pot:${spoiled.slot}`;
   const doneSlot = counter.slots.findIndex((b) => b && b.done);
   if (doneSlot >= 0) return `${counter.id}:${doneSlot}`;
 
@@ -46,7 +46,7 @@ export function botDecide(w) {
   for (const { bowl } of cands) for (const tok of bowl.recipe.assembly.slice(bowl.placed.length)) addUseful(bowl.recipe, tok, 0);
   const isUseful = (h) => [...useful].some((u) => tokenMatches(u, h));
   // (kệ chỉ nhận trả khi tay đầy — tay còn chỗ thì chạm kệ là lấy thêm)
-  if (c.hand.length >= 2) for (const h of c.hand) {
+  if (c.hand.length >= w.handCap) for (const h of c.hand) {
     if (typeof h !== 'string' || isUseful(h)) continue;
     const shelf = w.stations.find((s) => s.type === 'shelf' && s.items.includes(h));
     if (shelf) return `${shelf.id}:${h}`;
@@ -62,7 +62,7 @@ export function botDecide(w) {
     if (st && w.freeSlot(st, w.jobKind(st, t)) >= 0) return st.id;
   }
   // tay đầy mà bước kế của tô ưu tiên không phải thứ đang cầm và không lấy được khi tay đầy → trả 1 thứ (thứ dùng muộn nhất) về kệ
-  if (c.hand.length >= 2 && cands.length) {
+  if (c.hand.length >= w.handCap && cands.length) {
     const need0 = nextStep(cands[0].bowl.recipe, cands[0].bowl.placed);
     if (need0 && !c.hand.some((h) => typeof h === 'string' && tokenMatches(need0, h)) && !howToGet(w, cands[0].bowl.recipe, need0, 'x')) {
       const asm = cands[0].bowl.recipe.assembly;
@@ -92,7 +92,7 @@ export function botDecide(w) {
       }
     }
     // sắp đi bỏ vào tô mà tay còn chỗ → gom thêm 1 thứ trên kệ cần ngay sau đó (cùng tô, hoặc tô khác) rồi đi một lượt
-    if (r.startsWith(counter.id + ':') && c.hand.length < 2) {
+    if (r.startsWith(counter.id + ':') && c.hand.length < w.handCap) {
       const extra = nextShelfNeed(w, cands, c.hand);
       if (extra) return extra;
     }
@@ -128,8 +128,8 @@ function prepBowls(w) {
   const c = w.chef; const pot = w.stations.find((s) => s.type === 'pot');
   const recipe = w.recipes[w.shift.dishes[0]]; const bowlItem = recipe.bowl; if (!bowlItem) return null;
   const inPot = pot.jobs.filter((j) => j.kind === 'bowl').length; const inHand = c.hand.filter((h) => h === bowlItem).length;
-  if (inHand && (inPot + inHand <= 2 || c.hand.length >= 2)) return 'pot';
-  if (inPot + inHand >= 2 || c.hand.length >= 2) return null;
+  if (inHand && (inPot + inHand <= 2 || c.hand.length >= w.handCap)) return 'pot';
+  if (inPot + inHand >= 2 || c.hand.length >= w.handCap) return null;
   const shelf = w.stations.find((s) => s.type === 'shelf' && s.items.includes(bowlItem));
   return shelf ? `${shelf.id}:${bowlItem}` : null;
 }
@@ -176,26 +176,29 @@ function howToGet(w, recipe, tok, slotId, depth = 0) {
   const c = w.chef; if (depth > 8) return null;
   const inHand = (req) => c.hand.some((h) => typeof h === 'string' && tokenMatches(req, h));
   if (inHand(tok)) return slotId;
-  if (isBroth(tok)) return c.hand.length < 2 ? stoveFor(w, tok) : null;
+  if (isBroth(tok)) return c.hand.length < w.handCap ? stoveFor(w, tok) : null;
   if (tok.includes('|')) { for (const alt of tok.split('|')) { const r = howToGet(w, recipe, alt, slotId, depth + 1); if (r) return r; } return null; }   // requiresAny: thứ nào có thì lấy
   const shelf = w.stations.find((s) => s.type === 'shelf' && s.items.includes(tok));
-  if (shelf) return c.hand.length < 2 ? `${shelf.id}:${tok}` : null;
+  if (shelf) return c.hand.length < w.handCap ? `${shelf.id}:${tok}` : null;
+  // bản tập bỏ bước: token này lấy thẳng trên kệ qua item nguồn (recipe.shelfSubs)
+  const srcItem = Object.keys(recipe.shelfSubs || {}).find((k) => tokenMatches(tok, recipe.shelfSubs[k]));
+  if (srcItem) { const sh = w.stations.find((s) => s.type === 'shelf' && s.items.includes(srcItem)); if (sh) return c.hand.length < w.handCap ? `${sh.id}:${srcItem}` : null; }
   const t = recipe.transforms.find((x) => tokenMatches(tok, x.output));
   if (!t) return null;
   const st = w.stations.find((s) => s.type === t.station); if (!st) return null;
   if (st.type === 'prep') {   // thớt: gom đủ nguyên liệu (nhiều thứ) rồi làm
     const doneIdx = st.slots.findIndex((b) => b && b.tf.output === t.output && b.left === 0);
-    if (doneIdx >= 0) return c.hand.length < 2 ? `${st.id}:${doneIdx}` : null;
+    if (doneIdx >= 0) return c.hand.length < w.handCap ? `${st.id}:${doneIdx}` : null;
     if (st.slots.some((b) => b && b.tf.output === t.output && b.left > 0)) return null;   // đang làm → chờ
     const part = st.slots.find((b) => b && b.tf.output === t.output && b.left === null);
     const needIn = t.inputs.filter((req, i) => !(part && part.have[i]));
     const carrying = needIn.filter(inHand); const missing = needIn.filter((req) => !inHand(req));
-    if (carrying.length && (c.hand.length >= 2 || !missing.length)) return st.id;   // đem tới thớt
-    if (missing.length) { if (c.hand.length < 2) return howToGet(w, recipe, missing[0], slotId, depth + 1); return carrying.length ? st.id : null; }
+    if (carrying.length && (c.hand.length >= w.handCap || !missing.length)) return st.id;   // đem tới thớt
+    if (missing.length) { if (c.hand.length < w.handCap) return howToGet(w, recipe, missing[0], slotId, depth + 1); return carrying.length ? st.id : null; }
     return st.id;
   }
   const job = st.jobs.find((j) => tokenMatches(tok, j.output) && !j.taken);
-  if (job) { if (job.left > 0 || c.hand.length >= 2) return null; return st.type === 'pot' ? (job.kind === 'bowl' ? `pot:bowl.${job.input}` : `pot:${job.slot}`) : st.id; }   // xong thì lấy đúng rọ/tô (nếu tay còn chỗ), chưa thì chờ
+  if (job) { if (job.left > 0 || c.hand.length >= w.handCap) return null; return st.type === 'pot' ? (job.kind === 'bowl' ? `pot:bowl.${job.input}` : `pot:${job.slot}`) : st.id; }   // xong thì lấy đúng rọ/tô (nếu tay còn chỗ), chưa thì chờ
   if (inHand(t.inputs[0])) return w.freeSlot(st, w.jobKind(st, t)) >= 0 ? st.id : null;   // trạm đầy → chờ
   return howToGet(w, recipe, t.inputs[0], slotId, depth + 1);
 }

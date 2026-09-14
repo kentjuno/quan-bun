@@ -9,14 +9,16 @@ Tài liệu bàn giao cho model/agent thực hiện. Đọc hết trước khi s
 
 | Bước (mục 8) | Trạng thái | Ghi chú / commit |
 |---|---|---|
-| 1 worlds.js + levels.js + WORLDS + KITCHEN_VARIANTS | chưa | |
-| 1b ràng buộc / sự kiện / mục tiêu trong World | chưa | |
-| 2 recipeFor(simplify) + World cờ | chưa | |
-| 3 progress sao/mở khoá | chưa | |
-| 4 UI bản đồ + kết level + smoke | chưa | |
-| 5 xoá DAYS | chưa | |
-| 6 docs | chưa | |
-| 7 build/deploy/ảnh | chưa | |
+| 1 worlds.js + levels.js + WORLDS + KITCHEN_VARIANTS | ✅ xong 14/09 | 8 world · 124 level; 4 bố trí bếp; `makeLevelArrivals` seed theo id |
+| 1b ràng buộc / sự kiện / mục tiêu trong World | ✅ xong 14/09 | potSlots·handCapacity·brothCap·noStack; rain·vip·change-order·tour; clean·no-waste·streak·before |
+| 2 recipeFor(simplify) + World cờ | ✅ xong 14/09 | thêm `maxSteps`, `skipFry`; `recipe.shelfSubs` + `World.shelfToken`; snapshot 18 món không đổi |
+| 3 progress sao/mở khoá | ✅ xong 14/09 | worldStars/worldUnlocked/levelUnlocked/currentLevel; UPGRADES `unlockStars` |
+| 4 UI bản đồ + kết level + smoke | ✅ xong 14/09 | hàng world + lưới level + thẻ chi tiết; màn kết "Level N →"/"Sang world" |
+| 5 xoá DAYS | ✅ xong 14/09 | bỏ DAYS/makeDayArrivals/dayFor; days.test.js → customers.test.js |
+| 6 docs | ✅ xong 14/09 | CHANGELOG 0.8.0, STATUS, GAME-DESIGN §1/§5 ghi chú đã thay |
+| 7 build/deploy/ảnh | ✅ xong 14/09 | artifact + GitHub Pages, sw v3 |
+
+**Ghi thêm khi làm (so với bản kế hoạch)**: thêm trục `rule` (level bật một luật bếp mới, vd sợi để lâu hư) và `mix` (level đầu trộn chung các món đã mở) để mọi level từ L6 đều có "cái mới" thật; `tight` bỏ (4 bố trí là đủ, mỗi cái phải qua test nav); world một món 12 level, hai món 16, nhiều món 20.
 
 ## 0. Bối cảnh — đọc 5 phút
 

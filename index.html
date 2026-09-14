@@ -133,6 +133,23 @@
       .sign { font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; font-size: 34px; line-height: 1; color: var(--ink); margin: 0; letter-spacing: .5px; transform: rotate(-1.5deg); }
       .sign small { display: block; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: .55; margin-top: 4px; transform: none; font-family: inherit; }
       .daycard { min-height: 0; } .daycard .note { color: #b07a20; font-weight: 700; } .daycard .new { display: inline-block; background: var(--red); color: #fff; border-radius: 8px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
+      /* --- bản đồ world + lưới level --- */
+      .worlds { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: none; } .worlds::-webkit-scrollbar { display: none; }
+      .worlds .wd { flex: 0 0 auto; min-width: 74px; background: #fff; border: 3px solid #eadfcd; border-radius: 14px; padding: 7px 9px; text-align: center; cursor: pointer; }
+      .worlds .wd .ic { font-size: 22px; line-height: 1.1; } .worlds .wd b { display: block; font-size: 11.5px; line-height: 1.2; margin-top: 2px; } .worlds .wd small { display: block; font-size: 10px; color: var(--broth); font-weight: 700; }
+      .worlds .wd.on { border-color: var(--red); background: #fff3f1; } .worlds .wd.locked { opacity: .55; background: #f7f1e6; } .worlds .wd.locked small { color: #9a8b76; }
+      .lvgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 8px 0 10px; }
+      .lvgrid .lvb { position: relative; aspect-ratio: 1; border: 2.5px solid #eadfcd; border-radius: 12px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer; font-weight: 800; font-size: 15px; color: var(--ink); padding: 0; margin: 0; box-shadow: none; }
+      .lvgrid .lvb .st { font-size: 9px; letter-spacing: 1px; color: var(--broth); line-height: 1; height: 10px; }
+      .lvgrid .lvb.on { border-color: var(--red); background: #ffe9e5; }
+      .lvgrid .lvb.ch { border-color: var(--broth); } .lvgrid .lvb.ch::before { content: '⭐'; position: absolute; top: -7px; right: -5px; font-size: 11px; }
+      .lvgrid .lvb.done { background: #f3faf2; }
+      .lvgrid .lvb.locked { color: #b5a691; background: #f7f1e6; border-style: dashed; }
+      .lvgrid .lvb.next::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--red); border-radius: 15px; animation: nx 1.4s infinite; } @keyframes nx { 50% { opacity: .25; } }
+      .lvcard .whatsnew { font-weight: 800; color: var(--red); font-size: 13px; }
+      .lvcard .tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 2px; }
+      .lvcard .tag { font-size: 10.5px; font-weight: 700; background: #f3e9d8; border-radius: 8px; padding: 2px 7px; }
+      .lvcard .tag.train { background: #fff3d6; color: #8a6a20; } .lvcard .tag.goal { background: #e8f1ff; color: #24568a; } .lvcard .tag.new { background: #ffe9e5; color: var(--red); }
       .row.tight { gap: 6px; margin: 8px 0 0; } .row.tight button { flex: 1; }
       .upg .sh .lv { font-size: 10px; letter-spacing: 2px; color: var(--broth); } .upg .sh.max { border-color: var(--green); background: #eef8ec; } .upg .sh.locked { opacity: .55; }
       .money { font-size: 40px; font-weight: 800; color: #b07a20; margin: 4px 0; font-variant-numeric: tabular-nums; }
@@ -229,9 +246,9 @@
         <div class="tabs three"><button data-tab="day" class="on">🍜 Quán</button><button data-tab="shop">🔧 Nâng cấp <span id="ptsBadge" class="badge"></span></button><button data-tab="more">🎮 Thêm</button></div>
         <div id="loading">Đang tải…</div>
         <section id="tab-day" class="tab main">
-          <div class="carousel"><button class="arrow" id="lvPrev" aria-label="Ngày trước">‹</button>
-            <div class="lvcard daycard" id="lvCard"></div>
-            <button class="arrow" id="lvNext" aria-label="Ngày sau">›</button></div>
+          <div class="worlds" id="worldRow"></div>
+          <div class="lvgrid" id="lvGrid"></div>
+          <div class="lvcard daycard" id="lvCard"></div>
           <button id="btnStart" class="hidden">Mở quán</button>
           <button id="btnBot" class="ghost small">Xem bot làm mẫu</button>
         </section>
