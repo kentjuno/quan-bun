@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Quán Bún</title>
+    <title>KJ's Choices</title>
     <meta name="theme-color" content="#e84a3b" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Quán Bún" />
+    <meta name="apple-mobile-web-app-title" content="KJ's Choices" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27%23e8a33c%27/%3E%3C/svg%3E" />
     <style>
@@ -38,6 +38,9 @@
       .patience > div { height: 100%; background: var(--green); transition: width .2s linear; }
       .patience.warn > div { background: var(--broth); } .patience.angry > div { background: var(--red); }
       .bubble { pointer-events: none; position: relative; background: var(--paper); color: var(--ink); border-radius: 12px; padding: 4px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; box-shadow: 0 3px 8px rgba(0,0,0,.35); }
+      .bubble b { display: block; } .bubble i { display: none; font-style: italic; font-weight: 500; font-size: 11.5px; opacity: .85; max-width: 190px; white-space: normal; line-height: 1.2; }
+      .bubble.say i { display: block; } .bubble.say { animation: bpop .18s ease-out; } @keyframes bpop { from { transform: translateY(4px) scale(.96); } }
+      .bubble.regular { border: 2px solid var(--broth); }
       .bubble::after { content: ''; position: absolute; left: 50%; bottom: -6px; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--paper); border-bottom: 0; }
       .qnum { pointer-events: none; width: 24px; height: 24px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 800; font-size: 13px; display: grid; place-items: center; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
       .qnum.now { background: var(--red); }
@@ -126,6 +129,18 @@
       .shop .sh button { font-size: 12px; padding: 5px 9px; margin: 4px 0 0; } .shop .sh.owned { border-color: var(--green); background: #eef8ec; } .shop .sh button:disabled { opacity: .45; }
       details.more { margin-top: 10px; font-size: 12px; text-align: left; } details.more summary { text-align: center; opacity: .6; font-weight: 700; } details.more .how { margin: 8px auto 6px; font-size: 12.5px; }
       details.more .opt { justify-content: flex-start; flex-wrap: wrap; }
+      .tabs.three { grid-template-columns: repeat(3, 1fr); } .tabs.sub { background: transparent; padding: 0; margin: 0 0 8px; } .tabs.sub button { background: #f3ede0; opacity: .8; } .tabs.sub button.on { opacity: 1; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+      .sign { font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; font-size: 34px; line-height: 1; color: var(--ink); margin: 0; letter-spacing: .5px; transform: rotate(-1.5deg); }
+      .sign small { display: block; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: .55; margin-top: 4px; transform: none; font-family: inherit; }
+      .daycard { min-height: 0; } .daycard .note { color: #b07a20; font-weight: 700; } .daycard .new { display: inline-block; background: var(--red); color: #fff; border-radius: 8px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
+      .row.tight { gap: 6px; margin: 8px 0 0; } .row.tight button { flex: 1; }
+      .upg .sh .lv { font-size: 10px; letter-spacing: 2px; color: var(--broth); } .upg .sh.max { border-color: var(--green); background: #eef8ec; } .upg .sh.locked { opacity: .55; }
+      .money { font-size: 40px; font-weight: 800; color: #b07a20; margin: 4px 0; font-variant-numeric: tabular-nums; }
+      .recap { background: #fff8ec; border-left: 4px solid var(--broth); padding: 8px 12px; border-radius: 8px; font-style: italic; margin: 8px 0; font-size: 14px; }
+      .unlock { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; } .unlock .u { background: #fff; border: 2px dashed var(--red); border-radius: 12px; padding: 8px 12px; font-size: 13px; display: flex; gap: 8px; align-items: center; animation: upop .5s ease-out both; } .unlock .u .ic { font-size: 22px; } .unlock .u img { width: 34px; height: 34px; object-fit: contain; } .unlock .u small { display: block; opacity: .7; font-size: 11px; }
+      @keyframes upop { from { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.06); } }
+      .stars .s { display: inline-block; opacity: 0; transform: scale(2) translateY(-20px); } .stars .s.in { animation: sdrop .45s cubic-bezier(.2,.8,.3,1.2) forwards; } @keyframes sdrop { to { opacity: 1; transform: none; } }
+      details.rep { margin-top: 10px; font-size: 13px; } details.rep summary { font-weight: 700; opacity: .7; cursor: pointer; }
       .tabs.five { grid-template-columns: repeat(5, 1fr); } .tabs.five button { font-size: 11.5px; padding: 8px 2px; }
       .mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .mini .lvcard { min-height: 0; padding: 12px 8px; } .mini .lvcard b { font-size: 16px; } .mini button { margin: 8px 0 0; padding: 10px 12px; font-size: 14px; }
       .pz-panel { width: min(560px, 100%); text-align: left; padding: 16px; }
@@ -151,6 +166,13 @@
       /* hướng dẫn: lên trên (dưới hàng pill), nền mờ — hai ô tay ở đáy không che nữa */
       #hint { position: absolute; top: calc(max(10px, env(safe-area-inset-top)) + 58px); left: 50%; transform: translateX(-50%); max-width: min(560px, calc(100% - 24px)); text-align: center; font-size: 11.5px; line-height: 1.35; color: var(--paper); background: var(--shade); backdrop-filter: blur(4px); border-radius: 10px; padding: 6px 12px; box-sizing: border-box; }
       #hint:empty { display: none; }
+      #banner { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%) scale(.9); text-align: center; pointer-events: none; opacity: 0; transition: opacity .25s, transform .25s; }
+      #banner.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      #banner b { display: block; font-size: 34px; font-weight: 800; color: var(--paper); text-shadow: 0 2px 0 #7a2e1a, 0 4px 16px rgba(0,0,0,.6); letter-spacing: 1px; }
+      #banner small { display: block; margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--paper); background: var(--shade); border-radius: 10px; padding: 4px 12px; backdrop-filter: blur(4px); }
+      .float { pointer-events: none; font-weight: 800; font-size: 16px; color: #ffd166; text-shadow: 0 1px 0 #7a2e1a, 0 2px 8px rgba(0,0,0,.6); white-space: nowrap; animation: floatup 1.3s ease-out forwards; }
+      .float.tip { color: #9be15d; } .float.bad { color: #ff7b6b; font-size: 14px; }
+      @keyframes floatup { from { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateY(-46px); opacity: 0; } }
       #hint { transition: opacity .5s; } #hint.fade { opacity: 0; }
       .overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(20, 14, 12, .5); padding: 16px; }
       .panel { max-height: 94vh; overflow-y: auto; background: var(--paper); color: var(--ink); border-radius: 18px; padding: 24px 26px; text-align: center; width: min(400px, 100%); box-shadow: 0 18px 60px rgba(0,0,0,.55); border-top: 6px solid var(--red); }
@@ -197,43 +219,48 @@
       <button id="btnTakeover" class="takeover hidden">Tự chơi ▶</button>
       <button id="btnMute" class="mute">🔊</button>
       <div id="hands"><div class="slot" data-i="0"></div><div class="slot" data-i="1"></div></div>
+      <div id="banner"></div>
       <div id="hint">Kệ → lấy · nồi/bồn → làm · quầy ráp → bỏ đúng thứ tự · quầy giao</div>
     </div>
 
     <div id="menu" class="overlay">
       <div class="panel menu">
-        <div class="mhead"><h1>Quán Bún</h1><div class="pts" id="ptsPill" title="Điểm — mua trang trí ở tab Trang trí">⭐ <b id="ptsNow">0</b></div></div>
-        <div class="tabs five"><button data-tab="level" class="on">🍜 Level</button><button data-tab="survival">🔥 Survival</button><button data-tab="practice">🎯 Luyện</button><button data-tab="puzzle">🎮 Mini</button><button data-tab="decor">🏮 Quán <span id="ptsBadge" class="badge"></span></button></div>
+        <div class="mhead"><h1 class="sign">KJ's Choices<small>quán bún · phở</small></h1><div class="pts" id="ptsPill" title="Tiền quán — mua nâng cấp, trang trí">💰 <b id="ptsNow">0</b>k</div></div>
+        <div class="tabs three"><button data-tab="day" class="on">🍜 Quán</button><button data-tab="shop">🔧 Nâng cấp <span id="ptsBadge" class="badge"></span></button><button data-tab="more">🎮 Thêm</button></div>
         <div id="loading">Đang tải…</div>
-        <section id="tab-level" class="tab">
-          <div class="carousel"><button class="arrow" id="lvPrev" aria-label="Level trước">‹</button>
-            <div class="lvcard" id="lvCard"></div>
-            <button class="arrow" id="lvNext" aria-label="Level sau">›</button></div>
-          <div class="dots" id="lvDots"></div>
-          <button id="btnStart" class="hidden">Mở hàng</button>
+        <section id="tab-day" class="tab main">
+          <div class="carousel"><button class="arrow" id="lvPrev" aria-label="Ngày trước">‹</button>
+            <div class="lvcard daycard" id="lvCard"></div>
+            <button class="arrow" id="lvNext" aria-label="Ngày sau">›</button></div>
+          <button id="btnStart" class="hidden">Mở quán</button>
           <button id="btnBot" class="ghost small">Xem bot làm mẫu</button>
         </section>
-        <section id="tab-survival" class="tab hidden">
-          <div class="lvcard solo"><b>Đủ 16 món · khách tới mãi</b><small>Càng lâu khách càng dày · 3 khách bỏ đi là hết · điểm ×1.5</small><small id="survRecord"></small></div>
-          <button id="btnSurvival">Bắt đầu Survival</button>
-        </section>
-        <section id="tab-practice" class="tab hidden">
-          <div class="pickbar"><span id="pickCount"></span><button id="pickAll" class="ghost small">Hết</button><button id="pickWeak" class="ghost small">Chưa thuộc</button><button id="pickBun" class="ghost small">Chỉ món bún</button><button id="pickNone" class="ghost small">Bỏ</button></div>
-          <div class="dishpick" id="dishPick"></div>
-          <div class="row"><button id="btnDrill" class="secondary">Luyện 8 đơn</button><button id="btnRush" class="secondary">Rush 3 đơn</button></div>
-        </section>
-        <section id="tab-puzzle" class="tab hidden">
-          <div class="mini"><div class="lvcard solo"><b>🧩 Đố nhanh</b><small>9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary">Chơi</button></div>
-          <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div>
-          <div class="lvcard solo" style="grid-column:1/-1"><b>⚡ Phản xạ</b><small>Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục. Chữa bệnh quên món bún: chọn "Chỉ món bún" ở tab Luyện.</small><button id="btnReflex">Chơi</button></div></div>
-          <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — chọn món ở tab Luyện. Kết quả ghi vào Tiến độ nhớ món, +10 điểm/câu sạch.</div>
-        </section>
-        <section id="tab-decor" class="tab hidden">
+        <section id="tab-shop" class="tab main hidden">
+          <div class="shop upg" id="upgrades"></div>
+          <div class="sub" style="font-size:12px;margin:10px 0 4px;font-weight:700">Trang trí — mỗi món khách kiên nhẫn thêm 6 %</div>
           <div class="shop" id="shop"></div>
-          <div class="sub" style="font-size:11px;margin:8px 0 0">Điểm = tiền + tip mỗi lần chơi (survival ×1.5) + 60 mỗi sao mới · đã kiếm <span id="ptsTotal">0</span></div>
+          <div class="sub" style="font-size:11px;margin:8px 0 0">Tiền quán = tiền + tip mỗi ngày (+60 mỗi sao mới) · đã kiếm <span id="ptsTotal">0</span>k</div>
+        </section>
+        <section id="tab-more" class="tab main hidden">
+          <div class="tabs sub"><button data-sub="survival" class="on">🔥 Survival</button><button data-sub="practice">🎯 Luyện</button><button data-sub="puzzle">🧩 Mini</button></div>
+          <section id="tab-survival" class="tab sub">
+            <div class="lvcard solo"><b>Đủ menu · khách tới mãi</b><small>Càng lâu khách càng dày · 3 khách bỏ đi là hết · tiền ×1.5</small><small id="survRecord"></small></div>
+            <button id="btnSurvival">Bắt đầu Survival</button>
+          </section>
+          <section id="tab-practice" class="tab sub hidden">
+            <div class="pickbar"><span id="pickCount"></span><button id="pickAll" class="ghost small">Hết</button><button id="pickWeak" class="ghost small">Chưa thuộc</button><button id="pickBun" class="ghost small">Chỉ món bún</button><button id="pickNone" class="ghost small">Bỏ</button></div>
+            <div class="dishpick" id="dishPick"></div>
+            <div class="row"><button id="btnDrill" class="secondary">Luyện 8 đơn</button><button id="btnRush" class="secondary">Rush 3 đơn</button></div>
+          </section>
+          <section id="tab-puzzle" class="tab sub hidden">
+            <div class="mini"><div class="lvcard solo"><b>🧩 Đố nhanh</b><small>9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary">Chơi</button></div>
+            <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1"><b>⚡ Phản xạ</b><small>Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục.</small><button id="btnReflex">Chơi</button></div></div>
+            <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — chọn món ở Luyện. Kết quả ghi vào Tiến độ nhớ món, +10k/câu sạch.</div>
+          </section>
         </section>
         <details class="more"><summary>Cách chơi · tuỳ chọn</summary>
-          <div class="how"><b>Chạm là đi.</b> Kệ → lấy đồ · nồi trụng → thả sợi (3 rọ, để lâu hư) · sợi <b>nóng → xả lạnh → nóng</b> · quầy ráp → bỏ đúng thứ tự · múc nước · quầy giao. <b>≥1★ mở level kế</b>; tiền + tip → điểm mua trang trí quán.</div>
+          <div class="how"><b>Chạm là đi.</b> Tủ topping → lấy đồ · nồi trụng → thả sợi (3 rọ, để lâu hư) · sợi <b>nóng → xả lạnh → nóng</b> · quầy ráp → bỏ đúng thứ tự · múc nước · bưng ra bàn khách. <b>≥1★ mở ngày kế</b>; tiền + tip → mua nâng cấp bếp, trang trí.</div>
           <div class="opt"><label><input type="checkbox" id="optCard" /> Kệ kiểu card</label><label><input type="checkbox" id="optHideName" /> Ẩn tên trên card</label></div>
           <button id="btnResetMastery" class="ghost small">Xoá toàn bộ tiến độ</button>
         </details>
@@ -255,13 +282,16 @@
 
     <div id="result" class="overlay hidden">
       <div class="panel wide">
-        <h1 style="font-size:28px" id="rTitle">Hết ca</h1>
-        <div class="stars" id="stars">☆☆☆</div>
-        <div class="stat">Tiền: <b id="rMoney">0</b>k (tip <span id="rTips">0</span>k)</div>
-        <div class="stat">Phục vụ: <b id="rServed">0</b> · Bỏ đi: <b id="rLeft">0</b> · Sai thứ tự: <b id="rMistakes">0</b></div>
+        <h1 style="font-size:26px;margin:0" id="rTitle">Đóng cửa</h1>
         <div class="stat" id="rDishes" style="font-size:13px;opacity:.8"></div>
-        <div id="report"></div>
-        <div style="margin-top:14px"><div class="stat" id="rPoints" style="font-size:14px;color:#b07a20"></div><button id="btnNext">Level tiếp →</button><button id="btnRetry" class="secondary">Chơi lại</button><button id="btnMenu" class="secondary">Menu</button></div>
+        <div class="stars" id="stars">☆☆☆</div>
+        <div class="money"><span id="rMoney">0</span>k</div>
+        <div class="stat">Tip <b id="rTips">0</b>k · Phục vụ <b id="rServed">0</b> · Bỏ đi <b id="rLeft">0</b> · Sai thứ tự <b id="rMistakes">0</b></div>
+        <div class="recap hidden" id="rRecap"></div>
+        <div class="unlock" id="rUnlock"></div>
+        <div class="stat" id="rPoints" style="font-size:14px;color:#b07a20"></div>
+        <div style="margin-top:10px"><button id="btnNext">Sang ngày sau →</button><button id="btnRetry" class="secondary">Chơi lại</button><button id="btnMenu" class="secondary">Menu</button></div>
+        <details class="rep"><summary>Báo cáo bếp — để làm nhanh hơn</summary><div id="report"></div></details>
       </div>
     </div>
 

@@ -1,9 +1,9 @@
 // Tiến trình người chơi (localStorage): level đã mở, sao tốt nhất, điểm kiếm được, đồ trang trí đã mua, kỷ lục survival, món đang luyện.
 // Điểm = tiền + tip mỗi lần chơi (mọi chế độ) + thưởng sao lần đầu. Điểm dùng mua trang trí quán (DECOR trong config).
-import { DECOR } from '../config.js';
+import { DECOR, UPGRADES, DAYS, dayAfter, modsFor } from '../config.js';
 const KEY = 'qb.progress.v1';
 let data = load();
-function load() { try { return { stars: {}, points: 0, spent: 0, decor: [], survival: null, practice: null, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch { return { stars: {}, points: 0, spent: 0, decor: [], survival: null, practice: null }; } }
+function load() { try { return { stars: {}, points: 0, spent: 0, decor: [], upgrades: {}, survival: null, practice: null, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch { return { stars: {}, points: 0, spent: 0, decor: [], upgrades: {}, survival: null, practice: null }; } }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {} }
 export const STAR_BONUS = 60;   // điểm thưởng mỗi sao mới của một level
 
@@ -38,4 +38,18 @@ export function buyDecor(id) {
   data.decor.push(id); data.spent += d.cost; save(); return true;
 }
 export function setPractice(dishes) { data.practice = dishes; save(); }
-export function resetProgress() { data = { stars: {}, points: 0, spent: 0, decor: [], survival: null, practice: null }; save(); }
+export function resetProgress() { data = { stars: {}, points: 0, spent: 0, decor: [], upgrades: {}, survival: null, practice: null }; save(); }
+// ---- ngày ở quán ----
+/** Ngày thứ n (1-based): trong DAYS hoặc ngày vô tận sau đó. */
+export function dayFor(n) { return DAYS[n - 1] || dayAfter(n); }
+/** Ngày hiện tại = ngày đầu tiên chưa đạt ≥1★ (chơi lại ngày cũ vẫn được). */
+export function currentDay() { let n = 1; while (bestStars(dayFor(n).id) >= 1 && n < 999) n++; return n; }
+export function dayUnlocked(n) { if (n <= 1 || bestStars(dayFor(n - 1).id) >= 1) return true; if (typeof location !== 'undefined') { const q = new URLSearchParams(location.search); if (q.has('all') || q.has('day')) return true; } return false; }
+// ---- nâng cấp bếp ----
+export function upgradeLevel(id) { return data.upgrades?.[id] || 0; }
+export function upgradeCost(id) { const u = UPGRADES.find((x) => x.id === id); const lv = upgradeLevel(id); return u && lv < u.levels.length ? u.levels[lv] : null; }
+export function buyUpgrade(id) { const cost = upgradeCost(id); if (cost == null || pointsAvailable() < cost) return false; data.upgrades = { ...(data.upgrades || {}), [id]: upgradeLevel(id) + 1 }; data.spent += cost; save(); return true; }
+/** Thông số bếp của người chơi (nâng cấp + trang trí). */
+export function playerMods() { return modsFor(data.upgrades || {}, data.decor.length); }
+/** Thứ mới mở ở ngày n để hiện thẻ "Mở khoá" cuối ngày: món mới, khách quen mới, nâng cấp mới bán. */
+export function unlocksAt(n) { const d = dayFor(n); const out = []; if (d.newDish) out.push({ kind: 'dish', id: d.newDish }); for (const u of UPGRADES) if (u.unlockDay === n) out.push({ kind: 'upgrade', id: u.id }); return out; }

@@ -1,7 +1,7 @@
 {
- "name": "Quán Bún",
- "short_name": "Quán Bún",
- "description": "Luyện quy trình bếp Quán Bún — nhớ món, làm nhanh.",
+ "name": "KJ's Choices",
+ "short_name": "KJ's",
+ "description": "Quán bún phở KJ's Choices — mở quán từng ngày, nhớ món, làm nhanh.",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",

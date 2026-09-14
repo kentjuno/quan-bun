@@ -1,7 +1,7 @@
 {
   "name": "quan-bun",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.7.0",
   "type": "module",
   "description": "Quán Bún — game quản lý quán bún Việt, bếp 3D góc nhìn Overcooked, chạm-là-đi (Three.js + Vite)",
   "scripts": {

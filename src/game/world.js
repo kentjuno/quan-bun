@@ -1,22 +1,28 @@
 // Trạng thái game thuần (không Three.js): bếp, đầu bếp, trạm, tô, khách, ca.
 // Render (view.js) chỉ đọc state này và vẽ. Test được không cần trình duyệt.
-import { CHEF, RULES, CUSTOMERS, KITCHEN, POT, SOUP } from '../config.js';
+import { CHEF, RULES, CUSTOMERS, KITCHEN, POT, SOUP, makeDayArrivals } from '../config.js';
+import { REGULARS, regularsFor, lineFor } from '../data/customers.js';
 import { recipeFor, nextStep, label, D, soupRecipeFor, actionTime, tokenMatches } from './recipes.js';
 import { NavGrid } from './nav.js';
 
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 
 export class World {
-  constructor(shift, events = {}, kitchen = KITCHEN) {
-    this.shift = shift; this.ev = events; this.kitchen = kitchen;
+  /** `mods`: thông số bếp sau nâng cấp (config.modsFor) — null = mặc định trong bố trí bếp. */
+  constructor(shift, events = {}, kitchen = KITCHEN, mods = null) {
+    this.shift = shift; this.ev = events; this.kitchen = kitchen; this.mods = mods;
+    this.pot = { ...POT, bowlSlots: mods?.bowlSlots ?? POT.bowlSlots }; this.speed = CHEF.speed * (mods?.speedMult ?? 1);
+    // ngày ở quán: khách sinh theo pha + khách quen ghé (docs/GAME-DESIGN.md)
+    this.regulars = shift.day ? regularsFor(shift.day, shift.dishes).map((r) => r.id) : [];
+    if (shift.day && !shift.arrivals) this.shift = shift = { ...shift, arrivals: makeDayArrivals(shift.day, shift.dishes, shift.newDish, this.regulars, shift.seconds) };
     this.recipes = Object.fromEntries(shift.dishes.map((d) => [d, recipeFor(d)]));
     // trạm có `dishes` chỉ xuất hiện khi ca có món đó (bếp lớn dần theo ca)
     // kệ chỉ bày nguyên liệu các món trong ca (+ `alwaysShow` để có thứ gây nhiễu) → một kệ chung cho cả thịt lẫn rau như bếp thật
     const used = new Set(Object.values(this.recipes).flatMap((r) => r.shelfItems));
-    this.stations = kitchen.stations.filter((s) => !s.dishes || s.dishes.some((d) => shift.dishes.includes(d))).map((s) => ({
-      ...s, stand: standPoint(s, kitchen), jobs: [],
+    this.stations = kitchen.stations.filter((s) => !s.dishes || s.dishes.some((d) => shift.dishes.includes(d))).filter((s) => !s.extra || (mods?.seats ?? 3) >= s.extra).map((s) => ({
+      ...s, stand: standPoint(s, kitchen), jobs: [], burners: s.type === 'burner' ? (mods?.burners ?? s.burners ?? 2) : s.burners,
       items: s.type === 'shelf' ? s.items.filter((it) => used.has(it) || (s.alwaysShow || []).includes(it)) : s.items,
-      slots: s.type === 'counter' ? Array.from({ length: s.slots ?? RULES.bowlSlots }, () => null) : s.type === 'burner' ? Array.from({ length: s.burners ?? 2 }, () => null) : s.type === 'prep' ? Array.from({ length: s.boards ?? 2 }, () => null) : [],
+      slots: s.type === 'counter' ? Array.from({ length: s.slots ?? RULES.bowlSlots }, () => null) : s.type === 'burner' ? Array.from({ length: mods?.burners ?? s.burners ?? 2 }, () => null) : s.type === 'prep' ? Array.from({ length: s.boards ?? 2 }, () => null) : [],
     }));
     // nước lèo phải nấu trên lò (bếp thật: phở có sẵn; riêu/bún bò lấy nồi cho cốt → huyết → nước rồi đun)
     this.soups = Object.fromEntries(shift.dishes.map((d) => [d, soupRecipeFor(d)]).filter(([, v]) => v));
@@ -106,7 +112,7 @@ export class World {
       if (this.time >= this.nextArrival && this.seats.some((s) => !s.customer)) {
         const seat = this.seats.find((s) => !s.customer); const types = Object.keys(CUSTOMERS); const tk = types[Math.floor(Math.random() * types.length)]; const type = CUSTOMERS[tk]; const dish = this.pickDish();
         const c = { id: `c${this.arrivalIdx}`, type: tk, name: type.name, dish, patience: sh.patience, maxPatience: sh.patience, tipMult: type.tipMult, seat, state: 'waiting', arrivedAt: this.time };
-        seat.customer = c; this.customers.push(c); this.arrivalIdx++; this.ev.onCustomer?.(c, 'arrive');
+        seat.customer = c; this.customers.push(c); this.arrivalIdx++; this.ev.onCustomer?.(c, 'arrive'); this.speak(c, 'sit');
         this.nextArrival = this.time + Math.max(sh.minGap, sh.startGap - this.arrivalIdx * sh.gapDecay);
       }
       return;
@@ -115,10 +121,12 @@ export class World {
       const a = arr[this.arrivalIdx];
       const seat = this.seats.find((s) => !s.customer);
       if (!seat) break; // chờ ghế trống
-      const type = CUSTOMERS[a.type];
-      const dish = a.dish || this.pickDish();
-      const c = { id: `c${this.arrivalIdx}`, type: a.type, name: type.name, dish, patience: a.patience ?? type.patience, maxPatience: a.patience ?? type.patience, tipMult: type.tipMult, seat, state: 'waiting', arrivedAt: this.time };
+      const reg = a.regular ? REGULARS.find((r) => r.id === a.regular) : null; const type = CUSTOMERS[reg?.type || a.type] || CUSTOMERS.office;
+      const dish = reg ? reg.dish : (a.dish || this.pickDish());
+      const pat = (a.patience ?? type.patience) * (reg?.patienceMult ?? 1) * (this.mods?.patienceMult ?? 1);
+      const c = { id: `c${this.arrivalIdx}`, type: reg?.type || a.type, name: reg ? reg.name : type.name, regular: reg?.id || null, group: a.group || null, dish, patience: pat, maxPatience: pat, tipMult: reg?.tipMult ?? type.tipMult, seat, state: 'waiting', arrivedAt: this.time };
       seat.customer = c; this.customers.push(c); this.arrivalIdx++;
+      this.speak(c, 'sit');
       const orphan = this.stations.find((x) => x.type === 'counter').slots.find((b) => b && !b.customer && b.recipe.id === dish);
       if (orphan) orphan.customer = c;
       this.ev.onCustomer?.(c, 'arrive');
@@ -152,7 +160,7 @@ export class World {
     }
     const tg = this.resolve(c.target); if (!tg) { c.target = null; c.path = []; return; } const s = tg.station; const p = s.stand;
     // đi theo từng điểm trên đường; điểm cuối là điểm đứng của trạm
-    let remaining = CHEF.speed * dt;
+    let remaining = this.speed * dt;
     while (remaining > 0 && c.path.length) {
       const wp = c.path[0]; const d = dist(c, wp);
       if (d <= remaining) { c.x = wp.x; c.z = wp.z; remaining -= d; c.path.shift(); }
@@ -204,7 +212,7 @@ export class World {
   // ---------- nồi / bồn / bếp ----------
   /** Loại chỗ trong trạm cho một việc: nồi chia 'noodle' (3 rọ) / 'bowl' (5 tô); trạm khác 1 chỗ. */
   jobKind(s, t) { return s.type === 'pot' ? (t.action === 'blanch-bowl' ? 'bowl' : 'noodle') : 'any'; }   // rọ dùng chung cho sợi và topping (bò viên)
-  capacityFor(s, kind) { return s.type === 'pot' ? (kind === 'bowl' ? POT.bowlSlots : POT.noodleSlots) : 1; }
+  capacityFor(s, kind) { return s.type === 'pot' ? (kind === 'bowl' ? this.pot.bowlSlots : this.pot.noodleSlots) : 1; }
   /** Ô trống cho việc mới (sợi: 0..2 để vẽ/chạm từng rọ; tô: xếp chồng). */
   freeSlot(s, kind) { const used = new Set(s.jobs.filter((j) => j.kind === kind).map((j) => j.slot)); for (let i = 0; i < this.capacityFor(s, kind); i++) if (!used.has(i)) return i; return -1; }
   useStation(s, slot) {
@@ -375,7 +383,7 @@ export class World {
       return false;
     }
     c.waiting = null;
-    s.slots[slot] = { name: match.name, brothAction: match.brothAction, output: match.output, left: actionTime(match.heatAction), total: actionTime(match.heatAction), servings: SOUP.servings, items: match.items };
+    s.slots[slot] = { name: match.name, brothAction: match.brothAction, output: match.output, left: actionTime(match.heatAction) * (this.mods?.heatMult ?? 1), total: actionTime(match.heatAction) * (this.mods?.heatMult ?? 1), servings: SOUP.servings, items: match.items };
     this.ev.onJobStart?.(s, s.slots[slot]); this.toast(`${match.name}: đang đun (${match.items.map(label).join(' → ')})`);
     return true;
   }
@@ -456,13 +464,15 @@ export class World {
     const since = this.stats.bowls.length ? this.stats.bowls[this.stats.bowls.length - 1].servedAt : 0;
     const mistakes = this.errors.filter((e) => !e.waste && e.t > since).length;   // lỗi thứ tự kể từ tô trước
     this.stats.bowls.push({ dish: bowl.recipe.id, name: bowl.recipe.name, arrivedAt: +(cu.arrivedAt ?? 0).toFixed(1), servedAt: +this.time.toFixed(1), wait: +(this.time - (cu.arrivedAt ?? 0)).toFixed(1), mistakes, taps: this.stats.tapTimes.filter((t) => t > since).length });
-    cu.state = 'served'; cu.seat.customer = null; this.ev.onServe?.(cu, price, tip);
+    cu.state = 'served'; cu.servedAt = this.time; this.ev.onServe?.(cu, price, tip); this.speak(cu, 'good'); if (!cu.linger) cu.seat.customer = null;   // có thoại → ngồi thêm ~2.6 s rồi mới trả ghế
   }
 
   updateCustomers(dt) {
     for (const cu of this.customers) {
+      if (cu.state === 'served' && cu.seat.customer === cu && this.time - cu.servedAt >= (cu.linger || 0)) cu.seat.customer = null;
       if (cu.state !== 'waiting') continue;
       cu.patience -= dt;
+      if (!cu.saidWait && cu.patience < cu.maxPatience * 0.45 && cu.maxPatience < 1e8) { cu.saidWait = true; this.speak(cu, 'wait'); }
       if (cu.patience <= 0) {
         cu.state = 'left'; cu.seat.customer = null; this.left++;
         // tô đang làm cho khách này KHÔNG bị dọn — như bếp thật, tô vẫn ở đó và sẽ giao cho khách sau gọi cùng món
@@ -476,10 +486,13 @@ export class World {
     this.state = 'over';
     const t = this.shift.moneyTargets; let stars = 0;
     for (let i = 0; i < 3; i++) if (this.money >= t[i] && this.left <= RULES.leaveLimitFor[i]) stars = i + 1;
-    this.result = { money: this.money, tips: this.tips, served: this.served, left: this.left, mistakes: this.mistakes, wasted: this.wasted || 0, errors: this.errors, stars, stats: { ...this.stats, idle: +this.stats.idle.toFixed(1), time: +this.time.toFixed(1) } };
+    const regulars = this.customers.filter((c) => c.regular).map((c) => ({ id: c.regular, name: c.name, served: c.state === 'served' }));
+    this.result = { money: this.money, tips: this.tips, served: this.served, left: this.left, mistakes: this.mistakes, wasted: this.wasted || 0, errors: this.errors, stars, regulars, day: this.shift.day || null, stats: { ...this.stats, idle: +this.stats.idle.toFixed(1), time: +this.time.toFixed(1) } };
     this.ev.onFinish?.(this.result);
   }
   toast(msg) { this.ev.onToast?.(msg); this.log.push(msg); }
+  /** Khách nói một câu (khách quen: thoại riêng; khách lạ: thoại chung). Chỉ chế độ có khách thật (không drill/par). */
+  speak(cu, kind) { if (cu.type === 'drill' || cu.maxPatience >= 1e8 || !this.ev.onSpeak) return; const t = lineFor(cu, kind); if (!t) return; if (kind === 'good') cu.linger = 2.6; this.ev.onSpeak(cu, kind, t); }
 }
 
 /** Điểm đứng trước trạm: phía +z (về phía khách) cho hàng trên, phía -z cho hàng dưới. */

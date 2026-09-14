@@ -132,7 +132,7 @@ export class View {
     if (has('cay-canh')) { g.add(plant(-(w / 2 + 0.35), d / 2 + 0.25)); g.add(plant(w / 2 + 0.35, d / 2 + 0.25)); }
     if (has('hoa-mai')) { g.add(plant(-(w / 2 + 0.35), d / 2 - 1.1, 0x3d7a2e, true)); }
     if (has('den-long')) { const n = Math.max(3, Math.floor(w / 2)); for (let i = 0; i < n; i++) { const x = -w / 2 + (i + 0.5) * (w / n); const l = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 8), std(0xe8452b, { emissive: 0xff5a2a, emissiveIntensity: 0.6 })); l.scale.y = 1.25; l.position.set(x, 2.15, -d / 2 + 0.25); g.add(l); const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.06, 8), std(0xf4c542)); cap.position.set(x, 2.38, -d / 2 + 0.25); g.add(cap); const tas = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.03, 0.2, 6), std(0xf4c542)); tas.position.set(x, 1.85, -d / 2 + 0.25); g.add(tas); } }
-    if (has('bang-hieu')) { const b = new THREE.Mesh(new THREE.BoxGeometry(Math.min(3.2, w * 0.45), 0.6, 0.08), std(0x7a2e1a)); b.position.set(0, 1.95, -d / 2 - 0.02); b.castShadow = true; g.add(b); const t = lbl('QUÁN BÚN', 'lbl sign'); t.position.set(0, 1.95, -d / 2 + 0.05); g.add(t); }
+    if (has('bang-hieu')) { const b = new THREE.Mesh(new THREE.BoxGeometry(Math.min(3.2, w * 0.45), 0.6, 0.08), std(0x7a2e1a)); b.position.set(0, 1.95, -d / 2 - 0.02); b.castShadow = true; g.add(b); const t = lbl("KJ's Choices", 'lbl sign'); t.position.set(0, 1.95, -d / 2 + 0.05); g.add(t); }
     if (has('tranh')) { const fr = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.8, 0.05), std(0xd9b36a)); fr.position.set(w / 4, 1.75, -d / 2 + 0.02); g.add(fr); const cv = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.65, 0.06), std(0x3d6fa3)); cv.position.set(w / 4, 1.75, -d / 2 + 0.03); g.add(cv); const sun = new THREE.Mesh(new THREE.CircleGeometry(0.12, 12), std(0xf4c542, { emissive: 0x9a7a10 })); sun.position.set(w / 4 + 0.25, 1.9, -d / 2 + 0.07); g.add(sun); for (let i = 0; i < 4; i++) { const h = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18 + i * 0.05, 0.02), std([0xf2c14e, 0xc9573b, 0xe0a458, 0xb8674a][i])); h.position.set(w / 4 - 0.35 + i * 0.22, 1.55 + (0.18 + i * 0.05) / 2, -d / 2 + 0.07); g.add(h); } }
     if (has('be-ca')) { const tank = new THREE.Group(); const glass = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.7, 0.5), new THREE.MeshStandardMaterial({ color: 0x7fc8e8, transparent: true, opacity: 0.45, roughness: 0.1 })); glass.position.y = 0.75; tank.add(glass); const stand = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.4, 0.55), std(0x4a3328)); stand.position.y = 0.2; tank.add(stand); for (let i = 0; i < 3; i++) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.16, 6), std([0xff7a2a, 0xffd23c, 0xff4d6d][i], { emissive: 0x331100 })); f.rotation.z = Math.PI / 2; f.position.set(-0.3 + i * 0.3, 0.65 + (i % 2) * 0.15, 0); f.userData.fish = { x0: f.position.x, ph: i * 2 }; tank.add(f); this.decorFish = this.decorFish || []; this.decorFish.push(f); } tank.position.set(w / 2 + 0.55, 0, d / 2 - 0.9); tank.rotation.y = -Math.PI / 2; g.add(tank); }
     if (has('gach-hoa')) { let i = 0; for (const t of floor.children) { if (!t.isGroup && !t.isMesh) continue; if (t.geometry?.type === 'BoxGeometry') continue; const x = Math.round(t.position.x * 2), z = Math.round(t.position.z * 2); if (((x + z) / 2) % 2 === 0) t.traverse((m) => { if (m.isMesh) { m.material = m.material.clone(); m.material.color.multiply(new THREE.Color(0.85, 0.72, 0.62)); } }); i++; } }
@@ -329,6 +329,7 @@ export class View {
       let v = this.dyn.get('cust:' + cu.id);
       if (!v && cu.state === 'waiting') { v = this.buildCustomer(cu); this.dyn.set('cust:' + cu.id, v); }
       if (!v) continue;
+      if (cu.state === 'served' && cu.linger && world.time - cu.servedAt < cu.linger) { v.barWrap.style.display = 'none'; if (v.head) v.head.rotation.z = Math.sin(t * 6) * 0.08; continue; }   // khách ăn xong nói một câu rồi mới đi
       if (cu.state !== 'waiting') { if (v.group.parent) dispose(v.group); continue; }
       const f = cu.patience / cu.maxPatience; v.bar.style.width = `${Math.max(0, f * 100)}%`; v.barWrap.className = `patience ${f < 0.25 ? 'angry' : f < 0.5 ? 'warn' : ''}`;
       v.group.position.y = f < 0.25 ? Math.abs(Math.sin(t * 12)) * 0.05 : 0;
@@ -359,9 +360,20 @@ export class View {
   buildCustomer(cu) {
     const s = cu.seat.station; const g = new THREE.Group(); g.position.set(s.x, 0.02, s.z + 0.05);
     const m = clone(this.lib.customer[cu.type] || this.lib.customer.office); m.rotation.y = Math.PI; g.add(m);
-    const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = `${D.recipes[cu.dish].name}`; const bo = new CSS2DObject(bubble); bo.position.set(0, 2.05, 0); g.add(bo);
+    const bubble = document.createElement('div'); bubble.className = 'bubble' + (cu.regular ? ' regular' : ''); bubble.innerHTML = `<b>${cu.regular ? cu.name + ' · ' : ''}${D.recipes[cu.dish].name}</b><i></i>`; const bo = new CSS2DObject(bubble); bo.position.set(0, 2.05, 0); g.add(bo);
     const barWrap = document.createElement('div'); barWrap.className = 'patience'; const bar = document.createElement('div'); barWrap.appendChild(bar); const po = new CSS2DObject(barWrap); po.position.set(0, 1.7, 0); g.add(po);
-    this.scene.add(g); return { group: g, bar, barWrap, head: m.getObjectByName(`Customer_${cu.type}_Head`) };
+    this.scene.add(g); return { group: g, bar, barWrap, bubble, head: m.getObjectByName(`Customer_${cu.type}_Head`) };
+  }
+  /** Số tiền / chữ bay lên từ chỗ khách (CSS2D, tự gỡ sau 1.3 s). */
+  float(cu, text, cls = '') {
+    const s = cu.seat?.station; if (!s) return; const el = document.createElement('div'); el.className = 'float ' + cls; el.textContent = text;
+    const o = new CSS2DObject(el); o.position.set(s.x + (Math.random() - 0.5) * 0.3, 2.4, s.z); this.scene.add(o); setTimeout(() => { this.scene.remove(o); el.remove(); }, 1400);
+  }
+  /** Khách nói một câu: hiện dưới tên món ~3 s (thoại khách quen / khách lạ, data/customers.js). */
+  say(cu, text, ms = 3200) {
+    const v = this.dyn.get('cust:' + cu.id); if (!v || !v.bubble) return;
+    v.bubble.querySelector('i').textContent = text; v.bubble.classList.remove('say'); void v.bubble.offsetWidth; v.bubble.classList.add('say');
+    clearTimeout(v.sayTimer); v.sayTimer = setTimeout(() => v.bubble.classList.remove('say'), ms);
   }
   reset() {
     for (const [k, v] of this.dyn) if (k.startsWith('cust:') && v.group) dispose(v.group);

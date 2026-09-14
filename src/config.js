@@ -75,13 +75,62 @@ export const LEVELS = [
   { id: 10, name: 'Level 10 — Khai vị', seconds: 240, dishes: ['cha-gio-viet-nam', 'goi-cuon-tom-thit'], moneyTargets: [90, 150, 210], arrivals: ARR_LONG },
 ];
 export const SHIFTS = LEVELS;   // tên cũ (tests, par)
+
+// ============================================================
+//  NGÀY Ở QUÁN (KJ's Choices) — vòng chơi chính. Mỗi ngày mở đúng MỘT thứ mới (món / khách quen / cơ chế),
+//  nhịp: trưa đông → xế thở → chiều đông (docs/GAME-DESIGN.md §1, §5). Khách sinh có seed theo ngày → chơi lại thấy quen.
+// ============================================================
+export const DAY_SECONDS = 240;
+// [ngày, món mới (null = không), ghi chú cơ chế]
+const DAY_PLAN = [
+  [1, 'pho-tai-nam', 'Mở quán — phở tái nạm'], [2, 'bun-rieu-cua', 'Thêm bún riêu cua — nấu nước ở lò'], [3, 'bun-bo-hue', 'Thêm bún bò Huế — nhiều nước cùng lúc'],
+  [4, 'pho-dac-biet', 'Thêm phở đặc biệt'], [5, null, 'Khách đi cặp'], [6, 'bun-cha-ha-noi', 'Thêm bún chả Hà Nội — món khô, mẹt'], [7, null, 'Cuối tuần — đoàn khách'],
+  [8, 'bun-ca-hai-phong', 'Thêm bún cá Hải Phòng'], [9, 'banh-da-cua', 'Thêm bánh đa cua'], [10, 'pho-tai-dap', 'Thêm phở tái đập'], [11, 'pho-suon-tai', 'Thêm phở sườn tái — lò vi sóng'],
+  [12, 'bun-dau-mam-tom', 'Thêm bún đậu mắm tôm'], [13, 'banh-hoi-thit-heo', 'Thêm bánh hỏi thịt heo'], [14, null, 'Cuối tuần — đoàn khách'],
+  [15, 'bun-nem-cua-thit-nuong-tom-nuong', 'Thêm bún nem cua thịt nướng'], [16, 'bun-ga-nuong', 'Thêm bún gà nướng'], [17, 'chao-long', 'Thêm cháo lòng'], [18, 'chao-suon', 'Thêm cháo sườn'],
+  [19, 'cha-ca-la-vong', 'Thêm chả cá Lã Vọng'], [20, 'cha-gio-viet-nam', 'Thêm chả giò — chảo chiên'], [21, 'goi-cuon-tom-thit', 'Cuối tuần — thêm gỏi cuốn tôm thịt'],
+];
+function seeded(seed) { let s = seed * 2654435761 % 4294967296 || 1; return () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }; }
+const TYPES = ['office', 'xeom', 'tourist'];
+/** Sinh danh sách khách của một ngày theo 3 pha: trưa (2–42 %), xế (42–62 %), chiều (62–92 %). `regulars` = id khách quen ghé hôm nay. */
+export function makeDayArrivals(day, dishes, newDish, regulars, seconds = DAY_SECONDS) {
+  const rnd = seeded(day); const n = Math.min(14, 6 + day); const weekend = day % 7 === 0;
+  const spread = (k, a, b) => Array.from({ length: k }, (_, i) => Math.round(seconds * (a + (b - a) * (i + 0.3 + rnd() * 0.4) / k)));
+  const nLunch = Math.round(n * 0.55), nLull = Math.max(1, Math.round(n * 0.1)), nAft = Math.max(1, n - nLunch - nLull);
+  const ts = [...spread(nLunch, 0.02, 0.42), ...spread(nLull, 0.44, 0.6), ...spread(nAft, 0.62, 0.9)];
+  const arr = ts.map((t, i) => ({ t, type: TYPES[Math.floor(rnd() * TYPES.length)], patience: 95 + Math.round(rnd() * 35), dish: newDish && rnd() < 0.4 ? newDish : undefined }));
+  // khách quen thay chỗ vài khách lạ: người lẻ vào trưa, người chẵn vào chiều
+  regulars.forEach((rid, i) => { const pool = arr.filter((a) => (i % 2 ? a.t < seconds * 0.42 : a.t > seconds * 0.62) && !a.regular); const a = pool[Math.floor(rnd() * pool.length)] || arr[i % arr.length]; a.regular = rid; delete a.dish; });
+  if (day >= 5) { const a = arr.find((x) => !x.regular && x.t > seconds * 0.1 && x.t < seconds * 0.4); if (a) arr.push({ ...a, t: a.t + 1, group: 'pair', regular: undefined, dish: undefined }); }   // cặp: hai người tới cách 1 s
+  if (weekend) { const t0 = Math.round(seconds * 0.64); for (let k = 0; k < 4; k++) arr.push({ t: t0 + k, type: TYPES[k % 3], patience: 150, group: 'tour' }); }   // đoàn 4 người (3 bàn → người thứ 4 chờ ghế)
+  return arr.sort((a, b) => a.t - b.t);
+}
+export const DAYS = (() => { const menu = []; return DAY_PLAN.map(([id, dish, note]) => {
+  if (dish) menu.push(dish); const dishes = [...menu]; const avg = dishes.reduce((s, d) => s + PRICES[d], 0) / dishes.length;
+  const n = Math.min(14, 6 + id) + (id >= 5 ? 1 : 0) + (id % 7 === 0 ? 4 : 0); const pot = Math.round(avg * n);
+  return { id: `day-${id}`, day: id, name: `Ngày ${id}`, note, newDish: dish, weekend: id % 7 === 0, seconds: Math.min(DAY_SECONDS, 180 + id * 10), prep: 20, dishes, moneyTargets: [0.4, 0.6, 0.8].map((f) => Math.round(pot * f / 10) * 10), arrivals: null };   // arrivals sinh lúc bắt đầu ngày (cần biết khách quen)
+}); })();
+/** Ngày sau ngày cuối: đủ menu, khách dày dần theo số ngày. */
+export function dayAfter(id) { const last = DAYS[DAYS.length - 1]; const n = Math.min(16, 6 + id); const avg = last.dishes.reduce((s, d) => s + PRICES[d], 0) / last.dishes.length; const pot = Math.round(avg * n); return { ...last, id: `day-${id}`, day: id, name: `Ngày ${id}`, note: id % 7 === 0 ? 'Cuối tuần — đoàn khách' : 'Đủ menu', newDish: null, weekend: id % 7 === 0, moneyTargets: [0.4, 0.6, 0.8].map((f) => Math.round(pot * f / 10) * 10) }; }
+
+// Nâng cấp bếp mua bằng tiền quán — làm mình NHANH hơn (docs/GAME-DESIGN.md §2). `levels[i]` = giá lên cấp i+1; `apply(mods, lv)` đổi thông số.
+export const UPGRADES = [
+  { id: 'bowl-stack', name: 'Nồi trụng', icon: '🍜', desc: 'Chồng tô nóng trữ trong nồi: 3 → 4 → 5', unlockDay: 2, levels: [180, 320], apply: (m, lv) => { m.bowlSlots = 3 + lv; } },
+  { id: 'burners', name: 'Bếp lò', icon: '🔥', desc: 'Số lò đun nước: 1 → 2 → 3', unlockDay: 3, levels: [220, 420], apply: (m, lv) => { m.burners = 1 + lv; } },
+  { id: 'fire', name: 'Lửa lớn', icon: '♨️', desc: 'Nước lèo nóng nhanh hơn 15 % mỗi cấp', unlockDay: 4, levels: [200, 380], apply: (m, lv) => { m.heatMult = 1 - 0.15 * lv; } },
+  { id: 'seats', name: 'Thêm bàn', icon: '🪑', desc: 'Bàn cho khách: 3 → 4 → 5', unlockDay: 5, levels: [300, 550], apply: (m, lv) => { m.seats = 3 + lv; } },
+  { id: 'shoes', name: 'Dép bếp êm', icon: '🩴', desc: 'Đi lại nhanh hơn 12 % mỗi cấp', unlockDay: 6, levels: [260, 480], apply: (m, lv) => { m.speedMult = 1 + 0.12 * lv; } },
+];
+export const DECOR_PATIENCE = 0.06;   // mỗi món trang trí: khách kiên nhẫn thêm 6 %
+/** Thông số bếp sau nâng cấp/trang trí: { bowlSlots, burners, heatMult, seats, speedMult, patienceMult }. */
+export function modsFor(upLevels = {}, decorCount = 0) { const m = { bowlSlots: 3, burners: 1, heatMult: 1, seats: 3, speedMult: 1, patienceMult: 1 + DECOR_PATIENCE * decorCount }; for (const u of UPGRADES) if (upLevels[u.id]) u.apply(m, Math.min(u.levels.length, upLevels[u.id])); return m; }
 // Survival: đủ 16 món, khách tới mãi, càng lâu càng dày (gap giảm mỗi khách), `lives` khách bỏ đi là thua. Điểm ×1.5.
 export const SURVIVAL = { id: 'survival', name: 'Survival — đủ menu', survival: true, seconds: Infinity, dishes: ALL_DISHES, moneyTargets: [1e9, 1e9, 1e9], arrivals: [], prep: 15, startGap: 42, minGap: 18, gapDecay: 1.5, patience: 170, lives: 3 };
 // Trang trí quán mua bằng điểm (view.js dựng). Chỉ là "áo" — không ảnh hưởng chơi.
 export const DECOR = [
   { id: 'cay-canh', name: 'Cây cảnh', icon: '🪴', cost: 150, desc: '2 chậu cây trước quán' },
   { id: 'den-long', name: 'Đèn lồng', icon: '🏮', cost: 250, desc: 'Dây đèn lồng đỏ trên tường' },
-  { id: 'bang-hieu', name: 'Bảng hiệu', icon: '🪧', cost: 300, desc: 'Bảng "Quán Bún" treo tường' },
+  { id: 'bang-hieu', name: 'Bảng hiệu', icon: '🪧', cost: 300, desc: 'Bảng "KJ\'s Choices" treo tường' },
   { id: 'tranh', name: 'Tranh treo', icon: '🖼️', cost: 350, desc: 'Tranh sơn dầu phố cổ' },
   { id: 'gach-hoa', name: 'Gạch hoa', icon: '🟫', cost: 450, desc: 'Sàn gạch bông hai màu' },
   { id: 'be-ca', name: 'Bể cá', icon: '🐠', cost: 600, desc: 'Bể cá cạnh quán' },
@@ -118,6 +167,7 @@ export const KITCHEN_LANDSCAPE = {
     { id: 'counter',       type: 'counter', label: 'Quầy ráp', x: 0, z: 0.4, w: 2.6, d: 1, slots: 2 },
     { id: 'trash',         type: 'trash', label: 'Thùng rác', x: -4.5, z: -1.3, w: 0.6, d: 0.6 },   // giữa kệ sợi và kệ tô
     { id: 'seat-0', type: 'seat', x: -1.4, z: 3.6 }, { id: 'seat-1', type: 'seat', x: 0, z: 3.6 }, { id: 'seat-2', type: 'seat', x: 1.4, z: 3.6 },
+    { id: 'seat-3', type: 'seat', x: -2.8, z: 3.6, extra: 4 }, { id: 'seat-4', type: 'seat', x: 2.8, z: 3.6, extra: 5 },   // bàn mua thêm (nâng cấp 'seats')
   ],
   chefStart: { x: 0, z: -1.2 },
 };
@@ -140,6 +190,7 @@ export const KITCHEN_PORTRAIT = {
     { id: 'counter',       type: 'counter', label: 'Quầy ráp', x: 0, z: -1.0, w: 2.0, d: 1, slots: 2 },
     { id: 'trash',         type: 'trash', label: 'Thùng rác', x: -3.1, z: -1.0, w: 0.6, d: 0.6 },   // giữa kệ sợi và kệ tô
     { id: 'seat-0', type: 'seat', x: -1.6, z: 4.5 }, { id: 'seat-1', type: 'seat', x: -0.2, z: 4.5 }, { id: 'seat-2', type: 'seat', x: 1.2, z: 4.5 },
+    { id: 'seat-3', type: 'seat', x: -1.6, z: 5.9, extra: 4 }, { id: 'seat-4', type: 'seat', x: 1.2, z: 5.9, extra: 5 },   // bàn mua thêm (nâng cấp 'seats')
   ],
   chefStart: { x: 0, z: -2.6 },
 };

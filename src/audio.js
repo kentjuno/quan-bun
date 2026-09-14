@@ -41,21 +41,43 @@ function shaker(t0, vol = 0.012) {   // hơi thở nhịp rất nhẹ
   n.connect(f).connect(g).connect(musicGain); n.start(t0);
 }
 const CHORDS = [[0, 2, 4], [3, 5, 7], [1, 3, 5], [2, 4, 6]];   // bậc ngũ cung, mỗi hợp âm 8 nhịp
+// Không khí theo pha của ngày: calm (sáng/xế) · busy (giờ cao điểm: nhanh hơn, dày nốt hơn, shaker mỗi nhịp) · close (đóng cửa: chậm, thưa)
+const MOODS = { calm: { bpm: 72, notes: [2, 4], rest: 0.25, shakerEvery: 2, vol: 1 }, busy: { bpm: 96, notes: [3, 6], rest: 0.1, shakerEvery: 1, vol: 1.15 }, close: { bpm: 58, notes: [1, 3], rest: 0.4, shakerEvery: 4, vol: 0.8 } };
+let mood = 'calm';
+export function setMood(m) { if (!MOODS[m] || m === mood) return; mood = m; if (musicGain && ctx) musicGain.gain.setTargetAtTime(0.55 * MOODS[m].vol, ctx.currentTime, 0.6); }
 export function startMusic() {
   if (!ensureAudio() || started) return; started = true;
-  const bpm = 72, beat = 60 / bpm, bar = beat * 4; let barIdx = 0; let nextBar = ctx.currentTime + 0.1;
+  let barIdx = 0; let nextBar = ctx.currentTime + 0.1;
   const schedule = () => {
     while (nextBar < ctx.currentTime + 2.5) {
+      const M = MOODS[mood]; const beat = 60 / M.bpm, bar = beat * 4;
       const ch = CHORDS[Math.floor(barIdx / 2) % CHORDS.length];
       if (barIdx % 2 === 0) for (const deg of ch) pad(note(deg, -1), nextBar, bar * 2 + 0.5, 0.045);
-      // giai điệu thưa: 2–4 nốt / ô nhịp, chọn trong hợp âm + nốt lân cận, thỉnh thoảng nghỉ
-      const n = 2 + Math.floor(Math.random() * 3);
-      for (let i = 0; i < n; i++) { if (Math.random() < 0.25) continue; const deg = ch[Math.floor(Math.random() * ch.length)] + (Math.random() < 0.3 ? 5 : 0) + (Math.random() < 0.15 ? 1 : 0); pluck(note(deg, 1), nextBar + i * (bar / n) + (Math.random() < 0.5 ? 0 : beat / 2), 0.07 + Math.random() * 0.03); }
-      for (let b = 0; b < 4; b++) if (b % 2 === 1) shaker(nextBar + b * beat + beat / 2);
+      // giai điệu: số nốt / ô nhịp theo mood, chọn trong hợp âm + nốt lân cận, thỉnh thoảng nghỉ
+      const n = M.notes[0] + Math.floor(Math.random() * (M.notes[1] - M.notes[0] + 1));
+      for (let i = 0; i < n; i++) { if (Math.random() < M.rest) continue; const deg = ch[Math.floor(Math.random() * ch.length)] + (Math.random() < 0.3 ? 5 : 0) + (Math.random() < 0.15 ? 1 : 0); pluck(note(deg, 1), nextBar + i * (bar / n) + (Math.random() < 0.5 ? 0 : beat / 2), 0.07 + Math.random() * 0.03); }
+      for (let b = 0; b < 4; b++) if ((b + 1) % M.shakerEvery === 0) shaker(nextBar + b * beat + beat / 2, mood === 'busy' ? 0.02 : 0.012);
       nextBar += bar; barIdx++;
     }
   };
   schedule(); timers.push(setInterval(schedule, 800));
+}
+// ---------- tiếng bếp nền: nồi sôi ục ục (noise lọc thấp + LFO), bật khi đang chơi ----------
+let boilNodes = null;
+export function setBoil(on, level = 1) {
+  if (!ctx) return;
+  if (on && !boilNodes) {
+    const n = ctx.createBufferSource(); const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate); const d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    n.buffer = buf; n.loop = true; const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 420; f.Q.value = 1.2;
+    const g = ctx.createGain(); g.gain.value = 0; const lfo = ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 2.3; const lg = ctx.createGain(); lg.gain.value = 0.02; lfo.connect(lg).connect(g.gain);
+    n.connect(f).connect(g).connect(master); n.start(); lfo.start(); boilNodes = { n, g, lfo, lg };
+  }
+  if (boilNodes) boilNodes.g.gain.setTargetAtTime(on ? 0.045 * level : 0, ctx.currentTime, 0.4);
+}
+function noise(dur, vol = 0.08, hp = 1500, lp = 8000) {   // tiếng xì/xèo ngắn
+  if (!ctx || muted) return; const t0 = ctx.currentTime; const n = ctx.createBufferSource(); const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate); const d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+  n.buffer = buf; const h = ctx.createBiquadFilter(); h.type = 'highpass'; h.frequency.value = hp; const l = ctx.createBiquadFilter(); l.type = 'lowpass'; l.frequency.value = lp; const g = ctx.createGain(); g.gain.value = vol;
+  n.connect(h).connect(l).connect(g).connect(master); n.start(t0);
 }
 export function stopMusic() { for (const t of timers) clearInterval(t); timers = []; started = false; }
 
@@ -76,4 +98,12 @@ export const sfx = {
   mistake() { tone(180, 0.28, 'sawtooth', 0.05, 0.7); },
   arrive() { tone(1568, 0.35, 'sine', 0.05); },        // chuông cửa nhỏ
   trash() { tone(220, 0.2, 'square', 0.03, 0.5); },
+  sizzle() { noise(0.9, 0.06, 2500, 9000); },             // thả vào chảo/nồi: xèo
+  splash() { noise(0.25, 0.05, 600, 3000); tone(240, 0.12, 'sine', 0.05, 0.7); },   // thả sợi vào nước
+  clink() { tone(2100, 0.12, 'triangle', 0.05, 0.98); setTimeout(() => tone(2600, 0.1, 'sine', 0.03), 30); },   // đặt tô: cạch
+  coin() { tone(1760, 0.09, 'square', 0.03); setTimeout(() => tone(2349, 0.16, 'square', 0.03), 70); },       // tiền
+  bell() { [0, 0, 160].forEach((d, i) => setTimeout(() => tone(i === 2 ? 1568 : 1046, 0.7, 'sine', 0.06), d)); },   // chuông mở cửa
+  cheer() { [0, 90, 180, 270].forEach((d, i) => setTimeout(() => tone([523, 659, 784, 1046][i], 0.35, 'triangle', 0.06), d)); },   // hết ngày / sao
+  chatter() { noise(0.4, 0.015, 300, 1200); },            // tiếng quán rì rào (khách nhóm)
+  hum(kind) { if (kind === 'wait') tone(392, 0.18, 'sine', 0.03, 0.9); else tone(523, 0.14, 'sine', 0.03, 1.1); },   // khách lên tiếng
 };

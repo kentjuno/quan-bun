@@ -60,7 +60,7 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
     console.log(vp.tag, 'CARD', opened, hand);
     if (!opened || hand !== '["nam","nam"]') errors.push('card mode');
     // lò đun (ca 3): chạm bếp lò 0 → card nước lèo → bấm cốt cua, huyết, nước → Đun → lò có nồi "Nước riêu cua"
-    await page.goto('http://localhost:4175/?shift=3'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
+    await page.goto('http://localhost:4175/?day=3'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
     const bp = await page.evaluate(() => { const { view, world } = window.__qb; const s = world.stationById['burner']; const v = new (Object.getPrototypeOf(view.camera.position).constructor)(s.x - s.w / 4, 1.0, s.z); v.project(view.camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; });
     await page.mouse.click(...bp);
     const sopen = await page.waitForSelector('#card.show', { timeout: 20000 }).then(() => true).catch(() => false);
@@ -68,30 +68,34 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
     const soup = await page.evaluate(() => JSON.stringify(window.__qb.world.stationById['burner'].slots.map((b) => b && b.name)));
     console.log(vp.tag, 'SOUP', sopen, soup); if (!sopen || !soup.includes('Nước riêu cua')) errors.push('soup card');
     // ca 5 (mẹt/tô khô, thớt) — bot làm 60 s để có đồ trên thớt rồi chụp
-    await page.goto('http://localhost:4175/?shift=5&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
+    await page.goto('http://localhost:4175/?day=6&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(1200);
     const s5 = await page.evaluate(() => { const { botDecide } = window.__qb; const w = window.__qb.world; for (let i = 0; i < 40 * 30; i++) { const t = botDecide(w); if (t) w.tap(t); w.update(1 / 30); } return { served: w.served, prep: !!w.stationById.prep, mistakes: w.mistakes }; });
     await page.waitForTimeout(800); await page.screenshot({ path: 'tests/out/port_shift5.png' });
     console.log(vp.tag, 'SHIFT5', JSON.stringify(s5)); if (!s5.prep || s5.mistakes) errors.push('shift5');
-    await page.goto('http://localhost:4175/?shift=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/port_shift4.png' });
+    await page.goto('http://localhost:4175/?day=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/port_shift4.png' });
     const st4 = await page.evaluate(() => window.__qb.world.stations.map((s) => s.id).filter((i) => /burner/.test(i)).concat(window.__qb.world.stationById['shelf-topping'].items.filter((i) => /cha-re|ca-chua/.test(i))));
     console.log(vp.tag, 'SHIFT4', st4.join(',')); if (st4.length < 3) errors.push('shift4 stations');
     await page.goto('http://localhost:4175/?hit=1&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(400); await page.screenshot({ path: 'tests/out/port_hitboxes.png' }); }
   await page.waitForTimeout(400); await page.screenshot({ path: `tests/out/${vp.tag}_02_play.png` });
   if (vp.tag === 'land') {   // luyện đơn lẻ: bot lái 5 đơn → báo cáo tổng kết có bảng tô / so với bot / lộ trình
-    await page.goto('http://localhost:4175/?shift=2&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.evaluate(() => document.getElementById('btnDrill').click()); await page.waitForTimeout(600);
+    await page.goto('http://localhost:4175/?day=2&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.evaluate(() => document.getElementById('btnDrill').click()); await page.waitForTimeout(600);
     const drill = await page.evaluate(() => { const { botDecide } = window.__qb; const w = window.__qb.world; let taps = 0; for (let i = 0; i < 400 * 30 && w.state === 'running'; i++) { const t = botDecide(w); if (t) { w.tap(t); taps++; } w.update(1 / 30); } return { state: w.state, served: w.served, taps, bowls: w.result?.stats?.bowls?.length, idle: w.result?.stats?.idle }; });
     await page.waitForTimeout(800);
     const rep = await page.evaluate(() => ({ visible: !document.querySelector('#result').classList.contains('hidden'), rows: document.querySelectorAll('#report table tbody tr').length, route: !!document.querySelector('#report ol.route'), title: document.querySelector('#rTitle').textContent }));
     console.log(vp.tag, 'DRILL', JSON.stringify(drill), JSON.stringify(rep));
     if (drill.state !== 'over' || drill.served !== 8 || !rep.visible || rep.rows !== 8) errors.push('drill/report');
     await page.screenshot({ path: 'tests/out/land_report.png' });
-    await page.goto('http://localhost:4175/?shift=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/land_shift4.png' });
+    await page.goto('http://localhost:4175/?day=4&card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 }); await page.click('#btnStart'); await page.waitForTimeout(600); await page.screenshot({ path: 'tests/out/land_shift4.png' });
     // survival + trang trí: mua hết đồ (điểm giả) → dựng quán có cây/đèn/bảng → bot chơi 90 s → ép 3 khách bỏ đi → kết quả
-    await page.evaluate(() => localStorage.setItem('qb.progress.v1', JSON.stringify({ stars: { 1: 3, 2: 2 }, points: 5000, spent: 0, decor: ['cay-canh', 'den-long', 'bang-hieu', 'tranh', 'gach-hoa', 'be-ca', 'tuong-vang', 'hoa-mai'] })));
+    await page.evaluate(() => localStorage.setItem('qb.progress.v1', JSON.stringify({ stars: { 'day-1': 3, 'day-2': 2, 'day-3': 1, 'day-4': 2 }, points: 5000, spent: 0, decor: ['cay-canh', 'den-long', 'bang-hieu', 'tranh', 'gach-hoa', 'be-ca', 'tuong-vang', 'hoa-mai'] })));
     await page.goto('http://localhost:4175/?card=0'); await page.waitForSelector('#btnStart:not(.hidden)', { timeout: 30000 });
-    const menu = await page.evaluate(() => ({ dots: document.querySelectorAll('#lvDots i').length, done: document.querySelectorAll('#lvDots i.done').length, shop: document.querySelectorAll('#shop .sh.owned').length, decor: window.__qb.view.scene.getObjectByName('decor')?.children.length }));
-    console.log(vp.tag, 'MENU', JSON.stringify(menu)); if (menu.dots !== 10 || menu.done !== 1 || menu.shop !== 8 || !menu.decor) errors.push('menu/decor');
-    await page.click('#lvNext'); await page.click('#lvNext'); await page.click('#lvNext'); await page.waitForTimeout(250); const lv4 = await page.evaluate(() => ({ txt: document.getElementById('lvCard').textContent, locked: document.getElementById('lvCard').classList.contains('locked'), start: document.getElementById('btnStart').disabled })); console.log(vp.tag, 'CAROUSEL', JSON.stringify(lv4)); if (!lv4.txt.includes('Level 4') || !lv4.locked || !lv4.start) errors.push('carousel'); await page.screenshot({ path: 'tests/out/land_menu_locked.png' }); await page.click('#lvPrev'); await page.waitForTimeout(250);
+    const menu = await page.evaluate(() => ({ card: document.getElementById('lvCard').textContent, upg: document.querySelectorAll('#upgrades .sh').length, shop: document.querySelectorAll('#shop .sh.owned').length, decor: window.__qb.view.scene.getObjectByName('decor')?.children.length, seats: window.__qb.world.seats.length }));
+    console.log(vp.tag, 'MENU', JSON.stringify(menu)); if (!menu.card.includes('Ngày 5') || !menu.card.includes('hôm nay') || menu.upg !== 5 || menu.shop !== 8 || !menu.decor) errors.push('menu/decor');
+    const nextDis = await page.evaluate(() => document.getElementById('lvNext').disabled); if (!nextDis) errors.push('day 6 should be locked');
+    await page.click('#lvPrev'); await page.waitForTimeout(250); const lv2 = await page.evaluate(() => ({ txt: document.getElementById('lvCard').textContent, locked: document.getElementById('lvCard').classList.contains('locked'), start: document.getElementById('btnStart').textContent })); console.log(vp.tag, 'CAROUSEL', JSON.stringify(lv2)); if (!lv2.txt.includes('Ngày 4') || lv2.locked || !lv2.start.includes('Chơi lại')) errors.push('carousel'); await page.screenshot({ path: 'tests/out/land_menu_day2.png' });
+    // mua nâng cấp: thêm bàn → quán dựng lại có 4 ghế
+    await page.evaluate(() => document.querySelector('#upgrades .sh:nth-child(4) button')?.click()); await page.waitForTimeout(300);
+    const seats = await page.evaluate(() => window.__qb.world.seats.length); console.log(vp.tag, 'UPGRADE_SEATS', seats); if (seats !== 4) errors.push('upgrade seats');
     await page.screenshot({ path: 'tests/out/land_menu_decor.png' });
     await page.evaluate(() => document.getElementById('btnSurvival').click()); await page.waitForTimeout(800); await page.screenshot({ path: 'tests/out/land_survival_start.png' });
     const sv = await page.evaluate(() => { const { botDecide } = window.__qb; const w = window.__qb.world; for (let i = 0; i < 150 * 30 && w.state === 'running'; i++) { const t = botDecide(w); if (t) w.tap(t); w.update(1 / 30); } return { survival: !!w.shift.survival, served: w.served, left: w.left, arrived: w.arrivalIdx, state: w.state, mistakes: w.mistakes, clock: document.getElementById('clock').textContent }; });
@@ -99,7 +103,7 @@ for (const vp of [{ w: 1280, h: 720, tag: 'land' }, { w: 430, h: 900, tag: 'port
     console.log(vp.tag, 'SURVIVAL', JSON.stringify(sv)); if (!sv.survival || sv.arrived < 3 || sv.state !== 'running') errors.push('survival');
     await page.evaluate(() => { const w = window.__qb.world; w.left = 3; w.update(0.05); }); await page.waitForTimeout(300);
     const svr = await page.evaluate(() => ({ visible: !document.querySelector('#result').classList.contains('hidden'), stars: document.querySelector('#stars').textContent, pts: document.querySelector('#rPoints').textContent }));
-    console.log(vp.tag, 'SURVIVAL_RESULT', JSON.stringify(svr)); if (!svr.visible || !svr.stars.includes('khách') || !svr.pts.includes('điểm')) errors.push('survival result');
+    console.log(vp.tag, 'SURVIVAL_RESULT', JSON.stringify(svr)); if (!svr.visible || !svr.stars.includes('khách') || !svr.pts.includes('k')) errors.push('survival result');
     await page.screenshot({ path: 'tests/out/land_survival_result.png' }); }
   await page.evaluate(() => { const w = window.__qb.world; w.time = w.shift.seconds; w.update(0.05); }); await page.waitForTimeout(300);
   console.log(vp.tag, 'RESULT_VISIBLE', await page.isVisible('#result'), await page.textContent('#stars'));
