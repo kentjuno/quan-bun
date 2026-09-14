@@ -80,3 +80,28 @@ Ba lỗi đã sửa khi làm bước này:
 - `src/game/art.js` + `public/art/*.webp`: tô của mỗi món hiện **ảnh art C thật** trong ô ráp, `-dry` → `-wet` khi đã chan nước. Chỉ vẽ khi còn đúng một món khớp; không có ảnh thì tự quay về icon cũ (`onerror` gỡ thẻ img) nên không bao giờ vỡ giao diện.
 
 **Còn lại của bước 3**: nền từng trạm bằng ảnh (nồi/bồn/chảo/lò), vùng thả theo % trong `counter-layout.js`, mặt khách lên phiếu, và ráp animation A10 (tay cầm vá) vào lúc chan nước thật trong game.
+
+
+## Nhịp khách ở quầy — 14/09 (Kent: "tần suất khách xuất hiện ít quá")
+
+Đúng là do level. Lịch khách trong `data/worlds.js` canh cho **bếp 3D** (còn phải đi lại); bê nguyên qua quầy thì khách thưa gấp đôi. Đo thật:
+
+| | lịch cũ | lịch quầy |
+|---|---|---|
+| Khách đầu tiên (pho-1) | giây 38 | giây 4 |
+| Thời gian có ít nhất 1 phiếu treo (TB 124 level) | 48 % | 86 % |
+| Số phiếu treo trung bình | 0.59 | 1.10 |
+| Bot để khách bỏ đi | 0.6 % | 0.6 % |
+
+Cách làm: `povArrivals(level)` **giữ nguyên nhịp** của level (đợt dồn, khách đôi, boss) nhưng **nén cả trục thời gian** cho khớp tốc độ thật của quầy. Tốc độ thật đo bằng bot, để trong `src/data/pace.js` (`POV_SECONDS`, giây/tô cho từng món: 4.8 s gỏi cuốn → 25 s bún cá Hải Phòng). Chỉ nén, không bao giờ giãn ra. Bản tập nhân thêm 0.62 vì bỏ bớt bước nên làm nhanh hơn.
+
+`tests/counter.test.js` giữ ba chốt: bảng giây/tô lệch >40 % so với bot là fail; khách đầu phải tới trước giây 6 ở cả 124 level; và nén xong bot vẫn không để mất quá 1/3 khách ở bất kỳ level nào.
+
+### Hai lỗi bot lộ ra khi đo
+1. `counterMove` chỉ làm **phiếu đầu tiên** — phiếu đó chờ nồi là bot đứng im dù phiếu khác có việc. Giờ duyệt mọi phiếu, lấy nước đi đầu tiên hợp lệ (đúng kiểu làm song song ở tiệm).
+2. Hết chỗ ráp tô thì bot **đổ đại vào tô của phiếu khác** (`Math.max(0, findIndex)` trả 0 khi không còn chỗ) → tự sinh lỗi. Giờ hết chỗ thì chờ.
+Kèm theo: lỗi không gắn với tô nào thì chỉ ghi vào `errors`, không đổ cho `tickets[0]` nữa — chơi song song mà đổ lỗi cho phiếu đầu là sai chất lượng.
+
+## Art đã vào game
+- Mặt khách (`cus-*`) hiện trên phiếu — khách quen đúng mặt, khách lạ rải theo id phiếu.
+- **A10 chan nước chạy thật trong game**: thả nước lèo vào tô → tay cầm vá trượt vào, nghiêng 30°, dòng nước chảy xuống mặt nước rồi rút ra; tô đổi `-dry` → `-wet`. Thông số lấy thẳng từ `counter-layout.js` (số Kent duyệt trên demo). Tôn trọng `prefers-reduced-motion`.
