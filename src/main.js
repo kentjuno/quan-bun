@@ -136,7 +136,7 @@ function start(bot = false, mode = playMode) {
   botMode = bot === true; world = newWorld();
   rebuild();   // mỗi level có thể khác trạm (bếp lớn dần) → dựng lại
   $('card').classList.remove('show');
-  running = true; $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.remove('hidden');
+  running = true; $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.remove('hidden'); armBackGuard();
   showHint(botMode ? 'Bot làm mẫu — bấm "Tự chơi" để cầm lái' : playMode === 'drill' ? 'Luyện 8 đơn nối tiếp, không giới hạn giờ — đúng rồi mới nhanh' : playMode === 'rush' ? 'Rush 3 đơn — dùng đủ 3 rọ + chồng tô, làm song song' : playMode === 'survival' ? 'Survival — 3 khách bỏ đi là hết; rảnh thì trụng tô, sợi sẵn' : (level.hint || level.whatsNew), playMode === 'level' ? 9000 : 6000);
   // ẩn tên trên card khi mọi món trong ca đã thuộc (≥3 tô sạch liên tiếp), trừ khi Kent tự tick
   opts.hideNameAuto = world.shift.dishes.every(isMastered);
@@ -200,7 +200,7 @@ function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9) {
   ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
   let dishes = practice.length ? practice : ALL_DISHES; if (kinds[0] === 'assemble') { dishes = dishes.filter(assembleOk); if (!dishes.length) dishes = ALL_DISHES.filter(assembleOk); } const weights = weightsFor(dishes);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
-  lastPuzzle = { kinds, rounds };
+  lastPuzzle = { kinds, rounds }; armBackGuard();
   puzzle = new Puzzle({ dishes, weights, rounds, kinds, sfx, onDone: (r) => showResult(r) }); puzzle.start();
 }
 let lastPuzzle = { kinds: ['order', 'intruder', 'missing'], rounds: 9 };
@@ -209,7 +209,7 @@ function startPov(rounds = 8) {
   ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
   let dishes = (practice.length ? practice : ALL_DISHES).filter(povOk); if (!dishes.length) dishes = ALL_DISHES.filter(povOk);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
-  lastPuzzle = { kinds: ['pov'], rounds };
+  lastPuzzle = { kinds: ['pov'], rounds }; armBackGuard();
   pov = new Pov({ dishes, weights: weightsFor(dishes), rounds, sfx, onDone: (r) => showResult(r), onQuit: () => { $('menu').classList.remove('hidden'); } }); pov.start();
 }
 $('btnPov').onclick = () => startPov(8);
@@ -311,6 +311,15 @@ btnMute.onclick = () => { ensureAudio(); setMuted(!isMuted()); paintMute(); };
 $('btnBack').onclick = () => { if (!running) return; running = false; setBoil(false); setMood('calm'); botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
 $('btnMenu').onclick = () => { running = false; $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'level'; if (bestStars(level.id) >= 1) level = currentLevel(); selectLevel(level); };
 $('loading').classList.add('hidden'); $('btnStart').classList.remove('hidden');
+
+// ---- chặn nút/cử chỉ Back của trình duyệt khi đang chơi (Kent: quẹt trái/phải trên điện thoại bị back ra khỏi game) ----
+// Vào màn chơi → đẩy một history state; bấm/quẹt Back → popstate → đẩy lại ngay và coi như không có gì (menu thoát bằng nút ‹ trong game).
+let guardOn = false;
+function armBackGuard() { if (guardOn) return; guardOn = true; try { history.pushState({ qb: 'play' }, ''); } catch {} }
+function disarmBackGuard() { guardOn = false; }
+addEventListener('popstate', () => { const playing = running || !$('puzzle').classList.contains('hidden') || !$('pov').classList.contains('hidden') || !$('result').classList.contains('hidden'); if (playing) { try { history.pushState({ qb: 'play' }, ''); } catch {} toast('Đang chơi — dùng nút ‹ để về menu', 1400); } else disarmBackGuard(); });
+// iOS Safari: quẹt từ mép trái = Back của trình duyệt, không chặn được bằng JS → chỉ tránh được khi cài PWA (standalone). Nhắc một lần.
+if (/iPhone|iPad/.test(navigator.userAgent) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone) setTimeout(() => toast('Trên iPhone: thêm vào Màn hình chính để quẹt không bị back', 3500), 2500);
 
 // chạm là đi
 view.renderer.domElement.addEventListener('pointerdown', (e) => {

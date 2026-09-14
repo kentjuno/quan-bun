@@ -242,3 +242,7 @@ Kent sau khi thử Ráp tô: "ok, nhưng kéo thả vô tô sẽ có cảm giác
 ## 0.8.3 — 2026-09-14 · Quầy POV: chạm đôi thay kéo · plan lõi mới
 - Kent: "Ngon hơn rồi, chỉ cần thiết kế lại giao diện cho đẹp; kéo chính xác khó → thêm double tap". `pov.js`: **chạm đôi** một vật là nó tự bay tới đích hợp lý nhất (`autoTarget`: tô sạch → nồi, tô nóng → chỗ tô trống, sợi → rọ trống, rọ nóng → tô cần (bún bò) hoặc bồn, rọ đã xả → nồi, rọ nóng lại → tô cần, topping/vá → tô đang cần, tô xong → phiếu khớp) với hiệu ứng bay `flyTo`; chạm nhẹ không kéo thì không thả gì (trước đây chạm vào tô đang ráp bị tính "kéo sai"). Một tô phở hoàn hảo bằng chạm đôi ≈ 10 s.
 - `docs/PLAN-CORE.md`: kế hoạch lõi mới thay bếp 3D — Counter state tách khỏi DOM, thêm thớt/chảo/lò vi sóng/lò đun để đủ 18 món, world/level chạy trên quầy POV với đủ cờ/ràng buộc/sự kiện, art C (nền ký hoạ + hitbox theo toạ độ), juice, bếp 3D về tab Thêm. Bảng trạng thái cho đổi model giữa chừng.
+
+## 0.8.4 — 2026-09-14 · Chặn quẹt Back khi đang chơi
+- Kent: trên điện thoại quẹt trái/phải bị Back ra khỏi game. `overscroll-behavior: none` cho html/body/#pov (Chrome Android không còn quẹt-Back / kéo-Reload) + history guard: vào màn chơi (level, minigame, POV) đẩy một state; Back → popstate → đẩy lại, toast "dùng nút ‹ để về menu". iPhone Safari quẹt mép trái không chặn được → nhắc thêm vào Màn hình chính (PWA) một lần.
+- Chữ tay: Kent chọn dùng font (ghi PLAN-CORE §6b).

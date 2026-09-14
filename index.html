@@ -15,7 +15,7 @@
     <style>
       :root { --wood: #c98b4a; --broth: #e8a33c; --green: #5fa55a; --red: #e84a3b; --teal: #2a9d8f; --ink: #2b2118; --paper: #fff7ea; --shade: rgba(43,33,24,.72);
         font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-      html, body { margin: 0; height: 100%; background: #2e2420; color: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+      html, body { margin: 0; height: 100%; background: #2e2420; color: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }   /* overscroll none: chặn quẹt trái/phải thành Back / kéo xuống thành Reload trên Chrome Android */
       #app { position: fixed; inset: 0; }
       canvas { display: block; }
       /* viền tối nhẹ quanh khung (vignette) */
@@ -189,7 +189,7 @@
       .pz.busy { opacity: .55; } .pz.busy .opt button { pointer-events: none; }
       .pz.bw { border-color: #c9d9e8; } .pz.br { border-color: #f1c27d; }
       /* ===== Quầy POV — kéo thả (bản thử #2) ===== */
-      #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; background: linear-gradient(#5b7d78 0%, #6d8f88 26%, #cfd6d8 27%, #b9c1c4 46%, #d9d3c4 47%, #efe7d6 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
+      #pov { position: fixed; inset: 0; z-index: 6; overscroll-behavior: none; display: flex; flex-direction: column; background: linear-gradient(#5b7d78 0%, #6d8f88 26%, #cfd6d8 27%, #b9c1c4 46%, #d9d3c4 47%, #efe7d6 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
       #pov.shake { animation: shake .3s; }
       .pv-top { display: flex; align-items: flex-start; gap: 6px; padding: calc(max(8px, env(safe-area-inset-top)) + 4px) 10px 6px; background: rgba(43,33,24,.35); }
       .pv-top .pill-dark { margin-top: 4px; } .pv-top .ghost { background: rgba(255,247,234,.85); margin: 0; padding: 6px 10px; }

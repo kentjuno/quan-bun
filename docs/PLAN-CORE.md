@@ -53,5 +53,9 @@ Mọi bước trong `recipeFor(d).transforms` phải có một **trạm kéo-th�
 
 Định nghĩa xong: Kent chơi Phở 1→5 bằng ngón tay cái trên điện thoại không cần đọc hướng dẫn, nói "muốn chơi tiếp".
 
+## 6b. Ghi chú kỹ thuật bắt buộc (Kent báo từ điện thoại)
+- **Chặn Back bằng cử chỉ**: `html, body, #pov { overscroll-behavior: none }` (Chrome Android: quẹt ngang không thành Back, kéo xuống không Reload) + `touch-action: none`; JS: khi vào màn chơi `history.pushState`, `popstate` khi đang chơi → pushState lại + toast "dùng nút ‹" (đã làm 0.8.4). iOS Safari quẹt từ mép trái không chặn được bằng web — chỉ hết khi cài PWA (standalone); game nhắc một lần. Mọi màn chơi mới (Counter POV) phải gọi `armBackGuard()`.
+- **Chữ tay**: Kent không dùng chữ viết tay thật → dùng font chữ tay tiếng Việt có đủ dấu (ưu tiên Google Fonts hỗ trợ Vietnamese: "Patrick Hand", "Itim", "Baloo 2" cho tiêu đề; kiểm tra dấu ă/ơ/ư hiện đúng). Artifact claude.ai chỉ cho fonts.googleapis.com; bản Pages nhúng font file vào `public/` để offline.
+
 ## 7. Không làm
 Không sửa sim-data/công thức; không bỏ chạm-là-đi 3D (chỉ chuyển sang Thêm); không đổi art khỏi hướng C; không tự viết thoại khách quen mới; không thêm món ngoài 18 món sim-data.
