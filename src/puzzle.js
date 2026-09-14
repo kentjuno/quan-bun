@@ -4,6 +4,7 @@
 import { D, recipeFor, label } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { ALL_DISHES, SHELF_TOPPING } from './config.js';
+import { REGULARS, STRANGER_LINES, lineFor } from './data/customers.js';
 
 const $ = (id) => document.getElementById(id);
 const shuffle = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -16,18 +17,23 @@ function intruders(d, n) {
   return shuffle([...pool]).slice(0, n);
 }
 
+/** Món dùng được cho Ráp tô bản thử: chuỗi ráp chỉ gồm tô nóng, sợi, topping rời, nước lèo (chưa có thớt/chảo/lò vi sóng). */
+export function assembleOk(d) { const r = recipeFor(d); return r.bowl && r.noodle && r.assembly.every((t) => t.startsWith('bowl-hot:') || t.startsWith('noodle-drained:') || /^broth:|-broth-ready$/.test(t) || (D.items[t] && SHELF_TOPPING.includes(t))); }
+
 export class Puzzle {
   /** @param {{ dishes: string[], weights: Object, rounds: number, kinds?: string[], onDone: (result) => void, sfx: any }} o — kinds: ['order','intruder','missing'] (Đố nhanh) hoặc ['ninja'] (Chém) */
   constructor(o) { this.o = o; this.i = 0; this.results = []; this.el = $('puzzle'); }
   start() { this.i = 0; this.results = []; this.t0 = performance.now(); this.el.classList.remove('hidden'); this.next(); }
   stop() { this.el.classList.add('hidden'); this.ninja?.stop(); cancelAnimationFrame(this._raf); }
   next() {
+    if ((this.o.kinds || [])[0] === 'assemble') { if (this.i) return this.finish(); this.i = 1; this.cur = { dish: null, kind: 'assemble', mistakes: 0, t0: performance.now(), taps: 0 }; $('pzCanvas').classList.add('hidden'); $('pzGrid').classList.remove('hidden', 'reflex'); $('pzTickets').classList.add('hidden'); $('pzGrid').classList.remove('assemble'); return this.buildAssemble(); }
     if (this.i >= this.o.rounds) return this.finish();
     const dish = pickW(this.o.weights); const kinds = this.o.kinds || ['order', 'intruder', 'missing']; const kind = kinds[this.i % kinds.length];
     this.cur = { dish, kind, mistakes: 0, t0: performance.now(), taps: 0 }; this.i++;
     $('pzProgress').textContent = `${this.i}/${this.o.rounds}`; $('pzDish').textContent = D.recipes[dish].name;
     $('pzCanvas').classList.add('hidden'); $('pzGrid').classList.remove('hidden'); $('pzGrid').classList.remove('reflex'); cancelAnimationFrame(this._raf);
-    ({ order: this.buildOrder, intruder: this.buildIntruder, missing: this.buildMissing, ninja: this.buildNinja, reflex: this.buildReflex })[kind].call(this, dish);
+    $('pzTickets').classList.add('hidden'); $('pzGrid').classList.remove('assemble');
+    ({ order: this.buildOrder, intruder: this.buildIntruder, missing: this.buildMissing, ninja: this.buildNinja, reflex: this.buildReflex, assemble: this.buildAssemble })[kind].call(this, dish);
   }
   steps(dish) { return recipeFor(dish).assembly; }
   // ---- (1) xếp thứ tự: bấm các bước theo đúng thứ tự ráp ----
@@ -90,6 +96,90 @@ export class Puzzle {
       return el;
     }));
     this._raf = requestAnimationFrame(tick);
+  }
+  // ---- (6) RÁP TÔ — bản thử lõi mới (Papa's × Cook Serve Delicious): phiếu khách treo, ráp ngay trên kệ, chấm từng bước, không đi lại ----
+  // Một phiên = `rounds` phiếu tới dần (tối đa 3 treo), mỗi phiếu có kiên nhẫn. Phiếu đầu là phiếu đang làm.
+  // Kệ cố định như tủ topping thật; sợi có thẻ riêng: trụng → chọn "vô tô" hay "xả lạnh" → trụng lại (kiểm tra kiến thức nóng-lạnh-nóng).
+  buildAssemble() {
+    const A = this; const dishes = this.o.dishes.filter(assembleOk); if (!dishes.length) return this.finish();
+    const weights = Object.fromEntries(dishes.map((d) => [d, this.o.weights[d] ?? 1]));
+    const total = this.o.rounds; const tickets = []; let spawned = 0; let done = 0; let over = false; const t0 = performance.now();
+    const PAT = 38, GAP = 11;   // giây kiên nhẫn mỗi phiếu · giây giữa hai phiếu
+    const who = (dish) => { const r = REGULARS.filter((x) => x.dish === dish); if (r.length && Math.random() < 0.5) { const g = r[Math.floor(Math.random() * r.length)]; return { name: g.name, regular: g.id }; } return { name: ['Khách', 'Cô áo xanh', 'Anh áo đỏ', 'Bác nón lá', 'Bé học sinh', 'Chị công sở'][Math.floor(Math.random() * 6)], regular: null }; };
+    const spawn = () => { if (spawned >= total) return; const dish = pickW(weights); const w = who(dish); tickets.push({ id: spawned++, dish, ...w, steps: recipeFor(dish).assembly, k: 0, mistakes: 0, taps: 0, born: performance.now(), pat: PAT, noodle: null, bowlBusy: 0 }); renderTickets(); };
+    // ---- kệ cố định: tô · sợi · topping (thứ tự kệ thật) · nước ----
+    const recs = dishes.map((d) => recipeFor(d));
+    const bowls = [...new Set(recs.map((r) => r.bowl).filter(Boolean))];
+    const noodles = [...new Set(recs.map((r) => r.noodle).filter(Boolean))];
+    const tops = SHELF_TOPPING.filter((it) => recs.some((r) => r.assembly.includes(it)));
+    const broths = [...new Set(recs.flatMap((r) => r.assembly.filter((t) => /^broth:|-broth-ready$/.test(t))))];
+    const cur = () => tickets[0] || null;
+    const wrongTap = (el, msg) => { const t = cur(); if (t) t.mistakes++; el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400); $('pzMsg').textContent = msg; A.o.sfx?.mistake?.(); };
+    const place = (tok, el) => {   // đặt token vào tô của phiếu đang làm — đúng bước kế thì nhận, sai thì lỗi
+      const t = cur(); if (!t || over) return false; t.taps++;
+      const need = t.steps[t.k];
+      const ok = need === tok || (need.startsWith('bowl-hot:') && tok === need) || (need.startsWith('noodle-drained:') && tok === need);
+      if (!ok) { wrongTap(el, t.k === 0 ? `Bắt đầu bằng ${label(need)}` : `Chưa tới lượt "${label(tok)}"`); return false; }
+      t.k++; A.o.sfx?.place?.(); $('pzMsg').textContent = ''; renderBowl();
+      if (t.k >= t.steps.length) serve(t);
+      return true;
+    };
+    const serve = (t) => {
+      const sec = (performance.now() - t.born) / 1000; A.results.push({ dish: t.dish, mistakes: t.mistakes, sec, taps: t.taps });
+      tickets.shift(); done++; A.o.sfx?.serve?.();
+      const say = t.mistakes ? (t.regular ? lineFor({ regular: t.regular }, 'wrong') : 'Ừ… cũng được.') : (t.regular ? lineFor({ regular: t.regular }, 'good') : STRANGER_LINES.good[Math.floor(Math.random() * STRANGER_LINES.good.length)]);
+      $('pzMsg').innerHTML = `<span style="color:${t.mistakes ? 'var(--broth)' : '#2f8a3a'}">${t.name}: “${say}” · ${sec.toFixed(0)}s${t.mistakes ? ` · ${t.mistakes} lỗi` : ' · hoàn hảo'}</span>`;
+      $('pzProgress').textContent = `${done}/${total}`; renderTickets(); renderBowl();
+      if (done >= total) { over = true; cancelAnimationFrame(A._raf); setTimeout(() => A.finish(), 1200); }
+    };
+    const expire = (t) => { A.results.push({ dish: t.dish, mistakes: t.mistakes + 3, sec: PAT, taps: t.taps }); tickets.splice(tickets.indexOf(t), 1); done++; A.o.sfx?.mistake?.(); $('pzMsg').innerHTML = `<span style="color:var(--red)">${t.name} bỏ đi — chờ lâu quá</span>`; $('pzProgress').textContent = `${done}/${total}`; renderTickets(); renderBowl(); if (done >= total) { over = true; cancelAnimationFrame(A._raf); setTimeout(() => A.finish(), 1200); } };
+    // ---- vẽ ----
+    const renderTickets = () => {
+      $('pzTickets').replaceChildren(...tickets.slice(0, 3).map((t, i) => { const el = document.createElement('div'); el.className = 'tk' + (i === 0 ? ' on' : '') + (t.regular ? ' reg' : ''); el.dataset.id = t.id;
+        el.innerHTML = `<b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u></u></i>`; return el; }));
+      const t = cur(); $('pzDish').textContent = t ? D.recipes[t.dish].name : '—';
+    };
+    const renderBowl = () => {
+      const t = cur(); const box = $('pzAnswer'); box.classList.remove('hidden');
+      if (!t) { box.innerHTML = '<span class="ans">Đang chờ khách…</span>'; return; }
+      box.replaceChildren(...t.steps.map((tok, i) => { const el = document.createElement('span'); el.className = 'ans' + (i < t.k ? '' : ' hole'); el.textContent = i < t.k ? label(tok) : (i === t.k ? '?' : '·'); return el; }));
+    };
+    // sợi: thẻ có trạng thái — chọn đúng nóng → (xả lạnh → trụng lại | vô tô) theo món
+    const noodleCard = (n) => {
+      const el = document.createElement('div'); el.className = 'pz sm nd'; el.dataset.it = n; let st = 'raw'; let busy = false;
+      const draw = () => { el.innerHTML = `${icon(n)}<span>${label(n)}${st === 'hot' ? ' — nóng' : st === 'rinsed' ? ' — đã xả lạnh' : st === 'hot2' ? ' — nóng lại' : ''}</span>` + (st === 'raw' ? '<div class="opt"><button data-a="blanch">♨️ Trụng</button></div>' : st === 'hot' ? '<div class="opt"><button data-a="bowl">🥣 Vô tô</button><button data-a="rinse">🚿 Xả lạnh</button></div>' : st === 'rinsed' ? '<div class="opt"><button data-a="reblanch">♨️ Trụng lại</button><button data-a="bowl">🥣 Vô tô</button></div>' : '<div class="opt"><button data-a="bowl">🥣 Vô tô</button></div>'); };
+      const wf = (dish) => (D.recipes[dish]?.base?.workflow || 'noodle-base');
+      el.addEventListener('click', (e) => {
+        const b = e.target.closest('button'); if (!b || busy || over) return; const a = b.dataset.a; const t = cur(); if (!t) return; t.taps++;
+        const act = (ms, next) => { busy = true; el.classList.add('busy'); setTimeout(() => { busy = false; el.classList.remove('busy'); st = next; draw(); A.o.sfx?.done?.(); }, ms); A.o.sfx?.drop?.(); };
+        if (a === 'blanch') return act(900, 'hot');
+        if (a === 'rinse') { if (wf(t.dish) === 'noodle-hot-only') return wrongTap(el, `${label(n)} chỉ trụng một lần — không xả lạnh`); return act(600, 'rinsed'); }
+        if (a === 'reblanch') return act(600, 'hot2');
+        if (a === 'bowl') {
+          const need = t.steps[t.k]; const tok = `noodle-drained:${n}`;
+          if (wf(t.dish) === 'noodle-base' && st !== 'hot2') return wrongTap(el, st === 'hot' ? 'Phải xả lạnh rồi trụng nóng lại mới vô tô' : 'Chưa trụng nóng lại');
+          if (need !== tok) return wrongTap(el, need.startsWith('noodle-drained:') ? `Món này dùng ${label(need.split(':')[1])}, không phải ${label(n)}` : `Chưa tới lượt sợi — kế tiếp là ${label(need)}`);
+          st = 'raw'; draw(); place(tok, el);
+        }
+      });
+      draw(); return el;
+    };
+    const cardBtn = (tok, cls, onTap) => { const el = document.createElement('button'); el.className = 'pz sm ' + cls; el.dataset.it = tok; el.innerHTML = `${icon(tok)}<span>${label(tok)}</span>`; el.onclick = () => { if (over) return; onTap(el); }; return el; };
+    const grid = $('pzGrid'); grid.classList.add('assemble'); grid.replaceChildren();
+    const section = (title, els) => { if (!els.length) return; const h = document.createElement('div'); h.className = 'sec'; h.textContent = title; grid.appendChild(h); for (const e of els) grid.appendChild(e); };
+    section('Kệ tô', bowls.map((b) => cardBtn(b, 'bw', (el) => { if (el.classList.contains('busy')) return; el.classList.add('busy'); A.o.sfx?.drop?.(); setTimeout(() => { el.classList.remove('busy'); place(`bowl-hot:${b}`, el); }, 500); })));
+    section('Nồi trụng', noodles.map(noodleCard));
+    section('Tủ topping', tops.map((it) => cardBtn(it, 'tp', (el) => place(it, el))));
+    section('Nước lèo', broths.map((t) => cardBtn(t, 'br', (el) => place(t, el))));
+    $('pzTitle').textContent = 'Ráp đúng thứ tự cho phiếu đang sáng · phiếu mới tới dần, chờ lâu là bỏ đi'; $('pzTickets').classList.remove('hidden'); $('pzProgress').textContent = `0/${total}`;
+    spawn(); renderBowl();
+    let nextSpawn = performance.now() + GAP * 1000;
+    const tick = () => { if (over) return; const now = performance.now();
+      if (now >= nextSpawn && tickets.length < 3 && spawned < total) { spawn(); nextSpawn = now + GAP * 1000; } else if (tickets.length >= 3) nextSpawn = now + 3000;
+      for (const el of $('pzTickets').children) { const t = tickets.find((x) => String(x.id) === el.dataset.id); if (!t) continue; const f = Math.max(0, 1 - (now - t.born) / 1000 / t.pat); const u = el.querySelector('u'); u.style.width = `${f * 100}%`; u.style.background = f < 0.25 ? 'var(--red)' : f < 0.5 ? 'var(--broth)' : 'var(--green)'; if (f <= 0) { expire(t); break; } }
+      A._raf = requestAnimationFrame(tick); };
+    A._raf = requestAnimationFrame(tick);
+    this._sol = cur() ? cur().steps.map(label) : [];
   }
   /** (test) nhãn các nút cần bấm theo thứ tự để giải câu hiện tại */
   solution() { return this._sol || []; }

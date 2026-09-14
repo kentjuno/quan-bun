@@ -226,3 +226,9 @@ Kent 14/09: "ngày đầu mà bước nhiều quá, người mới bị ngộp" 
 - Bot & par chạy đúng công thức của level (kể cả bản tập, kể cả ràng buộc một tay/một rọ); `par` cache theo cả bố trí bếp.
 - Bỏ hẳn hệ NGÀY (`DAYS`, `makeDayArrivals`, `dayFor`…). `LEVELS` cũ giữ cho tests/par.
 - Tests: `tests/worlds.test.js` (18 — gồm "cả 124 level bot chơi được", "không 3 level liên tiếp cùng một trục", "mọi bố trí bếp đều tới được"), `tests/customers.test.js` (3). Tổng 64 unit pass; smoke Chromium cập nhật cho bản đồ/khoá/nâng cấp/chơi Phở 5 — 0 lỗi.
+
+## 0.8.1 — 2026-09-14 · Bản thử lõi mới: 🥣 Ráp tô (tab Thêm → Mini)
+Kent: cơ chế Overcooked mạnh ở co-op, chơi một mình nhàm; giữ bậc thang world/level làm đường luyện, còn game thật cần lõi khác. Phân tích phong cách (Diner Dash · Papa's · Cook Serve Delicious · PlateUp! · Coffee Talk) → đề nghị lai **Papa's (ráp từng đơn, chấm từng bước) × CSD (phiếu treo, phản xạ đã thuộc)**, không đi lại trong bếp. Bản thử cực mỏng để Kent cầm điện thoại quyết:
+- `puzzle.js` kind `assemble`: 10 phiếu tới dần (tối đa 3 treo, mỗi phiếu kiên nhẫn 38 s, cách 11 s), phiếu đầu là phiếu đang làm; khách quen có tên thật (Cậu Hai, Dì Ba, Thím Bảy) hoặc khách lạ. Kệ cố định như tủ topping thật chia 4 khu: **Kệ tô** (chạm = trụng tô 0.5 s) · **Nồi trụng** (thẻ sợi có trạng thái: Trụng → chọn *Vô tô* hay *Xả lạnh* → Trụng lại — kiểm tra kiến thức nóng-lạnh-nóng vs bún bò trụng một lần) · **Tủ topping** (thứ tự kệ thật) · **Nước lèo**. Mỗi chạm chấm ngay: đúng bước kế thì vào tô, sai thì rung + lỗi + gợi ý ngắn. Xong phiếu: khách nói một câu (khen nếu hoàn hảo), giây và số lỗi; chờ quá lâu thì bỏ đi (+3 lỗi).
+- Chỉ nhận món có chuỗi ráp gồm tô + sợi + topping rời + nước (`assembleOk`): hiện là phở tái nạm, bún riêu cua, bún bò Huế; món có thớt/chảo/lò vi sóng để bản sau.
+- Kết quả đi vào mastery như các minigame khác. UI: đầu bảng dính (phiếu + tô đang ráp + phản hồi), kệ thu nhỏ để vừa một màn điện thoại.

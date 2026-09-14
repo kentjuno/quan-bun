@@ -176,7 +176,24 @@
       .pz.sm { padding: 5px 2px; font-size: 10px; border-width: 2px; border-radius: 10px; } .pz.sm img { width: 36px; height: 36px; } .pz.sm .emo { font-size: 24px; line-height: 36px; }
       .pz.missed { border-color: var(--broth); background: #fff3d6; }
       .ans.timer { position: relative; overflow: hidden; min-width: 120px; background: #eee2d0; } .ans.timer i { position: absolute; left: 0; top: 0; bottom: 0; background: #dff2df; transition: width .1s linear; } .ans.timer b { position: relative; }
-      .pz-msg { min-height: 20px; margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--red); text-align: center; }
+      /* Ráp tô: phiếu khách treo + kệ chia khu */
+      .pz-tickets { display: flex; gap: 6px; margin: 2px 0 8px; min-height: 58px; }
+      .pz-tickets .tk { flex: 1; background: #fff8ec; border: 2px dashed #d8cbb6; border-radius: 10px; padding: 6px 8px 8px; font-size: 11px; line-height: 1.25; opacity: .7; position: relative; }
+      .pz-tickets .tk.on { opacity: 1; border: 3px solid var(--red); background: #fff; box-shadow: 0 4px 12px rgba(232,74,59,.25); } .pz-tickets .tk.reg b { color: #b07a20; }
+      .pz-tickets .tk b { display: block; font-size: 12px; } .pz-tickets .tk span { display: block; font-weight: 700; color: var(--red); font-size: 12px; }
+      .pz-tickets .tk .bar { display: block; height: 5px; background: rgba(0,0,0,.12); border-radius: 3px; margin-top: 5px; overflow: hidden; } .pz-tickets .tk .bar u { display: block; height: 100%; background: var(--green); width: 100%; }
+      .pz-grid.assemble { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 4px; }
+      .pz-grid.assemble .sec { grid-column: 1 / -1; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; opacity: .55; font-weight: 800; margin: 6px 0 -1px; }
+      .pz.nd { grid-column: span 2; cursor: default; } .pz .opt { display: flex; gap: 4px; margin-top: 3px; flex-wrap: wrap; justify-content: center; }
+      .pz .opt button { font: inherit; font-size: 10.5px; font-weight: 800; padding: 5px 7px; margin: 0; border-radius: 8px; background: var(--teal); box-shadow: 0 2px 0 #1f7a70; }
+      .pz.busy { opacity: .55; } .pz.busy .opt button { pointer-events: none; }
+      .pz.bw { border-color: #c9d9e8; } .pz.br { border-color: #f1c27d; }
+      .pz-msg { min-height: 18px; margin: 4px 0 6px; font-size: 12.5px; font-weight: 700; color: var(--red); text-align: center; line-height: 1.25; }
+      .pz-sticky { position: sticky; top: -16px; background: var(--paper); z-index: 2; padding-top: 4px; margin: 0 -4px; padding-left: 4px; padding-right: 4px; }
+      .pz-grid.assemble .pz.sm { padding: 4px 2px; border-radius: 9px; } .pz-grid.assemble .pz.sm img { width: 30px; height: 30px; } .pz-grid.assemble .pz.sm span { font-size: 9.5px; }
+      .pz-grid.assemble .pz.nd { grid-column: span 2; flex-direction: row; gap: 6px; padding: 4px 6px; text-align: left; } .pz.nd img { flex: 0 0 auto; } .pz.nd > span { flex: 1; } .pz.nd .opt { margin: 0; flex-direction: column; } .pz.nd .opt button { padding: 4px 6px; font-size: 10px; }
+      .pz-tickets { min-height: 50px; } .pz-tickets .tk { padding: 4px 7px 6px; } .pz-tickets .tk b { font-size: 11px; } .pz-tickets .tk span { font-size: 11px; }
+      .pz-title { font-size: 12px; margin: 2px 0 4px; }
       .lbl.sign      .lbl.sign { font-size: 15px; font-weight: 800; letter-spacing: 3px; color: #ffe08a; text-shadow: 0 1px 0 #7a2e1a, 0 0 8px rgba(0,0,0,.6); }
       .opt { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; margin: 6px 0 10px; }
       .opt label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
@@ -272,6 +289,7 @@
           <section id="tab-puzzle" class="tab sub hidden">
             <div class="mini"><div class="lvcard solo"><b>🧩 Đố nhanh</b><small>9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary">Chơi</button></div>
             <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🥣 Ráp tô <small style="display:inline;color:var(--red)">· bản thử lõi mới</small></b><small>Phiếu khách treo dần, ráp ngay trên kệ không cần đi lại: tô → sợi (nóng · xả lạnh · nóng lại) → topping đúng thứ tự → nước. 10 phiếu, chấm từng bước.</small><button id="btnAssemble">Chơi</button></div>
             <div class="lvcard solo" style="grid-column:1/-1"><b>⚡ Phản xạ</b><small>Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục.</small><button id="btnReflex">Chơi</button></div></div>
             <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — chọn món ở Luyện. Kết quả ghi vào Tiến độ nhớ món, +10k/câu sạch.</div>
           </section>
@@ -287,11 +305,14 @@
     <div id="puzzle" class="overlay hidden">
       <div class="panel pz-panel">
         <div class="pz-head"><span id="pzProgress" class="pill-dark">1/9</span><b id="pzDish">Món</b><button id="pzQuit" class="ghost small">Thoát</button></div>
-        <div class="pz-title" id="pzTitle"></div>
-        <div class="pz-answer" id="pzAnswer"></div>
+        <div class="pz-sticky" id="pzSticky">
+          <div class="pz-tickets hidden" id="pzTickets"></div>
+          <div class="pz-title" id="pzTitle"></div>
+          <div class="pz-answer" id="pzAnswer"></div>
+          <div class="pz-msg" id="pzMsg"></div>
+        </div>
         <div class="pz-grid" id="pzGrid"></div>
         <canvas id="pzCanvas" class="pz-canvas hidden"></canvas>
-        <div class="pz-msg" id="pzMsg"></div>
       </div>
     </div>
 
