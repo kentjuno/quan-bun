@@ -60,3 +60,23 @@ Mọi bước trong `recipeFor(d).transforms` phải có một **trạm kéo-th�
 
 ## 7. Không làm
 Không sửa sim-data/công thức; không bỏ chạm-là-đi 3D (chỉ chuyển sang Thêm); không đổi art khỏi hướng C; không tự viết thoại khách quen mới; không thêm món ngoài 18 món sim-data.
+
+
+---
+
+## Bước 2 ✅ + bước 3 (một phần) — 14/09
+
+**Bước 2 xong**: level chính chạy ở Quầy POV. `Counter` nhận `arrivals` (lịch khách của level), `goal`, `moneyTargets`, tính tiền/tip/sao/chuỗi y như `World`. Test mới `tests/counter.test.js` chạy bot qua **cả 124 level**. Bếp 3D còn nguyên, vào bằng tab **Thêm → Luyện tập → Bếp thật (3D)**, hoặc `?bep3d=1`.
+
+Ba lỗi đã sửa khi làm bước này:
+1. Bot đứng hình ở mọi bản tập — `findReady` không biết `shelfSubs` (bản tập lấy tô ở kệ là ra thẳng tô nóng, token `bowl-hot:*` không nằm trong `D.items`).
+2. Bot loop ở 4 level nước nấu sẵn — `soupMove` vẫn cố nấu khi `sim.soupReady`; giờ chặn hẳn.
+3. Màn kết ngày đọc `world.shift` của bếp 3D trong khi đang chơi quầy — giờ nhớ `povLevel` riêng, và bỏ cột "so với bot" (quầy không đi lại nên so lộ trình là vô nghĩa).
+
+**Bước 3 mới làm một phần**:
+- Bếp 3D thành phần phụ thật sự: `set3D()` ẩn hẳn `#app` VÀ ngưng `view.sync/render` khi không chơi nó. Trước đây canvas 3D luôn chạy làm nền menu — đó là lý do chơi xong một level lại "thấy 3D".
+- Nền 2D `#bg2d` (giấy kẻ ô + vệt màu nước, thuần CSS nên không phải tải ảnh), `.overlay` trong suốt khi `body.flat`.
+- Quầy POV đổi sang hệ màu giấy art C; ô ráp tô to lên `min(30vw,150px)`.
+- `src/game/art.js` + `public/art/*.webp`: tô của mỗi món hiện **ảnh art C thật** trong ô ráp, `-dry` → `-wet` khi đã chan nước. Chỉ vẽ khi còn đúng một món khớp; không có ảnh thì tự quay về icon cũ (`onerror` gỡ thẻ img) nên không bao giờ vỡ giao diện.
+
+**Còn lại của bước 3**: nền từng trạm bằng ảnh (nồi/bồn/chảo/lò), vùng thả theo % trong `counter-layout.js`, mặt khách lên phiếu, và ráp animation A10 (tay cầm vá) vào lúc chan nước thật trong game.
