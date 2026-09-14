@@ -12,8 +12,8 @@ has = lambda n: os.path.exists(os.path.join(CUT, n + '.png'))
 cut = lambda n, w=440: uri(os.path.join(CUT, n + '.png'), w)
 
 # spout = toạ độ MIỆNG VÁ trong ảnh (% rộng, % cao)
-HSPEC = [('hand-ladle-b', 'Tay B — vá ngang',   [10, 44], {'size': 62, 'tilt': 26, 'lift': 13, 'offx': -4}),
-         ('hand-ladle-d', 'Tay D — vá cán dài', [75, 92], {'size': 78, 'tilt': 30, 'lift': 13, 'offx': 4})]
+HSPEC = [('hand-ladle-b', 'Tay B — vá ngang',   [10, 44], {'size': 62, 'tilt': 26, 'lift': 13}),
+         ('hand-ladle-d', 'Tay D — vá cán dài', [75, 92], {'size': 78, 'tilt': 30, 'lift': 13})]
 hands = [{'label': lb, 'spout': sp, 'preset': pr, 'src': cut(n)} for n, lb, sp, pr in HSPEC if has(n)]
 
 BSPEC = [('a', 'Tô A')]

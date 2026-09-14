@@ -81,7 +81,6 @@
   <div class="row"><label>Cỡ tay</label><input type="range" id="size" min="40" max="120" step="1" value="72"><span class="val" id="vsize"></span></div>
   <div class="row"><label>Cỡ tô</label><input type="range" id="bw" min="35" max="90" step="1" value="60"><span class="val" id="vbw"></span></div>
   <div class="row"><label>Vá cao hơn tô</label><input type="range" id="lift" min="0" max="34" step="1" value="13"><span class="val" id="vlift"></span></div>
-  <div class="row"><label>Vá lệch ngang</label><input type="range" id="offx" min="-30" max="30" step="1" value="-4"><span class="val" id="voffx"></span></div>
 
   <div id="dump"></div>
 
@@ -120,7 +119,7 @@ picker($('#bowlpick'), BOWLS, (b) => { dry.src = b.dry; wet.src = b.wet; });
 $('#handimg').src = HANDS[0].src; dry.src = BOWLS[0].dry; wet.src = BOWLS[0].wet;
 
 const S = {};
-for (const [id, unit] of [['dur','ms'],['tilt','°'],['size','%'],['bw','%'],['lift','%'],['offx','%']]) {
+for (const [id, unit] of [['dur','ms'],['tilt','°'],['size','%'],['bw','%'],['lift','%']]) {
   const el = $('#'+id), out = $('#v'+id);
   el.oninput = () => { S[id] = +el.value; out.textContent = el.value + unit;
     if (id === 'size') hand.style.width = el.value + '%';
@@ -143,7 +142,7 @@ function pose(T) {
   const a = T*Math.PI/180, c = Math.cos(a), si = Math.sin(a);
   const rx = ox + (px-ox)*c - (py-oy)*si;      // miệng vá sau khi xoay
   const ry = oy + (px-ox)*si + (py-oy)*c;
-  const tx = sw*(.50 + S.offx/100);
+  const tx = sw*.50;                           // nước luôn rơi giữa tô
   const ty = rimY() - sh*S.lift/100;
   return { x: tx - rx, y: ty - ry, sx: tx, sy: ty };
 }
