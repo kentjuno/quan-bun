@@ -107,3 +107,29 @@ Artifact claude.ai chỉ cho `fonts.googleapis.com`; bản Pages nhúng `.woff2`
 - Tổng ảnh sau xử lý phải < 3 MB (nền 2×250 KB, trạm 7×80 KB, còn lại < 40 KB/ảnh) để PWA vẫn cài offline nhanh.
 - Mỗi mẻ gen xong: chạy `process_icons.py`, ghép lên màn thật, chụp 1 ảnh gửi Kent duyệt **trước khi gen mẻ sau**.
 - Kiểm tra bắt buộc: icon đọc được ở 48 px (bible §2), nền không nuốt chữ trắng, hitbox vẫn trúng khi đổi từ dọc sang ngang.
+
+---
+
+## 6. A10 — chan nước: đã làm xong, số đã chốt (14/09)
+
+Demo: `art/demo/pour.html` (dựng từ `pour.tpl.html` + `build_pour_demo.py`). Số Kent duyệt nằm trong `src/data/counter-layout.js`.
+
+| Thông số | Giá trị | Ghi chú |
+|---|---|---|
+| Tổng thời gian | 1500 ms | chậm hơn dự kiến 0.8 s — Kent thấy 0.8 s gấp quá |
+| Độ nghiêng vá | 30° | |
+| Cỡ tay / cỡ tô | 62% / 54% bề ngang sân khấu | |
+| Vá cao hơn miệng tô | 0% | vá gần như chạm vành |
+| Ảnh tay | `hand-ladle-d` (vá cán dài) | `hand-ladle-b` giữ làm dự phòng |
+
+**Ba lỗi đã sửa, đừng lặp lại:**
+
+1. **Đừng dùng icon món làm lớp trong tô.** Icon là vật trên kệ, đặt chồng lên nhau trong tô thì lệch cỡ và khác hệ vẽ. Mỗi món có **2 ảnh trạng thái** (`<dish>-dry` / `<dish>-wet`), chan xong thì crossfade — không xếp lớp.
+2. **Đừng canh vị trí dòng nước bằng tay.** Mỗi ảnh tay ghi sẵn `spout` (toạ độ miệng vá, % của ảnh); code giải ngược ra chỗ tay phải đứng (đã tính góc xoay) để nước rơi **đúng tâm tô**. Đổi tay/cỡ/góc vẫn đúng.
+3. **`easing` trong options của Web Animations bóp méo cả timeline**, không phải từng đoạn — làm tay vọt lên rồi tụt xuống trước khi nước kịp chảy. Luôn để `options.easing = 'linear'`, easing gắn vào từng keyframe.
+
+**Mốc hình ảnh** tính theo % chiều cao của ảnh tô (không phải sân khấu): miệng tô `0.13`, mặt nước `0.30`, dòng nước bắt đầu thấp hơn miệng vá `0.06`. Nước chảy tới mặt nước rồi toé ở đó.
+
+### Ảnh đã có
+`hand-ladle-b`, `hand-ladle-d`, `hand-bowl` (bưng tô), `fx-stream`, `fx-splash` — trong `art/cut/`, gốc trong `art/raw/`.
+Cắt nền magenta bằng `scripts/cut_magenta.py <thư mục raw>`.
