@@ -206,6 +206,16 @@
       #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; overscroll-behavior: none; background: linear-gradient(#cdbb98 0%, #c4b18d 20%, #d7cdb5 21%, #cfc3a8 40%, #ece0c9 41%, #f5ecda 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
       #pov.shake { animation: shake .3s; }
       /* art C: ảnh tô thật trong ô ráp — thay cho chồng icon */
+      /* mặt khách trên phiếu */
+      #pov .tk-face { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; object-position: top center;
+        float: left; margin: 0 5px 0 0; background: #fffdf7; box-shadow: 0 1px 2px rgba(40,28,18,.3); }
+      /* A10 — lớp hiệu ứng chan nước, không chắn thao tác */
+      #pov .pv-fx { position: absolute; pointer-events: none; z-index: 9; }
+      #pov .pv-fx img { width: 100%; height: 100%; display: block; object-fit: contain; }
+      #pov .pv-hand { left: 0; top: 0; transform-origin: 75% 92%; }
+      #pov .pv-stream { transform: translateX(-50%); transform-origin: top center; }
+      #pov .pv-stream img { object-fit: fill; }
+      #pov .pv-splash { transform: translate(-50%,-60%); }
       #pov .pv-art { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 2px 3px rgba(40,28,18,.28)); }
       #pov .pv-bowl.full .pv-art { animation: bowlDone 1.1s ease-in-out infinite; }
       @keyframes bowlDone { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }

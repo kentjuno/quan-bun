@@ -1,6 +1,7 @@
 // Sinh danh sách khách cho một level (docs/PLAN-WORLDS.md §5).
 // Seed theo level.id → chơi lại thấy y hệt, nhưng mỗi level một kiểu. Không dùng Math.random.
 import { CUSTOMERS } from '../config.js';
+import { paceOf } from '../data/pace.js';
 
 const TYPES = Object.keys(CUSTOMERS);
 function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -45,4 +46,29 @@ export function makeLevelArrivals(level) {
     a.regular = rid; delete a.dish;
   });
   return out.sort((a, b) => a.t - b.t);
+}
+
+// ---- nhịp cho QUẦY POV ----
+export const POV_FIRST = 4;      // giây: khách đầu tiên, đủ để nhìn quanh quầy một cái
+export const POV_PACE = 1.0;     // 1.0 = khách tới đúng bằng tốc độ bot làm; <1 là dồn dập hơn
+const TRAIN_EASE = 0.62;         // bản tập bỏ bớt bước nên làm nhanh hơn nhiều
+
+/**
+ * Lịch khách cho quầy POV: GIỮ NGUYÊN nhịp của level (đợt dồn, khách đôi, boss)
+ * nhưng nén/giãn cả trục thời gian cho khớp tốc độ thật của quầy.
+ * Lịch gốc canh cho bếp 3D — ở đó còn phải đi lại, nên bê nguyên qua quầy thì khách thưa rề rà.
+ * @param {object} level
+ * @param {Array} [base] lịch gốc (mặc định: makeLevelArrivals(level))
+ */
+export function povArrivals(level, base = null) {
+  const arr = (base || makeLevelArrivals(level)).map((a) => ({ ...a }));
+  if (arr.length < 2) { if (arr[0]) arr[0].t = POV_FIRST; return arr; }
+  const t0 = arr[0].t; const span = arr[arr.length - 1].t - t0;
+  if (span <= 0) return arr;
+  const cur = span / (arr.length - 1);                                  // khoảng cách trung bình hiện tại
+  let want = paceOf(level.dishes) * POV_PACE;                           // khoảng cách mong muốn
+  if (level.training) want *= TRAIN_EASE;
+  const k = Math.max(0.12, Math.min(1, want / cur));                    // chỉ nén lại, không bao giờ giãn ra
+  for (const a of arr) a.t = +(POV_FIRST + (a.t - t0) * k).toFixed(2);
+  return arr;
 }

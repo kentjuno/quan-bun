@@ -33,6 +33,7 @@ export class Counter {
     this.arrivals = (o.arrivals || []).filter((a) => !a.dish || this.dishes.includes(a.dish));
     this.rounds = this.arrivals.length || (o.rounds ?? 8);
     this.patience = o.patience ?? 90; this.gap = o.gap ?? 16;
+    this.maxTickets = c?.tickets ?? o.maxTickets ?? 3;   // số phiếu treo cùng lúc — càng nhiều càng làm song song được
     this.time = 0; this.spawned = 0; this.done = 0; this.over = false; this.results = [];
     this.nextSpawn = 1;
     // ---- level (docs/PLAN-WORLDS.md): mục tiêu riêng, tiền, chuỗi tô đúng ----
@@ -73,7 +74,7 @@ export class Counter {
   pickDish() { const w = this.o.weights || {}; const sum = this.dishes.reduce((n, k) => n + (w[k] ?? 1), 0); let r = this.rnd() * sum; for (const k of this.dishes) { r -= (w[k] ?? 1); if (r <= 0) return k; } return this.dishes[this.dishes.length - 1]; }
   who(dish) { const rs = REGULARS.filter((x) => x.dish === dish); if (rs.length && this.rnd() < 0.5) { const g = rs[Math.floor(this.rnd() * rs.length)]; return { name: g.name, regular: g.id }; } const ns = ['Khách', 'Cô áo xanh', 'Anh áo đỏ', 'Bác nón lá', 'Bé học sinh', 'Chị công sở']; return { name: ns[Math.floor(this.rnd() * ns.length)], regular: null }; }
   spawn(dish = null, arr = null) {
-    if (this.spawned >= this.rounds || this.tickets.length >= 3) return null;
+    if (this.spawned >= this.rounds || this.tickets.length >= this.maxTickets) return null;
     if (!arr && this.arrivals.length) arr = this.arrivals[this.spawned];
     const d = dish || arr?.dish || this.pickDish();
     const reg = arr?.regular ? REGULARS.find((x) => x.id === arr.regular) : null;
@@ -91,7 +92,7 @@ export class Counter {
   waste(tag) { this.errors.push({ t: +this.time.toFixed(1), tag, waste: true }); }
   err(msg, slotIdx = null) {
     const b = slotIdx != null ? this.slots[slotIdx] : null;
-    if (b) b.mistakes = (b.mistakes || 0) + 1; else if (this.tickets[0]) this.tickets[0].mistakes++;
+    if (b) b.mistakes = (b.mistakes || 0) + 1;   // lỗi không gắn với tô nào chỉ ghi vào `errors`, không đổ cho phiếu nào
     this.errors.push({ t: +this.time.toFixed(1), tag: msg, waste: false });
     this.ev.onMsg?.(msg, 'bad'); this.ev.onSfx?.('mistake'); return { ok: false, msg };
   }
@@ -243,7 +244,11 @@ export class Counter {
     const b = this.slots[src.i]; if (!b) return this.err('Chỗ này chưa có tô');
     const t = this.tickets.find((x) => x.id === id); if (!t) return this.err('Phiếu không còn');
     const match = t.steps.length === b.placed.length && t.steps.every((s, k) => s === b.placed[k]);
-    if (!match) { const other = this.tickets.find((x) => x.steps.length === b.placed.length && x.steps.every((s, k) => s === b.placed[k])); return this.err(other ? `Tô này của ${other.name}, không phải ${t.name}` : 'Tô chưa xong — còn thiếu bước'); }
+    if (!match) {
+      const other = this.tickets.find((x) => x !== t && x.steps.length === b.placed.length && x.steps.every((s, k) => s === b.placed[k]));
+      // đưa nhầm phiếu là lỗi CỦA TÔ ĐÓ → trừ chất lượng đúng tô, không đổ cho phiếu khác
+      return this.err(other ? `Tô này là ${D.recipes[other.dish].name} của ${other.name}, không phải ${t.name}` : 'Tô chưa xong — còn thiếu bước', src.i);
+    }
     t.mistakes += b.mistakes || 0; this.slots[src.i] = null; return this.serve(t, b);
   }
   toTrash(src, tok) {
@@ -281,8 +286,8 @@ export class Counter {
     if (this.over) return; this.time += dt;
     if (this.arrivals.length) {
       // khách tới theo lịch; quầy chỉ treo 3 phiếu nên người tới sớm phải đợi chỗ trống
-      while (this.spawned < this.rounds && this.tickets.length < 3 && this.time >= this.arrivals[this.spawned].t) this.spawn(null, this.arrivals[this.spawned]);
-    } else if (this.time >= this.nextSpawn && this.tickets.length < 3 && this.spawned < this.rounds) { this.spawn(); this.nextSpawn = this.time + this.gap; }
+      while (this.spawned < this.rounds && this.tickets.length < this.maxTickets && this.time >= this.arrivals[this.spawned].t) this.spawn(null, this.arrivals[this.spawned]);
+    } else if (this.time >= this.nextSpawn && this.tickets.length < this.maxTickets && this.spawned < this.rounds) { this.spawn(); this.nextSpawn = this.time + this.gap; }
     const tickJob = (j) => { if (j && j.left > 0) { j.left = Math.max(0, j.left - dt); if (j.left === 0) this.ev.onSfx?.('done'); } };
     for (const b of this.baskets) { if (!b) continue; tickJob(b);
       if (b.left === 0 && b.state !== 'rinsed') { b.state = b.state === 'blanching' ? 'hot' : b.state === 'reblanching' ? 'hot2' : b.state; }
@@ -332,15 +337,23 @@ export class Counter {
  * "Bot" cho quầy: trả về nước đi kế tiếp {src, zone} để hoàn thành phiếu đầu — dùng cho test và cho par.
  * Quy tắc: đi theo `assembly` của phiếu đang làm, bước nào chưa có thì truy ngược chuỗi transform.
  */
+/** Nước đi kế tiếp của bot. Phiếu đầu kẹt (đang chờ nồi/thớt) thì quay sang phiếu khác — làm song song như người thật. */
 export function counterMove(C) {
-  const t = C.tickets[0]; if (!t) return null;
+  for (const t of C.tickets) { const m = moveFor(C, t); if (m) return m; }
+  return null;
+}
+function moveFor(C, t) {
+  if (!t) return null;
   const si = C.slots.findIndex((b) => b && C.fits(b.placed).includes(t));
   const bowl = si >= 0 ? C.slots[si] : null;
   const rec = C.recs[t.dish];
   // tô xong → giao
   if (bowl && bowl.placed.length === t.steps.length) return { src: { kind: 'madebowl', i: si }, zone: { kind: 'ticket', id: t.id } };
   const need = t.steps[bowl ? bowl.placed.length : 0];
-  const slotZone = () => (si >= 0 ? { kind: 'slot', i: si } : { kind: 'slot', i: Math.max(0, C.slots.findIndex((b) => !b)) });
+  // hết chỗ thớt thì chờ, tuyệt đối không đổ vào tô của phiếu khác
+  const free = C.slots.findIndex((b) => !b);
+  if (si < 0 && free < 0) return null;
+  const slotZone = () => (si >= 0 ? { kind: 'slot', i: si } : { kind: 'slot', i: free });
   // đã có sẵn ở đâu đó → đem vô tô
   const ready = findReady(C, need); if (ready) return { src: ready, zone: slotZone() };
   const sm = soupMove(C, need); if (sm) return sm;                            // nước lèo phải nấu ở lò

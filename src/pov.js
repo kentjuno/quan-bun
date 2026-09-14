@@ -3,7 +3,8 @@
 import { D, label, tokenMatches } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
-import { dishArt } from './game/art.js';
+import { dishArt, faceArt, fx, hand } from './game/art.js';
+import { POUR, BOWL } from './data/counter-layout.js';
 export { povOk };
 
 const $ = (id) => document.getElementById(id);
@@ -67,7 +68,7 @@ export class Pov {
   render() {
     const C = this.C;
     $('pvProg').textContent = `${C.done}/${C.rounds}`;
-    $('pvTickets').innerHTML = C.tickets.map((t) => `<div class="tk drop${t.regular ? ' reg' : ''}" data-zone="ticket" data-i="${t.id}"><b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u style="width:${C.patienceOf(t) * 100}%;background:${C.patienceOf(t) < 0.25 ? 'var(--red)' : C.patienceOf(t) < 0.5 ? 'var(--broth)' : 'var(--green)'}"></u></i></div>`).join('');
+    $('pvTickets').innerHTML = C.tickets.map((t) => `<div class="tk drop${t.regular ? ' reg' : ''}" data-zone="ticket" data-i="${t.id}"><img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()"><b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u style="width:${C.patienceOf(t) * 100}%;background:${C.patienceOf(t) < 0.25 ? 'var(--red)' : C.patienceOf(t) < 0.5 ? 'var(--broth)' : 'var(--green)'}"></u></i></div>`).join('');
     if (this.has.pot) $('pvBaskets').innerHTML = C.baskets.map((b, i) => {
       if (!b) return `<div class="pv-basket drop" data-zone="pot" data-i="${i}"></div>`;
       const busy = b.left > 0; const st = b.spoiled ? 'hư — vứt đi' : busy ? '…' : b.state === 'hot' ? 'nóng' : b.state === 'rinsed' ? 'đã xả lạnh' : b.state === 'hot2' ? 'nóng lại' : 'xong';
@@ -102,6 +103,56 @@ export class Pov {
     }).join('');
   }
 
+  /** Sau mỗi thao tác đúng: chan nước thì chạy A10 (docs/ART-PIPELINE.md §2·§6). */
+  afterDrop(res, src, zone) {
+    if (!res?.ok || zone?.kind !== 'slot') return;
+    const isBroth = ['broth', 'ready', 'burnerpot'].includes(src?.kind);
+    if (!isBroth) return;
+    const slot = this.el.querySelector(`.pv-slot[data-i="${zone.i}"]`);
+    if (slot) this.pour(slot);
+  }
+  /** A10 — tay cầm vá trượt vào, nghiêng, dòng nước chảy xuống mặt nước trong tô rồi rút ra. */
+  pour(slotEl) {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const st = this.el.getBoundingClientRect(); const b = slotEl.getBoundingClientRect();
+    const cx = b.left - st.left + b.width / 2;
+    const rim = b.top - st.top + b.height * BOWL.rim;
+    const surf = b.top - st.top + b.height * BOWL.surface;
+    const D = POUR.duration, T = POUR.tilt;
+    const mk = (cls, src) => { const e = document.createElement('div'); e.className = cls;
+      e.innerHTML = `<img src="${src}" alt="" draggable="false" onerror="this.closest('.pv-fx').remove()">`;
+      this.el.appendChild(e); return e; };
+    const h = mk('pv-fx pv-hand', hand('ladle-d'));
+    const w = Math.min(st.width * 0.62, 260); h.style.width = w + 'px';
+    const hx = cx - w * 0.75, hy = rim - w * 0.92;
+    h.animate([
+      { transform: `translate(${hx}px, ${st.height}px) rotate(0deg)`, offset: 0, easing: 'cubic-bezier(.22,.9,.3,1)' },
+      { transform: `translate(${hx}px, ${hy}px) rotate(${T * 0.65}deg)`, offset: POUR.t.rise, easing: 'ease-out' },
+      { transform: `translate(${hx}px, ${hy}px) rotate(${T}deg)`, offset: POUR.t.tilted, easing: 'linear' },
+      { transform: `translate(${hx}px, ${hy}px) rotate(${T}deg)`, offset: POUR.t.holdEnd, easing: 'cubic-bezier(.5,0,.75,.45)' },
+      { transform: `translate(${hx}px, ${st.height}px) rotate(0deg)`, offset: 1 },
+    ], { duration: D, easing: 'linear' }).onfinish = () => h.remove();
+
+    const y0 = rim - b.height * BOWL.underLadle;
+    const sm = mk('pv-fx pv-stream', fx('stream'));
+    sm.style.left = cx + 'px'; sm.style.top = y0 + 'px';
+    sm.style.width = Math.max(10, b.width * 0.13) + 'px'; sm.style.height = Math.max(10, surf - y0) + 'px';
+    sm.animate([
+      { opacity: 0, transform: 'translateX(-50%) scaleY(0)' },
+      { opacity: 1, transform: 'translateX(-50%) scaleY(1)', offset: .2 },
+      { opacity: 1, transform: 'translateX(-50%) scaleY(1)', offset: .82 },
+      { opacity: 0, transform: 'translateX(-50%) scaleY(1)' },
+    ], { duration: D * POUR.t.streamLen, delay: D * POUR.t.streamIn, easing: 'linear' }).onfinish = () => sm.remove();
+
+    const sp = mk('pv-fx pv-splash', fx('splash'));
+    sp.style.left = cx + 'px'; sp.style.top = surf + 'px'; sp.style.width = b.width * 0.24 + 'px';
+    sp.animate([
+      { opacity: 0, transform: 'translate(-50%,-60%) scale(.6)' },
+      { opacity: .95, transform: 'translate(-50%,-60%) scale(1)', offset: .3 },
+      { opacity: 0, transform: 'translate(-50%,-60%) scale(.9)' },
+    ], { duration: D * POUR.t.splashLen, delay: D * POUR.t.splashIn, easing: 'linear' }).onfinish = () => sp.remove();
+  }
+
   // ---------- kéo thả + chạm đôi ----------
   srcOf(el) { return { kind: el.dataset.k, tok: el.dataset.t, i: el.dataset.i != null ? Number(el.dataset.i) : undefined }; }
   zoneOf(el) { return { kind: el.dataset.zone, i: el.dataset.i != null ? Number(el.dataset.i) : undefined, id: el.dataset.zone === 'ticket' ? Number(el.dataset.i) : undefined }; }
@@ -118,7 +169,7 @@ export class Pov {
     root.onpointermove = (e) => { if (!drag) return; if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) drag.moved = true; this.ghostTo(e.clientX, e.clientY, drag.ghost); };
     const end = (e) => { if (!drag) return; const d = drag; drag = null; d.ghost.remove(); d.el.classList.remove('lift'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
       if (!d.moved) return; const zone = document.elementsFromPoint(e.clientX, e.clientY).find((z) => z.classList?.contains('drop'));
-      if (zone) { this.C.drop(this.srcOf(d.el), this.zoneOf(zone)); this.render(); } };
+      if (zone) { const sc = this.srcOf(d.el), zn = this.zoneOf(zone); const r = this.C.drop(sc, zn); this.render(); this.afterDrop(r, sc, zn); } };
     root.onpointerup = end; root.onpointercancel = end;
   }
   ghostTo(x, y, ghost) { ghost.style.transform = `translate(${x - 28}px, ${y - 28}px)`; this.el.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over')); const z = document.elementsFromPoint(x, y).find((q) => q.classList?.contains('drop')); if (z) z.classList.add('over'); }
@@ -127,7 +178,7 @@ export class Pov {
     const src = this.srcOf(el); const zone = this.autoZone(src); if (!zone) { this.msg(this.whyNoZone(src), 'bad'); return; }
     const sel = zone.kind === 'ticket' ? `.tk[data-i="${zone.id}"]` : `.drop[data-zone="${zone.kind}"]${zone.i != null ? `[data-i="${zone.i}"]` : ''}`;
     const dst = this.el.querySelector(sel) || this.el.querySelector(`.drop[data-zone="${zone.kind}"]`);
-    const go = () => { this.C.drop(src, zone); this.render(); };
+    const go = () => { const r = this.C.drop(src, zone); this.render(); this.afterDrop(r, src, zone); };
     if (!dst) return go();
     const a = el.getBoundingClientRect(), b = dst.getBoundingClientRect();
     const g = document.createElement('div'); g.className = 'pv-ghost fly'; g.innerHTML = el.querySelector('img,.emo')?.outerHTML || '•'; document.body.appendChild(g);

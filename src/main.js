@@ -9,7 +9,7 @@ import { label } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { ensureAudio, startMusic, setMuted, isMuted, sfx, setMood, setBoil } from './audio.js';
 import { parFor } from './game/par.js';
-import { makeLevelArrivals } from './game/levels.js';
+import { povArrivals } from './game/levels.js';
 import { Puzzle, assembleOk } from './puzzle.js';
 import { counterMove } from './game/counter.js';
 import { Pov, povOk } from './pov.js';
@@ -237,7 +237,7 @@ function startLevelPov(L) {
   if (mods.potSlots && !con.potSlots) con.potSlots = mods.potSlots;      // nâng cấp Nồi trụng
   pov = new Pov({
     dishes: L.dishes, weights: weightsFor(L.dishes), level: L,
-    arrivals: makeLevelArrivals(L), simplify: L.simplify, constraints: con,
+    arrivals: povArrivals(L), simplify: L.simplify, constraints: con,
     goal: L.goal, moneyTargets: L.moneyTargets, events: L.events,
     burners: mods.burners || 1, patience: L.patience, sfx,
     onDone: (r) => showResult(r), onQuit: () => { $('menu').classList.remove('hidden'); },

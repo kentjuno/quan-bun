@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { Counter, counterMove, povOk } from '../src/game/counter.js';
 import { ALL_DISHES, levelById, WORLDS } from '../src/config.js';
-import { makeLevelArrivals } from '../src/game/levels.js';
+import { makeLevelArrivals, povArrivals } from '../src/game/levels.js';
+import { POV_SECONDS, POV_DEFAULT } from '../src/data/pace.js';
 import { recipeFor, D } from '../src/game/recipes.js';
 
 /** Chạy quầy bằng bot: mỗi 0.35 s làm một nước đi, còn lại để đồng hồ chạy. */
@@ -87,8 +88,10 @@ describe('Counter — lõi quầy POV', () => {
   it('giao nhầm phiếu bị bắt; tô đúng thì khách nhận và tính chất lượng', () => {
     const C = mk(['pho-tai-nam', 'bun-bo-hue'], { rounds: 2 });
     const a = C.spawn('pho-tai-nam'); const b = C.spawn('bun-bo-hue');
-    for (let i = 0; i < 400 && C.slots.every((s) => !s || s.placed.length < a.steps.length); i++) { const m = counterMove(C); if (m) C.drop(m.src, m.zone); C.update(0.3); }
-    const si = C.slots.findIndex((s) => s && s.placed.length === a.steps.length);
+    // bot làm song song nhiều phiếu → phải tìm đúng cái tô ĐÃ XONG của phiếu a, không phải tô bất kỳ đủ số bước
+    const doneA = () => C.slots.findIndex((s) => s && s.placed.length === a.steps.length && a.steps.every((x, k) => x === s.placed[k]));
+    for (let i = 0; i < 800 && doneA() < 0; i++) { const m = counterMove(C); if (m) C.drop(m.src, m.zone); C.update(0.3); }
+    const si = doneA();
     expect(si).toBeGreaterThanOrEqual(0);
     const wrong = C.drop({ kind: 'madebowl', i: si }, { kind: 'ticket', id: b.id });
     expect(wrong.ok).toBe(false); expect(wrong.msg).toMatch(/của /);
@@ -135,7 +138,7 @@ describe('Counter — lõi quầy POV', () => {
 // ---- level chạy trên quầy POV (docs/PLAN-CORE.md bước 2) ----
 describe('Quầy POV chạy được world/level', () => {
   const lvCounter = (L) => new Counter({
-    dishes: L.dishes, arrivals: makeLevelArrivals(L), simplify: L.simplify,
+    dishes: L.dishes, arrivals: povArrivals(L), simplify: L.simplify,
     constraints: L.constraints, goal: L.goal, moneyTargets: L.moneyTargets,
     patience: L.patience, rnd: () => 0.37,
   });
@@ -177,4 +180,44 @@ describe('Quầy POV chạy được world/level', () => {
     const C2 = mkGoal({ kind: 'no-waste' }); play(C2, 900);
     expect(C2.result().wasted).toBe(0);
   });
+});
+
+
+// ---- nhịp khách ở quầy (Kent 14/09: "tần suất khách xuất hiện ít quá") ----
+describe('Nhịp khách ở quầy POV', () => {
+  it('bảng giây/tô còn khớp với bot (lệch >40% là phải đo lại)', () => {
+    const off = [];
+    for (const d of ALL_DISHES) {
+      const C = new Counter({ dishes: [d], rounds: 3, patience: 900, gap: 0.1, rnd: () => 0.5 });
+      let acc = 0;
+      for (let i = 0; i < 900 * 20 && !C.over; i++) { C.update(0.05); acc += 0.05; if (acc >= 0.35) { acc = 0; const m = counterMove(C); if (m) C.drop(m.src, m.zone); } }
+      const real = C.time / 3; const book = POV_SECONDS[d] ?? POV_DEFAULT;
+      if (Math.abs(real - book) / book > 0.4) off.push(`${d}: bảng ${book}s, đo ${real.toFixed(1)}s`);
+    }
+    expect(off, off.join(' | ')).toEqual([]);
+  }, 120000);
+
+  it('khách đầu tới sớm và khoảng cách bám theo tốc độ thật của quầy', () => {
+    for (const w of WORLDS) for (const L of w.levels) {
+      const a = povArrivals(L);
+      expect(a[0].t, `${L.id} khách đầu`).toBeLessThanOrEqual(6);
+      if (a.length > 2) {
+        const span = a[a.length - 1].t - a[0].t;
+        const avg = span / (a.length - 1);
+        expect(avg, `${L.id} khoảng cách trung bình`).toBeLessThanOrEqual(40);
+      }
+    }
+  });
+
+  it('nén lịch nhưng KHÔNG làm level thành bất khả thi: bot vẫn không để khách bỏ đi nhiều', () => {
+    const bad = [];
+    for (const w of WORLDS) for (const L of w.levels) {
+      const C = new Counter({ dishes: L.dishes, arrivals: povArrivals(L), simplify: L.simplify,
+        constraints: L.constraints, goal: L.goal, moneyTargets: L.moneyTargets, patience: L.patience, rnd: () => 0.41 });
+      play(C, L.seconds + 240);
+      const r = C.result();
+      if (r.left > Math.max(1, Math.ceil(C.rounds * 0.34))) bad.push(`${L.id}: bỏ đi ${r.left}/${C.rounds}`);
+    }
+    expect(bad, bad.slice(0, 8).join(' | ')).toEqual([]);
+  }, 180000);
 });
