@@ -133,3 +133,29 @@ Demo: `art/demo/pour.html` (dựng từ `pour.tpl.html` + `build_pour_demo.py`).
 ### Ảnh đã có
 `hand-ladle-b`, `hand-ladle-d`, `hand-bowl` (bưng tô), `fx-stream`, `fx-splash` — trong `art/cut/`, gốc trong `art/raw/`.
 Cắt nền magenta bằng `scripts/cut_magenta.py <thư mục raw>`.
+
+---
+
+## 7. Toàn bộ asset đã gen xong (14/09)
+
+| Nhóm | Số ảnh | Nơi để | Ghi chú |
+|---|---|---|---|
+| Tô/mẹt/dĩa 18 món × 2 trạng thái | 36 | `art/cut/<dish>-dry.png`, `-wet.png` | mẻ v2; mẻ v1 giữ ở `art/raw/dishes-v1` + `art/cut-v1` |
+| Bàn tay | 3 | `hand-ladle-b/d`, `hand-bowl`, thêm `hand-chopsticks`, `hand-basket` | `spout` ghi trong `counter-layout.js` |
+| Hiệu ứng | 6 | `fx-stream`, `fx-splash`, `fx-steam`, `fx-chop`, `fx-bubbles`, `fx-oil-bubbles`, `fx-sparkle`, `fx-splash-water` | |
+| Mặt khách | 14 | `cus-*` | 6 khách quen khớp `sketch` trong `customers.js`, 8 khách lạ |
+| UI giấy | 8 | `ui-*` | giấy để TRỐNG, chữ do code vẽ bằng font tay |
+| Icon bổ sung | 4 | `dia-dai`, `cha-gio`, `tom-luoc`, `banh-trang` | lấp 4 chỗ trống của bộ 81 icon |
+
+### Prompt đã dùng (giữ nguyên cho mọi đợt gen sau)
+Nét: *ink line art with warm marker and watercolor wash, brown ink outline, hand-drawn illustration*.
+Nền: *flat solid MAGENTA #FF00FF*, cắt bằng `scripts/cut_magenta.py <thư mục raw>`.
+
+### Bốn cái bẫy của Flow — đã dính, đừng dính lại
+1. **Bảo "giấy trắng trơn" thì nó vẫn vẽ hình lên** (con cú, dây lá, cây nấm). Phải liệt kê thẳng từng thứ cấm: *no bird, no animal, no flower, no leaf, no drawing, no pattern, nothing at all on it*.
+2. **Khói/hơi nước hay ra màu hồng** → lẫn với nền magenta, cắt xong còn vệt hồng. Phải ép *PURE WHITE and pale grey only, never pink, never magenta*. `scripts/_normalize.py` có hàm `depink()` quét 30% phía trên ảnh để dọn nốt.
+3. **Nền không phải lúc nào cũng magenta chuẩn** (có tấm ra trắng, có tấm ra tím) → cắt thất bại, ảnh giữ nguyên khung. Luôn soi contact sheet trước khi dùng.
+4. **Tả "dải ngang" thì nó vẽ luôn cái khung chữ nhật.** Phải nói *floating free with nothing around them, no rim, no rectangle*.
+
+### Quy tắc 2 trạng thái
+Mỗi món có ĐÚNG MỘT cái tô, xuất hiện y hệt ở cả `-dry` và `-wet` → chan nước chỉ crossfade phần trong tô, cái tô đứng yên. Prompt phải tả cái tô giống hệt nhau ở hai lần gen, và chặn *NO chopsticks, NO spoon, no extra side dishes*.
