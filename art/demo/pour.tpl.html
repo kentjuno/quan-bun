@@ -76,11 +76,11 @@
 
   <button id="go">Chan nước</button>
 
-  <div class="row"><label>Tổng thời gian</label><input type="range" id="dur" min="400" max="1600" step="50" value="850"><span class="val" id="vdur"></span></div>
-  <div class="row"><label>Độ nghiêng vá</label><input type="range" id="tilt" min="0" max="50" step="1" value="26"><span class="val" id="vtilt"></span></div>
-  <div class="row"><label>Cỡ tay</label><input type="range" id="size" min="40" max="120" step="1" value="72"><span class="val" id="vsize"></span></div>
-  <div class="row"><label>Cỡ tô</label><input type="range" id="bw" min="35" max="90" step="1" value="60"><span class="val" id="vbw"></span></div>
-  <div class="row"><label>Vá cao hơn tô</label><input type="range" id="lift" min="0" max="34" step="1" value="13"><span class="val" id="vlift"></span></div>
+  <div class="row"><label>Tổng thời gian</label><input type="range" id="dur" min="400" max="2000" step="50" value="1500"><span class="val" id="vdur"></span></div>
+  <div class="row"><label>Độ nghiêng vá</label><input type="range" id="tilt" min="0" max="50" step="1" value="30"><span class="val" id="vtilt"></span></div>
+  <div class="row"><label>Cỡ tay</label><input type="range" id="size" min="40" max="120" step="1" value="62"><span class="val" id="vsize"></span></div>
+  <div class="row"><label>Cỡ tô</label><input type="range" id="bw" min="35" max="90" step="1" value="54"><span class="val" id="vbw"></span></div>
+  <div class="row"><label>Vá cao hơn tô</label><input type="range" id="lift" min="0" max="34" step="1" value="0"><span class="val" id="vlift"></span></div>
 
   <div id="dump"></div>
 
@@ -129,10 +129,13 @@ for (const [id, unit] of [['dur','ms'],['tilt','°'],['size','%'],['bw','%'],['l
 }
 
 let CUR = HANDS[0];
-function rimY() {                       // mép miệng tô, px trong sân khấu
+function bowlBox() {
   const b = bowl.getBoundingClientRect(), st = stage.getBoundingClientRect();
-  return b.top - st.top + b.height * 0.13;
+  return { top: b.top - st.top, h: b.height };
 }
+const rimY  = () => { const b = bowlBox(); return b.top + b.h * 0.13; };   // mép miệng tô
+const pourY = () => { const b = bowlBox(); return b.top + b.h * 0.30; };   // mặt nước trong tô
+const underLadle = () => bowlBox().h * 0.06;                              // nước bắt đầu ngay dưới vá
 /** Giải vị trí tay sao cho MIỆNG VÁ rơi đúng điểm target (đã tính cả góc nghiêng). */
 function pose(T) {
   const hw = hand.offsetWidth, hh = hand.offsetHeight;
@@ -178,10 +181,10 @@ $('#go').onclick = () => {
     { transform:`translate(${H0.x}px,${H0.y}px) rotate(0deg)`,   offset:1 }
   ], { duration:D, easing:'linear' });
 
-  const len = Math.max(6, rimY() - P.sy);
+  const y0 = P.sy + underLadle();                 // dưới miệng vá
   stream.style.left = (P.sx / stage.clientWidth * 100) + '%';
-  stream.style.top  = (P.sy / stage.clientHeight * 100) + '%';
-  stream.style.height = len + 'px';
+  stream.style.top  = (y0 / stage.clientHeight * 100) + '%';
+  stream.style.height = Math.max(10, pourY() - y0) + 'px';
   stream.animate([
     { opacity:0, transform:'translateX(-50%) scaleY(0)' },
     { opacity:1, transform:'translateX(-50%) scaleY(1)', offset:.20 },
@@ -190,7 +193,7 @@ $('#go').onclick = () => {
   ], { duration:D*.56, delay:D*.32, easing:'linear' });
 
   splash.style.left = stream.style.left;
-  splash.style.top  = (rimY() / stage.clientHeight * 100) + '%';
+  splash.style.top  = (pourY() / stage.clientHeight * 100) + '%';
   splash.animate([
     { opacity:0,   transform:'translate(-50%,-60%) scale(.6)' },
     { opacity:.95, transform:'translate(-50%,-60%) scale(1)',    offset:.3 },
