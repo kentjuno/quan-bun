@@ -1,0 +1,206 @@
+<title>Chan nước — demo A10</title>
+<style>
+  :root{
+    --ink:#3b2a1e; --paper:#f6efe2; --line:#c9b79a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e8dcc6;color:var(--ink);
+       font-family:'Patrick Hand',system-ui,sans-serif;
+       -webkit-user-select:none;user-select:none;overscroll-behavior:none}
+  #wrap{max-width:460px;margin:0 auto;padding:10px 14px 24px}
+  h1{font-size:20px;margin:10px 0 2px}
+  .sub{font-size:13px;opacity:.65;margin:0 0 10px}
+
+  /* ---- sân khấu POV ---- */
+  #stage{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;
+         border-radius:14px;border:2px solid var(--ink);
+         background:
+           radial-gradient(120% 80% at 50% 108%, #cbb794 0%, #b9a179 45%, #9d8560 100%);
+         box-shadow:0 6px 0 rgba(59,42,30,.18)}
+  /* mặt thớt inox */
+  #stage:after{content:'';position:absolute;left:0;right:0;bottom:0;height:34%;
+    background:linear-gradient(#d8d4cb,#bdb8ad);
+    border-top:2px solid var(--ink);opacity:.9}
+
+  .layer{position:absolute;inset:0;pointer-events:none}
+  #bowl{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);
+        width:52%;aspect-ratio:1}
+  #bowl img{position:absolute;inset:0;width:100%;height:100%;
+            object-fit:contain;image-rendering:auto}
+  #l-broth{opacity:0}
+  #l-meat{opacity:0}
+
+  /* dòng nước */
+  #stream{position:absolute;width:11%;transform:translateX(-50%);
+          transform-origin:top center;opacity:0;z-index:6}
+  #stream img{width:100%;height:100%;object-fit:fill;display:block}
+  #splash{position:absolute;width:26%;transform:translate(-50%,-55%);
+          opacity:0;z-index:7}
+  #splash img{width:100%;display:block}
+
+  /* bàn tay */
+  #hand{position:absolute;left:50%;bottom:-6%;width:66%;
+        transform:translate(-50%,110%) rotate(0deg);
+        transform-origin:70% 90%;z-index:8}
+  #hand img{width:100%;display:block}
+
+  /* hơi nước */
+  .steam{position:absolute;bottom:0;left:50%;width:26px;height:26px;
+    border-radius:50%;background:rgba(255,255,255,.55);filter:blur(7px);opacity:0}
+
+  /* ---- bảng điều khiển ---- */
+  .row{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:14px}
+  .row label{flex:0 0 118px}
+  input[type=range]{flex:1;accent-color:#8a5a2b}
+  .val{flex:0 0 46px;text-align:right;font-variant-numeric:tabular-nums;opacity:.75}
+  button{font-family:inherit;font-size:17px;padding:11px 20px;border-radius:12px;
+    border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+    box-shadow:0 3px 0 var(--ink);cursor:pointer}
+  button:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink)}
+  #go{width:100%;margin:14px 0 4px;font-size:19px;background:#f3d9a4}
+  .hands{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+  .hands button{flex:1;padding:8px 4px;font-size:14px;box-shadow:0 2px 0 var(--ink)}
+  .hands button.on{background:#f3d9a4}
+  details{margin-top:14px;font-size:13px;line-height:1.5}
+  summary{cursor:pointer}
+  code{background:#0001;padding:1px 4px;border-radius:4px}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+<div id="wrap">
+  <h1>Chan nước phở — A10</h1>
+  <p class="sub">Bấm <b>Chan nước</b>. Kéo thanh trượt để chỉnh rồi bấm lại.</p>
+
+  <div id="stage">
+    <div id="bowl">
+      <img id="l-bowl"  src="__BOWL__">
+      <img id="l-noodle" src="__NOODLE__">
+      <img id="l-broth" src="__BROTH__">
+      <img id="l-meat"  src="__MEAT__">
+    </div>
+    <div id="stream"><img src="__STREAM__"></div>
+    <div id="splash"><img src="__SPLASH__"></div>
+    <div id="hand"><img id="handimg" src="__HAND0__"></div>
+    <div class="layer" id="steamwrap"></div>
+  </div>
+
+  <div class="hands" id="handpick"></div>
+
+  <button id="go">Chan nước</button>
+
+  <div class="row"><label>Tổng thời gian</label><input type="range" id="dur" min="400" max="1600" step="50" value="800"><span class="val" id="vdur"></span></div>
+  <div class="row"><label>Độ nghiêng vá</label><input type="range" id="tilt" min="0" max="45" step="1" value="25"><span class="val" id="vtilt"></span></div>
+  <div class="row"><label>Tay lên cao</label><input type="range" id="rise" min="30" max="90" step="1" value="62"><span class="val" id="vrise"></span></div>
+  <div class="row"><label>Cỡ tay</label><input type="range" id="size" min="40" max="110" step="1" value="66"><span class="val" id="vsize"></span></div>
+  <div class="row"><label>Vòi ngang</label><input type="range" id="sx" min="10" max="90" step="1" value="46"><span class="val" id="vsx"></span></div>
+  <div class="row"><label>Vòi dọc</label><input type="range" id="sy" min="5" max="60" step="1" value="26"><span class="val" id="vsy"></span></div>
+
+  <details>
+    <summary>Nó đang chạy cái gì</summary>
+    <p>Toàn bộ là <code>element.animate()</code> (Web Animations API) trên ảnh tĩnh — không frame-by-frame, không thư viện.</p>
+    <ol>
+      <li><b>0–30%</b> tay trượt lên từ mép dưới, nghiêng dần tới góc đã chọn</li>
+      <li><b>30–80%</b> dòng nước <code>scaleY 0→1</code> từ miệng vá, tô sáng lên</li>
+      <li><b>55–100%</b> lớp nước trong tô hiện ra (A9), hơi nước bắt đầu bốc</li>
+      <li><b>80–100%</b> tay hạ xuống, trả vá về 0°</li>
+    </ol>
+  </details>
+</div>
+
+<script>
+const HANDS = __HANDS__;
+const $ = (s) => document.querySelector(s);
+const stage = $('#stage'), hand = $('#hand'), stream = $('#stream'),
+      splash = $('#splash'), broth = $('#l-broth'), meat = $('#l-meat'), bowl = $('#bowl');
+const BOWL_TOP = 46;   // % chiều cao sân khấu — miệng tô
+
+// chọn ảnh tay
+const pick = $('#handpick');
+HANDS.forEach((h, i) => {
+  const b = document.createElement('button');
+  b.textContent = h.label; b.onclick = () => {
+    $('#handimg').src = h.src;
+    if (h.preset) for (const k in h.preset) { const el = $('#'+k); el.value = h.preset[k]; el.oninput(); }
+    [...pick.children].forEach(c => c.classList.remove('on')); b.classList.add('on');
+  };
+  if (i === 0) b.classList.add('on');
+  pick.appendChild(b);
+});
+
+// slider hiện số
+for (const [id, unit] of [['dur','ms'],['tilt','°'],['rise','%'],['size','%'],['sx','%'],['sy','%']]) {
+  const el = $('#'+id), out = $('#v'+id);
+  const upd = () => { out.textContent = el.value + unit;
+    if (id === 'size') hand.style.width = el.value + '%'; };
+  el.oninput = upd; upd();
+}
+
+function steam(dur) {
+  const w = $('#steamwrap');
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement('div');
+    s.className = 'steam';
+    s.style.left = (42 + Math.random()*16) + '%';
+    s.style.bottom = '44%';
+    w.appendChild(s);
+    s.animate([
+      { transform:'translate(-50%,0) scale(.5)', opacity:0 },
+      { transform:'translate(-50%,-38px) scale(1.5)', opacity:.7, offset:.4 },
+      { transform:'translate(-50%,-90px) scale(2.4)', opacity:0 }
+    ], { duration: 1900, delay: i*260 + dur*.6, easing:'ease-out' })
+      .onfinish = () => s.remove();
+  }
+}
+
+let busy = false;
+$('#go').onclick = () => {
+  if (busy) return; busy = true;
+  const D = +$('#dur').value, T = +$('#tilt').value, R = +$('#rise').value,
+        SX = +$('#sx').value, SY = +$('#sy').value;
+  broth.style.opacity = 0; meat.style.opacity = 1;
+
+  // 1. tay vào + nghiêng + ra
+  hand.animate([
+    { transform:`translate(-50%,110%) rotate(0deg)` ,           offset:0 },
+    { transform:`translate(-50%,${100-R}%) rotate(${T*.6}deg)`, offset:.30 },
+    { transform:`translate(-50%,${100-R-3}%) rotate(${T}deg)`,  offset:.45 },
+    { transform:`translate(-50%,${100-R-3}%) rotate(${T}deg)`,  offset:.78 },
+    { transform:`translate(-50%,110%) rotate(0deg)`,            offset:1 }
+  ], { duration: D, easing:'cubic-bezier(.3,.7,.3,1)' });
+
+  // 2. dòng nước chảy từ vòi xuống miệng tô
+  stream.style.left = SX + '%';
+  stream.style.top  = SY + '%';
+  stream.style.height = Math.max(4, BOWL_TOP - SY) + '%';
+  stream.animate([
+    { opacity:0, transform:'translateX(-50%) scaleY(0)' },
+    { opacity:1, transform:'translateX(-50%) scaleY(1)', offset:.22 },
+    { opacity:1, transform:'translateX(-50%) scaleY(1)', offset:.80 },
+    { opacity:0, transform:'translateX(-50%) scaleY(1)' }
+  ], { duration: D*.55, delay: D*.30, easing:'ease-out' });
+
+  // 3. toé nước ở miệng tô
+  splash.style.left = SX + '%';
+  splash.style.top  = BOWL_TOP + '%';
+  splash.animate([
+    { opacity:0, transform:'translate(-50%,-55%) scale(.6)' },
+    { opacity:.95, transform:'translate(-50%,-55%) scale(1)', offset:.3 },
+    { opacity:.7, transform:'translate(-50%,-55%) scale(1.05)', offset:.75 },
+    { opacity:0, transform:'translate(-50%,-55%) scale(.9)' }
+  ], { duration: D*.52, delay: D*.36, easing:'ease-out' });
+
+  // 4. tô sáng lên
+  bowl.animate([
+    { filter:'brightness(1)' }, { filter:'brightness(1.1)', offset:.5 }, { filter:'brightness(1)' }
+  ], { duration: D*.6, delay: D*.3 });
+
+  // 5. lớp nước hiện trong tô (A9)
+  broth.animate([
+    { opacity:0, transform:'translateY(-6px)' }, { opacity:1, transform:'translateY(0)' }
+  ], { duration: 180, delay: D*.55, fill:'forwards' });
+  setTimeout(() => { broth.style.opacity = 1; }, D*.55 + 180);
+
+  steam(D);
+  setTimeout(() => busy = false, D + 60);
+};
+</script>
