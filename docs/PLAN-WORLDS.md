@@ -1,6 +1,22 @@
 # KẾ HOẠCH — Worlds & Levels (bậc thang Overcooked) cho KJ's Choices
 
-Tài liệu bàn giao cho model/agent thực hiện. Đọc hết trước khi sửa code. Kent (chủ dự án) đã duyệt hướng này ngày 14/09/2026.
+Tài liệu bàn giao cho model/agent thực hiện. Đọc hết trước khi sửa code. Kent (chủ dự án) đã duyệt hướng này ngày 14/09/2026. Tài liệu này **tự đủ**: không cần lịch sử chat; mọi thứ cần biết nằm ở đây + các file được trỏ tới trong repo.
+
+> **Prompt giao việc (Kent dán cho model mới):**
+> "Bạn làm việc trong repo `F:\AntiGravity\Games\quan-bun`. Đọc `docs/PLAN-WORLDS.md` từ đầu tới cuối, rồi `docs/GAME-DESIGN.md`, `docs/STATUS.md`, mục 0.7.0 trong `docs/CHANGELOG.md`. Thực hiện đúng thứ tự mục 8 của PLAN-WORLDS; xong mỗi bước chạy `npx vitest run` và báo tôi kết quả trước khi sang bước sau. Tuyệt đối tuân thủ mục 0 (bất biến) và mục 10 (Không làm). Câu hỏi về bếp thật: trả lời bằng `src/data/sim-data.js`, không suy đoán; nếu sim-data không có thì hỏi tôi. Khi xong toàn bộ: cập nhật CHANGELOG 0.8.0, STATUS, build, smoke, deploy theo mục 9, gửi tôi ảnh chụp."
+
+**Trạng thái thực hiện** (model thực hiện cập nhật bảng này sau mỗi bước, để đổi model giữa chừng vẫn tiếp được):
+
+| Bước (mục 8) | Trạng thái | Ghi chú / commit |
+|---|---|---|
+| 1 worlds.js + levels.js + WORLDS + KITCHEN_VARIANTS | chưa | |
+| 1b ràng buộc / sự kiện / mục tiêu trong World | chưa | |
+| 2 recipeFor(simplify) + World cờ | chưa | |
+| 3 progress sao/mở khoá | chưa | |
+| 4 UI bản đồ + kết level + smoke | chưa | |
+| 5 xoá DAYS | chưa | |
+| 6 docs | chưa | |
+| 7 build/deploy/ảnh | chưa | |
 
 ## 0. Bối cảnh — đọc 5 phút
 
@@ -44,6 +60,12 @@ Một **level** (id dạng `pho-3`):
   regulars: ['cau-hai'],                   // khách quen ghé level này (customers.js), rỗng = không
   unlocks: { regular: 'cau-hai' } | { dish: 'pho-dac-biet' } | { upgrade: 'burners' } | null,   // thẻ mở khoá trên màn kết
   training: true,                          // = simplify không rỗng → nhãn "bản tập"
+  // --- TRỤC BIẾN THIÊN (mục 2b) — mỗi level từ L6 phải có ít nhất một thứ khác rỗng ---
+  layout: 'default' | 'far-pot' | 'left-topping' | 'tight' | 'island',   // biến thể bố trí bếp (config.KITCHEN_VARIANTS)
+  constraints: { potSlots?: 1|2, handCapacity?: 1, sinkFar?: true, brothCap?: 3, noStack?: true },
+  events: [{ at: 0.5, kind: 'tour', n: 4 } | { at: 0.4, kind: 'vip' } | { at: 0.3, kind: 'rain' } | { at: 0.6, kind: 'change-order' }],
+  goal: null | { kind: 'clean', bowls: 8 } | { kind: 'no-waste' } | { kind: 'streak', n: 5 } | { kind: 'before', seconds: 120 } | { kind: 'money' },
+  whatsNew: 'Nồi trụng dời ra xa kệ tô',    // BẮT BUỘC, một dòng: level này có gì level trước không có (ngoài số khách). Không viết được → cắt level.
 }
 ```
 
@@ -51,36 +73,51 @@ Một **level** (id dạng `pho-3`):
 
 ## 2. Bậc thang World 1 — Phở (Kent duyệt; L1 có trụng sợi 1 lần)
 
-| L | title | dishes | simplify | khách / thời gian | challenge | unlocks |
-|---|---|---|---|---|---|---|
-| 1 | Tô phở đầu tiên | pho-tai-nam | skipRinse, hotBowl, toppings [nam, bo-tai], noSpoil | 2 khách, patience 200, 120 s | | |
-| 2 | Đủ topping | pho-tai-nam | skipRinse, hotBowl, noSpoil | 3 khách, 200, 140 s | | |
-| 3 | Tự trụng tô nóng | pho-tai-nam | skipRinse, noSpoil | 3 khách, 180, 150 s | | |
-| 4 | Nóng → lạnh → nóng (đủ bước thật) | pho-tai-nam | noSpoil | 4 khách, 170, 160 s | | |
-| 5 | ⭐ Ba khách một lúc | pho-tai-nam | noSpoil | 3 khách tới t=1,2,3, 160 | rush 3 | |
-| 6 | Sợi để lâu hư | pho-tai-nam | — | 5 khách, 150, 180 s | | |
-| 7 | Đông hơn | pho-tai-nam | — | 6 khách, 140, 180 s | | |
-| 8 | Khách gọi 2 tô | pho-tai-nam | — | 5 khách, 2 người trong đó `pair` (2 tô), 140 | | |
-| 9 | Nhịp trưa | pho-tai-nam | — | 7 khách dồn 0–60 %, 130, 200 s | | |
-| 10 | ⭐ Đợt trưa + Cậu Hai | pho-tai-nam | — | 6 khách, 130 | lunch 6 | regular cau-hai |
-| 11 | Phở đặc biệt: bò viên, lá sách | pho-dac-biet | — | 3 khách, 170, 160 s | | dish pho-dac-biet |
-| 12 | Hai món xen | tai-nam, dac-biet | — | 5 khách, 150, 180 s | | |
-| 13 | Đông hơn | tai-nam, dac-biet | — | 7 khách, 140, 200 s | | upgrade bowl-stack |
-| 14 | Cậu Hai + cặp | tai-nam, dac-biet | — | 7 khách, 1 cặp, 130 | | |
-| 15 | ⭐ Chỉ đặc biệt | pho-dac-biet | — | 5 khách, 140 | only pho-dac-biet | |
-| 16 | Phở tái đập: thớt | + pho-tai-dap | — | 4 khách, 160, 180 s | | dish pho-tai-dap |
-| 17 | Ba món xen | 3 món | — | 7 khách, 140, 200 s | | upgrade shoes |
-| 18 | Phở sườn tái: lò vi sóng | + pho-suon-tai | — | 4 khách, 170, 200 s | | dish pho-suon-tai |
-| 19 | Bốn món xen | 4 món | — | 8 khách, 130, 220 s | | |
-| 20 | ⭐ Boss cuối tuần | 4 món | — | 6 khách + đoàn 4, 140, 240 s | boss 4 | world bun-rieu |
+Nguyên tắc (mục 2b giải thích): L1–5 học bước; **từ L6 mỗi level phải có một "cái mới" không phải bước công thức**; mốc 5/10/15/20 gộp hai trục. Cột **Cái mới** là bắt buộc — level nào không điền được thì cắt.
 
-Các world sau dùng **khuôn 20 level giống nhau** (hàm `makeWorldLevels(world, ladder)`), khác ở món và cờ:
-- Bún riêu: L1–2 nước riêu **có sẵn trên lò** (cờ `soupReady: true` — burner đã có 2 phần nước sẵn, không cần nấu), L3 dạy nấu cốt → huyết → nước, L4 đủ bước. Topping rút gọn L1: [ca-chua, dau-hu].
-- Bún bò Huế: workflow gốc đã là `noodle-hot-only` → không có skipRinse; rút gọn topping L1: [thit-luoc, cha-lua]; L1–2 `soupReady`.
-- Hải Phòng: L1–3 `skipPrep: true` (bước thớt — cắt chả cá, thì là — coi như đã cắt sẵn: kệ phát token `*-ready`), L4 đủ.
-- Món khô: L1–3 `skipRinse` (bún trụng 1 lần), L4 đủ (nóng→lạnh→nóng như Kent xác nhận).
-- Khai vị / Cháo / Chả cá: L1 rút topping, không có sợi nên không có skipRinse.
-Ghi rõ ladder từng world trong `src/data/worlds.js` (tách khỏi config cho dễ sửa; config chỉ import).
+| L | title | dishes | simplify | khách / patience / giây | Cái mới (trục) | challenge / goal | unlocks |
+|---|---|---|---|---|---|---|---|
+| 1 | Tô phở đầu tiên | pho-tai-nam | skipRinse, hotBowl, toppings [nam, bo-tai], noSpoil | 2 / 200 / 120 | học: chạm là đi, trụng, ráp, bưng | | |
+| 2 | Đủ topping | pho-tai-nam | skipRinse, hotBowl, noSpoil | 3 / 200 / 140 | học: 5 topping đúng thứ tự | | |
+| 3 | Tự trụng tô nóng | pho-tai-nam | skipRinse, noSpoil | 3 / 180 / 150 | học: tô → nồi → tô nóng, trữ trong nồi | | |
+| 4 | Nóng → lạnh → nóng | pho-tai-nam | noSpoil | 4 / 170 / 160 | học: đủ bước thật | | |
+| 5 | ⭐ Ba khách một lúc | pho-tai-nam | noSpoil | 3 tới t=1,2,3 / 160 | học: 3 rọ song song | challenge rush 3 | |
+| 6 | Sợi để lâu hư | pho-tai-nam | — | 5 / 150 / 180 | ràng buộc: bật hư sợi (25 s) | | |
+| 7 | Nồi ở xa | pho-tai-nam | — | 5 / 150 / 180 | layout `far-pot`: nồi trụng dời sang góc xa kệ tô → phải gom việc | | |
+| 8 | Khách gọi 2 tô | pho-tai-nam | — | 5 (1 pair) / 140 / 180 | sự kiện: khách đôi cùng bàn | | |
+| 9 | Một rọ thôi | pho-tai-nam | — | 5 / 150 / 180 | ràng buộc `potSlots: 1` → xếp hàng sợi | goal clean 6 (không lỗi thứ tự) | |
+| 10 | ⭐ Đợt trưa + Cậu Hai | pho-tai-nam | — | 6 dồn 0–50 % / 130 | sự kiện: khách quen đầu tiên (bong bóng tên, thoại) + lunch | challenge lunch 6 | regular cau-hai |
+| 11 | Phở đặc biệt | pho-dac-biet | — | 3 / 170 / 160 | món mới: bò viên trụng rọ, lá sách | | dish pho-dac-biet |
+| 12 | Hai món xen | tai-nam, dac-biet | — | 5 / 150 / 180 | kỹ năng: đọc bong bóng để chọn tô/topping đúng khách | | |
+| 13 | Tủ topping bên trái | tai-nam, dac-biet | — | 6 / 140 / 200 | layout `left-topping`: tủ topping đổi bên, thớt đổi theo | | upgrade bowl-stack |
+| 14 | Mưa | tai-nam, dac-biet | — | 7 / 130 / 200 | sự kiện `rain` ở 30 %: 40 s không khách rồi 4 người vô dồn | | |
+| 15 | ⭐ Chỉ đặc biệt, một tay | pho-dac-biet | — | 5 / 140 / 200 | ràng buộc `handCapacity: 1` + only | challenge only pho-dac-biet | |
+| 16 | Phở tái đập | + pho-tai-dap | — | 4 / 160 / 180 | món mới: thớt đập thịt với gừng | | dish pho-tai-dap |
+| 17 | Không vứt gì | 3 món | — | 6 / 140 / 200 | goal `no-waste`: sợi hư = thua sao | | upgrade shoes |
+| 18 | Phở sườn tái | + pho-suon-tai | — | 4 / 170 / 200 | món mới: lò vi sóng (chờ nền 5 s), tô phụ | | dish pho-suon-tai |
+| 19 | Khách VIP đổi ý | 4 món | — | 7 / 130 / 220 | sự kiện `vip` (tip ×3, kiên nhẫn 60 s) + `change-order` ở 60 %: một khách đang chờ đổi món (tô đang ráp giữ lại cho khách sau) | | |
+| 20 | ⭐ Boss cuối tuần | 4 món | — | 6 + đoàn 4 ở 60 % / 140 / 240 | layout `island` (quầy ráp giữa sàn, khách vây 2 bên) + boss | challenge boss 4 | world bun-rieu |
+
+### 2a. Các world sau — khuôn và độ dài
+
+`makeWorldLevels(world, ladder)` dùng chung; **world chỉ có 1 món → 12 level** (không gượng 20): 4 học bước · 7 biến thiên · 1 boss. World nhiều món (Phở 4, Món khô 5, Hải Phòng 2, Cháo 2, Khai vị 2) → 20 level (Hải Phòng/Cháo/Khai vị: 16). Số sao mở world = 60 % số sao tối đa của world trước, làm tròn xuống 5 (Phở 60★ → 35; world 12 level 36★ → 20).
+- Bún riêu (12): L1–2 `soupReady` (nước riêu có sẵn 2 phần trên kệ nước), topping L1 [ca-chua, dau-hu]; L3 dạy nấu cốt → huyết → nước (đúng thứ tự, sai thì card mở lại); L4 đủ bước; L6 `brothCap: 1` (kệ nước chỉ chứa 1 phần → phải nấu đúng nhịp); L8 `far-pot`; L10 Dì Ba + `rain`; L12 boss.
+- Bún bò Huế (12): workflow gốc đã `noodle-hot-only` → không skipRinse; L1 topping [thit-luoc, cha-lua], `soupReady`; L3 nấu nước; L5 hai loại nước cùng lúc trên kệ (`stack`) — đây là bài chính của world; L7 `noStack` (lò xong phải lấy ngay); L10 Thím Bảy; L12 boss.
+- Hải Phòng (16): bún cá trước, bánh đa cua từ L9; L1–3 `skipPrep` (chả cá/thì là đã cắt sẵn), L4 đủ; L6 `left-topping`; L8 goal clean; L13 Ông Năm; L16 boss.
+- Món khô (20): bún chả HN → bún nem/gà (tô khô) → bún đậu → bánh hỏi; L1–3 `skipRinse`; L4 đủ nóng→lạnh→nóng; mẹt/tô khô là "cái mới" tự nhiên mỗi 4 level; L10 Út Mười.
+- Cháo (16), Khai vị (16), Chả cá Lã Vọng (12): L1 rút topping/chén; không có sợi nên không skipRinse; Khai vị: chảo chiên (chờ nền 8 s) là bài chính; Chả cá: `assemblyFlexible` → goal `before` (xong trước giờ) thay clean.
+Ghi ladder từng world trong `src/data/worlds.js` (tách khỏi config; config chỉ import). Mỗi level trong file phải có `whatsNew`.
+
+### 2b. Bốn trục biến thiên (vì sao & cách hiện thực)
+
+Overcooked lặp lại vài công thức suốt game nhưng không chán vì **cái đổi là bếp và tình huống, không phải công thức**. Công thức cố định để người chơi thấy mình tiến bộ; sự khác biệt đến từ bốn trục sau. Từ L6 mỗi level lấy ít nhất một; mốc 5/10/15/20 lấy hai.
+
+1. **Bố trí bếp** (`layout`) — rẻ nhất vì `KITCHEN_*` đã là data. Thêm `config.KITCHEN_VARIANTS = { default, 'far-pot', 'left-topping', tight, island }`, mỗi biến thể là hàm `(base) => stations đã dời` cho cả landscape và portrait (dời `x/z` của vài trạm; `nav.js` tự tính đường). `island`: quầy ráp ra giữa, ghế khách hai bên; `tight`: mọi trạm sát nhau nhưng thêm vật cản giữa (bàn phụ) → đi vòng. World tạo bằng `kitchenFor(portrait, level.layout)`. View dựng lại theo `world.stations` (đã làm mỗi lần `rebuild()`), không cần code view mới trừ model vật cản (dùng hộp gỗ có sẵn).
+2. **Ràng buộc** (`constraints`) — `potSlots` ghi đè `this.pot.noodleSlots` (view đọc `world.pot.noodleSlots` thay `POT.noodleSlots` ở `view.js:220,303`); `handCapacity` ghi đè `CHEF.handCapacity` qua `this.handCap` (world.js dùng `CHEF.handCapacity` ở 3 chỗ → đổi sang `this.handCap`; HUD ẩn ô tay thứ 2); `sinkFar`: dùng layout có bồn ở góc xa (chỉ là layout, gộp vào 1); `brothCap` ghi đè `SOUP.stackMax`; `noStack`: lò xong không tự đẩy sang kệ nước, phải lấy tay (nhánh `s.ready.length < stackMax` trong `updateStations`).
+3. **Sự kiện** (`events`, xử lý trong `World.update` theo `time/seconds`): `tour` = đoàn n người tới cùng lúc (đã có qua arrivals `group:'tour'` — chuyển thành event để đặt mốc); `vip` = một khách tipMult 3, patience 60, bong bóng viền vàng; `rain` = xoá arrivals trong 40 s kế rồi dồn chúng vào 10 s sau đó (banner "Mưa — quán vắng… rồi ào vô"); `change-order` = một khách đang chờ (không phải regular) đổi `dish` sang món khác trong menu, bong bóng đổi, toast; tô đang ráp cho khách đó thì `bowl.customer = null` (tô vẫn giữ, giao khách sau cùng món — luật hiện có). Mỗi event có banner + sfx (`audio.js` đã có `chatter`, `bell`).
+4. **Mục tiêu** (`goal`, tính trong `World.finish` thay/ngoài tiền): `money` (mặc định: 3 mốc tiền + khách bỏ đi); `clean` = ≥ n tô không lỗi thứ tự → sao theo n×[0.6,0.8,1]; `no-waste` = 0 lỗi `waste` mới có 3★ (1 lỗi 2★, 2 lỗi 1★); `streak` = chuỗi tô đúng liên tiếp dài nhất ≥ n; `before` = phục vụ hết khách trước `seconds` giây (đồng hồ chạy ngược đỏ). Thẻ level ghi rõ mục tiêu bằng chữ; màn kết hiện mục tiêu đạt/không.
+
+Quy tắc kiểm tra chán: khi viết `worlds.js`, đọc dọc cột `whatsNew` của một world — nếu 3 level liên tiếp cùng một trục, đổi trục. Chưa làm ở bản này (ghi để không quên): đầu bếp thứ hai (co-op/AI phụ bếp) — trục lớn nhất của Overcooked nhưng đụng điều khiển chạm-là-đi trên điện thoại; để sau khi World Phở chạy được.
 
 ## 3. Cách rút gọn công thức (không đụng sim-data)
 
@@ -119,7 +156,7 @@ Viết lại từ `makeDayArrivals` (config) thành `src/game/levels.js`:
 
 ## 6. UI (`index.html`, `src/main.js`)
 
-- Tab **Quán** → đổi thành màn **Bản đồ**: hàng world (thẻ tròn có icon + tên + `x/60 ★`, khoá nếu chưa đủ sao), dưới là **lưới 20 level** của world đang chọn (ô vuông: số, 0–3 ★, khoá; mốc 5/10/15/20 có viền vàng "⭐ thử thách"; level đang tới có badge "tiếp"). Bấm ô → thẻ chi tiết (title, món, "bản tập — thiếu…", mục tiêu, khách quen) + nút **Chơi**. Vuốt ngang đổi world. Giữ id `btnStart`, `btnBot` (smoke test dùng).
+- Tab **Quán** → đổi thành màn **Bản đồ**: hàng world (thẻ tròn có icon + tên + `x/60 ★`, khoá nếu chưa đủ sao), dưới là **lưới 20 level** của world đang chọn (ô vuông: số, 0–3 ★, khoá; mốc 5/10/15/20 có viền vàng "⭐ thử thách"; level đang tới có badge "tiếp"). Bấm ô → thẻ chi tiết (title, **`whatsNew`** in đậm, món, "bản tập — thiếu…", mục tiêu bằng chữ từ `goal`, ràng buộc bằng chữ, khách quen) + nút **Chơi**. Vuốt ngang đổi world. Giữ id `btnStart`, `btnBot` (smoke test dùng).
 - Màn kết: tiêu đề `Phở 7 — ${title}`; sao rơi, tiền chạy (đã có); thẻ mở khoá dùng `level.unlocks` (dish / regular / upgrade / world); nút **Level tiếp →** (ẩn nếu chưa ≥1★ hoặc hết world → "Sang world ${tên}" nếu đã đủ sao). Câu nhận xét khách quen chỉ khi level có regular.
 - Hint đầu level = mô tả bước mới của level (`level.hint`), ví dụ L3: "Hôm nay tự trụng tô: lấy tô ở kệ → bỏ vô nồi → lấy tô nóng ra".
 - Tab **Nâng cấp**: hiện "Mở khi đủ N★" thay "Mở bán từ Ngày N". Tab **Thêm**: không đổi.
@@ -132,7 +169,8 @@ Viết lại từ `makeDayArrivals` (config) thành `src/game/levels.js`:
 
 ## 8. Thứ tự làm & tiêu chí xong
 
-1. `src/data/worlds.js` (ladder 8 world) + `src/game/levels.js` (`makeLevelArrivals`) + `config.WORLDS` — **test**: 8 world × 20 level, id duy nhất, level 1 mỗi world có `simplify`, từ L4 `simplify` rỗng; arrivals seed ổn định; challenge đúng dạng.
+1. `src/data/worlds.js` (ladder 8 world, mỗi level có `whatsNew`) + `src/game/levels.js` (`makeLevelArrivals`) + `config.WORLDS` + `config.KITCHEN_VARIANTS` — **test**: số level đúng theo mục 2a (Phở 20, Bún riêu 12…), id duy nhất, level 1 mỗi world có `simplify`, từ L4 `simplify` rỗng, từ L6 có ≥1 trong {layout≠default, constraints, events, goal, unlocks.dish}; `whatsNew` không rỗng; arrivals seed ổn định; mọi layout variant dựng `NavGrid` mà mọi trạm đều tới được từ `chefStart` (dùng `nav.reachableFrom`).
+1b. Ràng buộc + sự kiện + mục tiêu trong `World` (mục 2b) — **test**: `potSlots:1` → `capacityFor(pot,'noodle') === 1`; `handCapacity:1` → lấy thứ 2 bị từ chối; `rain` dời arrivals đúng; `change-order` đổi dish và gỡ `bowl.customer`; `goal clean/no-waste/streak/before` cho ra sao đúng với result giả lập; bot vẫn chơi hết một level `island` + `potSlots:1` không lỗi.
 2. `recipeFor(dish, simplify)` + `World` đọc cờ — **test**: với `skipRinse` chỉ còn 1 transform pot cho sợi; `hotBowl` không có `blanch-bowl` và tay nhận `bowl-hot:pho-bowl` khi lấy tô; `toppings` lọc đúng và giữ thứ tự; `recipeFor(d)` không tham số **bằng y** kết quả cũ (snapshot test cho 18 món để chắc chế độ Thêm không đổi); bot chơi hết Phở L1 phục vụ ≥ 2 khách không lỗi; bot chơi Bún riêu L1 (`soupReady`) không cần lò.
 3. `progress.js` sao/mở khoá/nâng cấp theo sao — test.
 4. UI bản đồ + thẻ level + kết level; cập nhật `tests/smoke.browser.mjs` (thay các đoạn `?day=` bằng `?world=&level=`; kiểm tra lưới 20 ô, khoá, mở, chơi L1 bằng bot → kết quả có sao; L11 có `pho-dac-biet`).
