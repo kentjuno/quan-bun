@@ -15,7 +15,7 @@ export const ZONES = {
   sink:    { x: 36, y: 29, w: 25, h: 15 },   // bồn xả lạnh
   burner:  { x: 61, y: 28, w: 38, h: 18 },   // bếp lò + nồi nước lèo
   broth:   { x: 63, y: 30, w: 35, h: 9  },   // nước lèo có sẵn (phở) múc thẳng
-  prep:    { x: 3,  y: 42, w: 95, h: 9  },   // dãy khay GN trên tủ prep = tủ topping
+  prep:    { x: 7,  y: 43, w: 90, h: 9  },   // dãy khay GN trên tủ prep = tủ topping
   fryer:   { x: 84, y: 20, w: 15, h: 10 },   // chảo chiên (chỉ hiện khi món cần)
   micro:   { x: 68, y: 10, w: 17, h: 11 },   // lò vi sóng (chỉ hiện khi món cần)
   stack:   { x: 0,  y: 56, w: 15, h: 20 },   // chồng tô + mẹt/dĩa
@@ -23,9 +23,9 @@ export const ZONES = {
   boards:  { x: 0,  y: 79, w: 30, h: 16 },   // thớt
   slots:   { x: 36, y: 70, w: 56, h: 26 },   // mặt thớt trắng — chỗ ráp tô
   trash:   { x: 91, y: 88, w: 9,  h: 11 },
-  rail:    { x: 4,  y: 1,  w: 92, h: 9  },   // dây kẹp phiếu khách
-  hudL:    { x: 1,  y: 11, w: 26, h: 10 },
-  hudR:    { x: 73, y: 11, w: 26, h: 10 },
+  rail:    { x: 3,  y: 16, w: 94, h: 14 },   // dây kẹp phiếu khách — treo trên mảng tường trống
+  hudL:    { x: 2,  y: 2,  w: 30, h: 7  },
+  hudR:    { x: 68, y: 2,  w: 30, h: 7  },
 };
 
 /** Ảnh bàn tay: `spout` = toạ độ MIỆNG VÁ trong ảnh (% rộng, % cao). */

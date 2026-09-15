@@ -50,6 +50,8 @@ export class Pov {
       <div class="pv-stage scene" id="pvStage">
         <img class="pv-scene" src="${SCENE.src}" alt="" draggable="false"
              onerror="this.closest('.pv-stage').classList.remove('scene');this.remove()">
+        <div class="pv-hud" style="${z('hudL')}"><span id="pvMoney">0k</span><i>tiền</i></div>
+        <div class="pv-hud r" style="${z('hudR')}"><span id="pvServed">0/${C.rounds}</span><i>tô</i></div>
         <div class="pv-rail" id="pvTickets" style="${z('rail')}"></div>
         ${this.has.pot ? dropz('pot', 'pot', '<div class="pv-baskets" id="pvBaskets"></div>', 'st-pot') : ''}
         ${this.has.pot ? zone('hot', '<div class="pv-hot" id="pvHot"></div>') : ''}
@@ -74,6 +76,8 @@ export class Pov {
   render() {
     const C = this.C;
     $('pvProg').textContent = `${C.done}/${C.rounds}`;
+    const mo = $('pvMoney'); if (mo) mo.textContent = `${Math.round(C.money)}k`;
+    const sv = $('pvServed'); if (sv) sv.textContent = `${C.results.length - C.left}/${C.rounds}`;
     $('pvTickets').innerHTML = C.tickets.map((t) => `<div class="tk drop${t.regular ? ' reg' : ''}" data-zone="ticket" data-i="${t.id}"><img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()"><b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u style="width:${C.patienceOf(t) * 100}%;background:${C.patienceOf(t) < 0.25 ? 'var(--red)' : C.patienceOf(t) < 0.5 ? 'var(--broth)' : 'var(--green)'}"></u></i></div>`).join('');
     if (this.has.pot) $('pvBaskets').innerHTML = C.baskets.map((b, i) => {
       if (!b) return `<div class="pv-basket drop" data-zone="pot" data-i="${i}"></div>`;
@@ -170,10 +174,13 @@ export class Pov {
       if (this._tap && this._tap.key === key && now - this._tap.t < 340) { this._tap = null; return this.auto(el); }
       this._tap = { key, t: now };
       const ghost = document.createElement('div'); ghost.className = 'pv-ghost'; ghost.innerHTML = el.querySelector('img,.emo')?.outerHTML || '•'; document.body.appendChild(ghost);
-      drag = { el, ghost, x0: e.clientX, y0: e.clientY, moved: false }; el.classList.add('lift'); this.ghostTo(e.clientX, e.clientY, ghost);
+      drag = { el, ghost, x0: e.clientX, y0: e.clientY, moved: false }; el.classList.add('lift');
+      root.classList.add('dragging');   // đang kéo mới hiện viền chỗ thả (CSS), lúc thường để tranh sạch
+      this.ghostTo(e.clientX, e.clientY, ghost);
     };
     root.onpointermove = (e) => { if (!drag) return; if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) drag.moved = true; this.ghostTo(e.clientX, e.clientY, drag.ghost); };
-    const end = (e) => { if (!drag) return; const d = drag; drag = null; d.ghost.remove(); d.el.classList.remove('lift'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
+    const end = (e) => { if (!drag) return; const d = drag; drag = null; d.ghost.remove(); d.el.classList.remove('lift');
+      root.classList.remove('dragging'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
       if (!d.moved) return; const zone = document.elementsFromPoint(e.clientX, e.clientY).find((z) => z.classList?.contains('drop'));
       if (zone) { const sc = this.srcOf(d.el), zn = this.zoneOf(zone); const r = this.C.drop(sc, zn); this.render(); this.afterDrop(r, sc, zn); } };
     root.onpointerup = end; root.onpointercancel = end;
