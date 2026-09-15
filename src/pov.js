@@ -4,7 +4,7 @@ import { D, label, tokenMatches } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
 import { dishArt, faceArt, fx, hand } from './game/art.js';
-import { POUR, BOWL } from './data/counter-layout.js';
+import { POUR, BOWL, SCENE, ZONES } from './data/counter-layout.js';
 export { povOk };
 
 const $ = (id) => document.getElementById(id);
@@ -33,31 +33,37 @@ export class Pov {
   msg(t, cls = '') { const m = $('pvMsg'); if (!m) return; m.textContent = t; m.className = 'pv-msg ' + cls; if (cls === 'bad') { this.el.classList.add('shake'); setTimeout(() => this.el.classList.remove('shake'), 320); } }
 
   // ---------- dựng quầy ----------
+  // Nền là MỘT TẤM VẼ LIỀN; mọi trạm là ô trong suốt đặt lên trên theo % (data/counter-layout.js).
+  // Ảnh hỏng/chưa có thì `.pv-stage` mất class `scene` → quay về bố cục khung cũ, vẫn chơi được.
   build() {
     const C = this.C; const need = (st) => Object.values(C.recs).some((r) => r.transforms.some((t) => t.station === st));
-    this.has = { pot: need('pot'), sink: need('sink'), prep: need('prep'), fryer: need('fryer'), microwave: need('microwave'), burner: !!Object.keys(C.soups).length && !C.sim?.soupReady, ready: !!Object.keys(C.soups).length };
+    this.has = { pot: need('pot'), sink: need('sink'), prep: need('prep'), fryer: need('fryer'), microwave: need('microwave'),
+      burner: !!Object.keys(C.soups).length && !C.sim?.soupReady, ready: !!Object.keys(C.soups).length };
+    const z = (k) => { const b = ZONES[k]; return `left:${b.x}%;top:${b.y}%;width:${b.w}%;height:${b.h}%`; };
     const pan = (it) => `<div class="pv-pan dragsrc" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`;
+    const src = (it) => `<div class="pv-src dragsrc" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`;
+    const zone = (k, inner, cls = '') => `<div class="pv-z ${cls}" style="${z(k)}">${inner}</div>`;
+    const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
+
     this.el.innerHTML = `
-      <div class="pv-top"><span class="pill-dark" id="pvProg">0/${C.rounds}</span><div class="pv-tickets" id="pvTickets"></div><button class="ghost small" id="pvQuit">Thoát</button></div>
-      <div class="pv-back">
-        ${this.has.pot ? '<div class="pv-pot drop" data-zone="pot"><div class="pv-lbl">Nồi trụng</div><div class="pv-baskets" id="pvBaskets"></div><div class="pv-hot" id="pvHot"></div></div>' : ''}
-        <div class="pv-col">
-          ${this.has.sink ? '<div class="pv-sink drop" data-zone="sink"><div class="pv-lbl">Bồn xả lạnh</div><div class="pv-sinkin" id="pvSink"></div></div>' : ''}
-          ${this.has.fryer ? '<div class="pv-st drop fry" data-zone="fryer"><div class="pv-lbl">Chảo chiên</div><div id="pvFryer"></div></div>' : ''}
-          ${this.has.microwave ? '<div class="pv-st drop mw" data-zone="microwave"><div class="pv-lbl">Lò vi sóng</div><div id="pvMw"></div></div>' : ''}
-        </div>
-        ${this.has.ready ? `<div class="pv-burner"><div class="pv-lbl">Lò đun nước</div><div class="pv-pots" id="pvPots"></div><div class="pv-ready" id="pvReady"></div></div>` : ''}
-        ${C.brothSrc.length ? `<div class="pv-broths">${C.brothSrc.map((b) => `<div class="pv-broth dragsrc" ${src1('broth', b)}>${img(b)}<small>${label(b)}</small></div>`).join('')}</div>` : ''}
-      </div>
-      ${C.soupItems.length && this.has.burner ? `<div class="pv-shelf soup"><div class="pv-lbl dark">Kệ nước lèo</div><div class="pv-pans">${C.soupItems.map(pan).join('')}</div></div>` : ''}
-      <div class="pv-shelf"><div class="pv-lbl dark">Tủ topping</div><div class="pv-pans" id="pvTops">${C.topItems.map(pan).join('')}</div></div>
-      <div class="pv-front">
-        <div class="pv-stack">${[...C.bowlItems, ...C.noodleItems].map((b) => `<div class="pv-src dragsrc" ${src1('item', b)}>${img(b)}<small>${label(b)}</small></div>`).join('')}</div>
-        <div class="pv-work">
-          ${this.has.prep ? '<div class="pv-boards" id="pvBoards"></div>' : ''}
-          <div class="pv-slots" id="pvSlots"></div>
-        </div>
-        <div class="pv-trash drop" data-zone="trash">🗑️<small>vứt</small></div>
+      <div class="pv-top"><span class="pill-dark" id="pvProg">0/${C.rounds}</span><button class="ghost small" id="pvQuit">Thoát</button></div>
+      <div class="pv-stage scene" id="pvStage">
+        <img class="pv-scene" src="${SCENE.src}" alt="" draggable="false"
+             onerror="this.closest('.pv-stage').classList.remove('scene');this.remove()">
+        <div class="pv-rail" id="pvTickets" style="${z('rail')}"></div>
+        ${this.has.pot ? dropz('pot', 'pot', '<div class="pv-baskets" id="pvBaskets"></div>', 'st-pot') : ''}
+        ${this.has.pot ? zone('hot', '<div class="pv-hot" id="pvHot"></div>') : ''}
+        ${this.has.sink ? dropz('sink', 'sink', '<div class="pv-sinkin" id="pvSink"></div>', 'st-sink') : ''}
+        ${this.has.ready ? zone('burner', `<div class="pv-pots" id="pvPots"></div><div class="pv-ready" id="pvReady"></div>`, 'st-burner') : ''}
+        ${C.brothSrc.length ? zone('broth', C.brothSrc.map((b) => `<div class="pv-broth dragsrc" ${src1('broth', b)}>${img(b)}<small>${label(b)}</small></div>`).join(''), 'row') : ''}
+        ${this.has.fryer ? dropz('fryer', 'fryer', '<div id="pvFryer"></div>', 'st-fryer') : ''}
+        ${this.has.microwave ? dropz('micro', 'microwave', '<div id="pvMw"></div>', 'st-mw') : ''}
+        ${zone('prep', `<div class="pv-pans" id="pvTops">${[...C.soupItems, ...C.topItems].map(pan).join('')}</div>`, 'shelf')}
+        ${zone('stack', `<div class="pv-srcs">${C.bowlItems.map(src).join('')}</div>`, 'col')}
+        ${zone('noodle', `<div class="pv-srcs">${C.noodleItems.map(src).join('')}</div>`, 'row')}
+        ${this.has.prep ? zone('boards', '<div class="pv-boards" id="pvBoards"></div>', 'row') : ''}
+        ${zone('slots', '<div class="pv-slots" id="pvSlots"></div>')}
+        ${dropz('trash', 'trash', '<span class="pv-tr">🗑️</span>', 'trash')}
       </div>
       <div class="pv-msg" id="pvMsg">Kéo hoặc chạm đôi: tô vô nồi để trụng · sợi vô rọ · topping vô tô · tô xong lên phiếu</div>`;
     $('pvQuit').onclick = () => { this.stop(); this.o.onQuit?.(); };
