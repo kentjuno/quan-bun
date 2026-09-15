@@ -10,22 +10,22 @@ export const SCENE = { src: 'art/scene.webp', w: 768, h: 1376 };
 
 /** x, y, w, h tính bằng % của khung nền. */
 export const ZONES = {
-  pot:     { x: 6,  y: 23, w: 33, h: 21 },   // nồi trụng + 3 rọ treo trong nồi
-  hot:     { x: 6,  y: 44, w: 33, h: 7  },   // tô nóng trữ ở mép nồi
-  sink:    { x: 36, y: 29, w: 25, h: 15 },   // bồn xả lạnh
-  burner:  { x: 61, y: 28, w: 38, h: 18 },   // bếp lò + nồi nước lèo
-  broth:   { x: 63, y: 30, w: 35, h: 9  },   // nước lèo có sẵn (phở) múc thẳng
-  prep:    { x: 7,  y: 43, w: 90, h: 9  },   // dãy khay GN trên tủ prep = tủ topping
-  fryer:   { x: 84, y: 20, w: 15, h: 10 },   // chảo chiên (chỉ hiện khi món cần)
-  micro:   { x: 68, y: 10, w: 17, h: 11 },   // lò vi sóng (chỉ hiện khi món cần)
-  stack:   { x: 0,  y: 56, w: 15, h: 20 },   // chồng tô + mẹt/dĩa
-  noodle:  { x: 11, y: 66, w: 25, h: 17 },   // khay sợi
-  boards:  { x: 0,  y: 79, w: 30, h: 16 },   // thớt
-  slots:   { x: 36, y: 70, w: 56, h: 26 },   // mặt thớt trắng — chỗ ráp tô
-  trash:   { x: 91, y: 88, w: 9,  h: 11 },
-  rail:    { x: 3,  y: 16, w: 94, h: 14 },   // dây kẹp phiếu khách — treo trên mảng tường trống
-  hudL:    { x: 2,  y: 2,  w: 30, h: 7  },
-  hudR:    { x: 68, y: 2,  w: 30, h: 7  },
+  pot:     { x:   5, y:23.5, w:  33, h:  21 },   // nồi trụng + 3 rọ treo trong nồi
+  hot:     { x:   5, y:  36, w:  33, h:   7 },   // tô nóng trữ ở mép nồi
+  sink:    { x:  37, y:28.5, w:  25, h:  15 },   // bồn xả lạnh
+  burner:  { x:60.5, y:29.5, w:39.5, h:  12 },   // bếp lò + nồi nước lèo
+  broth:   { x:  63, y:31.5, w:  35, h:   9 },   // nước lèo có sẵn (phở) múc thẳng
+  prep:    { x:   6, y:43.5, w:  94, h: 5.5 },   // dãy khay GN trên tủ prep = tủ topping
+  fryer:   { x:84.5, y:20.5, w:  15, h:  10 },   // chảo chiên (chỉ hiện khi món cần)
+  micro:   { x:  68, y:  10, w:  17, h:  11 },   // lò vi sóng (chỉ hiện khi món cần)
+  stack:   { x:   0, y:  56, w:  15, h:  20 },   // chồng tô + mẹt/dĩa
+  noodle:  { x:11.5, y:66.5, w:  26, h:  13 },   // khay sợi
+  boards:  { x:   0, y:  79, w:  30, h:  16 },   // thớt
+  slots:   { x:  36, y:  70, w:  56, h:  26 },   // mặt thớt trắng — chỗ ráp tô
+  trash:   { x:  88, y:  55, w:  12, h:  18 },
+  rail:    { x:   4, y: 9.5, w:  94, h:  14 },   // dây kẹp phiếu khách — treo trên mảng tường trống
+  hudL:    { x:   2, y: 1.5, w:41.5, h: 7.5 },
+  hudR:    { x:52.5, y:   1, w:  47, h: 7.5 },
 };
 
 /** Ảnh bàn tay: `spout` = toạ độ MIỆNG VÁ trong ảnh (% rộng, % cao). */
