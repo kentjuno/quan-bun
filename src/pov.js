@@ -8,6 +8,8 @@ import { POUR, BOWL, SCENE, ZONES } from './data/counter-layout.js';
 export { povOk };
 
 const $ = (id) => document.getElementById(id);
+/** Ảnh trạm nằm dưới, nội dung (nhãn, thanh thời gian) nằm trên. Dùng cả ở build() lẫn render(). */
+const objImg = (n) => `<img class="pv-objimg" src="${st(n)}" alt="" draggable="false" onerror="this.remove()">`;
 const img = (tok) => { const u = iconUrl(tok); return u ? `<img src="${u}" alt="" draggable="false">` : `<span class="emo">${D.items[tok]?.icon || '🍲'}</span>`; };
 const src1 = (kind, tok, i) => `data-k="${kind}"${tok != null ? ` data-t="${tok}"` : ''}${i != null ? ` data-i="${i}"` : ''}`;
 const bar = (left, total) => (left > 0 && total ? `<i class="pv-bar" style="--p:${(1 - left / total) * 100}%"></i>` : '');
@@ -47,8 +49,6 @@ export class Pov {
         ? `<div class="pv-obj dragsrc" ${src1('item', it)}><img class="pv-objimg" src="${st}" alt="" draggable="false" onerror="this.closest('.pv-obj').classList.add('noart');this.remove()"><i class="pv-ghosticon">${img(it)}</i><small>${label(it)}</small></div>`
         : `<div class="pv-src dragsrc" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`; };
     const zone = (k, inner, cls = '') => `<div class="pv-z ${cls}" style="${z(k)}">${inner}</div>`;
-    // Ảnh trạm nằm dưới, nội dung (nhãn, thanh thời gian) nằm trên.
-    const objImg = (n) => `<img class="pv-objimg" src="${st(n)}" alt="" draggable="false" onerror="this.remove()">`;
     const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
 
     this.el.innerHTML = `
