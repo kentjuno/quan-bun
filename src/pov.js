@@ -3,7 +3,7 @@
 import { D, label, tokenMatches } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
-import { dishArt, faceArt, fx, hand } from './game/art.js';
+import { dishArt, dishArtAt, dishStage, faceArt, fx, hand } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES } from './data/counter-layout.js';
 export { povOk };
 
@@ -102,10 +102,10 @@ export class Pov {
     $('pvSlots').innerHTML = C.slots.map((b, i) => {
       if (!b) return `<div class="pv-slot drop" data-zone="slot" data-i="${i}"><small>chỗ tô ${i + 1}</small></div>`;
       const fit = C.fits(b.placed); const full = fit.some((t) => t.steps.length === b.placed.length);
-      // Chỉ khi CÒN ĐÚNG MỘT món khớp mới biết vẽ tô nào; trước đó vẫn xếp icon như cũ.
-      const only = fit.length === 1 ? fit[0].dish : null;
-      const wet = !!only && b.placed.some((t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t));
-      const art = only ? dishArt(only, wet || full) : null;
+      // Một ảnh liền lạc cho cả cái tô — không đè icon rời lên nữa.
+      // Còn nhiều món khớp thì lấy món đầu: cùng bậc này chúng nhìn như nhau.
+      const only = fit[0]?.dish || null;
+      const art = only ? dishArtAt(only, dishStage(b.placed, full)) : null;
       const inner = art
         ? `<img class="pv-art" src="${art}" alt="" draggable="false" onerror="this.remove()">`
         : `${img(b.placed[0].replace(/^bowl-hot:/, ''))}${b.placed.slice(1).map((t, k) => `<i class="lay" style="--k:${k}">${img(t)}</i>`).join('')}`;

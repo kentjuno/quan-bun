@@ -12,6 +12,29 @@ export const DISH_ART = new Set([
   'bun-nem-cua-thit-nuong-tom-nuong', 'bun-ga-nuong', 'bun-cha-ha-noi',
   'cha-gio-viet-nam', 'goi-cuon-tom-thit', 'chao-long', 'chao-suon',
 ]);
+/** Món nào có thêm ảnh giữa `-top` (đủ topping, chưa chan nước). */
+export const DISH_TOP = new Set([
+  'pho-dac-biet', 'pho-tai-nam', 'pho-tai-dap', 'pho-suon-tai',
+  'bun-rieu-cua', 'banh-da-cua', 'bun-bo-hue', 'bun-ca-hai-phong',
+  'chao-long', 'chao-suon',
+]);
+/**
+ * Bậc của tô theo những gì đã bỏ vào — KHÔNG bao giờ đè icon lên ảnh tô nữa (Kent 16/09).
+ *   dry  = mới có đế (bánh phở / bún / mẹt trống)
+ *   top  = đã xếp topping, chưa chan nước
+ *   wet  = đã chan nước hoặc xong tô
+ */
+export function dishStage(placed = [], full = false) {
+  if (full) return 'wet';
+  if (placed.some((t) => /^@pour|^broth:|-broth-ready$|^porridge-ready$/.test(t))) return 'wet';
+  return placed.length > 1 ? 'top' : 'dry';
+}
+/** Ảnh tô của một món ở một bậc. Món chưa có `-top` thì lùi về `-dry`. */
+export function dishArtAt(dish, stage = 'dry') {
+  if (!DISH_ART.has(dish)) return null;
+  if (stage === 'top' && !DISH_TOP.has(dish)) stage = 'wet';   // món khô (mẹt/dĩa): bậc giữa chính là ảnh xong
+  return `${BASE}${dish}-${stage}.webp`;
+}
 /** Ảnh tô của một món. `wet` = đã chan nước / đã xong. */
 export function dishArt(dish, wet = false) {
   return DISH_ART.has(dish) ? `${BASE}${dish}-${wet ? 'wet' : 'dry'}.webp` : null;
