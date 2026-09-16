@@ -63,3 +63,15 @@ export function faceArt(regular, seed = 0) {
 export const fx = (name) => `${BASE}fx-${name}.webp`;
 export const ui = (name) => `${BASE}ui-${name}.webp`;
 export const hand = (name) => `${BASE}hand-${name}.webp`;
+
+/**
+ * Sprite của trạm — đồ KHÔNG còn vẽ dính trong nền nữa, mỗi cái là một object riêng
+ * nằm đúng ô của nó (Kent 16/09: "chồng tô nên là 1 object riêng").
+ * Token nào không có sprite thì pov.js quay về icon như cũ.
+ */
+export const STATION_ART = {
+  'pho-bowl': `${BASE}st-bowl-stack.webp`,
+  'pho-noodle': `${BASE}st-noodle-tray.webp`,
+};
+export const stationArt = (tok) => STATION_ART[tok] || null;
+
