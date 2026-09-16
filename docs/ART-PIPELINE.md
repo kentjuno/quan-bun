@@ -186,3 +186,25 @@ flowkit có `/api/flow/upload-image` → `media_id`, rồi `/api/flow/edit-image
 Cái tô giữ nguyên gần như tuyệt đối — đúng thứ cần để 4 bậc chồng lên nhau không giật.
 Gen xong: `scripts\cut_magenta.py art\raw\stages` → resize 300px → `.webp` vào `public/art`.
 
+## 9. Tạm đồ là object riêng, không vẽ dính trong nền (16/09)
+
+Kent: *"chồng tô phở nên là 1 object riêng, cái sợi phở bún cũng vậy, khi mà kéo nó đi thì nó đi theo con trỏ."*
+
+Khuôn làm, áp cho mọi trạm sau này:
+
+1. **Xoá món đó khỏi `scene.webp`** bằng `edit-image` trên `art/raw/scene/scene-c.png`:
+   *"Keep the EXACT same kitchen picture … Change TWO things only: remove …"*.
+   Gen 3 bản rồi so `art/raw/scene/scene-strip*.png`, chọn bản ít trôi bố cục nhất.
+   **Bố cục có trôi nhẹ ở nửa dưới** — luôn vẽ khung ZONES đè lên so trước khi thay.
+2. **Cắt sprite từ chính `scene-c.png`** (crop đúng vùng → pad nền magenta → `edit-image`
+   *"… background must be a flat solid MAGENTA … only that one thing floating on it"*).
+   Cắt từ tranh gốc chứ đừng gen mới — cùng nét, cùng màu, cùng góc, khớp ngay.
+3. **Khai báo trong `STATION_ART`** (`src/game/art.js`), key là token của món.
+   `pov.js` tự vẽ `.pv-obj` đầy ô; token nào chưa có sprite thì quay về icon như cũ.
+4. **Icon nhỏ vẫn giữ, nhưng ẩn** trong `<i class="pv-ghosticon">` — đó là thứ bay theo ngón tay
+   khi kéo (kéo cả chồng tô thì vô lý; kéo ra MỘT cái tô mới đúng).
+
+### Cạm: đừng đặt tên class `.pv-st`
+`.pv-st` đã dùng cho chảo chiên / lò vi sóng từ trước. Sprite trạm dùng `.pv-obj` / `.pv-objimg`.
+Lần đầu tui đặt trùng tên → CSS không ăn, sprite phình ra full màn hình.
+
