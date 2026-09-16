@@ -18,21 +18,36 @@ export const DISH_TOP = new Set([
   'bun-rieu-cua', 'banh-da-cua', 'bun-bo-hue', 'bun-ca-hai-phong',
   'chao-long', 'chao-suon',
 ]);
+/** Món nào có ảnh vỏ trống `-s0` (mới lấy tô/dĩa ra, chưa bỏ gì). */
+export const DISH_S0 = new Set([
+  'pho-dac-biet', 'pho-tai-nam', 'pho-tai-dap', 'pho-suon-tai',
+  'bun-rieu-cua', 'banh-da-cua', 'bun-bo-hue', 'bun-ca-hai-phong',
+  'chao-long', 'chao-suon', 'bun-ga-nuong',
+  'bun-nem-cua-thit-nuong-tom-nuong', 'goi-cuon-tom-thit',
+]);
+const RE_BROTH = /^@pour|^broth:|-broth-ready$|^porridge-ready$/;
+const RE_VESSEL = /^bowl|^dry-bowl$|^tray|^dia-|^chen-|^mẹt/;
+const RE_BASE = /^base-ready$|^noodle|^bun$|^banh-hoi-ready$|-bun-ready$|^banh-trang-ready$|^banh-da/;
 /**
- * Bậc của tô theo những gì đã bỏ vào — KHÔNG bao giờ đè icon lên ảnh tô nữa (Kent 16/09).
- *   dry  = mới có đế (bánh phở / bún / mẹt trống)
+ * Bậc của tô theo NHỮNG GÌ ĐÃ BỎ VÀO — không đếm bước, vì mỗi level đơn giản hoá một kiểu.
+ * KHÔNG bao giờ đè icon rời lên ảnh tô nữa (Kent 16/09).
+ *   s0   = mới lấy vỏ ra, chưa bỏ gì
+ *   dry  = đã có đế (bánh phở / bún / bánh tráng)
  *   top  = đã xếp topping, chưa chan nước
  *   wet  = đã chan nước hoặc xong tô
  */
 export function dishStage(placed = [], full = false) {
   if (full) return 'wet';
-  if (placed.some((t) => /^@pour|^broth:|-broth-ready$|^porridge-ready$/.test(t))) return 'wet';
-  return placed.length > 1 ? 'top' : 'dry';
+  if (placed.some((t) => RE_BROTH.test(t))) return 'wet';
+  const rest = placed.filter((t) => !RE_VESSEL.test(t));
+  if (rest.some((t) => !RE_BASE.test(t))) return 'top';
+  return rest.length ? 'dry' : 's0';
 }
-/** Ảnh tô của một món ở một bậc. Món chưa có `-top` thì lùi về `-dry`. */
+/** Ảnh tô của một món ở một bậc; thiếu ảnh bậc nào thì lùi về bậc có sẵn. */
 export function dishArtAt(dish, stage = 'dry') {
   if (!DISH_ART.has(dish)) return null;
-  if (stage === 'top' && !DISH_TOP.has(dish)) stage = 'wet';   // món khô (mẹt/dĩa): bậc giữa chính là ảnh xong
+  if (stage === 's0' && !DISH_S0.has(dish)) stage = 'dry';    // mẹt/dĩa: `-dry` đã là cái mẹt trống
+  if (stage === 'top' && !DISH_TOP.has(dish)) stage = 'wet';  // món khô: bậc giữa chính là ảnh xong
   return `${BASE}${dish}-${stage}.webp`;
 }
 /** Ảnh tô của một món. `wet` = đã chan nước / đã xong. */

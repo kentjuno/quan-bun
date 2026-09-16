@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { dishStage, dishArtAt } from '../src/game/art.js';
 import { Counter, counterMove, povOk } from '../src/game/counter.js';
 import { ALL_DISHES, levelById, WORLDS } from '../src/config.js';
 import { makeLevelArrivals, povArrivals } from '../src/game/levels.js';
@@ -220,4 +221,22 @@ describe('Nhịp khách ở quầy POV', () => {
     }
     expect(bad, bad.slice(0, 8).join(' | ')).toEqual([]);
   }, 180000);
+});
+
+describe('bậc ảnh của tô (art C)', () => {
+  it('đi đúng thang s0 → dry → top → wet theo thứ đã bỏ vào, không đếm bước', () => {
+    expect(dishStage(['bowl-hot:pho-bowl'])).toBe('s0');
+    expect(dishStage(['bowl-hot:pho-bowl', 'noodle-drained:pho-noodle'])).toBe('dry');
+    expect(dishStage(['base-ready'])).toBe('dry');
+    expect(dishStage(['base-ready', 'nam'])).toBe('top');
+    expect(dishStage(['base-ready', 'nam', '@pour-pho-broth'])).toBe('wet');
+    expect(dishStage(['base-ready', 'nam'], true)).toBe('wet');
+    expect(dishStage(['tray-ready'])).toBe('s0');
+  });
+  it('món thiếu ảnh bậc nào thì lùi về bậc có sẵn, món không có art thì trả null', () => {
+    expect(dishArtAt('pho-tai-nam', 'top')).toBe('art/pho-tai-nam-top.webp');
+    expect(dishArtAt('bun-cha-ha-noi', 'top')).toBe('art/bun-cha-ha-noi-wet.webp');   // món khô: không có -top
+    expect(dishArtAt('bun-cha-ha-noi', 's0')).toBe('art/bun-cha-ha-noi-dry.webp');    // mẹt trống chính là -dry
+    expect(dishArtAt('mon-khong-co-that', 'wet')).toBe(null);
+  });
 });
