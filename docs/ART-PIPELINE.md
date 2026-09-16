@@ -159,3 +159,30 @@ Nền: *flat solid MAGENTA #FF00FF*, cắt bằng `scripts/cut_magenta.py <thư 
 
 ### Quy tắc 2 trạng thái
 Mỗi món có ĐÚNG MỘT cái tô, xuất hiện y hệt ở cả `-dry` và `-wet` → chan nước chỉ crossfade phần trong tô, cái tô đứng yên. Prompt phải tả cái tô giống hệt nhau ở hai lần gen, và chặn *NO chopsticks, NO spoon, no extra side dishes*.
+
+## 8. Tô có 4 bậc — hết kiểu đè icon lên ảnh tô (16/09)
+
+Kent báo: *"cái tô bỏ vô đúng đẹp nhưng khi phở vô thì nó ra z"* — màn lắp tô đang vẽ
+ảnh tô rồi **dán icon rời đè lên**, ra cục sợi bé tí lơ lửng giữa tô to. Bỏ hẳn cách đó.
+
+Mỗi món giờ có tối đa **4 ảnh, mỗi ảnh là MỘT bức liền**:
+
+| Bậc | File | Là gì |
+|---|---|---|
+| `s0`  | `<dish>-s0.webp`  | vỏ trống, mới lấy tô/dĩa ra (13 món) |
+| `dry` | `<dish>-dry.webp` | đã có đế: bánh phở / bún / bánh tráng (18 món) |
+| `top` | `<dish>-top.webp` | đủ topping, chưa chan nước (10 món nước) |
+| `wet` | `<dish>-wet.webp` | đã chan nước / xong tô (18 món) |
+
+`dishStage(placed, full)` trong `src/game/art.js` chọn bậc **theo token đã bỏ vào**, không đếm
+bước — vì mỗi level đơn giản hoá một kiểu nên số bước không đáng tin.
+Món thiếu ảnh bậc nào thì `dishArtAt()` lùi về bậc có sẵn (mẹt/dĩa: `s0` → `dry`; món khô: `top` → `wet`).
+
+### Cách gen thêm bậc: **sửa ảnh cũ, đừng gen lại từ đầu**
+flowkit có `/api/flow/upload-image` → `media_id`, rồi `/api/flow/edit-image`
+(`prompt`, `source_media_id`, `project_id`, `aspect_ratio`). Upload chính cái PNG raw cũ
+(nền magenta còn nguyên) rồi bảo nó **đổi ĐÚNG MỘT thứ**:
+*"Keep the EXACT same bowl … same flat solid MAGENTA background. Change ONE thing only: …"*.
+Cái tô giữ nguyên gần như tuyệt đối — đúng thứ cần để 4 bậc chồng lên nhau không giật.
+Gen xong: `scripts\cut_magenta.py art\raw\stages` → resize 300px → `.webp` vào `public/art`.
+
