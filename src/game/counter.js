@@ -72,12 +72,22 @@ export class Counter {
 
   // ---------- phiếu khách ----------
   pickDish() { const w = this.o.weights || {}; const sum = this.dishes.reduce((n, k) => n + (w[k] ?? 1), 0); let r = this.rnd() * sum; for (const k of this.dishes) { r -= (w[k] ?? 1); if (r <= 0) return k; } return this.dishes[this.dishes.length - 1]; }
-  who(dish) { const rs = REGULARS.filter((x) => x.dish === dish); if (rs.length && this.rnd() < 0.5) { const g = rs[Math.floor(this.rnd() * rs.length)]; return { name: g.name, regular: g.id }; } const ns = ['Khách', 'Cô áo xanh', 'Anh áo đỏ', 'Bác nón lá', 'Bé học sinh', 'Chị công sở']; return { name: ns[Math.floor(this.rnd() * ns.length)], regular: null }; }
+  /** Ai gọi món — không để trùng tên với phiếu đang treo. */
+  who(dish) {
+    const used = new Set(this.tickets.map((t) => t.name));
+    const rs = REGULARS.filter((x) => x.dish === dish && !used.has(x.name));
+    if (rs.length && this.rnd() < 0.5) { const g = rs[Math.floor(this.rnd() * rs.length)]; return { name: g.name, regular: g.id }; }
+    const ns = ['Khách', 'Cô áo xanh', 'Anh áo đỏ', 'Bác nón lá', 'Bé học sinh', 'Chị công sở'];
+    const free = ns.filter((n) => !used.has(n));
+    const pool = free.length ? free : ns;
+    return { name: pool[Math.floor(this.rnd() * pool.length)], regular: null };
+  }
   spawn(dish = null, arr = null) {
     if (this.spawned >= this.rounds || this.tickets.length >= this.maxTickets) return null;
     if (!arr && this.arrivals.length) arr = this.arrivals[this.spawned];
     const d = dish || arr?.dish || this.pickDish();
-    const reg = arr?.regular ? REGULARS.find((x) => x.id === arr.regular) : null;
+    let reg = arr?.regular ? REGULARS.find((x) => x.id === arr.regular) : null;
+    if (reg && this.tickets.some((t) => t.regular === reg.id || t.name === reg.name)) reg = null;   // khách quen đang đứng chờ thì không hiện thêm phiếu nữa
     const w = reg ? { name: reg.name, regular: reg.id } : this.who(d);
     const t = { id: this.spawned++, dish: d, ...w, steps: this.recs[d].assembly, born: this.time,
       pat: arr?.patience || this.patience, tipMult: reg?.tipMult || 1, mistakes: 0, taps: 0 };

@@ -3,6 +3,8 @@ import { WORLDS, kitchenFor, modsFor, levelById } from '../src/config.js';
 import { World } from '../src/game/world.js';
 import { REGULARS, lineFor, recapLine, STRANGER_LINES } from '../src/data/customers.js';
 import { botDecide } from '../src/game/bot.js';
+import { Counter } from '../src/game/counter.js';
+import { povArrivals } from '../src/game/levels.js';
 
 describe('khách quen & thoại', () => {
   it('mỗi khách quen có món ruột nằm trong một world, đủ 6 loại thoại', () => {
@@ -33,5 +35,16 @@ describe('khách quen & thoại', () => {
     for (let i = 0; i < L.seconds * 30 && w.state === 'running'; i++) w.update(1 / 30);
     const reg = w.customers.find((c) => c.regular); const str = w.customers.find((c) => !c.regular);
     expect(reg.maxPatience).toBeGreaterThan(str.maxPatience * 0.99);
+  });
+  it('quầy POV: không bao giờ có hai phiếu trùng tên khách cùng lúc', () => {
+    const L = levelById('pho-10');
+    const arr = povArrivals(L);
+    let r = 0.13; const rnd = () => (r = (r * 9301 + 49297) % 233280 / 233280);
+    const C = new Counter({ dishes: L.dishes, arrivals: arr, simplify: L.simplify, patience: 999, maxTickets: 4, rnd });
+    for (let i = 0; i < 120 * 30; i++) {
+      C.update(1 / 30);
+      const names = C.tickets.map((t) => t.name);
+      expect(new Set(names).size, names.join(' | ')).toBe(names.length);
+    }
   });
 });
