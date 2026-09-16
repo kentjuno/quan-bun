@@ -224,3 +224,24 @@ Khi rổ thành sprite, nó căn theo ô → trôi ra ngoài nồi, tụt xuốn
 Bóp lại còn `x9.5 y18 w23 h24` (lòng nồi + chừa chỗ quai nhô trên vành) là vừa.
 **Sau mỗi lần tách một trạm, kiểm lại ô của trạm đó.**
 
+### Bảng trạm (cập nhật 16/09)
+
+| Trạm | Sprite | Ghi chú |
+|---|---|---|
+| Chồng tô | `st-bowl-stack.webp` | dùng cho `pho-bowl` `soup-bowl` `dry-bowl` `extra-bowl` |
+| Khay sợi | `st-noodle-tray.webp` | dùng cho `pho-noodle` `bun` `bun-to` `banh-da` |
+| Rổ trụng ×3 | `st-basket.webp` / `st-basket-noodle.webp` | nóng · xả lạnh · hư = đổi màu `drop-shadow` |
+| Nồi nước trên bếp | `st-soup-pot.webp` | nồi cũ đã xoá khỏi mặt bếp trong tranh |
+| Chảo chiên | `st-fryer.webp` | đứng đầu phải mặt bếp |
+| Lò vi sóng | `st-microwave.webp` | kệ tường trên bếp |
+
+**Không tách** (cố ý): mẹt / dĩa / bánh tráng vẫn dùng icon — vẽ chồng tô cho cái mẹt thì sai hơn là không vẽ.
+**Thớt** cũng không tách: hai khay trắng vẽ sẵn ở góc dưới CHÍNH LÀ cái thớt; đắp thêm thớt gỗ lên là nhân đôi đồ vật.
+**Khay topping** cũng không: các khay GN trong tranh đang TRỐNG, icon chính là đồ nằm trong khay — không trùng gì cả.
+
+### Bậy thứ ba: helper định nghĩa trong `build()` nhưng gọi trong `render()`
+`objImg()` tui đặt trong `build()`, rồi dùng lại ở `render()` cho thớt/nồi → `ReferenceError`
+ngay lần vẽ lại đầu tiên. **83 test vẫn pass** vì test không dựng DOM của POV.
+Helper dùng ở cả hai chỗ thì đặt ở module scope, cạnh `img()`.
+Sau mỗi lần đổi `pov.js`: mở bản live, chạy `pov.render()` và soi console — test không bắt giúm.
+
