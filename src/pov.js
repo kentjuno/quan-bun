@@ -44,7 +44,7 @@ export class Pov {
     // Đồ có sprite riêng thì vẽ to đầy ô; icon nhỏ giữ lại (ẩn) để làm cái bay theo ngón tay.
     const src = (it) => { const st = stationArt(it);
       return st
-        ? `<div class="pv-st dragsrc" ${src1('item', it)}><img class="pv-stimg" src="${st}" alt="" draggable="false" onerror="this.closest('.pv-st').classList.add('noart');this.remove()"><i class="pv-hidden">${img(it)}</i><small>${label(it)}</small></div>`
+        ? `<div class="pv-obj dragsrc" ${src1('item', it)}><img class="pv-objimg" src="${st}" alt="" draggable="false" onerror="this.closest('.pv-obj').classList.add('noart');this.remove()"><i class="pv-ghosticon">${img(it)}</i><small>${label(it)}</small></div>`
         : `<div class="pv-src dragsrc" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`; };
     const zone = (k, inner, cls = '') => `<div class="pv-z ${cls}" style="${z(k)}">${inner}</div>`;
     const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
@@ -177,7 +177,7 @@ export class Pov {
       const key = el.dataset.k + ':' + (el.dataset.t || el.dataset.i); const now = performance.now();
       if (this._tap && this._tap.key === key && now - this._tap.t < 340) { this._tap = null; return this.auto(el); }
       this._tap = { key, t: now };
-      const ghost = document.createElement('div'); ghost.className = 'pv-ghost'; ghost.innerHTML = (el.querySelector('.pv-hidden img,.pv-hidden .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(ghost);
+      const ghost = document.createElement('div'); ghost.className = 'pv-ghost'; ghost.innerHTML = (el.querySelector('.pv-ghosticon img,.pv-ghosticon .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(ghost);
       drag = { el, ghost, x0: e.clientX, y0: e.clientY, moved: false }; el.classList.add('lift');
       root.classList.add('dragging');   // đang kéo mới hiện viền chỗ thả (CSS), lúc thường để tranh sạch
       this.ghostTo(e.clientX, e.clientY, ghost);
@@ -198,7 +198,7 @@ export class Pov {
     const go = () => { const r = this.C.drop(src, zone); this.render(); this.afterDrop(r, src, zone); };
     if (!dst) return go();
     const a = el.getBoundingClientRect(), b = dst.getBoundingClientRect();
-    const g = document.createElement('div'); g.className = 'pv-ghost fly'; g.innerHTML = (el.querySelector('.pv-hidden img,.pv-hidden .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(g);
+    const g = document.createElement('div'); g.className = 'pv-ghost fly'; g.innerHTML = (el.querySelector('.pv-ghosticon img,.pv-ghosticon .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(g);
     g.style.transform = `translate(${a.left + a.width / 2 - 28}px, ${a.top + a.height / 2 - 28}px)`; dst.classList.add('over');
     requestAnimationFrame(() => { g.style.transition = 'transform .2s cubic-bezier(.3,.7,.3,1)'; g.style.transform = `translate(${b.left + b.width / 2 - 28}px, ${b.top + b.height / 2 - 28}px) scale(.85)`; });
     setTimeout(() => { g.remove(); dst.classList.remove('over'); go(); }, 210);

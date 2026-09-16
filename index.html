@@ -253,6 +253,16 @@
         font-size: 7.5px; line-height: 1.05; white-space: normal; overflow: visible;
         text-overflow: clip; max-height: 2.2em; text-align: center;
         text-shadow: 0 1px 2px rgba(255,250,240,.95), 0 0 3px rgba(255,250,240,.9); }
+      /* sprite trạm: object riêng nằm đúng ô, không phải hình vẽ dính trong nền */
+      .pv-stage .pv-obj { position: relative; width: 100%; height: 100%; display: flex;
+        align-items: flex-end; justify-content: center; cursor: grab; }
+      .pv-stage .pv-obj .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.32)); }
+      .pv-stage .pv-obj .pv-ghosticon { display: none; }
+      .pv-stage .pv-obj small { position: relative; z-index: 1; }
+      .pv-stage .pv-obj.noart::after { content: ''; position: absolute; inset: 0;
+        border: 2px dashed rgba(90,66,44,.35); border-radius: 8px; }
+      .pv-stage .pv-obj:active { transform: scale(.96); }
       .pv-stage .dragsrc:active { transform: scale(.94); }
       .pv-stage .pv-baskets { gap: 4%; }
       .pv-stage .pv-basket { flex: 1; min-height: 0; height: 74%; }
