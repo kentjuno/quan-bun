@@ -15,7 +15,7 @@ export const ZONES = {
   sink:    { x:  37, y:28.5, w:  25, h:  15 },   // bồn xả lạnh
   burner:  { x:  62, y:28.5, w:  23, h:13.5 },   // mặt bếp trái: 2 nồi nước (nồi đã xoá khỏi tranh)
   broth:   { x:  85, y:  30, w:  14, h:  11 },   // nước nấu sẵn ở đầu phải mặt bếp
-  prep:    { x:   6, y:43.5, w:  94, h: 5.5 },   // dãy khay GN trên tủ prep = tủ topping
+  prep:    { x:   7, y:  44, w:  88, h: 5.4 },   // đúng 9 cái khay GN trong tranh — xem PAN_COLS bên dưới
   fryer:   { x:  85, y:  28, w:  14, h:13.5 },   // chảo chiên đứng đầu phải mặt bếp
   micro:   { x:  66, y:  13, w:  18, h:  13 },   // lò vi sóng trên kệ tường
   stack:   { x:   0, y:  56, w:  15, h:  20 },   // chồng tô + mẹt/dĩa
@@ -49,3 +49,4 @@ export const POUR = {
 };
 
 export const STEAM = { count: 6, spread: 14, gap: 240, duration: 1900, rise: 96 };
+

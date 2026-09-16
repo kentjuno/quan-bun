@@ -42,7 +42,7 @@ export class Pov {
     this.has = { pot: need('pot'), sink: need('sink'), prep: need('prep'), fryer: need('fryer'), microwave: need('microwave'),
       burner: !!Object.keys(C.soups).length && !C.sim?.soupReady, ready: !!Object.keys(C.soups).length };
     const z = (k) => { const b = ZONES[k]; return `left:${b.x}%;top:${b.y}%;width:${b.w}%;height:${b.h}%`; };
-    const pan = (it) => `<div class="pv-pan dragsrc" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`;
+    const pan = (it) => `<div class="pv-pan dragsrc" title="${label(it)}" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`;
     // Đồ có sprite riêng thì vẽ to đầy ô; icon nhỏ giữ lại (ẩn) để làm cái bay theo ngón tay.
     const src = (it) => { const st = stationArt(it);
       return st
