@@ -8,3 +8,5 @@ _dev_server.*
 _server_status.json
 pwa_build_status.json
 .claude/
+
+_dupfix.json
