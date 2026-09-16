@@ -208,3 +208,19 @@ Khuôn làm, áp cho mọi trạm sau này:
 `.pv-st` đã dùng cho chảo chiên / lò vi sóng từ trước. Sprite trạm dùng `.pv-obj` / `.pv-objimg`.
 Lần đầu tui đặt trùng tên → CSS không ăn, sprite phình ra full màn hình.
 
+### Đã tách xong (cập nhật khi rải thêm)
+
+| Trạm | Sprite | Trạng thái |
+|---|---|---|
+| Chồng tô | `st-bowl-stack.webp` | 1 |
+| Khay sợi | `st-noodle-tray.webp` | 1 |
+| Rổ trụng ×3 | `st-basket.webp`, `st-basket-noodle.webp` | rỗng / có sợi; nóng · xả lạnh · hư là `drop-shadow` đổi màu |
+
+Còn lại: khay topping, thớt, chảo chiên, lò vi sóng, kệ nước.
+
+### Bậy thứ hai: **xoá đồ khỏi nền thì ô cũ không còn đúng nữa**
+Ô `pot` cũ (x5 y23.5 w33 h21) bao cả viền ngoài nồi — hồi đó không sao vì rổ vẽ sẵn trong tranh.
+Khi rổ thành sprite, nó căn theo ô → trôi ra ngoài nồi, tụt xuống mặt bàn.
+Bóp lại còn `x9.5 y18 w23 h24` (lòng nồi + chừa chỗ quai nhô trên vành) là vừa.
+**Sau mỗi lần tách một trạm, kiểm lại ô của trạm đó.**
+
