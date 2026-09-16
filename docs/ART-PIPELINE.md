@@ -245,3 +245,20 @@ ngay lần vẽ lại đầu tiên. **83 test vẫn pass** vì test không dựn
 Helper dùng ở cả hai chỗ thì đặt ở module scope, cạnh `img()`.
 Sau mỗi lần đổi `pov.js`: mở bản live, chạy `pov.render()` và soi console — test không bắt giúm.
 
+### Dải khay topping: không phải tách, mà là căn
+
+Kent: *"Xử lý được chỗ này thì hay"* — đồ topping nằm **trên vành khay** chứ không trong lòng,
+cỡ to nhỏ lộn xộn, nhãn "Ngò rí + ngò gai" tràn sang khay bên cạnh.
+Đây KHÔNG phải lỗi nhân đôi đồ vật (khay trong tranh đang trống) mà là lỗi căn chỉnh:
+
+1. **Bề ngang `.pv-pan` phải là `1/PAN_COLS`**, không được ước lượng.
+   Cũ đặt `13%` trong khi tranh có 9 khay (11.1%) → đến khay thứ 5 lệch hẳn một khay.
+2. **Ô `prep` phải bám miệng khay**, không phải cả dải inox: `x7 y44 w88 h5.4`.
+3. Đồ trong khay: `position:absolute; top:11%; height:58%` — căn theo Ô chứ không flex-center,
+   vì flex-center với nội dung cao hơn ô thì nó tràn đều hai đầu → lòi lên trên vành.
+4. Nhãn xuống mặt bàn dưới khay, xuống dòng trong bề ngang khay của nó.
+   **Không cắt cụt bằng `text-overflow: ellipsis`** — game này là để nhớ tên nguyên liệu.
+
+Cách dò: bắt `pov.render()` trên bản live rồi đo `getBoundingClientRect()` của `.pv-pan`
+quy ra % của `.pv-stage`, so với vị trí khay đọc từ lưới % đè lên `scene.webp`. Nhanh hơn đoán nhiều.
+
