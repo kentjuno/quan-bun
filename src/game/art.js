@@ -78,3 +78,6 @@ export const stationArt = (tok) => STATION_ART[tok] || null;
 /** Rổ trụng: rỗng / đang có sợi. Thiếu ảnh thì pov.js quay về icon cũ. */
 export const basketArt = (full = false) => `${BASE}st-basket${full ? '-noodle' : ''}.webp`;
 
+/** Sprite trạm theo tên file `st-<name>.webp` (chảo chiên, lò vi sóng, nồi nước, thớt…). */
+export const st = (name) => `${BASE}st-${name}.webp`;
+

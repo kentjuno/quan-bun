@@ -3,7 +3,7 @@
 import { D, label, tokenMatches } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
-import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt } from './game/art.js';
+import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES } from './data/counter-layout.js';
 export { povOk };
 
@@ -47,6 +47,8 @@ export class Pov {
         ? `<div class="pv-obj dragsrc" ${src1('item', it)}><img class="pv-objimg" src="${st}" alt="" draggable="false" onerror="this.closest('.pv-obj').classList.add('noart');this.remove()"><i class="pv-ghosticon">${img(it)}</i><small>${label(it)}</small></div>`
         : `<div class="pv-src dragsrc" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`; };
     const zone = (k, inner, cls = '') => `<div class="pv-z ${cls}" style="${z(k)}">${inner}</div>`;
+    // Ảnh trạm nằm dưới, nội dung (nhãn, thanh thời gian) nằm trên.
+    const objImg = (n) => `<img class="pv-objimg" src="${st(n)}" alt="" draggable="false" onerror="this.remove()">`;
     const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
 
     this.el.innerHTML = `
@@ -62,8 +64,8 @@ export class Pov {
         ${this.has.sink ? dropz('sink', 'sink', '<div class="pv-sinkin" id="pvSink"></div>', 'st-sink') : ''}
         ${this.has.ready ? zone('burner', `<div class="pv-pots" id="pvPots"></div><div class="pv-ready" id="pvReady"></div>`, 'st-burner') : ''}
         ${C.brothSrc.length ? zone('broth', C.brothSrc.map((b) => `<div class="pv-broth dragsrc" ${src1('broth', b)}>${img(b)}<small>${label(b)}</small></div>`).join(''), 'row') : ''}
-        ${this.has.fryer ? dropz('fryer', 'fryer', '<div id="pvFryer"></div>', 'st-fryer') : ''}
-        ${this.has.microwave ? dropz('micro', 'microwave', '<div id="pvMw"></div>', 'st-mw') : ''}
+        ${this.has.fryer ? dropz('fryer', 'fryer', `${objImg('fryer')}<div id="pvFryer"></div>`, 'st-fryer') : ''}
+        ${this.has.microwave ? dropz('micro', 'microwave', `${objImg('microwave')}<div id="pvMw"></div>`, 'st-mw') : ''}
         ${zone('prep', `<div class="pv-pans" id="pvTops">${[...C.soupItems, ...C.topItems].map(pan).join('')}</div>`, 'shelf')}
         ${zone('stack', `<div class="pv-srcs">${C.bowlItems.map(src).join('')}</div>`, 'col')}
         ${zone('noodle', `<div class="pv-srcs">${C.noodleItems.map(src).join('')}</div>`, 'row')}
@@ -96,14 +98,14 @@ export class Pov {
       $(id).innerHTML = j ? `<div class="pv-job ${j.left > 0 ? '' : 'dragsrc'}" ${src1(k)}>${img(j.input)}<small>${j.left > 0 ? j.name : 'xong'}</small>${bar(j.left, j.total)}</div>` : '<small class="hint">trống</small>'; }
     if (this.has.ready) {
       $('pvPots').innerHTML = C.burner.pots.map((p, i) => {
-        if (!p) return `<div class="pv-pt drop" data-zone="burner" data-i="${i}"><small class="hint">nồi trống</small></div>`;
-        const done = p.left === 0; return `<div class="pv-pt drop ${done ? 'done' : ''}" data-zone="burner" data-i="${i}"><div class="${done ? 'dragsrc' : ''}" ${src1('burnerpot', null, i)}><b>${p.name}</b><small>${p.left === null ? p.items.map(label).join(' → ') : done ? 'xong — múc ra' : 'đang đun…'}</small>${bar(p.left, p.total)}</div></div>`;
+        if (!p) return `<div class="pv-pt drop" data-zone="burner" data-i="${i}">${objImg('soup-pot')}<small class="hint">nồi trống</small></div>`;
+        const done = p.left === 0; return `<div class="pv-pt drop ${done ? 'done' : ''}" data-zone="burner" data-i="${i}">${objImg('soup-pot')}<div class="${done ? 'dragsrc' : ''}" ${src1('burnerpot', null, i)}><b>${p.name}</b><small>${p.left === null ? p.items.map(label).join(' → ') : done ? 'xong — múc ra' : 'đang đun…'}</small>${bar(p.left, p.total)}</div></div>`;
       }).join('');
       $('pvReady').innerHTML = C.burner.ready.length ? C.burner.ready.map((r, i) => `<div class="pv-rd dragsrc" ${src1('ready', null, i)}>${img(r.output)}<small>${r.name}</small></div>`).join('') : '<small class="hint">kệ nước</small>';
     }
     if (this.has.prep) $('pvBoards').innerHTML = C.boards.map((b, i) => {
-      if (!b) return `<div class="pv-board drop" data-zone="prep" data-i="${i}"><small class="hint">thớt ${i + 1}</small></div>`;
-      const done = b.left === 0; return `<div class="pv-board drop ${done ? 'done' : ''}" data-zone="prep" data-i="${i}"><div class="${done ? 'dragsrc' : ''}" ${src1('board', null, i)}>${done ? img(b.output) : b.have.filter(Boolean).map(img).join('')}<small>${b.left === null ? `thiếu ${b.tf.inputs.filter((_, k) => !b.have[k]).map(label).join(', ')}` : done ? label(b.output) : b.name + '…'}</small>${bar(b.left, b.total)}</div></div>`;
+      if (!b) return `<div class="pv-board drop" data-zone="prep" data-i="${i}">${objImg('board')}<small class="hint">thớt ${i + 1}</small></div>`;
+      const done = b.left === 0; return `<div class="pv-board drop ${done ? 'done' : ''}" data-zone="prep" data-i="${i}">${objImg('board')}<div class="${done ? 'dragsrc' : ''}" ${src1('board', null, i)}>${done ? img(b.output) : b.have.filter(Boolean).map(img).join('')}<small>${b.left === null ? `thiếu ${b.tf.inputs.filter((_, k) => !b.have[k]).map(label).join(', ')}` : done ? label(b.output) : b.name + '…'}</small>${bar(b.left, b.total)}</div></div>`;
     }).join('');
     $('pvSlots').innerHTML = C.slots.map((b, i) => {
       if (!b) return `<div class="pv-slot drop" data-zone="slot" data-i="${i}"><small>chỗ tô ${i + 1}</small></div>`;

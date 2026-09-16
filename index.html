@@ -263,6 +263,22 @@
       .pv-stage .pv-obj.noart::after { content: ''; position: absolute; inset: 0;
         border: 2px dashed rgba(90,66,44,.35); border-radius: 8px; }
       .pv-stage .pv-obj:active { transform: scale(.96); }
+      /* sprite trạm chung: ảnh nằm dưới, chữ và thanh thời gian nằm trên */
+      .pv-stage .pv-z.st-fryer, .pv-stage .pv-z.st-mw,
+      .pv-stage .pv-board, .pv-stage .pv-pt { position: relative; }
+      .pv-stage .pv-z.st-fryer > .pv-objimg, .pv-stage .pv-z.st-mw > .pv-objimg,
+      .pv-stage .pv-board > .pv-objimg, .pv-stage .pv-pt > .pv-objimg {
+        position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+        filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); pointer-events: none; }
+      .pv-stage .pv-board, .pv-stage .pv-pt { border: 0; background: none; }
+      .pv-stage .pv-board.done, .pv-stage .pv-pt.done { background: none; }
+      .pv-stage .pv-board.done > .pv-objimg, .pv-stage .pv-pt.done > .pv-objimg {
+        filter: drop-shadow(0 0 6px rgba(93,166,110,.95)); }
+      .pv-stage .pv-board > *:not(.pv-objimg), .pv-stage .pv-pt > *:not(.pv-objimg),
+      .pv-stage .pv-z.st-fryer > *:not(.pv-objimg), .pv-stage .pv-z.st-mw > *:not(.pv-objimg) {
+        position: relative; z-index: 1; }
+      .pv-stage .pv-board small, .pv-stage .pv-pt small, .pv-stage .pv-pt b {
+        text-shadow: 0 1px 2px rgba(255,250,240,.95), 0 0 3px rgba(255,250,240,.9); color: #2b2118; }
       .pv-stage .dragsrc:active { transform: scale(.94); }
       .pv-stage .pv-baskets { gap: 4%; }
       .pv-stage .pv-basket { flex: 1; min-height: 0; height: 74%; }
