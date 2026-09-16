@@ -239,9 +239,8 @@
         display: flex; align-items: center; justify-content: center; gap: 3px; }
       .pv-stage .pv-srcs.col, .pv-z.col .pv-srcs { flex-direction: column; }
       /* dải khay topping: mỗi món đúng MỘT khay vẽ sẵn, đồ nằm TRONG lòng khay */
-      .pv-stage .pv-pans { overflow: visible; justify-content: flex-start; padding: 0; }
-      .pv-stage .pv-pan { flex: 0 0 auto; width: 11.111%; min-width: 0; height: 100%;
-        position: relative; display: block; }
+      .pv-stage .pv-pans { overflow: visible; padding: 0; position: relative; display: block; }
+      .pv-stage .pv-pan { position: absolute; top: 0; height: 100%; display: block; }
       .pv-stage .pv-pan img, .pv-stage .pv-pan .emo { position: absolute; left: 50%; top: 11%;
         transform: translateX(-50%); width: auto; height: 58%; max-width: 82%; object-fit: contain; }
       .pv-stage .pv-src img, .pv-stage .pv-src .emo { width: auto; height: 42px; max-width: 100%; object-fit: contain; }

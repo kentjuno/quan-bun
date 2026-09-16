@@ -4,7 +4,7 @@ import { D, label, tokenMatches } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
 import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st } from './game/art.js';
-import { POUR, BOWL, SCENE, ZONES } from './data/counter-layout.js';
+import { POUR, BOWL, SCENE, ZONES, PANS } from './data/counter-layout.js';
 export { povOk };
 
 const $ = (id) => document.getElementById(id);
@@ -42,7 +42,9 @@ export class Pov {
     this.has = { pot: need('pot'), sink: need('sink'), prep: need('prep'), fryer: need('fryer'), microwave: need('microwave'),
       burner: !!Object.keys(C.soups).length && !C.sim?.soupReady, ready: !!Object.keys(C.soups).length };
     const z = (k) => { const b = ZONES[k]; return `left:${b.x}%;top:${b.y}%;width:${b.w}%;height:${b.h}%`; };
-    const pan = (it) => `<div class="pv-pan dragsrc" title="${label(it)}" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`;
+    // Mỗi món đặt vào ĐÚNG khay thứ i theo toạ độ đo từ tranh (PANS), không chia đều.
+    const pan = (it, i) => { const b = PANS[Math.min(i, PANS.length - 1)];
+      return `<div class="pv-pan dragsrc" title="${label(it)}" style="left:${b.x}%;width:${b.w}%" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`; };
     // Đồ có sprite riêng thì vẽ to đầy ô; icon nhỏ giữ lại (ẩn) để làm cái bay theo ngón tay.
     const src = (it) => { const st = stationArt(it);
       return st

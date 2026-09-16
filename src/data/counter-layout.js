@@ -15,7 +15,7 @@ export const ZONES = {
   sink:    { x:  37, y:28.5, w:  25, h:  15 },   // bồn xả lạnh
   burner:  { x:  62, y:28.5, w:  23, h:13.5 },   // mặt bếp trái: 2 nồi nước (nồi đã xoá khỏi tranh)
   broth:   { x:  85, y:  30, w:  14, h:  11 },   // nước nấu sẵn ở đầu phải mặt bếp
-  prep:    { x:   7, y:  44, w:  88, h: 5.4 },   // đúng 9 cái khay GN trong tranh — xem PAN_COLS bên dưới
+  prep:    { x:   0, y:  44, w: 100, h: 5.4 },   // dải khay — vị trí từng khay nằm trong PANS
   fryer:   { x:  85, y:  28, w:  14, h:13.5 },   // chảo chiên đứng đầu phải mặt bếp
   micro:   { x:  66, y:  13, w:  18, h:  13 },   // lò vi sóng trên kệ tường
   stack:   { x:   0, y:  56, w:  15, h:  20 },   // chồng tô + mẹt/dĩa
@@ -49,4 +49,17 @@ export const POUR = {
 };
 
 export const STEAM = { count: 6, spread: 14, gap: 240, duration: 1900, rise: 96 };
+
+/**
+ * Vị trí TỪNG khay GN trên dải `prep`, tính theo % chiều ngang CẢ BỨC TRANH.
+ *
+ * KHÔNG được chia đều! Tranh vẽ có chiều sâu nên khay gần thì rộng, khay xa thì hẹp:
+ * khay đầu 12.8% mà khay cuối chỉ 7.6%. Chia đều thì đến khay thứ 7–8 lệch tới 3.5%.
+ * Số này do `scripts/measure_pans.py` đo thẳng từ `scene.webp` — đổi tranh thì chạy lại.
+ */
+export const PANS = [
+  { x:   7.9, w:  12.8 }, { x:  20.7, w:  10.2 }, { x:  30.9, w:  10.3 },
+  { x:  41.2, w:  10.9 }, { x:  52.1, w:   9.0 }, { x:  61.1, w:  10.2 },
+  { x:  71.3, w:   9.8 }, { x:  81.1, w:  11.3 }, { x:  92.4, w:   7.6 },
+];
 
