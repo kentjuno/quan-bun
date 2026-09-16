@@ -262,3 +262,20 @@ cỡ to nhỏ lộn xộn, nhãn "Ngò rí + ngò gai" tràn sang khay bên cạ
 Cách dò: bắt `pov.render()` trên bản live rồi đo `getBoundingClientRect()` của `.pv-pan`
 quy ra % của `.pv-stage`, so với vị trí khay đọc từ lưới % đè lên `scene.webp`. Nhanh hơn đoán nhiều.
 
+### Bậy thứ tư (cái này mới là gốc): **tranh có chiều sâu, đừng chia đều**
+
+Tui sửa dải khay hai lần vẫn lệch, vì cả hai lần đều **chia đều bề ngang** (13% rồi 11.1%).
+Đo thật thì khay không đều: **khay đầu 12.8%, khay cuối 7.6%** — vì tranh vẽ có chiều sâu,
+cái gần thì to, cái xa thì nhỏ. Chia đều kiểu gì cũng lệch dần, đến khay 7–8 là 3.5%.
+
+Giải pháp: `PANS[]` trong `counter-layout.js` giữ toạ độ **từng khay**,
+`scripts/measure_pans.py` đo thẳng từ `scene.webp` (dò vạch mực giữa hai khay).
+Đổi tranh nền → chạy lại script, dán block mới vào.
+
+**Cách nghiệm thu (đừng nhìn bằng mắt):** đo `getBoundingClientRect()` của từng `.pv-pan`
+quy ra % của `.pv-scene`, trừ với vạch do script đo — phải ra `dL = dR = 0.0`.
+Hai lần trước tui nhìn screenshot thấy "đẹp rồi" trong khi thực tế lệch 3%.
+
+**Luật chung:** bất cứ thứ gì lặp lại trên tranh nền (dải khay, hàng bếp, chỗ tô)
+đều phải có toạ độ riêng từng cái, không được `flex` chia đều.
+
