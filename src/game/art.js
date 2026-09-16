@@ -67,11 +67,18 @@ export const hand = (name) => `${BASE}hand-${name}.webp`;
 /**
  * Sprite của trạm — đồ KHÔNG còn vẽ dính trong nền nữa, mỗi cái là một object riêng
  * nằm đúng ô của nó (Kent 16/09: "chồng tô nên là 1 object riêng").
- * Token nào không có sprite thì pov.js quay về icon như cũ.
+ * Chỉ map những token THỪC SỰ là chồng tô / khay sợi. Mẹt, dĩa, bánh tráng… vẫn dùng icon
+ * vì vẽ chồng tô cho cái mẹt thì sai hơn là không vẽ.
  */
 export const STATION_ART = {
   'pho-bowl': `${BASE}st-bowl-stack.webp`,
+  'soup-bowl': `${BASE}st-bowl-stack.webp`,
+  'dry-bowl': `${BASE}st-bowl-stack.webp`,
+  'extra-bowl': `${BASE}st-bowl-stack.webp`,
   'pho-noodle': `${BASE}st-noodle-tray.webp`,
+  'bun': `${BASE}st-noodle-tray.webp`,
+  'bun-to': `${BASE}st-noodle-tray.webp`,
+  'banh-da': `${BASE}st-noodle-tray.webp`,
 };
 export const stationArt = (tok) => STATION_ART[tok] || null;
 
