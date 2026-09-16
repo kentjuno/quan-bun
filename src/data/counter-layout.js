@@ -13,11 +13,11 @@ export const ZONES = {
   pot:     { x: 9.5, y:  18, w:  23, h:  24 },   // đúng lòng nồi: quai rổ nhô lên trên vành, cái rổ nằm trong nước
   hot:     { x:   5, y:  36, w:  33, h:   7 },   // tô nóng trữ ở mép nồi
   sink:    { x:  37, y:28.5, w:  25, h:  15 },   // bồn xả lạnh
-  burner:  { x:60.5, y:29.5, w:39.5, h:  12 },   // bếp lò + nồi nước lèo
-  broth:   { x:  63, y:31.5, w:  35, h:   9 },   // nước lèo có sẵn (phở) múc thẳng
+  burner:  { x:  62, y:28.5, w:  23, h:13.5 },   // mặt bếp trái: 2 nồi nước (nồi đã xoá khỏi tranh)
+  broth:   { x:  85, y:  30, w:  14, h:  11 },   // nước nấu sẵn ở đầu phải mặt bếp
   prep:    { x:   6, y:43.5, w:  94, h: 5.5 },   // dãy khay GN trên tủ prep = tủ topping
-  fryer:   { x:84.5, y:20.5, w:  15, h:  10 },   // chảo chiên (chỉ hiện khi món cần)
-  micro:   { x:  68, y:  10, w:  17, h:  11 },   // lò vi sóng (chỉ hiện khi món cần)
+  fryer:   { x:  85, y:  28, w:  14, h:13.5 },   // chảo chiên đứng đầu phải mặt bếp
+  micro:   { x:  66, y:  13, w:  18, h:  13 },   // lò vi sóng trên kệ tường
   stack:   { x:   0, y:  56, w:  15, h:  20 },   // chồng tô + mẹt/dĩa
   noodle:  { x:11.5, y:66.5, w:  26, h:  13 },   // khay sợi
   boards:  { x:   0, y:  79, w:  30, h:  16 },   // thớt
