@@ -3,7 +3,7 @@
 import { D, label, tokenMatches } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
-import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt } from './game/art.js';
+import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES } from './data/counter-layout.js';
 export { povOk };
 
@@ -84,9 +84,11 @@ export class Pov {
     const sv = $('pvServed'); if (sv) sv.textContent = `${C.results.length - C.left}/${C.rounds}`;
     $('pvTickets').innerHTML = C.tickets.map((t) => `<div class="tk drop${t.regular ? ' reg' : ''}" data-zone="ticket" data-i="${t.id}"><img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()"><b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u style="width:${C.patienceOf(t) * 100}%;background:${C.patienceOf(t) < 0.25 ? 'var(--red)' : C.patienceOf(t) < 0.5 ? 'var(--broth)' : 'var(--green)'}"></u></i></div>`).join('');
     if (this.has.pot) $('pvBaskets').innerHTML = C.baskets.map((b, i) => {
-      if (!b) return `<div class="pv-basket drop" data-zone="pot" data-i="${i}"></div>`;
+      // Rổ là object riêng (docs/ART-PIPELINE.md §9): rỗng vẫn vẽ cái rổ, có sợi thì đổi ảnh.
+      const rk = (full) => `<img class="pv-objimg" src="${basketArt(full)}" alt="" draggable="false" onerror="this.closest('.pv-basket')?.classList.add('noart');this.remove()">`;
+      if (!b) return `<div class="pv-basket drop" data-zone="pot" data-i="${i}">${rk(false)}</div>`;
       const busy = b.left > 0; const st = b.spoiled ? 'hư — vứt đi' : busy ? '…' : b.state === 'hot' ? 'nóng' : b.state === 'rinsed' ? 'đã xả lạnh' : b.state === 'hot2' ? 'nóng lại' : 'xong';
-      return `<div class="pv-basket drop ${b.spoiled ? 'bad' : b.state}" data-zone="pot" data-i="${i}"><div class="pv-rk ${busy ? '' : 'dragsrc'}" ${src1('basket', null, i)}>${img(b.spoiled ? b.input : b.input)}<small>${st}</small>${bar(b.left, b.total)}</div></div>`;
+      return `<div class="pv-basket drop ${b.spoiled ? 'bad' : b.state}" data-zone="pot" data-i="${i}"><div class="pv-rk ${busy ? '' : 'dragsrc'}" ${src1('basket', null, i)}>${rk(true)}<i class="pv-ghosticon">${img(b.input)}</i><small>${st}</small>${bar(b.left, b.total)}</div></div>`;
     }).join('');
     if (this.has.pot) $('pvHot').innerHTML = C.hot.length ? C.hot.map((h, i) => `<div class="pv-hb ${h.left > 0 ? '' : 'dragsrc'}" ${src1('hotbowl', null, i)}>${img(h.input)}<small>${h.left > 0 ? '…' : 'nóng'}</small>${bar(h.left, h.total)}</div>`).join('') : '<small class="hint">tô nóng trữ ở đây</small>';
     if (this.has.sink) $('pvSink').innerHTML = C.sinkJob ? `<div class="pv-job ${C.sinkJob.left > 0 ? '' : 'dragsrc'}" ${src1('sink')}>${img(C.sinkJob.input)}<small>${C.sinkJob.left > 0 ? C.sinkJob.name : 'xong'}</small>${bar(C.sinkJob.left, C.sinkJob.total)}</div>` : '';

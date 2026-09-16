@@ -266,6 +266,19 @@
       .pv-stage .dragsrc:active { transform: scale(.94); }
       .pv-stage .pv-baskets { gap: 4%; }
       .pv-stage .pv-basket { flex: 1; min-height: 0; height: 74%; }
+      /* rổ trụng là object riêng, không còn vẽ trong nền */
+      .pv-stage .pv-basket { position: relative; border: 0; }
+      .pv-stage .pv-basket .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
+      .pv-stage .pv-basket .pv-rk { position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: flex-end; }
+      .pv-stage .pv-basket .pv-rk .pv-ghosticon { display: none; }
+      .pv-stage .pv-basket .pv-rk small, .pv-stage .pv-basket .pv-rk .bar { position: relative; z-index: 1; }
+      .pv-stage .pv-basket.noart { border: 2px dashed rgba(255,255,255,.5); border-radius: 8px; }
+      .pv-stage .pv-basket.hot .pv-objimg, .pv-stage .pv-basket.hot2 .pv-objimg {
+        filter: drop-shadow(0 0 6px rgba(255,209,102,.95)); }
+      .pv-stage .pv-basket.rinsed .pv-objimg { filter: drop-shadow(0 0 6px rgba(127,211,255,.95)); }
+      .pv-stage .pv-basket.bad .pv-objimg { filter: drop-shadow(0 0 6px rgba(214,64,44,.95)); }
       .pv-stage .pv-slots { position: absolute; inset: 0; height: auto; display: grid;
         grid-auto-flow: column; gap: 2%; }
       .pv-stage .pv-slot { border: 0; background: radial-gradient(ellipse at 50% 62%, rgba(90,66,44,.16), transparent 62%); }
