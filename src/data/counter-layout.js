@@ -10,7 +10,7 @@ export const SCENE = { src: 'art/scene.webp', w: 768, h: 1376 };
 
 /** x, y, w, h tính bằng % của khung nền. */
 export const ZONES = {
-  pot:     { x:   5, y:23.5, w:  33, h:  21 },   // nồi trụng + 3 rọ treo trong nồi
+  pot:     { x: 9.5, y:  18, w:  23, h:  24 },   // đúng lòng nồi: quai rổ nhô lên trên vành, cái rổ nằm trong nước
   hot:     { x:   5, y:  36, w:  33, h:   7 },   // tô nóng trữ ở mép nồi
   sink:    { x:  37, y:28.5, w:  25, h:  15 },   // bồn xả lạnh
   burner:  { x:60.5, y:29.5, w:39.5, h:  12 },   // bếp lò + nồi nước lèo
