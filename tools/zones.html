@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Chỉnh ZONES — KJ's Choices</title>
 <style>
-  :root { --ink:#3a2c1c; --pa:#fffdf6; --li:#e7dcc6; --hi:#c8552e; --gut:22px; }
+  /* 22px trên máy rộng 412px = 5.3% — hiện theo % thì xem ở cỡ nào cũng đúng tỉ lệ máy thật. */
+  :root { --ink:#3a2c1c; --pa:#fffdf6; --li:#e7dcc6; --hi:#c8552e; --gut:5.3%; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin:0; font:14px/1.45 system-ui,sans-serif; color:var(--ink); background:#f4efe2;
          display:flex; flex-direction:column; height:100dvh; overflow:hidden; }
@@ -16,8 +17,10 @@
                    background:var(--pa); color:var(--ink); cursor:pointer; }
   button.on { background:var(--hi); color:#fff; border-color:var(--hi); }
   main { flex:1; min-height:0; display:flex; }
-  #wrap { flex:1; min-width:0; display:grid; place-items:center; padding:6px; overflow:hidden; }
-  #stage { position:relative; aspect-ratio:768/1376; max-height:100%; max-width:100%;
+  #wrap { flex:1; min-width:0; container-type:size; display:grid; place-items:center; padding:6px; overflow:hidden; }
+  /* Chiều rộng tính từ chiều cao khung chứa: aspect-ratio chỉ suy ra chiều cao khi
+     chiều cao là auto — đặt max-height:100% là ô xẹp mất. */
+  #stage { position:relative; aspect-ratio:768/1376; width:min(100%, calc(100cqh * 768 / 1376));
            background:#ddd center/cover no-repeat; touch-action:none; user-select:none; }
   #stage img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
   .gut { position:absolute; top:0; bottom:0; width:var(--gut); background:repeating-linear-gradient(
@@ -190,7 +193,7 @@ for (const k of ['x', 'y', 'w', 'h']) {
 const tog = (id, fn) => document.getElementById(id).addEventListener('click', (e) => { fn(); e.target.classList.toggle('on'); draw(); });
 tog('bGrid', () => grid = !grid);
 let gut = true;
-tog('bGut', () => { gut = !gut; document.documentElement.style.setProperty('--gut', gut ? '22px' : '0px'); });
+tog('bGut', () => { gut = !gut; document.documentElement.style.setProperty('--gut', gut ? '5.3%' : '0px'); });
 tog('bAll', () => solo = !solo);
 document.getElementById('bReset').addEventListener('click', () => { Z = JSON.parse(JSON.stringify(BASE)); draw(); });
 document.getElementById('bCopy').addEventListener('click', async () => {

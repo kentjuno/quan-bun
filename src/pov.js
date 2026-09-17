@@ -232,6 +232,8 @@ export class Pov {
     // Ngón tay to hơn con trỏ nhiều — không hít thì ô nhỏ (rổ, khay) gần như không thả trúng.
     const SNAP = 34;
 
+    const measure = () => [...root.querySelectorAll('.drop')].map((z) => ({ el: z, r: z.getBoundingClientRect() }));
+
     /** Ô nhận ở toạ độ này: ưu tiên ô đang nằm trong, không có thì ô gần nhất trong SNAP. */
     const hitAt = (x, y, zones) => {
       const on = document.elementsFromPoint(x, y).find((z) => z.classList?.contains('drop'));
@@ -247,55 +249,55 @@ export class Pov {
       return best;
     };
 
-    // Vẽ và dò ô CHỈ trong rAF. pointermove trên điện thoại bắn tới 120–240 lần/giây;
-    // gọi elementsFromPoint mỗi lần là nguyên nhân giật — đây là chỗ sửa chính.
-    const frame = () => {
-      if (!drag) return;
-      drag.raf = requestAnimationFrame(frame);
-      const { x, y } = drag.p;
-      const vx = Math.max(-14, Math.min(14, (x - drag.px) * 1.4));
-      drag.tilt += (vx - drag.tilt) * 0.18;   // nghiêng theo đà tay, cho có sức nặng
-      drag.px = x;
-      drag.ghost.style.transform =
-        `translate(${x - 28}px, ${y - 28}px) rotate(${drag.tilt.toFixed(2)}deg) scale(${drag.zone ? 1.14 : 1})`;
-      if (Math.abs(x - drag.tx) + Math.abs(y - drag.ty) < 3) return;
-      drag.tx = x; drag.ty = y;
-      const z = hitAt(x, y, drag.zones);
-      if (z !== drag.zone) {
-        drag.zone?.classList.remove('over');
-        drag.zone = z;
-        z?.classList.add('over');
-        if (z) this.C.ev?.onSfx?.('tap');   // tách nhẹ khi hít vào ô — ngón che mất viền thì còn nghe
-      }
-    };
-
     root.onpointerdown = (e) => {
       const el = e.target.closest('.dragsrc'); if (!el || this.C.over) return; e.preventDefault(); root.setPointerCapture?.(e.pointerId);
       const key = el.dataset.k + ':' + (el.dataset.t || el.dataset.i); const now = performance.now();
       if (this._tap && this._tap.key === key && now - this._tap.t < 340) { this._tap = null; return this.auto(el); }
       this._tap = { key, t: now };
       const ghost = document.createElement('div'); ghost.className = 'pv-ghost'; ghost.innerHTML = (el.querySelector('.pv-ghosticon img,.pv-ghosticon .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(ghost);
-      // Đo hết ô nhận MỘT LẦN lúc nhấc lên: trong lúc kéo không render lại nên số không đổi,
-      // mà đo sẵn thì mới hít được vào ô gần nhất.
-      const zones = [...root.querySelectorAll('.drop')].map((z) => ({ el: z, r: z.getBoundingClientRect() }));
-      drag = { el, ghost, zones, x0: e.clientX, y0: e.clientY, p: { x: e.clientX, y: e.clientY },
-               px: e.clientX, tx: -1e9, ty: -1e9, tilt: 0, zone: null, moved: false, raf: 0 };
+      const hl = document.createElement('div'); hl.className = 'pv-hl'; document.body.appendChild(hl);
+      drag = { el, ghost, hl, zones: measure(), x0: e.clientX, y0: e.clientY,
+               px: e.clientX, tx: -1e9, ty: -1e9, tt: 0, tilt: 0, zone: null, moved: false };
       el.classList.add('lift');
       root.classList.add('dragging');   // đang kéo mới hiện viền chỗ thả (CSS), lúc thường để tranh sạch
       ghost.style.transform = `translate(${e.clientX - 28}px, ${e.clientY - 28}px)`;
-      drag.raf = requestAnimationFrame(frame);
     };
+    // Bóng kéo bám con trỏ NGAY trong pointermove: đặt transform là việc rẻ, không đọc layout,
+    // và không phụ thuộc rAF — tab bị hãm nhịp thì bóng vẫn theo tay. Chỗ nặng là dò ô
+    // (đo lại toàn bộ + elementsFromPoint) nên chỗ đó mới chặn lại, nhiều nhất ~60 lần/giây.
     root.onpointermove = (e) => {
       if (!drag) return;
-      drag.p.x = e.clientX; drag.p.y = e.clientY;
-      if (!drag.moved && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) drag.moved = true;
+      const x = e.clientX, y = e.clientY;
+      if (!drag.moved && Math.hypot(x - drag.x0, y - drag.y0) > 8) drag.moved = true;
+      const vx = Math.max(-14, Math.min(14, (x - drag.px) * 1.4));
+      drag.tilt += (vx - drag.tilt) * 0.25;   // nghiêng theo đà tay, cho có sức nặng
+      drag.px = x;
+      drag.ghost.style.transform =
+        `translate(${x - 28}px, ${y - 28}px) rotate(${drag.tilt.toFixed(2)}deg) scale(${drag.zone ? 1.14 : 1})`;
+
+      const t = e.timeStamp || performance.now();
+      if (t - drag.tt < 16 || Math.abs(x - drag.tx) + Math.abs(y - drag.ty) < 3) return;
+      drag.tt = t; drag.tx = x; drag.ty = y;
+      // Đo lại mỗi lần dò: đồng hồ của game có render() GIỮA LÚC ĐANG KÉO, phần tử cũ bị thay.
+      drag.zones = measure();
+      const z = hitAt(x, y, drag.zones);
+      if (z !== drag.zone) {
+        drag.zone = z;
+        if (z) this.C.ev?.onSfx?.('tap');   // tách nhẹ khi hít vào ô — ngón che mất viền thì còn nghe
+      }
+      // Viền sáng là MỘT khối riêng nằm ngoài cây DOM của quầy, không phải class trên ô.
+      // Quầy render lại liên tục — gắn class lên ô thì viền bị xoá ngay, người chơi không kịp thấy.
+      if (z) { const r = z.getBoundingClientRect(), st = drag.hl.style;
+        st.left = `${r.left}px`; st.top = `${r.top}px`; st.width = `${r.width}px`; st.height = `${r.height}px`;
+        drag.hl.classList.add('on'); }
+      else drag.hl.classList.remove('on');
     };
     const end = (e) => {
-      if (!drag) return; const d = drag; drag = null; cancelAnimationFrame(d.raf);
-      d.el.classList.remove('lift');
+      if (!drag) return; const d = drag; drag = null;
+      d.hl.remove(); d.el.classList.remove('lift');
       root.classList.remove('dragging'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
-      // Dò lại ngay tại điểm nhả: rAF chỉ dò mỗi 3px nên cú vẩy nhanh có thể còn ô cũ.
-      const zone = d.moved ? hitAt(e.clientX, e.clientY, d.zones) : null;
+      // Dò lại ngay tại điểm nhả: lúc kéo chỉ dò mỗi 3px nên cú vẩy nhanh có thể còn ô cũ.
+      const zone = d.moved ? hitAt(e.clientX, e.clientY, measure()) : null;
       if (!zone) return this.flyBack(d.ghost, d.el);
       const r = zone.getBoundingClientRect();
       d.ghost.style.transition = 'transform .13s cubic-bezier(.3,.8,.35,1)';
