@@ -313,12 +313,15 @@
       /* Rổ xả lạnh đứng ở bồn + vòi nước đang chảy */
       .pv-stage .pv-sinkin { position: relative; }
       .pv-stage .pv-rinse { position: absolute; inset: 0; }
-      .pv-stage .pv-rinse .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+      .pv-stage .pv-rinse .pv-objimg { position: absolute; inset: auto 0 2% 0; width: 100%; height: 74%;
         object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
       .pv-stage .pv-rinse.done .pv-objimg { filter: drop-shadow(0 0 6px rgba(127,211,255,.95)); }
-      .pv-stage .pv-rinse .pv-water { position: absolute; left: 50%; top: -18%; width: 46%; height: 78%;
-        transform: translateX(-50%); object-fit: contain; opacity: .85;
+      /* fx-splash-water vẽ trắng, đặt trên bồn sáng thì không thấy gì — nhuộm xanh cho nổi. */
+      .pv-stage .pv-rinse .pv-water { position: absolute; left: 50%; top: 8%; width: 40%; height: 56%;
+        transform: translateX(-50%); object-fit: contain; opacity: .9;
+        filter: hue-rotate(175deg) saturate(2.2) brightness(1.05) drop-shadow(0 0 3px rgba(90,170,220,.9));
         animation: pvRinse .5s steps(2) infinite; }
+      .pv-stage .pv-rinse .pv-rk small { background: rgba(255,252,246,.82); padding: 0 3px; border-radius: 4px; }
       @keyframes pvRinse { 0%,100% { opacity: .55; transform: translateX(-50%) scaleY(.94); }
         50% { opacity: .95; transform: translateX(-50%) scaleY(1.06); } }
       .pv-stage .pv-rinse .pv-rk { position: absolute; inset: 0; display: flex; flex-direction: column;
