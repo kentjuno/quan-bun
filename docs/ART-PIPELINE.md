@@ -305,3 +305,19 @@ một mình), rồi mới nướng 50 món từ nó. Prompt phải nói thẳng:
 **Quy trình:** `scripts/pans_to_webp.py` — cắt nền magenta → cắt sát mép → phóng cho bề ngang
 bằng nhau → dán vào khung cố định 320×250, căn đáy. Mô tả từng món ở
 `art/raw/stages/_pan_desc.json` — gen lại thì sửa ở đó.
+
+### Bậy chí mạng: `open(p,"w").write(open(p).read())` làm RỖNG file
+Python mở file chế độ `"w"` là **cắt trắng ngay lập tức**, rồi mới đọc → đọc ra chuỗi rỗng.
+Tui dùng kiểu này để tăng số phiên bản `public/sw.js`, nên **từ v19 đến v30 file sw.js
+bị rỗng và đã deploy như vậy** — game vẫn chạy (không có service worker thì chỉ mất
+phần cache offline), nhưng mọi con số "sw vNN" tui báo trong khoảng đó đều vô nghĩa.
+Khôi phục từ `612c97fd`, đặt lại v31.
+
+**Luật:** đọc xong, đóng, RỒI mới mở ghi:
+```python
+s = io.open(p, encoding='utf-8').read()
+s = s.replace(...)
+with io.open(p, 'w', encoding='utf-8') as f: f.write(s)
+```
+Và sau mỗi lần sửa file quan trọng, đọc lại kiểm độ dài — `git status` không cứu được
+vì file rỗng vẫn là một thay đổi hợp lệ, commit trôi qua bình thường.
