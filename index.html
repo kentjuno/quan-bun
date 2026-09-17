@@ -11,9 +11,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KJ's Choices" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap" />
+    <!-- Chữ tay cho màn bếp. Caveat/Gaegu KHÔNG có bộ vietnamese — đã kiểm; Patrick Hand thì có. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27%23e8a33c%27/%3E%3C/svg%3E" />
     <style>
-      :root { --wood: #c98b4a; --broth: #e8a33c; --green: #5fa55a; --red: #e84a3b; --teal: #2a9d8f; --ink: #2b2118; --paper: #fff7ea; --shade: rgba(43,33,24,.72);
+      :root {
+      --pv-ink: #5b4128;   /* mực nâu ấm cho chữ trong cảnh bếp */ --wood: #c98b4a; --broth: #e8a33c; --green: #5fa55a; --red: #e84a3b; --teal: #2a9d8f; --ink: #2b2118; --paper: #fff7ea; --shade: rgba(43,33,24,.72);
         font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
       html, body { margin: 0; height: 100%; background: #2e2420; color: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }   /* overscroll none: chặn quẹt trái/phải thành Back / kéo xuống thành Reload trên Chrome Android */
       #app { position: fixed; inset: 0; }
@@ -144,7 +147,7 @@
       details.more { margin-top: 10px; font-size: 12px; text-align: left; } details.more summary { text-align: center; opacity: .6; font-weight: 700; } details.more .how { margin: 8px auto 6px; font-size: 12.5px; }
       details.more .opt { justify-content: flex-start; flex-wrap: wrap; }
       .tabs.three { grid-template-columns: repeat(3, 1fr); } .tabs.sub { background: transparent; padding: 0; margin: 0 0 8px; } .tabs.sub button { background: #f3ede0; opacity: .8; } .tabs.sub button.on { opacity: 1; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
-      .sign { font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; font-size: 34px; line-height: 1; color: var(--ink); margin: 0; letter-spacing: .5px; transform: rotate(-1.5deg); }
+      .sign { font-family: "Patrick Hand", "Segoe Print", "Bradley Hand", cursive; font-size: 34px; line-height: 1; color: var(--ink); margin: 0; letter-spacing: .5px; transform: rotate(-1.5deg); }
       .sign small { display: block; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: .55; margin-top: 4px; transform: none; font-family: inherit; }
       .daycard { min-height: 0; } .daycard .note { color: #b07a20; font-weight: 700; } .daycard .new { display: inline-block; background: var(--red); color: #fff; border-radius: 8px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
       /* --- bản đồ world + lưới level --- */
@@ -294,6 +297,19 @@
         position: relative; z-index: 1; }
       .pv-stage .pv-board small, .pv-stage .pv-pt small, .pv-stage .pv-pt b {
         text-shadow: 0 1px 2px rgba(255,250,240,.95), 0 0 3px rgba(255,250,240,.9); color: #2b2118; }
+      /* Chữ trong cảnh bếp — Kent 17/09: "chữ vẽ chưa được đẹp với to lắm".
+         Font máy chạy cạnh tranh mực nước nhìn như dán đè; đổi sang chữ tay, mực nâu, nhỏ lại. */
+      .pv-stage, .pv-stage small, .pv-stage b, .pv-stage .hint,
+      .pv-stage .tk, .pv-stage .pv-hud { font-family: "Patrick Hand", cursive; font-weight: 400; }
+      .pv-stage .pv-pan small { font-size: 8px; line-height: 1; color: var(--pv-ink);
+        text-shadow: 0 1px 0 rgba(255,252,246,.95), 0 0 2px rgba(255,252,246,.85); }
+      .pv-stage .hint { font-size: 8px; opacity: .45; letter-spacing: .2px; }
+      .pv-stage .pv-slot small { font-size: 8.5px; color: var(--pv-ink); }
+      .pv-stage .pv-src small, .pv-stage .pv-broth small, .pv-stage .pv-rk small,
+      .pv-stage .pv-job small, .pv-stage .pv-board small, .pv-stage .pv-pt small,
+      .pv-stage .pv-rd small { font-size: 8px; color: var(--pv-ink); }
+      .pv-stage .tk b { font-size: 10px; } .pv-stage .tk span { font-size: 9px; }
+      .pv-stage .pv-hud span { font-size: 12px; } .pv-stage .pv-hud i { font-size: 8px; }
       .pv-stage .dragsrc:active { transform: scale(.94); }
       .pv-stage .pv-baskets { gap: 4%; }
       .pv-stage .pv-basket { flex: 1; min-height: 0; height: 74%; }
