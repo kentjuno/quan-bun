@@ -227,24 +227,105 @@ export class Pov {
   zoneOf(el) { return { kind: el.dataset.zone, i: el.dataset.i != null ? Number(el.dataset.i) : undefined, id: el.dataset.zone === 'ticket' ? Number(el.dataset.i) : undefined }; }
   bind() {
     const root = this.el; let drag = null;
+
+    // Bán kính "hít": thả hụt trong khoảng này vẫn tính là trúng ô gần nhất.
+    // Ngón tay to hơn con trỏ nhiều — không hít thì ô nhỏ (rổ, khay) gần như không thả trúng.
+    const SNAP = 34;
+
+    /** Ô nhận ở toạ độ này: ưu tiên ô đang nằm trong, không có thì ô gần nhất trong SNAP. */
+    const hitAt = (x, y, zones) => {
+      const on = document.elementsFromPoint(x, y).find((z) => z.classList?.contains('drop'));
+      if (on) return on;
+      let best = null, bd = SNAP * SNAP;
+      for (const z of zones) {
+        const r = z.r;
+        const dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+        const dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0;
+        const d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = z.el; }
+      }
+      return best;
+    };
+
+    // Vẽ và dò ô CHỈ trong rAF. pointermove trên điện thoại bắn tới 120–240 lần/giây;
+    // gọi elementsFromPoint mỗi lần là nguyên nhân giật — đây là chỗ sửa chính.
+    const frame = () => {
+      if (!drag) return;
+      drag.raf = requestAnimationFrame(frame);
+      const { x, y } = drag.p;
+      const vx = Math.max(-14, Math.min(14, (x - drag.px) * 1.4));
+      drag.tilt += (vx - drag.tilt) * 0.18;   // nghiêng theo đà tay, cho có sức nặng
+      drag.px = x;
+      drag.ghost.style.transform =
+        `translate(${x - 28}px, ${y - 28}px) rotate(${drag.tilt.toFixed(2)}deg) scale(${drag.zone ? 1.14 : 1})`;
+      if (Math.abs(x - drag.tx) + Math.abs(y - drag.ty) < 3) return;
+      drag.tx = x; drag.ty = y;
+      const z = hitAt(x, y, drag.zones);
+      if (z !== drag.zone) {
+        drag.zone?.classList.remove('over');
+        drag.zone = z;
+        z?.classList.add('over');
+        if (z) this.C.ev?.onSfx?.('tap');   // tách nhẹ khi hít vào ô — ngón che mất viền thì còn nghe
+      }
+    };
+
     root.onpointerdown = (e) => {
       const el = e.target.closest('.dragsrc'); if (!el || this.C.over) return; e.preventDefault(); root.setPointerCapture?.(e.pointerId);
       const key = el.dataset.k + ':' + (el.dataset.t || el.dataset.i); const now = performance.now();
       if (this._tap && this._tap.key === key && now - this._tap.t < 340) { this._tap = null; return this.auto(el); }
       this._tap = { key, t: now };
       const ghost = document.createElement('div'); ghost.className = 'pv-ghost'; ghost.innerHTML = (el.querySelector('.pv-ghosticon img,.pv-ghosticon .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(ghost);
-      drag = { el, ghost, x0: e.clientX, y0: e.clientY, moved: false }; el.classList.add('lift');
+      // Đo hết ô nhận MỘT LẦN lúc nhấc lên: trong lúc kéo không render lại nên số không đổi,
+      // mà đo sẵn thì mới hít được vào ô gần nhất.
+      const zones = [...root.querySelectorAll('.drop')].map((z) => ({ el: z, r: z.getBoundingClientRect() }));
+      drag = { el, ghost, zones, x0: e.clientX, y0: e.clientY, p: { x: e.clientX, y: e.clientY },
+               px: e.clientX, tx: -1e9, ty: -1e9, tilt: 0, zone: null, moved: false, raf: 0 };
+      el.classList.add('lift');
       root.classList.add('dragging');   // đang kéo mới hiện viền chỗ thả (CSS), lúc thường để tranh sạch
-      this.ghostTo(e.clientX, e.clientY, ghost);
+      ghost.style.transform = `translate(${e.clientX - 28}px, ${e.clientY - 28}px)`;
+      drag.raf = requestAnimationFrame(frame);
     };
-    root.onpointermove = (e) => { if (!drag) return; if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) drag.moved = true; this.ghostTo(e.clientX, e.clientY, drag.ghost); };
-    const end = (e) => { if (!drag) return; const d = drag; drag = null; d.ghost.remove(); d.el.classList.remove('lift');
+    root.onpointermove = (e) => {
+      if (!drag) return;
+      drag.p.x = e.clientX; drag.p.y = e.clientY;
+      if (!drag.moved && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) drag.moved = true;
+    };
+    const end = (e) => {
+      if (!drag) return; const d = drag; drag = null; cancelAnimationFrame(d.raf);
+      d.el.classList.remove('lift');
       root.classList.remove('dragging'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
-      if (!d.moved) return; const zone = document.elementsFromPoint(e.clientX, e.clientY).find((z) => z.classList?.contains('drop'));
-      if (zone) { const sc = this.srcOf(d.el), zn = this.zoneOf(zone); const r = this.C.drop(sc, zn); this.render(); this.afterDrop(r, sc, zn); } };
+      // Dò lại ngay tại điểm nhả: rAF chỉ dò mỗi 3px nên cú vẩy nhanh có thể còn ô cũ.
+      const zone = d.moved ? hitAt(e.clientX, e.clientY, d.zones) : null;
+      if (!zone) return this.flyBack(d.ghost, d.el);
+      const r = zone.getBoundingClientRect();
+      d.ghost.style.transition = 'transform .13s cubic-bezier(.3,.8,.35,1)';
+      d.ghost.style.transform = `translate(${r.left + r.width / 2 - 28}px, ${r.top + r.height / 2 - 28}px) scale(.8)`;
+      setTimeout(() => d.ghost.remove(), 150);
+      const sc = this.srcOf(d.el), zn = this.zoneOf(zone);
+      const res = this.C.drop(sc, zn);
+      this.render();
+      if (res?.ok) this.bump(zn);
+      this.afterDrop(res, sc, zn);
+    };
     root.onpointerup = end; root.onpointercancel = end;
   }
-  ghostTo(x, y, ghost) { ghost.style.transform = `translate(${x - 28}px, ${y - 28}px)`; this.el.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over')); const z = document.elementsFromPoint(x, y).find((q) => q.classList?.contains('drop')); if (z) z.classList.add('over'); }
+  /** Thả trật: bóng kéo bay về chỗ cũ rồi tan — cho biết là hụt, không phải app đứng. */
+  flyBack(ghost, el) {
+    const a = el.getBoundingClientRect();
+    ghost.style.transition = 'transform .19s cubic-bezier(.4,0,.6,1), opacity .19s linear';
+    ghost.style.transform = `translate(${a.left + a.width / 2 - 28}px, ${a.top + a.height / 2 - 28}px) scale(.55)`;
+    ghost.style.opacity = '0';
+    setTimeout(() => ghost.remove(), 210);
+  }
+  /** Ô vừa nhận nảy một cái. Phải tìm lại phần tử vì render() đã thay DOM. */
+  bump(zn) {
+    const sel = zn.kind === 'ticket' ? `.tk[data-i="${zn.id}"]`
+      : `.drop[data-zone="${zn.kind}"]${zn.i != null ? `[data-i="${zn.i}"]` : ''}`;
+    const z = this.el.querySelector(sel) || this.el.querySelector(`.drop[data-zone="${zn.kind}"]`);
+    if (!z) return;
+    z.classList.add('hit');
+    setTimeout(() => z.classList.remove('hit'), 340);
+  }
   /** Chạm đôi: tìm đích hợp lý rồi bay tới. */
   auto(el) {
     const src = this.srcOf(el); const zone = this.autoZone(src); if (!zone) { this.msg(this.whyNoZone(src), 'bad'); return; }

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chỉnh ZONES — KJ's Choices</title>
+<style>
+  :root { --ink:#3a2c1c; --pa:#fffdf6; --li:#e7dcc6; --hi:#c8552e; --gut:22px; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin:0; font:14px/1.45 system-ui,sans-serif; color:var(--ink); background:#f4efe2;
+         display:flex; flex-direction:column; height:100dvh; overflow:hidden; }
+  header { display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:6px 8px;
+           background:var(--pa); border-bottom:1px solid var(--li); }
+  header b { font-size:13px; margin-right:4px; }
+  button, select { font:inherit; padding:4px 9px; border:1px solid var(--li); border-radius:7px;
+                   background:var(--pa); color:var(--ink); cursor:pointer; }
+  button.on { background:var(--hi); color:#fff; border-color:var(--hi); }
+  main { flex:1; min-height:0; display:flex; }
+  #wrap { flex:1; min-width:0; display:grid; place-items:center; padding:6px; overflow:hidden; }
+  #stage { position:relative; aspect-ratio:768/1376; max-height:100%; max-width:100%;
+           background:#ddd center/cover no-repeat; touch-action:none; user-select:none; }
+  #stage img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .gut { position:absolute; top:0; bottom:0; width:var(--gut); background:repeating-linear-gradient(
+         45deg, rgba(214,64,44,.28) 0 5px, rgba(214,64,44,.08) 5px 10px); pointer-events:none; z-index:5; }
+  .gut.l { left:0 } .gut.r { right:0 }
+  .z { position:absolute; border:1.5px solid rgba(40,90,160,.85); background:rgba(80,140,220,.16);
+       border-radius:4px; cursor:move; }
+  .z > i { position:absolute; left:2px; top:1px; font-style:normal; font-size:10px; line-height:1.1;
+           color:#fff; background:rgba(30,60,110,.82); padding:0 3px; border-radius:3px; white-space:nowrap; }
+  .z.sel { border-color:var(--hi); background:rgba(200,85,46,.22); box-shadow:0 0 0 1px #fff inset; z-index:3; }
+  .z.sel > i { background:var(--hi); }
+  .z.hid { display:none; }
+  .h { position:absolute; width:16px; height:16px; right:-8px; bottom:-8px; border-radius:50%;
+       background:var(--hi); border:2px solid #fff; cursor:nwse-resize; }
+  .z:not(.sel) .h { display:none; }
+  aside { width:290px; flex:none; display:flex; flex-direction:column; background:var(--pa);
+          border-left:1px solid var(--li); }
+  #list { flex:1; overflow:auto; padding:4px; }
+  #list div { display:flex; gap:4px; align-items:center; padding:2px 4px; border-radius:5px; cursor:pointer; }
+  #list div.sel { background:rgba(200,85,46,.14); font-weight:600; }
+  #list span { flex:1; font-size:13px; }
+  #list small { opacity:.55; font-size:11px; font-variant-numeric:tabular-nums; }
+  #nums { display:flex; gap:4px; padding:4px 6px; border-top:1px solid var(--li); }
+  #nums label { flex:1; font-size:11px; opacity:.7; }
+  #nums input { width:100%; font:inherit; padding:2px 4px; border:1px solid var(--li); border-radius:5px; }
+  #out { height:190px; border:0; border-top:1px solid var(--li); font:11px/1.35 ui-monospace,monospace;
+         padding:6px; resize:none; background:#fbf8ef; color:var(--ink); }
+  @media (max-width:760px) {
+    main { flex-direction:column; } aside { width:auto; border-left:0; border-top:1px solid var(--li); max-height:45vh; }
+    #out { height:110px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <b>Chỉnh ZONES</b>
+  <button id="bGrid" class="on">Bám lưới 0.5</button>
+  <button id="bGut" class="on">Dải vuốt</button>
+  <button id="bAll">Ẩn ô khác</button>
+  <button id="bReset">Về mặc định</button>
+  <button id="bCopy">Chép code</button>
+  <span id="msg" style="font-size:12px;opacity:.65"></span>
+</header>
+<main>
+  <div id="wrap"><div id="stage"><img id="scene" alt=""><div class="gut l"></div><div class="gut r"></div></div></div>
+  <aside>
+    <div id="list"></div>
+    <div id="nums">
+      <label>x<input id="nx" type="number" step="0.5"></label>
+      <label>y<input id="ny" type="number" step="0.5"></label>
+      <label>w<input id="nw" type="number" step="0.5"></label>
+      <label>h<input id="nh" type="number" step="0.5"></label>
+    </div>
+    <textarea id="out" readonly spellcheck="false"></textarea>
+  </aside>
+</main>
+<script type="module">
+import { ZONES, SCENE } from '../src/data/counter-layout.js';
+
+// Chú thích giữ nguyên theo tên ô, để đoạn code xuất ra dán lại được luôn.
+const NOTE = {
+  pot: 'đúng lòng nồi: quai rổ nhô lên trên vành, cái rổ nằm trong nước',
+  hot: 'tô nóng trữ ở mép nồi',
+  sink: 'bồn xả lạnh',
+  burner: 'mặt bếp trái: 2 nồi nước (nồi đã xoá khỏi tranh)',
+  broth: 'nước nấu sẵn ở đầu phải mặt bếp',
+  prep: 'dải để khay — khay là sprite, số lượng tự giãn theo món',
+  fryer: 'chảo chiên đứng đầu phải mặt bếp',
+  micro: 'lò vi sóng trên kệ tường',
+  stack: 'chồng tô + mẹt/dĩa',
+  noodle: 'khay sợi',
+  boards: 'thớt',
+  slots: 'mặt thớt trắng — chỗ ráp tô',
+  rail: 'dây kẹp phiếu khách — treo trên mảng tường trống',
+};
+
+const NAMES = Object.keys(ZONES);
+const BASE = JSON.parse(JSON.stringify(ZONES));      // bản gốc để "về mặc định"
+let Z = JSON.parse(JSON.stringify(ZONES));
+let sel = NAMES[0], grid = true, solo = false;
+
+const stage = document.getElementById('stage');
+document.getElementById('scene').src = '../' + SCENE.src;
+
+const els = {};
+for (const n of NAMES) {
+  const d = document.createElement('div');
+  d.className = 'z'; d.dataset.n = n;
+  d.innerHTML = `<i>${n}</i><div class="h"></div>`;
+  stage.appendChild(d); els[n] = d;
+}
+
+const r1 = (v) => Math.round(v * 10) / 10;
+const snap = (v) => grid ? Math.round(v * 2) / 2 : r1(v);
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+function draw() {
+  for (const n of NAMES) {
+    const z = Z[n], e = els[n];
+    e.style.left = z.x + '%'; e.style.top = z.y + '%';
+    e.style.width = z.w + '%'; e.style.height = z.h + '%';
+    e.classList.toggle('sel', n === sel);
+    e.classList.toggle('hid', solo && n !== sel);
+  }
+  document.getElementById('list').innerHTML = NAMES.map((n) => {
+    const z = Z[n], ch = JSON.stringify(z) !== JSON.stringify(BASE[n]);
+    return `<div data-n="${n}" class="${n === sel ? 'sel' : ''}"><span>${ch ? '• ' : ''}${n}</span>
+      <small>${z.x} ${z.y} ${z.w} ${z.h}</small></div>`;
+  }).join('');
+  for (const k of ['x', 'y', 'w', 'h']) document.getElementById('n' + k).value = Z[sel][k];
+  document.getElementById('out').value = code();
+}
+
+function code() {
+  const pad = Math.max(...NAMES.map((n) => n.length));
+  const num = (v) => String(v).padStart(5);
+  return 'export const ZONES = {\n' + NAMES.map((n) => {
+    const z = Z[n];
+    const body = `  ${(n + ':').padEnd(pad + 1)} { x:${num(z.x)}, y:${num(z.y)}, w:${num(z.w)}, h:${num(z.h)} },`;
+    return NOTE[n] ? `${body}   // ${NOTE[n]}` : body;
+  }).join('\n') + '\n};';
+}
+
+// ---- kéo / chỉnh kích thước ----
+let drag = null;
+stage.addEventListener('pointerdown', (e) => {
+  const zEl = e.target.closest('.z'); if (!zEl) return;
+  e.preventDefault(); stage.setPointerCapture(e.pointerId);
+  sel = zEl.dataset.n;
+  const r = stage.getBoundingClientRect();
+  drag = { n: sel, mode: e.target.classList.contains('h') ? 'size' : 'move',
+           r, sx: e.clientX, sy: e.clientY, o: { ...Z[sel] } };
+  draw();
+});
+stage.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  const dx = (e.clientX - drag.sx) / drag.r.width * 100;
+  const dy = (e.clientY - drag.sy) / drag.r.height * 100;
+  const z = Z[drag.n], o = drag.o;
+  if (drag.mode === 'move') {
+    z.x = clamp(snap(o.x + dx), -5, 100); z.y = clamp(snap(o.y + dy), -5, 100);
+  } else {
+    z.w = clamp(snap(o.w + dx), 1, 105); z.h = clamp(snap(o.h + dy), 1, 105);
+  }
+  draw();
+});
+const stop = () => { drag = null; };
+stage.addEventListener('pointerup', stop);
+stage.addEventListener('pointercancel', stop);
+
+// ---- bàn phím: mũi tên nhích 0.1, Shift nhích 1 ----
+addEventListener('keydown', (e) => {
+  const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  if (!d || e.target.tagName === 'INPUT') return;
+  e.preventDefault();
+  const s = e.shiftKey ? 1 : 0.1, z = Z[sel];
+  if (e.altKey) { z.w = r1(z.w + d[0] * s); z.h = r1(z.h + d[1] * s); }
+  else { z.x = r1(z.x + d[0] * s); z.y = r1(z.y + d[1] * s); }
+  draw();
+});
+
+document.getElementById('list').addEventListener('click', (e) => {
+  const d = e.target.closest('[data-n]'); if (!d) return; sel = d.dataset.n; draw();
+});
+for (const k of ['x', 'y', 'w', 'h']) {
+  document.getElementById('n' + k).addEventListener('input', (e) => {
+    const v = parseFloat(e.target.value); if (!Number.isNaN(v)) { Z[sel][k] = r1(v); draw(); }
+  });
+}
+const tog = (id, fn) => document.getElementById(id).addEventListener('click', (e) => { fn(); e.target.classList.toggle('on'); draw(); });
+tog('bGrid', () => grid = !grid);
+let gut = true;
+tog('bGut', () => { gut = !gut; document.documentElement.style.setProperty('--gut', gut ? '22px' : '0px'); });
+tog('bAll', () => solo = !solo);
+document.getElementById('bReset').addEventListener('click', () => { Z = JSON.parse(JSON.stringify(BASE)); draw(); });
+document.getElementById('bCopy').addEventListener('click', async () => {
+  const t = document.getElementById('out');
+  try { await navigator.clipboard.writeText(t.value); } catch { t.select(); document.execCommand('copy'); }
+  const m = document.getElementById('msg'); m.textContent = 'Đã chép — dán đè vào src/data/counter-layout.js';
+  setTimeout(() => (m.textContent = ''), 2600);
+});
+
+draw();
+</script>
+</body>
+</html>

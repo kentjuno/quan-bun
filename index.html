@@ -460,8 +460,12 @@
       .pv-bowl.full { animation: pop .5s infinite alternate; }
       .pv-trash { width: 44px; border: 2px dashed rgba(43,33,24,.3); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; color: #6a5d4e; } .pv-trash small { font-size: 8px; }
       .drop.over { outline: 3px solid var(--broth); outline-offset: 1px; background: rgba(255,209,102,.28); }
-      .dragsrc.lift { opacity: .4; }
-      .pv-ghost { position: fixed; left: 0; top: 0; width: 56px; height: 56px; pointer-events: none; z-index: 9; filter: drop-shadow(0 8px 10px rgba(0,0,0,.45)); } .pv-ghost img { width: 56px; height: 56px; } .pv-ghost .emo { font-size: 40px; }
+      .dragsrc.lift { opacity: .35; transform: scale(.92); transition: transform .12s ease-out, opacity .12s linear; }
+      /* Ô vừa nhận đồ nảy một cái — nhìn là biết đã vô, khỏi phải dò lại bằng mắt. */
+      .drop.hit { animation: pvHit .34s cubic-bezier(.3,1.5,.5,1); }
+      @keyframes pvHit { 0% { transform: scale(1); } 38% { transform: scale(1.12); } 100% { transform: scale(1); } }
+      @media (prefers-reduced-motion: reduce) { .drop.hit { animation: none; } .dragsrc.lift { transform: none; } }
+      .pv-ghost { will-change: transform; position: fixed; left: 0; top: 0; width: 56px; height: 56px; pointer-events: none; z-index: 9; filter: drop-shadow(0 8px 10px rgba(0,0,0,.45)); } .pv-ghost img { width: 56px; height: 56px; } .pv-ghost .emo { font-size: 40px; }
       .pv-msg { flex: 0 0 auto; padding: 6px 10px calc(max(6px, env(safe-area-inset-bottom)) + 4px); text-align: center; font-size: 12px; font-weight: 700; background: var(--paper); min-height: 32px; line-height: 1.25; }
       .pv-msg.bad { color: var(--red); } .pv-msg.good { color: #2f8a3a; } .pv-msg.mid { color: #b07a20; }
       .pz-msg { min-height: 18px; margin: 4px 0 6px; font-size: 12.5px; font-weight: 700; color: var(--red); text-align: center; line-height: 1.25; }
