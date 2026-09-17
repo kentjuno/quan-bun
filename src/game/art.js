@@ -95,3 +95,38 @@ export const st = (name) => `${BASE}st-${name}.webp`;
  */
 export const panArt = (tok) => `${BASE}pan/${tok}.webp`;
 
+/**
+ * Tô đổi theo TỪNG món bỏ vào (Kent 17/09).
+ * `DISH_STEPS[dish]` = những bước có ảnh riêng, đánh số theo công thức gọn.
+ *
+ * CHỈ dùng cho level chạy CÔNG THỨC ĐẦY ĐỦ. Level huấn luyện được đơn giản hoá
+ * (bớt món) nên số thứ tự bước không khớp — vẽ theo đây sẽ hiện cả món mà level đó
+ * cố tình chưa dạy, tức là dạy sai. Những level đó quay về thang 4 bậc.
+ */
+export const DISH_STEPS = {
+  'banh-da-cua': [2, 3, 4, 5, 6, 7, 8, 9, 10],
+  'banh-hoi-thit-heo': [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  'bun-bo-hue': [2, 3, 4, 5, 6, 7, 8, 9, 10],
+  'bun-ca-hai-phong': [2, 3, 4, 5, 6, 7, 8],
+  'bun-cha-ha-noi': [2, 3, 4, 5, 6, 7],
+  'bun-dau-mam-tom': [2, 3, 4, 5, 6],
+  'bun-ga-nuong': [2, 3],
+  'bun-nem-cua-thit-nuong-tom-nuong': [2, 3],
+  'bun-rieu-cua': [2, 3, 4, 5, 6, 7],
+  'cha-gio-viet-nam': [2, 3],
+  'chao-long': [2],
+  'chao-suon': [2],
+  'goi-cuon-tom-thit': [2, 3, 4, 5],
+  'pho-dac-biet': [2, 3, 4, 5, 6, 7, 8, 9],
+  'pho-suon-tai': [2, 3, 4, 5, 6],
+  'pho-tai-dap': [2, 3, 4, 5, 6, 7],
+  'pho-tai-nam': [2, 3, 4, 5, 6, 7],
+};
+export function dishStepArt(dish, placed) {
+  // Công thức thật tách "lấy tô" và "bỏ sợi" thành HAI bước, còn ảnh đánh số theo
+  // công thức gọn (`base-ready` = tô + sợi). Nên bỏ vào n thứ thì ảnh là k = n - 1.
+  const k = placed - 1;
+  const ks = DISH_STEPS[dish];
+  return ks && ks.includes(k) ? `${BASE}step/${dish}-k${k}.webp` : null;
+}
+

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dishStage, dishArtAt } from '../src/game/art.js';
+import { dishStage, dishArtAt, dishStepArt, DISH_STEPS } from '../src/game/art.js';
 import { Counter, counterMove, povOk } from '../src/game/counter.js';
 import { ALL_DISHES, levelById, WORLDS } from '../src/config.js';
 import { makeLevelArrivals, povArrivals } from '../src/game/levels.js';
@@ -238,5 +238,19 @@ describe('bậc ảnh của tô (art C)', () => {
     expect(dishArtAt('bun-cha-ha-noi', 'top')).toBe('art/bun-cha-ha-noi-wet.webp');   // món khô: không có -top
     expect(dishArtAt('bun-cha-ha-noi', 's0')).toBe('art/bun-cha-ha-noi-dry.webp');    // mẹt trống chính là -dry
     expect(dishArtAt('mon-khong-co-that', 'wet')).toBe(null);
+  });
+});
+
+describe('tô đổi theo từng món bỏ vào', () => {
+  it('ảnh bước đánh số lùi 1 so với số thứ đã bỏ (công thức thật tách tô và sợi)', () => {
+    expect(dishStepArt('pho-tai-nam', 3)).toBe('art/step/pho-tai-nam-k2.webp');
+    expect(dishStepArt('pho-tai-nam', 2)).toBe(null);
+    expect(dishStepArt('mon-khong-co-that', 3)).toBe(null);
+  });
+  it('mọi món có ảnh bước đều liền mạch từ k2, không đứt quãng', () => {
+    for (const [dish, ks] of Object.entries(DISH_STEPS)) {
+      expect(ks[0], dish).toBe(2);
+      for (let i = 1; i < ks.length; i++) expect(ks[i] - ks[i - 1], `${dish} đứt ở k${ks[i]}`).toBe(1);
+    }
   });
 });

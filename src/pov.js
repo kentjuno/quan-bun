@@ -1,14 +1,21 @@
 // QUẦY POV — lớp vẽ + kéo thả. Mọi luật bếp nằm ở game/counter.js (Counter), file này chỉ hiển thị và chuyển thao tác thành `C.drop(src, zone)`.
 // Điều khiển: KÉO vật tới chỗ, hoặc CHẠM ĐÔI để nó tự bay tới đích hợp lý nhất (Kent: kéo chính xác trên điện thoại khó).
-import { D, label, tokenMatches } from './game/recipes.js';
+import { D, label, tokenMatches, recipeFor } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
-import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt } from './game/art.js';
+import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES, PAN_GAP } from './data/counter-layout.js';
 export { povOk };
 
 const $ = (id) => document.getElementById(id);
 /** Ảnh trạm nằm dưới, nội dung (nhãn, thanh thời gian) nằm trên. Dùng cả ở build() lẫn render(). */
+/** Level này có chạy đúng công thức gốc không (không bớt bước nào)?
+ *  So với `recipeFor(dish)` chưa đơn giản hoá — `D.recipes` là công thức gọn, so nhầm
+ *  thì level nào cũng bị coi là đã bớt bước. */
+const fullRecipe = (C, dish) => {
+  const master = recipeFor(dish)?.assembly, lvl = C.recs?.[dish]?.assembly;
+  return !!master && !!lvl && lvl.length === master.length && lvl.every((x, i) => x === master[i]);
+};
 const objImg = (n) => `<img class="pv-objimg" src="${st(n)}" alt="" draggable="false" onerror="this.remove()">`;
 const img = (tok) => { const u = iconUrl(tok); return u ? `<img src="${u}" alt="" draggable="false">` : `<span class="emo">${D.items[tok]?.icon || '🍲'}</span>`; };
 const src1 = (kind, tok, i) => `data-k="${kind}"${tok != null ? ` data-t="${tok}"` : ''}${i != null ? ` data-i="${i}"` : ''}`;
@@ -117,7 +124,11 @@ export class Pov {
       // Một ảnh liền lạc cho cả cái tô — không đè icon rời lên nữa.
       // Còn nhiều món khớp thì lấy món đầu: cùng bậc này chúng nhìn như nhau.
       const only = fit[0]?.dish || null;
-      const art = only ? dishArtAt(only, dishStage(b.placed, full)) : null;
+      // Level chạy đúng công thức gốc thì vẽ tô theo TỪNG món đã bỏ vào;
+      // level đã đơn giản hoá thì số bước lệch, vẽ theo là hiện cả món chưa dạy → lùi về thang 4 bậc.
+      const art = only
+        ? ((fullRecipe(C, only) && dishStepArt(only, b.placed.length)) || dishArtAt(only, dishStage(b.placed, full)))
+        : null;
       const inner = art
         ? `<img class="pv-art" src="${art}" alt="" draggable="false" onerror="this.remove()">`
         : `${img(b.placed[0].replace(/^bowl-hot:/, ''))}${b.placed.slice(1).map((t, k) => `<i class="lay" style="--k:${k}">${img(t)}</i>`).join('')}`;
