@@ -310,6 +310,31 @@
       .pv-stage .pv-rd small { font-size: 8px; color: var(--pv-ink); }
       .pv-stage .tk b { font-size: 10px; } .pv-stage .tk span { font-size: 9px; }
       .pv-stage .pv-hud span { font-size: 12px; } .pv-stage .pv-hud i { font-size: 8px; }
+      /* Rổ xả lạnh đứng ở bồn + vòi nước đang chảy */
+      .pv-stage .pv-sinkin { position: relative; }
+      .pv-stage .pv-rinse { position: absolute; inset: 0; }
+      .pv-stage .pv-rinse .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
+      .pv-stage .pv-rinse.done .pv-objimg { filter: drop-shadow(0 0 6px rgba(127,211,255,.95)); }
+      .pv-stage .pv-rinse .pv-water { position: absolute; left: 50%; top: -18%; width: 46%; height: 78%;
+        transform: translateX(-50%); object-fit: contain; opacity: .85;
+        animation: pvRinse .5s steps(2) infinite; }
+      @keyframes pvRinse { 0%,100% { opacity: .55; transform: translateX(-50%) scaleY(.94); }
+        50% { opacity: .95; transform: translateX(-50%) scaleY(1.06); } }
+      .pv-stage .pv-rinse .pv-rk { position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: flex-end; }
+      .pv-stage .pv-rinse .pv-rk .pv-ghosticon { display: none; }
+      .pv-stage .pv-basket.away .pv-objimg { opacity: .32; }
+      /* Thùng rác là sprite; emoji chỉ còn là đường lùi */
+      .pv-stage .pv-z.trash { position: relative; }
+      .pv-stage .pv-z.trash > .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
+      .pv-stage .pv-z.trash .pv-tr { display: none; }
+      .pv-stage .pv-z.trash.noart .pv-tr { display: block; font-size: 20px; }
+      .pv-stage .pv-z.trash.tossing > .pv-objimg { animation: pvToss .45s ease-out; }
+      .pv-toss { position: fixed; pointer-events: none; z-index: 9; }
+      @keyframes pvToss { 0% { transform: rotate(0) scale(1); } 30% { transform: rotate(-7deg) scale(1.08); }
+        60% { transform: rotate(5deg) scale(1.04); } 100% { transform: rotate(0) scale(1); } }
       .pv-stage .dragsrc:active { transform: scale(.94); }
       .pv-stage .pv-baskets { gap: 4%; }
       .pv-stage .pv-basket { flex: 1; min-height: 0; height: 74%; }

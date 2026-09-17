@@ -3,7 +3,7 @@
 import { D, label, tokenMatches, recipeFor } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
-import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt } from './game/art.js';
+import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt, trashArt } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES, PAN_GAP } from './data/counter-layout.js';
 export { povOk };
 
@@ -82,7 +82,7 @@ export class Pov {
         ${zone('noodle', `<div class="pv-srcs">${C.noodleItems.map(src).join('')}</div>`, 'row')}
         ${this.has.prep ? zone('boards', '<div class="pv-boards" id="pvBoards"></div>', 'row') : ''}
         ${zone('slots', '<div class="pv-slots" id="pvSlots"></div>')}
-        ${dropz('trash', 'trash', '<span class="pv-tr">🗑️</span>', 'trash')}
+        ${dropz('trash', 'trash', `<img class="pv-objimg" src="${trashArt()}" alt="" draggable="false" onerror="this.closest('.pv-z').classList.add('noart');this.remove()"><span class="pv-tr">🗑️</span>`, 'trash')}
       </div>
       <div class="pv-msg" id="pvMsg">Kéo hoặc chạm đôi: tô vô nồi để trụng · sợi vô rọ · topping vô tô · tô xong lên phiếu</div>`;
     $('pvQuit').onclick = () => { this.stop(); this.o.onQuit?.(); };
@@ -96,15 +96,31 @@ export class Pov {
     const mo = $('pvMoney'); if (mo) mo.textContent = `${Math.round(C.money)}k`;
     const sv = $('pvServed'); if (sv) sv.textContent = `${C.results.length - C.left}/${C.rounds}`;
     $('pvTickets').innerHTML = C.tickets.map((t) => `<div class="tk drop${t.regular ? ' reg' : ''}" data-zone="ticket" data-i="${t.id}"><img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()"><b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u style="width:${C.patienceOf(t) * 100}%;background:${C.patienceOf(t) < 0.25 ? 'var(--red)' : C.patienceOf(t) < 0.5 ? 'var(--broth)' : 'var(--green)'}"></u></i></div>`).join('');
-    if (this.has.pot) $('pvBaskets').innerHTML = C.baskets.map((b, i) => {
+    // Rổ đang xả / đã xả thì đứng ở BỒN chứ không còn trong nồi (Kent 18/09).
+    const atSink = (b) => !!b && (b.state === 'rinsing' || b.state === 'rinsed');
+    if (this.has.pot) $('pvBaskets').innerHTML = C.baskets.map((b0, i) => {
+      const b = atSink(b0) ? null : b0;
       // Rổ là object riêng (docs/ART-PIPELINE.md §9): rỗng vẫn vẽ cái rổ, có sợi thì đổi ảnh.
       const rk = (full) => `<img class="pv-objimg" src="${basketArt(full)}" alt="" draggable="false" onerror="this.closest('.pv-basket')?.classList.add('noart');this.remove()">`;
-      if (!b) return `<div class="pv-basket drop" data-zone="pot" data-i="${i}">${rk(false)}</div>`;
+      if (!b) return `<div class="pv-basket ${atSink(b0) ? 'away' : 'drop'}" data-zone="pot" data-i="${i}">${rk(false)}</div>`;
       const busy = b.left > 0; const st = b.spoiled ? 'hư — vứt đi' : busy ? '…' : b.state === 'hot' ? 'nóng' : b.state === 'rinsed' ? 'đã xả lạnh' : b.state === 'hot2' ? 'nóng lại' : 'xong';
       return `<div class="pv-basket drop ${b.spoiled ? 'bad' : b.state}" data-zone="pot" data-i="${i}"><div class="pv-rk ${busy ? '' : 'dragsrc'}" ${src1('basket', null, i)}>${rk(true)}<i class="pv-ghosticon">${img(b.input)}</i><small>${st}</small>${bar(b.left, b.total)}</div></div>`;
     }).join('');
     if (this.has.pot) $('pvHot').innerHTML = C.hot.length ? C.hot.map((h, i) => `<div class="pv-hb ${h.left > 0 ? '' : 'dragsrc'}" ${src1('hotbowl', null, i)}>${img(h.input)}<small>${h.left > 0 ? '…' : 'nóng'}</small>${bar(h.left, h.total)}</div>`).join('') : '<small class="hint">tô nóng trữ ở đây</small>';
-    if (this.has.sink) $('pvSink').innerHTML = C.sinkJob ? `<div class="pv-job ${C.sinkJob.left > 0 ? '' : 'dragsrc'}" ${src1('sink')}>${img(C.sinkJob.input)}<small>${C.sinkJob.left > 0 ? C.sinkJob.name : 'xong'}</small>${bar(C.sinkJob.left, C.sinkJob.total)}</div>` : '';
+    if (this.has.sink) {
+      const jobHtml = C.sinkJob ? `<div class="pv-job ${C.sinkJob.left > 0 ? '' : 'dragsrc'}" ${src1('sink')}>${img(C.sinkJob.input)}<small>${C.sinkJob.left > 0 ? C.sinkJob.name : 'xong'}</small>${bar(C.sinkJob.left, C.sinkJob.total)}</div>` : '';
+      // Rổ xả lạnh hiện ở đây, kèm vòi nước đang chảy khi còn xả.
+      const rinse = C.baskets.map((b, i) => {
+        if (!atSink(b)) return '';
+        const busy = b.left > 0;
+        return `<div class="pv-rinse ${busy ? 'wet' : 'done'}">
+          <img class="pv-objimg" src="${basketArt(true)}" alt="" draggable="false" onerror="this.remove()">
+          ${busy ? `<img class="pv-water" src="${fx('splash-water')}" alt="" draggable="false" onerror="this.remove()">` : ''}
+          <div class="pv-rk ${busy ? '' : 'dragsrc'}" ${src1('basket', null, i)}><i class="pv-ghosticon">${img(b.input)}</i><small>${busy ? 'đang xả lạnh' : 'đã xả lạnh'}</small>${bar(b.left, b.total)}</div>
+        </div>`;
+      }).join('');
+      $('pvSink').innerHTML = rinse + jobHtml;
+    }
     for (const [k, id] of [['fryer', 'pvFryer'], ['microwave', 'pvMw']]) { if (!this.has[k]) continue; const j = C[k];
       $(id).innerHTML = j ? `<div class="pv-job ${j.left > 0 ? '' : 'dragsrc'}" ${src1(k)}>${img(j.input)}<small>${j.left > 0 ? j.name : 'xong'}</small>${bar(j.left, j.total)}</div>` : '<small class="hint">trống</small>'; }
     if (this.has.ready) {
@@ -138,11 +154,31 @@ export class Pov {
 
   /** Sau mỗi thao tác đúng: chan nước thì chạy A10 (docs/ART-PIPELINE.md §2·§6). */
   afterDrop(res, src, zone) {
+    if (res?.ok && zone?.kind === 'trash') return this.toss();
     if (!res?.ok || zone?.kind !== 'slot') return;
     const isBroth = ['broth', 'ready', 'burnerpot'].includes(src?.kind);
     if (!isBroth) return;
     const slot = this.el.querySelector(`.pv-slot[data-i="${zone.i}"]`);
     if (slot) this.pour(slot);
+  }
+  /** Vứt rác: thùng rác giật một cái + bụi bay lên. */
+  toss() {
+    const z = this.el.querySelector('.pv-z.trash'); if (!z) return;
+    z.classList.add('tossing');
+    setTimeout(() => z.classList.remove('tossing'), 460);
+    const r = z.getBoundingClientRect();
+    const p = document.createElement('img');
+    p.className = 'pv-fx pv-toss'; p.src = fx('sparkle'); p.draggable = false;
+    p.onerror = () => p.remove();
+    document.body.appendChild(p);
+    p.style.left = `${r.left + r.width / 2}px`; p.style.top = `${r.top + r.height * 0.15}px`;
+    p.style.width = `${Math.max(22, r.width * 0.8)}px`;
+    p.animate([
+      { opacity: 0, transform: 'translate(-50%,-40%) scale(.6)' },
+      { opacity: .9, transform: 'translate(-50%,-70%) scale(1)', offset: .35 },
+      { opacity: 0, transform: 'translate(-50%,-100%) scale(1.05)' },
+    ], { duration: 520, easing: 'linear' }).onfinish = () => p.remove();
+    this.C.ev?.onSfx?.('mistake');
   }
   /** A10 — tay cầm vá trượt vào, nghiêng, dòng nước chảy xuống mặt nước trong tô rồi rút ra. */
   pour(slotEl) {

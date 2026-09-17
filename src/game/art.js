@@ -130,3 +130,6 @@ export function dishStepArt(dish, placed) {
   return ks && ks.includes(k) ? `${BASE}step/${dish}-k${k}.webp` : null;
 }
 
+/** Thùng rác — trước là emoji 🗑️ nên mỗi máy vẽ một kiểu. */
+export const trashArt = () => `${BASE}st-trash.webp`;
+
