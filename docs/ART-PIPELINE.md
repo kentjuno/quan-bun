@@ -279,3 +279,29 @@ Hai lần trước tui nhìn screenshot thấy "đẹp rồi" trong khi thực t
 **Luật chung:** bất cứ thứ gì lặp lại trên tranh nền (dải khay, hàng bếp, chỗ tô)
 đều phải có toạ độ riêng từng cái, không được `flex` chia đều.
 
+## 10. Dải khay topping: nướng đồ vào khay luôn (17/09)
+
+Ý của Kent: *"generate hình từng khay luôn, mỗi khay 1 item"*. Đúng, và nó gỡ luôn hai thứ:
+
+**Lỗi thật sự tìm ra khi đếm để chuẩn bị gen:** tranh có **9 khay** nhưng thế giới
+Hải Phòng cần **14 món** — 6 món cuối đang chồng hết lên khay số 9.
+Bám theo khay vẽ trong tranh thì không bao giờ sửa được, vì khay là của tranh.
+
+**Cách làm:**
+1. Xoá cả dải khay khỏi tranh → mặt bàn trơn (`scene-strip5-*`).
+2. Mỗi món một ảnh `public/art/pan/<token>.webp` = **khay + đồ nằm trong khay**,
+   tất cả nướng từ CÙNG một cái khay gốc → hình dạng, góc, nét giống hệt.
+3. `pov.js` xếp bao nhiêu khay cũng được, chia đều cả dải — **giờ chia đều là đúng**,
+   vì khay do code vẽ chứ không còn là vật trong tranh có chiều sâu.
+
+### Bậy: **ảnh gốc có gì thì Flow giữ nguyên cái đó**
+Mở đầu tui lấy mẫu là một khay cắt thẳng từ tranh — mà cái crop đó **dính một mép khay
+bên cạnh**. Thế là cả loạt ảnh đều có mẩu khay thừa ở rìa, xếp thành hàng thì lồm chồm.
+Lọc "chỉ giữ mảng lớn nhất" **không cứu được** vì mẩu thừa dính liền với khay chính.
+Phải làm **một cái khay mẫu sạch** trước (`art/raw/scene/pan-seed.png`: khay trống, đứng
+một mình), rồi mới nướng 50 món từ nó. Prompt phải nói thẳng:
+*"ONLY ONE tray … no sliver or edge of another tray anywhere"*.
+
+**Quy trình:** `scripts/pans_to_webp.py` — cắt nền magenta → cắt sát mép → phóng cho bề ngang
+bằng nhau → dán vào khung cố định 320×250, căn đáy. Mô tả từng món ở
+`art/raw/stages/_pan_desc.json` — gen lại thì sửa ở đó.

@@ -88,3 +88,10 @@ export const basketArt = (full = false) => `${BASE}st-basket${full ? '-noodle' :
 /** Sprite trạm theo tên file `st-<name>.webp` (chảo chiên, lò vi sóng, nồi nước, thớt…). */
 export const st = (name) => `${BASE}st-${name}.webp`;
 
+/**
+ * Khay topping: MỘT ảnh cho mỗi món, đồ được vẽ sẵn NẰM TRONG khay.
+ * Tất cả nướng từ cùng một cái khay gốc nên hình dạng, góc, nét giống hệt nhau
+ * — xếp bao nhiêu cái cạnh nhau cũng đều. Thiếu ảnh thì pov.js quay về icon cũ.
+ */
+export const panArt = (tok) => `${BASE}pan/${tok}.webp`;
+
