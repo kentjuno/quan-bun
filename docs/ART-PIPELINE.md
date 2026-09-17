@@ -321,3 +321,26 @@ with io.open(p, 'w', encoding='utf-8') as f: f.write(s)
 ```
 Và sau mỗi lần sửa file quan trọng, đọc lại kiểm độ dài — `git status` không cứu được
 vì file rỗng vẫn là một thay đổi hợp lệ, commit trôi qua bình thường.
+
+## 11. Tô đổi theo từng món bỏ vào (17/09)
+
+89 ảnh ở `public/art/step/<dish>-k<N>.webp`, gen bằng **chuỗi**: ảnh bước k nướng từ chính
+ảnh bước k−1, prompt *"giữ nguyên mọi thứ đã có trong tô, chỉ THÊM …"*.
+Mô tả từng món ở `art/raw/stages/_step_desc.json`; script gen nằm trong lịch sử git.
+
+### Ba cái bậy của cách này
+
+**1. Đứt chuỗi là sai hết phía sau.** Một lần 502 ở bước 2 thì bước 3 nướng từ bước 1 →
+tô thiếu nạm nhưng tên file vẫn ghi là đã có. Đã dính 2 lần.
+Cách chữa: có **thử lại 4 lần**, và nếu vẫn hỏng thì **xoá cả chuỗi của món đó**
+rồi gen lại từ đầu — tuyệt đối không vá giữa.
+
+**2. `D.recipes` KHÔNG phải công thức thật.** Nó gộp "lấy tô" và "bỏ sợi" thành một bước
+`base-ready`, còn `recipeFor(dish)` tách ra hai. Nên:
+- Ảnh đánh số theo công thức gọn → tra cứu phải lùi 1: `k = placed - 1`.
+- Kiểm "level có chạy đủ công thức không" phải so với `recipeFor(dish)`; so với `D.recipes`
+  thì level nào cũng bị coi là đã bớt bước → tính năng không bao giờ bật.
+
+**3. Level huấn luyện bớt món.** Vẽ tô theo số bước ở những level đó sẽ hiện cả món
+level cố tình chưa dạy — dạy sai ở đúng chỗ nguy hiểm nhất. `fullRecipe()` chặn việc đó,
+level đã đơn giản hoá quay về thang 4 bậc `s0 → dry → top → wet`.
