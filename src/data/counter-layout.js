@@ -53,3 +53,10 @@ export const STEAM = { count: 6, spread: 14, gap: 240, duration: 1900, rise: 96 
 /** Khoảng hở giữa hai khay, tính theo % bề ngang của cả dải `prep`. */
 export const PAN_GAP = 1.2;
 
+/** Quá bao nhiêu khay thì tách làm hai hàng (docs/ART-PIPELINE.md §15).
+ *  8 khay là chỗ mỗi khay còn ~38px trên máy 412px; hơn nữa là tụt dưới ngưỡng bấm được. */
+export const PAN_MAX1 = 8;
+
+/** Khoảng hở giữa hai HÀNG khay, tính theo % bề cao của dải `prep`. */
+export const PAN_ROW_GAP = 8;
+

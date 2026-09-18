@@ -250,6 +250,11 @@
       /* dải khay topping: mỗi món đúng MỘT khay vẽ sẵn, đồ nằm TRONG lòng khay */
       .pv-stage .pv-pans { overflow: visible; padding: 0; position: relative; display: block; }
       .pv-stage .pv-pan { position: absolute; top: 0; height: 100%; display: block; }
+      /* HAI HÀNG (quá 8 khay): mỗi ô thấp đi nên nhãn phải chui vào TRONG ô,
+         để dưới đáy như một hàng thì nó đè lên khay hàng dưới. */
+      .pv-stage .pv-pans.two .pv-pan .pv-panimg { inset: 0 0 38% 0; }
+      .pv-stage .pv-pans.two .pv-pan small { bottom: 0; font-size: 7.5px; max-height: 2.3em; }
+      .pv-stage .pv-pans.two .pv-pan.noart .pv-ghosticon img { max-height: 18px; }
       /* khay là MỘT ảnh liền (khay + đồ trong khay), phủ kín ô */
       .pv-stage .pv-pan .pv-panimg { position: absolute; inset: 0; width: 100%; height: 100%;
         object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
