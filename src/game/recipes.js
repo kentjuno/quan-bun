@@ -183,8 +183,12 @@ export function soupRecipeFor(dishId) {
   const chain = []; let cur = heat;
   for (let g = 0; g < 10 && cur; g++) { chain.unshift(cur); const prevTok = (cur.requires || []).find((t) => !D.items[t]); cur = stages.find((s) => s.creates === prevTok); }
   const items = chain.flatMap((s) => (s.requires || []).filter((t) => D.items[t]));
+  // Món nào bị BƯỚC NÀO ăn — để quầy biết nước cốt đứng ở kệ nước, nước trắng hứng ở bồn,
+  // còn đồ rắn (huyết) thì vẫn nằm khay. Không đoán theo tên item.
+  const byAction = {};
+  for (const s of chain) for (const t of (s.requires || []).filter((x) => D.items[x])) byAction[t] = s.action;
   const brothAction = (r.assembly.find((t) => t.startsWith('@') && t !== '@finish') || '').slice(1) || null;
-  return { items, heatAction: heat.action, brothAction, name: label(heat.creates).replace(/ đã nóng$/, ''), output: heat.creates };
+  return { items, byAction, heatAction: heat.action, brothAction, name: label(heat.creates).replace(/ đã nóng$/, ''), output: heat.creates };
 }
 
 /** Token nào cần đưa vào tô tiếp theo. */

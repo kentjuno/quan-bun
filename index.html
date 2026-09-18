@@ -338,6 +338,14 @@
       .pv-stage .pv-rinse .pv-rk { position: absolute; inset: 0; display: flex; flex-direction: column;
         align-items: center; justify-content: flex-end; }
       .pv-stage .pv-rinse .pv-rk .pv-ghosticon { display: none; }
+      /* Vòi nước ở bồn: chỗ hứng "miếng nước trắng" đem vô nồi. Nằm góc trên bồn,
+         trên rổ xả lạnh một bậc để lúc đang xả vẫn bấm được. */
+      .pv-stage .pv-tap { position: absolute; right: 1%; top: 0; width: 42%; height: 46%;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 1px; z-index: 2; cursor: grab; border-radius: 7px;
+        background: rgba(255,252,246,.66); box-shadow: 0 1px 3px rgba(60,44,28,.28); }
+      .pv-stage .pv-tap img, .pv-stage .pv-tap .emo { width: auto; height: 56%; max-height: 22px; object-fit: contain; }
+      .pv-stage .pv-tap small { font-size: 7.5px; line-height: 1.05; text-align: center; color: var(--pv-ink); }
       .pv-stage .pv-basket.away .pv-objimg { opacity: .32; }
       /* Thùng rác là sprite; emoji chỉ còn là đường lùi */
       .pv-stage .pv-z.trash { position: relative; }

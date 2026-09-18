@@ -68,6 +68,15 @@ export class Counter {
     this.topItems = all.filter((it) => !this.noodleItems.includes(it) && !this.bowlItems.includes(it) && !this.soupItems.includes(it));
     this.topItems.sort((a, b) => (SHELF_TOPPING.indexOf(a) + 99 * (SHELF_TOPPING.indexOf(a) < 0)) - (SHELF_TOPPING.indexOf(b) + 99 * (SHELF_TOPPING.indexOf(b) < 0)));
     this.brothSrc = [...new Set(recs.flatMap((r) => r.assembly.filter(isBroth)))].filter((t) => !Object.values(this.soups).some((s) => s.output === t));   // nước có sẵn trên bếp (phở)
+    // Đồ nấu nước KHÔNG phải topping — nó đi vào nồi, không vào tô. Chia theo bước ăn nó:
+    //   put-stock-in-pot / put-porridge-in-pot → can nước cốt, nồi cháo: để ở kệ nước cạnh bếp
+    //   add-water                              → miếng nước trắng: hứng ở vòi bồn rửa
+    //   còn lại (huyết)                        → đồ rắn, vẫn nằm khay
+    const sAct = Object.assign({}, ...Object.values(this.soups).map((r) => r.byAction || {}));
+    this.stockItems = this.soupItems.filter((t) => /^put-(stock|porridge)-in-pot$/.test(sAct[t] || ''));
+    this.waterItems = this.soupItems.filter((t) => (sAct[t] || '') === 'add-water');
+    const onPan = (t) => !this.stockItems.includes(t) && !this.waterItems.includes(t);
+    this.panItems = [...this.soupItems.filter(onPan), ...this.topItems];
   }
 
   // ---------- phiếu khách ----------

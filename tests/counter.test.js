@@ -254,3 +254,29 @@ describe('tô đổi theo từng món bỏ vào', () => {
     }
   });
 });
+
+describe('kệ nước — nước cốt & nước trắng không nằm trên khay topping', () => {
+  it('cả 124 level: đồ nấu nước đứng đúng chỗ, không lẫn vào dải khay', () => {
+    const bad = [];
+    for (const w of WORLDS) for (const lv of (w.levels || [])) {
+      const dishes = lv.dishes || lv.menu || []; if (!dishes.length) continue;
+      const C = new Counter({ dishes, rounds: 1, patience: 600, gap: 3, rnd: () => 0.99 });
+      for (const t of C.stockItems) if (C.panItems.includes(t)) bad.push(`${lv.id}: nước cốt ${t} còn trên khay`);
+      for (const t of C.waterItems) if (C.panItems.includes(t)) bad.push(`${lv.id}: nước trắng ${t} còn trên khay`);
+      // không được mất món: mọi thứ cần vẫn phải lấy được ở đâu đó
+      for (const t of C.soupItems)
+        if (!C.panItems.includes(t) && !C.stockItems.includes(t) && !C.waterItems.includes(t))
+          bad.push(`${lv.id}: ${t} không còn chỗ nào lấy`);
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it('bún riêu: cốt cua ở kệ nước, miếng nước ở bồn, huyết vẫn ở khay', () => {
+    const C = mk(['bun-rieu-cua']);
+    expect(C.stockItems).toContain('cot-cua');
+    expect(C.waterItems).toEqual(['mieng-nuoc']);
+    expect(C.panItems).toContain('huyet');
+    expect(C.panItems).not.toContain('cot-cua');
+    expect(C.panItems).not.toContain('mieng-nuoc');
+  });
+});
