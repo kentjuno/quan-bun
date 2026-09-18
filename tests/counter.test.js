@@ -271,6 +271,20 @@ describe('kệ nước — nước cốt & nước trắng không nằm trên kh
     expect(bad).toEqual([]);
   });
 
+  // ZONES.broth (85,30,14,11) và ZONES.fryer (83.5,28,14,13.5) nằm ĐÈ lên nhau trong tranh.
+  // Hiện không level nào bật cả hai nên không sao — chốt lại bằng test để sau này thêm món
+  // vừa chiên vừa nấu nước thì vỡ ở đây, chứ không vỡ âm thầm trên màn hình.
+  it('không level nào vừa có chảo chiên vừa có kệ nước (hai ô đè nhau)', () => {
+    const clash = [];
+    for (const w of WORLDS) for (const lv of (w.levels || [])) {
+      const dishes = lv.dishes || lv.menu || []; if (!dishes.length) continue;
+      const C = new Counter({ dishes, rounds: 1, patience: 600, gap: 3, rnd: () => 0.99 });
+      const needFryer = Object.values(C.recs).some((r) => r.transforms.some((x) => x.station === 'fryer'));
+      if (needFryer && C.brothSrc.length + C.stockItems.length) clash.push(lv.id);
+    }
+    expect(clash).toEqual([]);
+  });
+
   it('bún riêu: cốt cua ở kệ nước, miếng nước ở bồn, huyết vẫn ở khay', () => {
     const C = mk(['bun-rieu-cua']);
     expect(C.stockItems).toContain('cot-cua');

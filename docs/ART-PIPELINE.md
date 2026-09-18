@@ -397,3 +397,26 @@ cử chỉ Back của Android quy theo máy rộng 412px (5.3%) — đừng đ�
 
 `#stage` phải tính **chiều rộng** từ chiều cao khung chứa (`100cqh`); đặt `max-height:100%`
 thì `aspect-ratio` hết suy ra được chiều cao và ô xẹp thành số không.
+
+## 15. Dải khay: hai hàng khi quá 8 khay + đồ nấu nước không nằm trên khay (18/09)
+
+**Hai hàng.** 36/124 level có hơn 10 khay (bún bò Huế 11, Hải Phòng 14). Một hàng thì trên máy
+412px mỗi khay chỉ còn 20px — chưa tới một nửa ngưỡng bấm được (48dp). Quá `PAN_MAX1` (8) thì
+`pov.js` xếp hai hàng: mỗi khay **44px**, cao 34px, đúng tỉ lệ sprite 320×250. Hàng cuối thiếu
+khay thì căn giữa. Hai hàng thì nhãn phải chui **vào trong ô** (`.pv-pans.two`), để dưới đáy như
+một hàng là nó đè lên khay hàng dưới.
+
+**Đồ nấu nước không phải topping.** Nước cá / nước cốt cua / nước bún bò / nồi cháo đi vào NỒI,
+miếng nước trắng cũng vậy — không cái nào bỏ vào tô. Trước đây `soupItems` bị trộn thẳng vào dải
+khay nên chúng đứng chung với hành lá, cà chua. Nay chia theo **bước ăn nó**, lấy từ
+`soupRecipeFor().byAction` (không đoán theo tên item):
+
+| Bước | Đi đâu |
+|---|---|
+| `put-stock-in-pot`, `put-porridge-in-pot` | kệ nước cạnh bếp (`ZONES.broth`) |
+| `add-water` | vòi bồn rửa (`.pv-tap` trong `ZONES.sink`) |
+| còn lại (huyết) | vẫn nằm khay — đồ rắn |
+
+Chỉ đổi **chỗ vẽ**: nguồn kéo vẫn là `kind:'item'` nên luật chơi và bot không đụng gì. Level nào
+cần nước trắng mà không có bước nhúng bồn thì vẫn phải vẽ ô bồn — nhớ nới điều kiện
+`has.sink || C.waterItems.length` ở cả `build()` lẫn `render()`.
