@@ -113,6 +113,9 @@ export class Pov {
         ${dropz('trash', 'trash', `<img class="pv-objimg" src="${trashArt()}" alt="" draggable="false" onerror="this.closest('.pv-z').classList.add('noart');this.remove()"><span class="pv-tr">🗑️</span>`, 'trash')}
       </div>
       <div class="pv-msg" id="pvMsg">Kéo hoặc chạm đôi: tô vô nồi để trụng · sợi vô rọ · topping vô tô · tô xong lên phiếu</div>`;
+    // J8 — nhãn khay chỉ hiện ở level gợi ý (simplify / showLabels); level thật thì ẩn, sai 3 lần liên tiếp mới bật lại.
+    this.el.classList.toggle('nolabels', !(C.sim || this.o.level?.showLabels));
+    this._miss = 0;
     $('pvQuit').onclick = () => { this.stop(); this.o.onQuit?.(); };
     this.bind();
   }
@@ -193,7 +196,11 @@ export class Pov {
 
   /** Sau mỗi thao tác đúng: chan nước thì chạy A10 (docs/ART-PIPELINE.md §2·§6). */
   afterDrop(res, src, zone, from) {
-    if (!res?.ok) return;
+    if (!res?.ok) {                                    // J8: sai thứ tự 3 lần liên tiếp → bật nhãn lại tới hết level
+      if (zone?.kind === 'slot' && ++this._miss >= 3) this.el.classList.remove('nolabels');
+      return;
+    }
+    this._miss = 0;
     if (zone?.kind === 'trash') return this.toss();
     this.bump(zone);                 // trước đây chỉ đường kéo mới bump, chạm đôi thì không
     this.react(src, zone, from);     // J5 — vật nhận nảy theo kiểu riêng
@@ -340,6 +347,17 @@ export class Pov {
     setTimeout(() => { img.remove(); done?.(); }, ms);
   }
 
+  /** J8 — tooltip tên món nổi trên khay 1,2 s. Phần tử riêng trong #pov (render() dựng lại khay). */
+  tip(el) {
+    const name = el.title || label(this.srcOf(el)?.t || ''); if (!name) return;
+    this.el.querySelectorAll('.pv-tip').forEach((x) => x.remove());
+    const r = el.getBoundingClientRect(), s = document.createElement('div');
+    s.className = 'pv-tip'; s.textContent = name;
+    s.style.left = `${r.left + r.width / 2}px`; s.style.top = `${r.top}px`;
+    this.el.appendChild(s); this.C.ev?.onSfx?.('tap');
+    setTimeout(() => s.remove(), 1200);
+  }
+
   /** Vứt rác: thùng rác giật một cái + bụi bay lên. */
   toss() {
     const z = this.el.querySelector('.pv-z.trash'); if (!z) return;
@@ -441,6 +459,8 @@ export class Pov {
       el.classList.add('lift');
       root.classList.add('dragging');   // đang kéo mới hiện viền chỗ thả (CSS), lúc thường để tranh sạch
       ghost.style.transform = `translate(${e.clientX - 28}px, ${e.clientY - 28}px)`;
+      // J8 — chạm giữ ≥ 350 ms không kéo → tooltip tên món (nhãn khay ẩn mặc định)
+      if (el.classList.contains('pv-pan')) drag.hold = setTimeout(() => { if (drag && !drag.moved) this.tip(el); }, 350);
     };
     // Bóng kéo bám con trỏ NGAY trong pointermove: đặt transform là việc rẻ, không đọc layout,
     // và không phụ thuộc rAF — tab bị hãm nhịp thì bóng vẫn theo tay. Chỗ nặng là dò ô
@@ -448,7 +468,7 @@ export class Pov {
     root.onpointermove = (e) => {
       if (!drag) return;
       const x = e.clientX, y = e.clientY;
-      if (!drag.moved && Math.hypot(x - drag.x0, y - drag.y0) > 8) drag.moved = true;
+      if (!drag.moved && Math.hypot(x - drag.x0, y - drag.y0) > 8) { drag.moved = true; clearTimeout(drag.hold); }
       const vx = Math.max(-14, Math.min(14, (x - drag.px) * 1.4));
       drag.tilt += (vx - drag.tilt) * 0.25;   // nghiêng theo đà tay, cho có sức nặng
       drag.px = x;
@@ -473,7 +493,7 @@ export class Pov {
       else drag.hl.classList.remove('on');
     };
     const end = (e) => {
-      if (!drag) return; const d = drag; drag = null;
+      if (!drag) return; const d = drag; drag = null; clearTimeout(d.hold);
       d.hl.remove(); d.el.classList.remove('lift');
       root.classList.remove('dragging'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
       // Dò lại ngay tại điểm nhả: lúc kéo chỉ dò mỗi 3px nên cú vẩy nhanh có thể còn ô cũ.

@@ -303,6 +303,11 @@ tức `broth` phải ăn sang dải họng bếp (x ≈ 68–99) và dời `burn
 - Level 20: `getComputedStyle('.pv-pan small').display === 'none'`. Level 1: hiện.
 - Pointerdown giữ 400 ms không di chuyển → xuất hiện `.pv-tip` với đúng `label(tok)`; 1.5 s sau biến mất. Kéo ngay sau 100 ms → **không** hiện tooltip và kéo vẫn chạy.
 
+**ĐÃ LÀM 19/09 (sw v65).** `#pov.nolabels` gắn ở `build()`; hẹn giờ 350 ms ở `pointerdown` (chỉ `.pv-pan`), huỷ khi
+kéo > 8 px hoặc nhả; `tip(el)` lấy tên từ `el.title`. Sai liên tiếp đếm ở `afterDrop` (`_miss`), chỉ đếm thả vào ô tô.
+Đo: level 20 `display:none`, level 1 `block`; giữ 420 ms → `.pv-tip` "Nạm", 1,4 s sau hết; kéo sau 100 ms → không tip,
+ghost vẫn chạy; sai 3 lần → nhãn `block`.
+
 ---
 
 ## J9 — Đời sống nền (idle)

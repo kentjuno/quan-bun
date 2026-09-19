@@ -448,6 +448,14 @@
         font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
         border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
 
+      /* ---- J8: nhãn khay ẩn mặc định, chạm giữ mới hiện tên ---- */
+      #pov.nolabels .pv-stage .pv-pan small { display: none; }
+      #pov .pv-tip { position: fixed; z-index: 21; pointer-events: none; transform: translate(-50%, -110%);
+        font-family: "Patrick Hand", cursive; font-size: 4cqw; font-weight: 700; color: #3b2a1e; white-space: nowrap;
+        background: #fffdf5; border: 1px solid rgba(90,66,44,.55); border-radius: .8cqw; padding: .6cqw 1.6cqw;
+        box-shadow: 0 3px 8px rgba(60,44,28,.3); animation: tipIn .15s ease-out; }
+      @keyframes tipIn { from { opacity: 0; transform: translate(-50%, -90%); } to { opacity: 1; transform: translate(-50%, -110%); } }
+
       /* ---- J7: nồi nước thật trên họng bếp ---- */
       /* Ô broth chỉ rộng 14 % ≈ 52 px: 1 nồi thì đẹp, 3 nồi = 17 px mỗi cái. Cho xuống dòng (2 + 1)
          để còn ~24 px — vẫn nhỏ; muốn đàng hoàng phải chia lại dải bếp trong tools/zones.html (Kent quyết). */
