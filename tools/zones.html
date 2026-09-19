@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chỉnh ZONES — KJ's Choices</title>
+<style>
+  /* 22px trên máy rộng 412px = 5.3% — hiện theo % thì xem ở cỡ nào cũng đúng tỉ lệ máy thật. */
+  :root { --ink:#3a2c1c; --pa:#fffdf6; --li:#e7dcc6; --hi:#c8552e; --gut:5.3%; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin:0; font:14px/1.45 system-ui,sans-serif; color:var(--ink); background:#f4efe2;
+         display:flex; flex-direction:column; height:100dvh; overflow:hidden; }
+  header { display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:6px 8px;
+           background:var(--pa); border-bottom:1px solid var(--li); }
+  header b { font-size:13px; margin-right:4px; }
+  button, select { font:inherit; padding:4px 9px; border:1px solid var(--li); border-radius:7px;
+                   background:var(--pa); color:var(--ink); cursor:pointer; }
+  button.on { background:var(--hi); color:#fff; border-color:var(--hi); }
+  main { flex:1; min-height:0; display:flex; }
+  #wrap { flex:1; min-width:0; container-type:size; display:grid; place-items:center; padding:6px; overflow:hidden; }
+  /* Chiều rộng tính từ chiều cao khung chứa: aspect-ratio chỉ suy ra chiều cao khi
+     chiều cao là auto — đặt max-height:100% là ô xẹp mất. */
+  #stage { position:relative; aspect-ratio:768/1376; width:min(100%, calc(100cqh * 768 / 1376));
+           background:#ddd center/cover no-repeat; touch-action:none; user-select:none; }
+  #stage img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .gut { position:absolute; top:0; bottom:0; width:var(--gut); background:repeating-linear-gradient(
+         45deg, rgba(214,64,44,.28) 0 5px, rgba(214,64,44,.08) 5px 10px); pointer-events:none; z-index:5; }
+  .gut.l { left:0 } .gut.r { right:0 }
+  .z { position:absolute; border:1.5px solid rgba(40,90,160,.85); background:rgba(80,140,220,.16);
+       border-radius:4px; cursor:move; }
+  .z > i { position:absolute; left:2px; top:1px; font-style:normal; font-size:10px; line-height:1.1;
+           color:#fff; background:rgba(30,60,110,.82); padding:0 3px; border-radius:3px; white-space:nowrap; }
+  .z.sel { border-color:var(--hi); background:rgba(200,85,46,.22); box-shadow:0 0 0 1px #fff inset; z-index:3; }
+  .z.sel > i { background:var(--hi); }
+  .z.hid { display:none; }
+  .h { position:absolute; width:16px; height:16px; right:-8px; bottom:-8px; border-radius:50%;
+       background:var(--hi); border:2px solid #fff; cursor:nwse-resize; }
+  .z:not(.sel) .h { display:none; }
+  aside { width:290px; flex:none; display:flex; flex-direction:column; background:var(--pa);
+          border-left:1px solid var(--li); }
+  #list { flex:1; overflow:auto; padding:4px; }
+  #list div { display:flex; gap:4px; align-items:center; padding:2px 4px; border-radius:5px; cursor:pointer; }
+  #list div.sel { background:rgba(200,85,46,.14); font-weight:600; }
+  #list span { flex:1; font-size:13px; }
+  #list small { opacity:.55; font-size:11px; font-variant-numeric:tabular-nums; }
+  #nums { display:flex; gap:4px; padding:4px 6px; border-top:1px solid var(--li); }
+  #nums label { flex:1; font-size:11px; opacity:.7; }
+  #nums input { width:100%; font:inherit; padding:2px 4px; border:1px solid var(--li); border-radius:5px; }
+  #out { height:190px; border:0; border-top:1px solid var(--li); font:11px/1.35 ui-monospace,monospace;
+         padding:6px; resize:none; background:#fbf8ef; color:var(--ink); }
+  @media (max-width:760px) {
+    main { flex-direction:column; } aside { width:auto; border-left:0; border-top:1px solid var(--li); max-height:45vh; }
+    #out { height:110px; }
+  }
+</style>
+  <script type="module" crossorigin src="../assets/zones-gwy60hUI.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/counter-layout-D2kH0A7h.js">
+</head>
+<body>
+<header>
+  <b>Chỉnh ZONES</b>
+  <button id="bGrid" class="on">Bám lưới 0.5</button>
+  <button id="bGut" class="on">Dải vuốt</button>
+  <button id="bAll">Ẩn ô khác</button>
+  <button id="bReset">Về mặc định</button>
+  <button id="bCopy">Chép code</button>
+  <span id="msg" style="font-size:12px;opacity:.65"></span>
+</header>
+<main>
+  <div id="wrap"><div id="stage"><img id="scene" alt=""><div class="gut l"></div><div class="gut r"></div></div></div>
+  <aside>
+    <div id="list"></div>
+    <div id="nums">
+      <label>x<input id="nx" type="number" step="0.5"></label>
+      <label>y<input id="ny" type="number" step="0.5"></label>
+      <label>w<input id="nw" type="number" step="0.5"></label>
+      <label>h<input id="nh" type="number" step="0.5"></label>
+    </div>
+    <textarea id="out" readonly spellcheck="false"></textarea>
+  </aside>
+</main>
+</body>
+</html>

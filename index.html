@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>KJ's Choices</title>
+    <meta name="theme-color" content="#e84a3b" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="KJ's Choices" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap" />
+    <!-- Chữ tay cho màn bếp. Caveat/Gaegu KHÔNG có bộ vietnamese — đã kiểm; Patrick Hand thì có. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27%23e8a33c%27/%3E%3C/svg%3E" />
+    <style>
+      :root {
+      --pv-gutter: 22px;   /* dải cử chỉ Android ~20dp mỗi bên */
+      --pv-ink: #5b4128;   /* mực nâu ấm cho chữ trong cảnh bếp */ --wood: #c98b4a; --broth: #e8a33c; --green: #5fa55a; --red: #e84a3b; --teal: #2a9d8f; --ink: #2b2118; --paper: #fff7ea; --shade: rgba(43,33,24,.72);
+        font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+      html, body { margin: 0; height: 100%; background: #2e2420; color: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }   /* overscroll none: chặn quẹt trái/phải thành Back / kéo xuống thành Reload trên Chrome Android */
+      #app { position: fixed; inset: 0; }
+      /* NỀN 2D (docs/PLAN-CORE.md bước 3): bếp 3D là phần phụ, mọi màn khác đứng trên nền giấy art C.
+         Giấy kẻ ô mờ + vệt màu nước ấm, không dùng ảnh nên nhẹ và không bao giờ chờ tải. */
+      #bg2d { position: fixed; inset: -2px; z-index: 0; display: none; background:
+          radial-gradient(60% 40% at 18% 8%, rgba(214,168,104,.20), transparent 70%),
+          radial-gradient(55% 45% at 86% 92%, rgba(168,124,74,.18), transparent 70%),
+          repeating-linear-gradient(0deg, rgba(90,66,44,.045) 0 1px, transparent 1px 22px),
+          repeating-linear-gradient(90deg, rgba(90,66,44,.045) 0 1px, transparent 1px 22px),
+          linear-gradient(170deg, #f3e9d6 0%, #ece0c9 55%, #e2d4ba 100%);
+        }
+      body.flat #bg2d { display: block; }
+      body.flat { color: var(--ink); }
+      body.flat #vignette { opacity: .14; }
+      /* không còn bếp 3D phía sau để làm mờ → lớp phủ trong suốt, thấy thẳng nền giấy */
+      body.flat .overlay { background: transparent; }
+      canvas { display: block; }
+      /* viền tối nhẹ quanh khung (vignette) */
+      #vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(20,14,10,.55) 100%); }
+      /* nhãn 3D (CSS2D) */
+      .lbl { pointer-events: none; font-size: 12px; font-weight: 700; color: var(--paper); text-shadow: 0 1px 2px #000, 0 0 10px rgba(0,0,0,.7); white-space: nowrap; letter-spacing: .2px; }
+      .lbl.small { font-size: 11px; font-weight: 600; background: var(--shade); padding: 2px 7px; border-radius: 8px; text-shadow: none; }
+      .lbl.tiny { font-size: 10px; font-weight: 600; background: var(--shade); padding: 1px 6px; border-radius: 6px; text-shadow: none; }
+      .lbl.shelfname { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; opacity: .65; }
+      .timer { pointer-events: none; width: 36px; height: 36px; border-radius: 50%; background: conic-gradient(var(--broth) var(--p), rgba(0,0,0,.5) 0); border: 2px solid var(--paper); display: grid; place-items: center; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+      .timer.sm { width: 28px; height: 28px; font-size: 12px; }
+      .timer.empty { background: rgba(0,0,0,.28); border-style: dashed; border-color: rgba(255,247,234,.55); box-shadow: none; opacity: .8; font-size: 11px; }
+      .timer.done { background: var(--green); animation: pop .45s infinite alternate; }
+      /* sợi chín đang "già" trong nồi: viền chuyển đỏ dần theo --h; hư = đỏ, ✖ */
+      .timer.done.aging { animation: none; background: conic-gradient(var(--red) var(--h), var(--green) 0); }
+      .timer.bad { background: var(--red); animation: pop .3s infinite alternate; }
+      .timer.stack { background: var(--teal); animation: none; font-weight: 800; }
+      @keyframes pop { to { transform: scale(1.18); } }
+      .patience { pointer-events: none; width: 58px; height: 8px; background: rgba(0,0,0,.55); border: 1px solid var(--paper); border-radius: 5px; overflow: hidden; }
+      .patience > div { height: 100%; background: var(--green); transition: width .2s linear; }
+      .patience.warn > div { background: var(--broth); } .patience.angry > div { background: var(--red); }
+      .bubble { pointer-events: none; position: relative; background: var(--paper); color: var(--ink); border-radius: 12px; padding: 4px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; box-shadow: 0 3px 8px rgba(0,0,0,.35); }
+      .bubble b { display: block; } .bubble i { display: none; font-style: italic; font-weight: 500; font-size: 11.5px; opacity: .85; max-width: 190px; white-space: normal; line-height: 1.2; }
+      .bubble.say i { display: block; } .bubble.say { animation: bpop .18s ease-out; } @keyframes bpop { from { transform: translateY(4px) scale(.96); } }
+      .bubble.regular { border: 2px solid var(--broth); }
+      .bubble::after { content: ''; position: absolute; left: 50%; bottom: -6px; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--paper); border-bottom: 0; }
+      .qnum { pointer-events: none; width: 24px; height: 24px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 800; font-size: 13px; display: grid; place-items: center; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+      .qnum.now { background: var(--red); }
+      .hand { pointer-events: none; background: var(--shade); border-radius: 8px; padding: 2px 7px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+      .ripple { position: fixed; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; border: 2px solid var(--paper); pointer-events: none; animation: rip .45s ease-out forwards; }
+      @keyframes rip { to { transform: scale(3.2); opacity: 0; } }
+      /* HUD */
+      #hud { position: fixed; inset: 0; pointer-events: none; }
+      .top { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: flex-start; font-weight: 700; gap: 8px; }
+      .pill { background: var(--shade); border-radius: 12px; padding: 6px 12px; font-size: 16px; font-variant-numeric: tabular-nums; backdrop-filter: blur(4px); }
+      .pill small { display: block; font-size: 9px; opacity: .7; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; }
+      /* thông báo: nằm trên hai ô tay (không đè), nền mờ */
+      #toast { position: absolute; bottom: calc(max(10px, env(safe-area-inset-bottom)) + 160px); left: 50%; transform: translateX(-50%); max-width: calc(100% - 24px); box-sizing: border-box; text-align: center; font-weight: 700; font-size: 16px; color: var(--paper); background: var(--shade); backdrop-filter: blur(4px); border-radius: 12px; padding: 8px 14px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+      #toast.show { opacity: 1; }
+      /* hai ô tay ở đáy màn hình: đang cầm gì, nút × → đem ra thùng rác vứt riêng thứ đó */
+      #hands { position: absolute; bottom: calc(max(10px, env(safe-area-inset-bottom)) + 58px); left: 0; right: 0; display: flex; justify-content: center; gap: 18px; pointer-events: none; }
+      .slot { position: relative; width: 66px; height: 66px; border-radius: 50%; background: rgba(43,33,24,.55); border: 3px dashed rgba(255,247,234,.35); display: grid; place-items: center; text-align: center; font-size: 10.5px; font-weight: 700; line-height: 1.15; padding: 4px; box-sizing: border-box; color: var(--paper); transition: transform .15s, border-color .15s; }
+      .slot.full { border-style: solid; border-color: var(--broth); background: var(--shade); backdrop-filter: blur(4px); }
+      .slot.bowl { border-color: var(--teal); }
+      .slot.pop { transform: scale(1.12); }
+      .slot img { width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+      .slot .under { position: absolute; bottom: -18px; left: -10px; right: -10px; font-size: 10px; text-shadow: 0 1px 2px #000; }
+      .slot .x { position: absolute; top: -7px; right: -7px; width: 24px; height: 24px; border-radius: 50%; background: var(--red); color: #fff; border: 2px solid #fff; font-size: 14px; font-weight: 800; line-height: 20px; text-align: center; pointer-events: auto; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+      .slot .x.queued { background: var(--ink); animation: pop .5s infinite alternate; }
+      /* màn ngang: hai ô tay dọc bên phải, không đè quầy giao/ghế khách */
+      @media (orientation: landscape) {
+        #hands { left: auto; right: 14px; bottom: 50%; transform: translateY(50%); flex-direction: column; gap: 14px; }
+        .slot .under { bottom: -16px; }
+        .takeover { bottom: calc(max(10px, env(safe-area-inset-bottom)) + 8px); }
+        #toast { bottom: calc(max(10px, env(safe-area-inset-bottom)) + 70px); }
+      }
+      #prep { position: absolute; top: auto; bottom: 24%; left: 12px; right: 12px; text-align: center; font-weight: 700; font-size: 14px; text-shadow: 0 2px 6px #000; }
+      #prep .big { font-size: 64px; font-weight: 800; color: var(--broth); line-height: 1; text-shadow: 0 3px 0 #b07a20, 0 6px 18px rgba(0,0,0,.5); }
+      .mute { position: absolute; left: 12px; bottom: calc(max(10px, env(safe-area-inset-bottom)) + 40px); pointer-events: auto; font-size: 18px; padding: 8px 10px; background: var(--shade); box-shadow: none; }
+      .backbtn { pointer-events: auto; font-size: 22px; line-height: 1; padding: 6px 12px; margin: 0; color: var(--paper); box-shadow: none; border: 0; cursor: pointer; }
+      .takeover { position: absolute; right: 12px; bottom: calc(max(10px, env(safe-area-inset-bottom)) + 40px); pointer-events: auto; font-size: 14px; padding: 10px 14px; }
+      /* card chọn nguyên liệu (chế độ kệ-card): trượt lên từ đáy, không chặn bếp */
+      #card { position: fixed; left: 0; right: 0; bottom: 0; background: var(--paper); color: var(--ink); border-radius: 22px 22px 0 0; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,.45); transform: translateY(110%); transition: transform .22s ease-out; z-index: 5; }
+      #card.show { transform: none; }
+      #card .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-weight: 800; font-size: 17px; }
+      #card .head .close { width: 34px; height: 34px; border-radius: 50%; background: #eee2d0; display: grid; place-items: center; font-size: 18px; cursor: pointer; }
+      #card .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
+      #card .it { border: 3px solid #eadfcd; border-radius: 16px; padding: 10px 6px; text-align: center; font-weight: 700; font-size: 12px; line-height: 1.2; cursor: pointer; background: #fff; user-select: none; }
+      #card .it .ic { font-size: 30px; display: block; margin-bottom: 4px; height: 56px; }
+      #card .it .ic img { width: 56px; height: 56px; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(0,0,0,.25)); }
+      #card .it.sel { border-color: var(--red); background: #ffe9e5; }
+      #card .it { position: relative; }
+      #card .it .cnt { position: absolute; top: -8px; left: -8px; background: var(--red); color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 12px; }
+      #card .it .cnt:empty { display: none; }
+      #card .it .minus { display: none; position: absolute; top: -10px; right: -10px; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 16px; line-height: 26px; }
+      #card .it.sel .minus { display: block; }
+      #card .foot { display: flex; gap: 10px; margin-top: 12px; align-items: center; }
+      #card .foot .n { flex: 1; font-size: 13px; opacity: .8; }
+      #card.hidename .it .nm { visibility: hidden; }
+      .shifts { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 0 0 10px; }
+      .shifts button { font-size: 13px; padding: 8px 12px; background: #eee2d0; color: var(--ink); box-shadow: 0 3px 0 #cdbfa8; margin: 0; }
+      .shifts button.on { background: var(--red); color: #fff; box-shadow: 0 3px 0 #a8321f; }
+      .shifts button small { display: block; font-size: 10px; font-weight: 600; opacity: .8; }
+      .panel.menu { padding: 18px 18px 14px; width: min(380px, 100%); }
+      .mhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+      .mhead h1 { font-size: 30px; margin: 0; }
+      .pts { background: #f3e9d8; border-radius: 12px; padding: 5px 10px; font-size: 13px; font-weight: 800; white-space: nowrap; }
+      .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #eee2d0; border-radius: 12px; padding: 4px; margin: 0 0 12px; }
+      .tabs button { background: transparent; color: var(--ink); box-shadow: none; border-radius: 9px; font-size: 12px; padding: 8px 4px; margin: 0; opacity: .7; white-space: nowrap; }
+      .tabs button.on { opacity: 1; background: var(--paper); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+      .badge { display: inline-block; min-width: 14px; background: var(--red); color: #fff; border-radius: 8px; font-size: 9px; padding: 1px 4px; vertical-align: top; } .badge:empty { display: none; }
+      .carousel { display: flex; align-items: stretch; gap: 6px; touch-action: pan-y; }
+      .arrow { flex: 0 0 40px; font-size: 30px; line-height: 1; padding: 0; margin: 0; background: #eee2d0; color: var(--ink); box-shadow: 0 3px 0 #cdbfa8; border-radius: 12px; }
+      .arrow:disabled { opacity: .3; }
+      .lvcard { flex: 1; min-height: 118px; background: #fff; border: 3px solid var(--red); border-radius: 16px; padding: 12px 10px; display: flex; flex-direction: column; justify-content: center; gap: 4px; text-align: center; transition: transform .18s, opacity .18s; }
+      .lvcard.locked { border-color: #d8cbb6; background: #f7f1e6; color: #7a6a58; }
+      .lvcard.solo { border-color: var(--broth); }
+      .lvcard.slide-l { transform: translateX(-14px); opacity: 0; } .lvcard.slide-r { transform: translateX(14px); opacity: 0; }
+      .lvcard b { font-size: 18px; } .lvcard .st { font-size: 20px; letter-spacing: 3px; color: var(--broth); line-height: 1; } .lvcard.locked .st { color: #c9b89a; }
+      .lvcard small { display: block; font-size: 12px; opacity: .8; line-height: 1.35; } .lvcard .dish { font-weight: 700; opacity: .9; }
+      .dots { display: flex; justify-content: center; gap: 5px; margin: 8px 0 10px; }
+      .dots i { width: 7px; height: 7px; border-radius: 50%; background: #d8cbb6; display: block; } .dots i.on { background: var(--red); width: 18px; border-radius: 4px; } .dots i.done { background: var(--broth); }
+      .row { display: flex; gap: 6px; justify-content: center; } .row button { flex: 1; margin: 4px 0; padding: 12px 8px; font-size: 15px; }
+      .pickbar { display: flex; align-items: center; gap: 4px; font-size: 12px; margin-bottom: 6px; } .pickbar span { flex: 1; text-align: left; font-weight: 700; } .pickbar button { margin: 0; padding: 5px 8px; }
+      .dishpick { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin-bottom: 8px; max-height: 38vh; overflow-y: auto; }
+      .dishpick .dp { border: 2px solid #eadfcd; border-radius: 10px; padding: 6px 6px; font-size: 11.5px; font-weight: 700; line-height: 1.2; cursor: pointer; background: #fff; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+      .dishpick .dp.on { border-color: var(--red); background: #ffe9e5; } .dishpick .dp small { font-weight: 600; opacity: .6; font-size: 10px; white-space: nowrap; }
+      .shop { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; text-align: left; max-height: 46vh; overflow-y: auto; }
+      .shop .sh { border: 2px solid #eadfcd; border-radius: 12px; padding: 8px; font-size: 12px; display: flex; gap: 6px; align-items: center; background: #fff; }
+      .shop .sh .ic { font-size: 24px; } .shop .sh b { display: block; font-size: 13px; } .shop .sh small { opacity: .7; display: block; font-size: 10.5px; }
+      .shop .sh button { font-size: 12px; padding: 5px 9px; margin: 4px 0 0; } .shop .sh.owned { border-color: var(--green); background: #eef8ec; } .shop .sh button:disabled { opacity: .45; }
+      details.more { margin-top: 10px; font-size: 12px; text-align: left; } details.more summary { text-align: center; opacity: .6; font-weight: 700; } details.more .how { margin: 8px auto 6px; font-size: 12.5px; }
+      details.more .opt { justify-content: flex-start; flex-wrap: wrap; }
+      .tabs.three { grid-template-columns: repeat(3, 1fr); } .tabs.sub { background: transparent; padding: 0; margin: 0 0 8px; } .tabs.sub button { background: #f3ede0; opacity: .8; } .tabs.sub button.on { opacity: 1; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+      .sign { font-family: "Patrick Hand", "Segoe Print", "Bradley Hand", cursive; font-size: 34px; line-height: 1; color: var(--ink); margin: 0; letter-spacing: .5px; transform: rotate(-1.5deg); }
+      .sign small { display: block; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: .55; margin-top: 4px; transform: none; font-family: inherit; }
+      .daycard { min-height: 0; } .daycard .note { color: #b07a20; font-weight: 700; } .daycard .new { display: inline-block; background: var(--red); color: #fff; border-radius: 8px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
+      /* --- bản đồ world + lưới level --- */
+      .worlds { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: none; } .worlds::-webkit-scrollbar { display: none; }
+      .worlds .wd { flex: 0 0 auto; min-width: 74px; background: #fff; border: 3px solid #eadfcd; border-radius: 14px; padding: 7px 9px; text-align: center; cursor: pointer; }
+      .worlds .wd .ic { font-size: 22px; line-height: 1.1; } .worlds .wd b { display: block; font-size: 11.5px; line-height: 1.2; margin-top: 2px; } .worlds .wd small { display: block; font-size: 10px; color: var(--broth); font-weight: 700; }
+      .worlds .wd.on { border-color: var(--red); background: #fff3f1; } .worlds .wd.locked { opacity: .55; background: #f7f1e6; } .worlds .wd.locked small { color: #9a8b76; }
+      .lvgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 8px 0 10px; }
+      .lvgrid .lvb { position: relative; aspect-ratio: 1; border: 2.5px solid #eadfcd; border-radius: 12px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer; font-weight: 800; font-size: 15px; color: var(--ink); padding: 0; margin: 0; box-shadow: none; }
+      .lvgrid .lvb .st { font-size: 9px; letter-spacing: 1px; color: var(--broth); line-height: 1; height: 10px; }
+      .lvgrid .lvb.on { border-color: var(--red); background: #ffe9e5; }
+      .lvgrid .lvb.ch { border-color: var(--broth); } .lvgrid .lvb.ch::before { content: '⭐'; position: absolute; top: -7px; right: -5px; font-size: 11px; }
+      .lvgrid .lvb.done { background: #f3faf2; }
+      .lvgrid .lvb.locked { color: #b5a691; background: #f7f1e6; border-style: dashed; }
+      .lvgrid .lvb.next::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--red); border-radius: 15px; animation: nx 1.4s infinite; } @keyframes nx { 50% { opacity: .25; } }
+      .lvcard .whatsnew { font-weight: 800; color: var(--red); font-size: 13px; }
+      .lvcard .tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 2px; }
+      .lvcard .tag { font-size: 10.5px; font-weight: 700; background: #f3e9d8; border-radius: 8px; padding: 2px 7px; }
+      .lvcard .tag.train { background: #fff3d6; color: #8a6a20; } .lvcard .tag.goal { background: #e8f1ff; color: #24568a; } .lvcard .tag.new { background: #ffe9e5; color: var(--red); }
+      .row.tight { gap: 6px; margin: 8px 0 0; } .row.tight button { flex: 1; }
+      .upg .sh .lv { font-size: 10px; letter-spacing: 2px; color: var(--broth); } .upg .sh.max { border-color: var(--green); background: #eef8ec; } .upg .sh.locked { opacity: .55; }
+      .money { font-size: 40px; font-weight: 800; color: #b07a20; margin: 4px 0; font-variant-numeric: tabular-nums; }
+      .recap { background: #fff8ec; border-left: 4px solid var(--broth); padding: 8px 12px; border-radius: 8px; font-style: italic; margin: 8px 0; font-size: 14px; }
+      .unlock { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; } .unlock .u { background: #fff; border: 2px dashed var(--red); border-radius: 12px; padding: 8px 12px; font-size: 13px; display: flex; gap: 8px; align-items: center; animation: upop .5s ease-out both; } .unlock .u .ic { font-size: 22px; } .unlock .u img { width: 34px; height: 34px; object-fit: contain; } .unlock .u small { display: block; opacity: .7; font-size: 11px; }
+      @keyframes upop { from { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.06); } }
+      .stars .s { display: inline-block; opacity: 0; transform: scale(2) translateY(-20px); } .stars .s.in { animation: sdrop .45s cubic-bezier(.2,.8,.3,1.2) forwards; } @keyframes sdrop { to { opacity: 1; transform: none; } }
+      details.rep { margin-top: 10px; font-size: 13px; } details.rep summary { font-weight: 700; opacity: .7; cursor: pointer; }
+      .tabs.five { grid-template-columns: repeat(5, 1fr); } .tabs.five button { font-size: 11.5px; padding: 8px 2px; }
+      .mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .mini .lvcard { min-height: 0; padding: 12px 8px; } .mini .lvcard b { font-size: 16px; } .mini button { margin: 8px 0 0; padding: 10px 12px; font-size: 14px; }
+      .pz-panel { width: min(560px, 100%); text-align: left; padding: 16px; }
+      .pz-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; } .pz-head b { flex: 1; font-size: 18px; color: var(--red); } .pz-head button { margin: 0; }
+      .pill-dark { background: var(--ink); color: #fff; border-radius: 10px; padding: 3px 9px; font-size: 12px; font-weight: 800; }
+      .pz-title { font-weight: 700; font-size: 14px; margin: 4px 0 8px; opacity: .85; }
+      .pz-answer { display: flex; flex-wrap: wrap; gap: 5px; min-height: 28px; margin-bottom: 10px; } .pz-answer:empty { display: none; }
+      .pz-answer .ans { background: #dff2df; border-radius: 8px; padding: 3px 8px; font-size: 12px; font-weight: 700; } .pz-answer .ans.hole { background: #ffe9e5; color: var(--red); }
+      .pz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+      .pz { font: inherit; font-size: 12px; font-weight: 700; line-height: 1.2; background: #fff; color: var(--ink); border: 3px solid #eadfcd; border-radius: 14px; padding: 8px 4px; margin: 0; box-shadow: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+      .pz img { width: 52px; height: 52px; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(0,0,0,.25)); } .pz .emo { font-size: 34px; line-height: 52px; }
+      .pz.ok { border-color: var(--green); background: #eef8ec; opacity: .55; } .pz.bad-found { border-color: var(--red); background: #ffe9e5; } .pz:disabled { cursor: default; }
+      .pz.shake { animation: shake .35s; border-color: var(--red); } @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+      .pz-canvas { display: block; width: 100%; height: min(58vh, 520px); border-radius: 14px; background: linear-gradient(#3a2c26, #241a16); touch-action: none; cursor: crosshair; }
+      .pz-grid.reflex { grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 5px; }
+      .pz.sm { padding: 5px 2px; font-size: 10px; border-width: 2px; border-radius: 10px; } .pz.sm img { width: 36px; height: 36px; } .pz.sm .emo { font-size: 24px; line-height: 36px; }
+      .pz.missed { border-color: var(--broth); background: #fff3d6; }
+      .ans.timer { position: relative; overflow: hidden; min-width: 120px; background: #eee2d0; } .ans.timer i { position: absolute; left: 0; top: 0; bottom: 0; background: #dff2df; transition: width .1s linear; } .ans.timer b { position: relative; }
+      /* Ráp tô: phiếu khách treo + kệ chia khu */
+      .pz-tickets { display: flex; gap: 6px; margin: 2px 0 8px; min-height: 58px; }
+      .pz-tickets .tk { flex: 1; background: #fff8ec; border: 2px dashed #d8cbb6; border-radius: 10px; padding: 6px 8px 8px; font-size: 11px; line-height: 1.25; opacity: .7; position: relative; }
+      .pz-tickets .tk.on { opacity: 1; border: 3px solid var(--red); background: #fff; box-shadow: 0 4px 12px rgba(232,74,59,.25); } .pz-tickets .tk.reg b { color: #b07a20; }
+      .pz-tickets .tk b { display: block; font-size: 12px; } .pz-tickets .tk span { display: block; font-weight: 700; color: var(--red); font-size: 12px; }
+      .pz-tickets .tk .bar { display: block; height: 5px; background: rgba(0,0,0,.12); border-radius: 3px; margin-top: 5px; overflow: hidden; } .pz-tickets .tk .bar u { display: block; height: 100%; background: var(--green); width: 100%; }
+      .pz-grid.assemble { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 4px; }
+      .pz-grid.assemble .sec { grid-column: 1 / -1; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; opacity: .55; font-weight: 800; margin: 6px 0 -1px; }
+      .pz.nd { grid-column: span 2; cursor: default; } .pz .opt { display: flex; gap: 4px; margin-top: 3px; flex-wrap: wrap; justify-content: center; }
+      .pz .opt button { font: inherit; font-size: 10.5px; font-weight: 800; padding: 5px 7px; margin: 0; border-radius: 8px; background: var(--teal); box-shadow: 0 2px 0 #1f7a70; }
+      .pz.busy { opacity: .55; } .pz.busy .opt button { pointer-events: none; }
+      .pz.bw { border-color: #c9d9e8; } .pz.br { border-color: #f1c27d; }
+      /* ===== Quầy POV — kéo thả / chạm đôi (lõi mới, docs/PLAN-CORE.md) ===== */
+      #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); overscroll-behavior: none; background: #6b5740; color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
+      #pov.shake { animation: shake .3s; }
+      /* art C: ảnh tô thật trong ô ráp — thay cho chồng icon */
+      /* mặt khách trên phiếu */
+      #pov .tk-face { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; object-position: top center;
+        float: left; margin: 0 5px 0 0; background: #fffdf7; box-shadow: 0 1px 2px rgba(40,28,18,.3); }
+      /* A10 — lớp hiệu ứng chan nước, không chắn thao tác */
+      #pov .pv-fx { position: absolute; pointer-events: none; z-index: 9; }
+      #pov .pv-fx img { width: 100%; height: 100%; display: block; object-fit: contain; }
+      #pov .pv-hand { left: 0; top: 0; transform-origin: 75% 92%; }
+      #pov .pv-stream { transform: translateX(-50%); transform-origin: top center; }
+      #pov .pv-stream img { object-fit: fill; }
+      #pov .pv-splash { transform: translate(-50%,-60%); }
+      /* ================= QUẦY POV — BỐ CỤC CẢNH VẼ LIỀN =================
+         Nền là một tấm tranh (art/scene.webp). Mọi trạm là ô TRONG SUỐT đặt lên trên
+         theo % trong src/data/counter-layout.js → đổi tranh chỉ cần đo lại bảng ZONES.
+         Ảnh hỏng → .pv-stage mất class `scene`, các ô hiện nền giấy mờ để vẫn chơi được. */
+      #pov { justify-content: center; align-items: center; padding: 0;
+        background: linear-gradient(170deg, #efe5d2, #ddd0b6); }
+      /* --pv-gutter: chừa mép trái/phải cho vùng cử chỉ của Android.
+         Quạt từ mép màn hình là Back của HỆ ĐIỀU HÀNH — trang web KHÔNG tắt được.
+         Chỉ tránh được bằng cách đừng để thứ kéo được nằm trong dải đó.
+         Thu cả khung tranh vào thay vì dịch từng ô — giữ nguyên căn chỉnh ô với tranh. */
+      .pv-stage { position: relative; container-type: inline-size; width: calc(100% - var(--pv-gutter) * 2); aspect-ratio: 768 / 1376;
+        max-width: min(calc(100% - var(--pv-gutter) * 2), calc((100vh - 74px) * 768 / 1376)); margin: auto;
+        border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(60,44,28,.28); }
+      .pv-scene { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      @media (pointer: fine) { :root { --pv-gutter: 0px; } }   /* chuột thì không có cử chỉ mép */
+      .pv-z { position: absolute; display: flex; align-items: center; justify-content: center;
+        gap: 2px; box-sizing: border-box; }
+      .pv-z.row { flex-direction: row; } .pv-z.col { flex-direction: column; }
+      .pv-stage:not(.scene) .pv-z { background: rgba(255,252,244,.72); border: 1px solid rgba(90,66,44,.25); border-radius: 8px; }
+      .pv-z.drop.over { outline: 3px dashed #c8552e; outline-offset: -3px; border-radius: 10px;
+        background: rgba(243,217,164,.42); }
+      /* trong cảnh: bỏ hết nền/viền của mấy khung cũ để thấy tranh */
+      .pv-stage .pv-baskets, .pv-stage .pv-hot, .pv-stage .pv-sinkin, .pv-stage .pv-pots,
+      .pv-stage .pv-ready, .pv-stage .pv-boards, .pv-stage .pv-pans, .pv-stage .pv-srcs {
+        background: none; border: 0; box-shadow: none; width: 100%; height: 100%;
+        display: flex; align-items: center; justify-content: center; gap: 3px; }
+      .pv-stage .pv-srcs.col, .pv-z.col .pv-srcs { flex-direction: column; }
+      /* dải khay topping: mỗi món đúng MỘT khay vẽ sẵn, đồ nằm TRONG lòng khay */
+      .pv-stage .pv-pans { overflow: visible; padding: 0; position: relative; display: block; }
+      .pv-stage .pv-pan { position: absolute; top: 0; height: 100%; display: block; }
+      /* HAI HÀNG (quá 8 khay): mỗi ô thấp đi nên nhãn phải chui vào TRONG ô,
+         để dưới đáy như một hàng thì nó đè lên khay hàng dưới. */
+      .pv-stage .pv-pans.two .pv-pan .pv-panimg { inset: 0 0 38% 0; }
+      .pv-stage .pv-pans.two .pv-pan small { bottom: 0; font-size: 7.5px; max-height: 2.3em; }
+      .pv-stage .pv-pans.two .pv-pan.noart .pv-ghosticon img { max-height: 18px; }
+      /* khay là MỘT ảnh liền (khay + đồ trong khay), phủ kín ô */
+      .pv-stage .pv-pan .pv-panimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
+      .pv-stage .pv-pan .pv-ghosticon { display: none; }
+      .pv-stage .pv-pan.noart { border: 2px dashed rgba(90,66,44,.35); border-radius: 6px; }
+      /* món chưa có ảnh khay thì vẽ icon như cũ */
+      .pv-stage .pv-pan.noart .pv-ghosticon { display: block; position: absolute; left: 50%; top: 14%;
+        transform: translateX(-50%); }
+      .pv-stage .pv-pan.noart .pv-ghosticon img { width: auto; height: 100%; max-height: 26px; }
+      .pv-stage .pv-src img, .pv-stage .pv-src .emo { width: auto; height: 42px; max-width: 100%; object-fit: contain; }
+      .pv-stage .pv-broth img { width: auto; height: 40px; object-fit: contain; }
+      /* đồ trên kệ/khay: bỏ khung trắng để nhìn như đồ nằm trong khay vẽ sẵn */
+      .pv-stage .pv-pan, .pv-stage .pv-src, .pv-stage .pv-broth {
+        background: none; border: 0; box-shadow: none; padding: 0; }
+      .pv-stage .pv-pan img, .pv-stage .pv-src img, .pv-stage .pv-broth img {
+        filter: drop-shadow(0 1px 2px rgba(60,44,28,.35)); }
+      .pv-stage .pv-src small, .pv-stage .pv-broth small {
+        font-size: 7.5px; line-height: 1.05; white-space: normal; overflow: visible;
+        text-overflow: clip; max-height: 2.2em; text-align: center;
+        text-shadow: 0 1px 2px rgba(255,250,240,.95), 0 0 3px rgba(255,250,240,.9); }
+      /* nhãn khay: MỘT dòng, cắt bớt nếu dài — hai dòng là đè lên khay bên cạnh */
+      /* nhãn khay: xuống mặt bàn dưới khay, xuống dòng TRONG bề ngang khay của nó.
+         Cắt cụt (…) thì mất tên nguyên liệu — game này là để nhớ món nên thà hai dòng. */
+      .pv-stage .pv-pan small {
+        position: absolute; left: 0; right: 0; bottom: -16%; font-size: 7px; line-height: 1.08;
+        white-space: normal; word-break: break-word; overflow: hidden; max-height: 2.4em; text-align: center;
+        text-shadow: 0 1px 2px rgba(255,250,240,.95), 0 0 3px rgba(255,250,240,.9); }
+      /* sprite trạm: object riêng nằm đúng ô, không phải hình vẽ dính trong nền */
+      .pv-stage .pv-obj { position: relative; width: 100%; height: 100%; display: flex;
+        align-items: flex-end; justify-content: center; cursor: grab; }
+      .pv-stage .pv-obj .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.32)); }
+      .pv-stage .pv-obj .pv-ghosticon { display: none; }
+      .pv-stage .pv-obj small { position: relative; z-index: 1; }
+      .pv-stage .pv-obj.noart::after { content: ''; position: absolute; inset: 0;
+        border: 2px dashed rgba(90,66,44,.35); border-radius: 8px; }
+      .pv-stage .pv-obj:active { transform: scale(.96); }
+      /* sprite trạm chung: ảnh nằm dưới, chữ và thanh thời gian nằm trên */
+      .pv-stage .pv-z.st-fryer, .pv-stage .pv-z.st-mw,
+      .pv-stage .pv-board, .pv-stage .pv-pt { position: relative; }
+      .pv-stage .pv-z.st-fryer > .pv-objimg, .pv-stage .pv-z.st-mw > .pv-objimg,
+      .pv-stage .pv-board > .pv-objimg, .pv-stage .pv-pt > .pv-objimg {
+        position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+        filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); pointer-events: none; }
+      .pv-stage .pv-board, .pv-stage .pv-pt { border: 0; background: none; }
+      .pv-stage .pv-board.done, .pv-stage .pv-pt.done { background: none; }
+      .pv-stage .pv-board.done > .pv-objimg, .pv-stage .pv-pt.done > .pv-objimg {
+        filter: drop-shadow(0 0 6px rgba(93,166,110,.95)); }
+      .pv-stage .pv-board > *:not(.pv-objimg), .pv-stage .pv-pt > *:not(.pv-objimg),
+      .pv-stage .pv-z.st-fryer > *:not(.pv-objimg), .pv-stage .pv-z.st-mw > *:not(.pv-objimg) {
+        position: relative; z-index: 1; }
+      .pv-stage .pv-board small, .pv-stage .pv-pt small, .pv-stage .pv-pt b {
+        text-shadow: 0 1px 2px rgba(255,250,240,.95), 0 0 3px rgba(255,250,240,.9); color: #2b2118; }
+      /* Chữ trong cảnh bếp — Kent 17/09: "chữ vẽ chưa được đẹp với to lắm".
+         Font máy chạy cạnh tranh mực nước nhìn như dán đè; đổi sang chữ tay, mực nâu, nhỏ lại. */
+      .pv-stage, .pv-stage small, .pv-stage b, .pv-stage .hint,
+      .pv-stage .tk, .pv-stage .pv-hud { font-family: "Patrick Hand", cursive; font-weight: 400; }
+      .pv-stage .pv-pan small { font-size: 9px; line-height: 1; color: var(--pv-ink);
+        text-shadow: 0 1px 0 rgba(255,252,246,.95), 0 0 2px rgba(255,252,246,.85); }
+      .pv-stage .hint { font-size: 8px; opacity: .45; letter-spacing: .2px; }
+      .pv-stage .pv-slot small { font-size: 8.5px; color: var(--pv-ink); }
+      .pv-stage .pv-src small, .pv-stage .pv-broth small, .pv-stage .pv-rk small,
+      .pv-stage .pv-job small, .pv-stage .pv-board small, .pv-stage .pv-pt small,
+      .pv-stage .pv-rd small { font-size: 8px; color: var(--pv-ink); }
+      .pv-stage .tk b { font-size: 10px; } .pv-stage .tk span { font-size: 9px; }
+      .pv-stage .pv-hud span { font-size: 12px; } .pv-stage .pv-hud i { font-size: 8px; }
+      /* Rổ xả lạnh đứng ở bồn + vòi nước đang chảy */
+      .pv-stage .pv-sinkin { position: relative; }
+      .pv-stage .pv-rinse { position: absolute; inset: 0; }
+      .pv-stage .pv-rinse .pv-objimg { position: absolute; inset: auto 0 2% 0; width: 100%; height: 74%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
+      .pv-stage .pv-rinse.done .pv-objimg { filter: drop-shadow(0 0 6px rgba(127,211,255,.95)); }
+      /* fx-splash-water vẽ trắng, đặt trên bồn sáng thì không thấy gì — nhuộm xanh cho nổi. */
+      .pv-stage .pv-rinse .pv-water { position: absolute; left: 50%; top: 8%; width: 40%; height: 56%;
+        transform: translateX(-50%); object-fit: contain; opacity: .9;
+        filter: hue-rotate(175deg) saturate(2.2) brightness(1.05) drop-shadow(0 0 3px rgba(90,170,220,.9));
+        animation: pvRinse .5s steps(2) infinite; }
+      .pv-stage .pv-rinse .pv-rk small { background: rgba(255,252,246,.82); padding: 0 3px; border-radius: 4px; }
+      @keyframes pvRinse { 0%,100% { opacity: .55; transform: translateX(-50%) scaleY(.94); }
+        50% { opacity: .95; transform: translateX(-50%) scaleY(1.06); } }
+      .pv-stage .pv-rinse .pv-rk { position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: flex-end; }
+      .pv-stage .pv-rinse .pv-rk .pv-ghosticon { display: none; }
+      /* Vòi nước ở bồn: chỗ hứng "miếng nước trắng" đem vô nồi. Nằm góc trên bồn,
+         trên rổ xả lạnh một bậc để lúc đang xả vẫn bấm được. */
+      .pv-stage .pv-tap { position: absolute; right: 1%; top: 0; width: 42%; height: 46%;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 1px; z-index: 2; cursor: grab; border-radius: 7px;
+        background: rgba(255,252,246,.66); box-shadow: 0 1px 3px rgba(60,44,28,.28); }
+      .pv-stage .pv-tap img, .pv-stage .pv-tap .emo { width: auto; height: 56%; max-height: 22px; object-fit: contain; }
+      .pv-stage .pv-tap small { font-size: 7.5px; line-height: 1.05; text-align: center; color: var(--pv-ink); }
+      .pv-stage .pv-basket.away .pv-objimg { opacity: .32; }
+      /* Thùng rác là sprite; emoji chỉ còn là đường lùi */
+      .pv-stage .pv-z.trash { position: relative; }
+      .pv-stage .pv-z.trash > .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
+      .pv-stage .pv-z.trash .pv-tr { display: none; }
+      .pv-stage .pv-z.trash.noart .pv-tr { display: block; font-size: 20px; }
+      .pv-stage .pv-z.trash.tossing > .pv-objimg { animation: pvToss .45s ease-out; }
+      .pv-toss { position: fixed; pointer-events: none; z-index: 9; }
+      @keyframes pvToss { 0% { transform: rotate(0) scale(1); } 30% { transform: rotate(-7deg) scale(1.08); }
+        60% { transform: rotate(5deg) scale(1.04); } 100% { transform: rotate(0) scale(1); } }
+      .pv-stage .dragsrc:active { transform: scale(.94); }
+      .pv-stage .pv-baskets { gap: 4%; }
+      .pv-stage .pv-basket { flex: 1; min-height: 0; height: 74%; }
+      /* rổ trụng là object riêng, không còn vẽ trong nền */
+      .pv-stage .pv-basket { position: relative; border: 0; }
+      .pv-stage .pv-basket .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,44,28,.30)); }
+      .pv-stage .pv-basket .pv-rk { position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: flex-end; }
+      .pv-stage .pv-basket .pv-rk .pv-ghosticon { display: none; }
+      .pv-stage .pv-basket .pv-rk small, .pv-stage .pv-basket .pv-rk .bar { position: relative; z-index: 1; }
+      .pv-stage .pv-basket.noart { border: 2px dashed rgba(255,255,255,.5); border-radius: 8px; }
+      .pv-stage .pv-basket.hot .pv-objimg, .pv-stage .pv-basket.hot2 .pv-objimg {
+        filter: drop-shadow(0 0 6px rgba(255,209,102,.95)); }
+      .pv-stage .pv-basket.rinsed .pv-objimg { filter: drop-shadow(0 0 6px rgba(127,211,255,.95)); }
+      .pv-stage .pv-basket.bad .pv-objimg { filter: drop-shadow(0 0 6px rgba(214,64,44,.95)); }
+      /* Cột PHẢI đều nhau: ô nào có tô thì grid cho nó rộng hơn, tô lệch khỏi tấm lót vẽ trong tranh. */
+      .pv-stage .pv-slots { position: absolute; inset: 0; height: auto; display: grid;
+        grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2%; }
+      .pv-stage .pv-slot { border: 0; background: radial-gradient(ellipse at 50% 62%, rgba(90,66,44,.10), transparent 62%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .pv-stage .pv-slot small { opacity: .45; font-size: 9px; }
+      .pv-stage .pv-slot.has { background: radial-gradient(ellipse at 50% 62%, rgba(90,66,44,.2), transparent 64%); }
+      /* đang kéo mới hiện viền chỗ thả — lúc bình thường để tranh sạch */
+      #pov.dragging .pv-stage .pv-slot { border: 2px dashed rgba(90,66,44,.5); border-radius: 46% / 38%; }
+      /* Tô ráp bám BỀ NGANG Ô chứ không bám vw: khung tranh đã chừa mép và bị giới hạn
+         theo chiều cao màn hình, nên vw không nói lên tô to bao nhiêu trong tranh. */
+      .pv-stage .pv-bowl { width: 99%; aspect-ratio: 1; height: auto; flex: none; }
+      .pv-stage .pv-tr { font-size: 20px; }
+      /* dây kẹp phiếu khách — như kẹp giấy trên dây trong bếp thật */
+      .pv-rail { position: absolute; display: flex; gap: 2%; align-items: stretch; justify-content: flex-start; }
+      .pv-rail:before { content: ''; position: absolute; left: -2%; right: -2%; top: 14%; height: 2px;
+        background: rgba(70,52,34,.55); border-radius: 2px; }
+      .pv-rail .tk { position: relative; flex: 1 1 0; max-width: 32%; min-width: 0; margin-top: 4%; align-self: flex-start;
+        background: #fffdf5; border: 1px solid rgba(90,66,44,.45); border-radius: 3px;
+        box-shadow: 0 3px 8px rgba(60,44,28,.32); padding: 5px 5px 4px; overflow: hidden;
+        transform: rotate(var(--tilt, 0deg)); transform-origin: top center; }
+      .pv-rail .tk:nth-child(2) { --tilt: -1.4deg; } .pv-rail .tk:nth-child(3) { --tilt: 1.2deg; }
+      .pv-rail .tk:before { content: ''; position: absolute; left: 50%; top: -9%; width: 26%; height: 16%;
+        transform: translateX(-50%); background: #4b4038; border-radius: 2px; }
+      .pv-rail .tk.reg { background: #fff6e0; }
+      .pv-rail .tk b { display: block; font-size: 11px; line-height: 1.2; }
+      .pv-rail .tk span { display: block; font-size: 10px; opacity: .85; line-height: 1.2; }
+      .pv-rail .tk .bar { display: block; height: 3px; margin-top: 2px; border-radius: 2px;
+        background: rgba(90,66,44,.2); overflow: hidden; }
+      .pv-rail .tk .bar u { display: block; height: 100%; }
+      .pv-stage .tk-face { width: 30px; height: 30px; margin: 0 5px 2px 0; }
+      /* HUD bám góc, cao theo nội dung — ô trong layout chỉ dùng để lấy điểm neo */
+      .pv-hud { position: absolute; width: auto !important; height: auto !important;
+        display: flex; align-items: center; gap: 6px; font-size: 11px;
+        font-weight: 700; color: #3b2a1e; background: rgba(255,252,244,.88);
+        border: 1px solid rgba(90,66,44,.35); border-radius: 6px; padding: 3px 7px;
+        box-shadow: 0 2px 5px rgba(60,44,28,.22); white-space: nowrap; }
+
+      /* ---- J3: HUD nằm TRONG tranh, tranh tràn viền, đồng hồ ca ---- */
+      /* Nền ngoài khung = chính tấm tranh phóng to + làm mờ, nên mắt không thấy cái khung be.
+         --pv-bg do pov.js gắn (SCENE.src đổi theo base path của Pages). */
+      #pov::before { content: ''; position: absolute; inset: 0; z-index: -1;
+        background: var(--pv-bg, none) center / cover no-repeat #6b5740;
+        filter: blur(14px) brightness(.78) saturate(.9); transform: scale(1.12); }
+      .pv-stage .pv-hud span { font-size: 4.6cqw; line-height: 1; }
+      .pv-stage .pv-hud i { font-size: 2.8cqw; opacity: .75; }
+      .pv-stage .pv-hud { gap: 1.6cqw; padding: 1cqw 2cqw; border-radius: 2cqw; }
+      .pv-streak:empty { display: none; }
+      .pv-streak { font-size: 3.6cqw; color: #b5521f; background: rgba(230,160,60,.22);
+        border-radius: 999px; padding: .3cqw 1.4cqw; }
+      .pv-streak.pop { animation: pvPop .2s ease-out; }
+      @keyframes pvPop { from { transform: scale(1.4); } to { transform: scale(1); } }
+
+      .pv-clock { position: relative; width: 13cqw; height: 13cqw; flex: none; }
+      .pv-clock svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+      .pv-clock circle { fill: none; stroke-width: 4.2; }
+      .pv-clock .bg { stroke: rgba(90,66,44,.18); }
+      /* stroke-dashoffset do JS gán (calc() ra số không đơn vị không phải trình duyệt nào cũng chịu) */
+      /* XANH khi còn nhiều giờ — KHÔNG dùng var(--broth) như spec: --broth là #e8a33c,
+         gần y hệt màu cảnh báo #e0a030 nên mốc 25% nhìn không ra. */
+      .pv-clock .fg { stroke: #3f8f4f; stroke-linecap: round; stroke-dasharray: 97.4; stroke-dashoffset: 0;
+        transition: stroke-dashoffset .2s linear; }
+      .pv-clock.warn .fg { stroke: #e0a030; }
+      .pv-clock.hot .fg { stroke: #d64a2c; }
+      .pv-clock.hot { animation: pvTick .6s infinite; }
+      .pv-clock.up .fg { display: none; }
+      @keyframes pvTick { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+      .pv-clock u { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+        font-size: 4.2cqw; font-weight: 700; text-decoration: none; color: #3b2a1e; }
+      .pv-clock.hot u { color: #d64a2c; }
+
+      .pv-x { width: 9cqw; height: 9cqw; flex: none; display: flex; align-items: center; justify-content: center;
+        font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
+        border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
+
+      /* ---- J6: phiếu khách to, kẹp gỗ, icon nguyên liệu. Mọi kích thước theo cqw ---- */
+      #pov .pv-tkghost, .pv-rail .tk { margin-top: 3.5%; padding: 1.2cqw 1.6cqw 2.2cqw; max-width: 32%; overflow: visible;
+        display: grid; grid-template-columns: 12cqw 1fr; grid-template-rows: auto auto; column-gap: 1.2cqw; align-items: start;
+        border-radius: .8cqw; }
+      .pv-rail .tk:before { display: none; }                      /* kẹp cũ (khối xám) → sprite kẹp gỗ */
+      #pov .pv-tkghost .tk-clip, .pv-rail .tk .tk-clip { position: absolute; left: 50%; top: -2.6cqw; width: 5cqw; height: auto; transform: translateX(-50%); z-index: 2;
+        filter: drop-shadow(0 1px 1px rgba(40,28,18,.35)); }
+      #pov .pv-tkghost.reg .tk-clip, .pv-rail .tk.reg .tk-clip { filter: sepia(1) saturate(4) hue-rotate(-8deg) drop-shadow(0 1px 1px rgba(40,28,18,.35)); }   /* khách quen: kẹp vàng */
+      .pv-stage .tk-face { grid-row: 1; width: 12cqw; height: 12cqw; margin: 0; float: none;
+        border: .45cqw solid #3b2a1e; box-sizing: border-box; }
+      #pov .pv-tkghost b, .pv-rail .tk b { grid-column: 2; font-size: 3.4cqw; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      #pov .pv-tkghost span, .pv-rail .tk span { grid-column: 2; font-size: 4.2cqw; font-weight: 700; color: #3b2a1e; opacity: 1; line-height: 1.12; }
+      #pov .pv-tkghost .tk-ing, .pv-rail .tk .tk-ing { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .5cqw; margin-top: .8cqw; }
+      #pov .pv-tkghost .tk-ing img, .pv-rail .tk .tk-ing img { width: 4.4cqw; height: 4.4cqw; object-fit: contain; opacity: .45; }
+      #pov .pv-tkghost .tk-ing img.on, .pv-rail .tk .tk-ing img.on { opacity: 1; }
+      #pov .pv-tkghost .bar, .pv-rail .tk .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 1.4cqw; margin: 0; border-radius: 0; }
+      #pov .pv-tkghost .bar u, .pv-rail .tk .bar u { background: var(--green); transition: width .25s linear; }
+      #pov .pv-tkghost .bar u.warn, .pv-rail .tk .bar u.warn { background: #e0a030; }
+      #pov .pv-tkghost .bar u.hot, .pv-rail .tk .bar u.hot { background: #d64a2c; animation: pvTick .6s infinite; }
+      .pv-rail .tk.new { animation: tkIn .22s cubic-bezier(.2,.8,.3,1.2); }
+      @keyframes tkIn { from { transform: translateY(-40%) rotate(var(--tilt, 0deg)); opacity: 0; } to { transform: translateY(0) rotate(var(--tilt, 0deg)); opacity: 1; } }
+
+      /* ---- J4: khoảnh khắc thắng. Tất cả là BẢN SAO gắn vào #pov, toạ độ fixed,
+         vì render() dựng lại #pvTickets / #pvSlots ngay khung hình kế. ---- */
+      #pov .pv-serve { position: fixed; z-index: 18; pointer-events: none; }
+      #pov .pv-serve img { width: 100%; height: 100%; object-fit: contain; }
+      #pov .pv-serve small { display: none; }
+      #pov .pv-tkghost { position: fixed; z-index: 18; pointer-events: none; margin: 0; }
+      #pov .pv-stamp { position: fixed; z-index: 19; pointer-events: none; height: auto;
+        transform: translate(-50%,-20%) rotate(-8deg); }
+      #pov .pv-star { position: fixed; z-index: 19; pointer-events: none; height: auto; }
+
+      /* ---- J5: vật nhận nảy + fx bung theo loại đích ---- */
+      #pov .pv-burst, #pov .pv-fly { position: fixed; z-index: 19; pointer-events: none; height: auto; object-fit: contain; }
+      #pov .pv-fly { transform: translate(-50%,-50%); }
+
+      /* Số tiền bay lên — gắn thẳng vào #pov vì render() dựng lại DOM mỗi khung hình. */
+      .pv-float { position: fixed; z-index: 20; pointer-events: none; font-weight: 700;
+        font-size: 16px; color: #2f8a3a; text-shadow: 0 1px 3px rgba(255,250,240,.95);
+        animation: pvFloat .7s ease-out forwards; }
+      @keyframes pvFloat { from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(-40px); opacity: 0; } }
+      .pv-hud.r { left: auto !important; right: 2%; }
+      .pv-hud i { font-style: normal; opacity: .6; font-weight: 600; }
+      /* thanh trên cùng + lời nhắc: nổi trên cảnh, không chiếm chỗ */
+      #pov .pv-top { position: absolute; top: 6px; left: 8px; right: 8px; z-index: 12;
+        display: flex; justify-content: space-between; pointer-events: none; }
+      #pov .pv-top > * { pointer-events: auto; }
+      #pov .pv-msg { position: absolute; left: 0; right: 0; bottom: 4px; z-index: 12;
+        text-align: center; font-size: 12px; padding: 2px 8px;
+        text-shadow: 0 1px 2px rgba(255,250,240,.9); }
+      #pov .pv-art { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 2px 3px rgba(40,28,18,.28)); }
+      #pov .pv-bowl.full .pv-art { animation: bowlDone 1.1s ease-in-out infinite; }
+      @keyframes bowlDone { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+      #pov .pv-lbl { font-size: 8.5px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.55); margin-bottom: 2px; }
+      #pov .pv-lbl.dark { color: #2b2118; text-shadow: none; opacity: .6; }
+      #pov .hint { font-size: 8.5px; opacity: .6; }
+      #pov small { display: block; line-height: 1.1; }
+      .pv-bar { position: absolute; left: 4px; right: 4px; bottom: 2px; height: 3px; border-radius: 2px; background: rgba(0,0,0,.25); overflow: hidden; }
+      .pv-bar::after { content: ''; display: block; height: 100%; width: var(--p); background: var(--broth); }
+      /* phiếu khách */
+      .pv-top { display: flex; align-items: flex-start; gap: 6px; padding: calc(max(6px, env(safe-area-inset-top)) + 2px) 8px 5px; background: rgba(43,33,24,.4); }
+      .pv-top .pill-dark { margin-top: 3px; } .pv-top .ghost { background: rgba(255,247,234,.9); margin: 0; padding: 5px 9px; font-size: 11px; }
+      .pv-tickets { flex: 1; display: flex; gap: 5px; min-height: 46px; }
+      .pv-tickets .tk { flex: 1; max-width: 34%; background: #fff8ec; border: 2px solid #d8cbb6; border-radius: 9px; padding: 3px 6px 5px; font-size: 10px; line-height: 1.2; transition: transform .12s; }
+      .pv-tickets .tk:first-child { border-color: var(--red); box-shadow: 0 3px 10px rgba(232,74,59,.25); }
+      .pv-tickets .tk b { display: block; font-size: 10.5px; } .pv-tickets .tk span { display: block; font-weight: 700; color: var(--red); font-size: 10.5px; } .pv-tickets .tk.reg b { color: #b07a20; }
+      .pv-tickets .tk .bar { display: block; height: 4px; background: rgba(0,0,0,.12); border-radius: 2px; margin-top: 3px; overflow: hidden; } .pv-tickets .tk .bar u { display: block; height: 100%; }
+      /* lớp xa: nồi · bồn · chảo · lò · lò đun nước */
+      .pv-back { flex: 0 0 auto; display: flex; gap: 6px; align-items: stretch; padding: 6px 8px 4px; }
+      .pv-pot { flex: 1.4; background: radial-gradient(ellipse at 50% 26%, #7d7466, #433c33 78%); border: 3px solid #9c9282; border-radius: 34% 34% 14px 14px / 26% 26% 10px 10px; padding: 4px 6px 6px; box-shadow: inset 0 8px 20px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.3); position: relative; }
+      .pv-pot::after { content: ''; position: absolute; inset: 16px 10px auto 10px; height: 26px; background: radial-gradient(ellipse, rgba(255,255,255,.3), transparent 70%); pointer-events: none; animation: steamy 2.2s infinite alternate; } @keyframes steamy { to { transform: translateY(-5px) scaleX(1.1); opacity: .45; } }
+      .pv-baskets { display: flex; gap: 4px; } .pv-basket { flex: 1; min-height: 46px; border: 2px dashed rgba(255,255,255,.5); border-radius: 8px; display: grid; place-items: center; }
+      .pv-basket.hot, .pv-basket.hot2 { border-color: #ffd166; border-style: solid; } .pv-basket.rinsed { border-color: #7fd3ff; border-style: solid; } .pv-basket.bad { border-color: var(--red); border-style: solid; }
+      .pv-rk { position: relative; text-align: center; font-size: 8.5px; color: #fff; padding-bottom: 4px; } .pv-rk img { width: 28px; height: 28px; }
+      .pv-hot { margin-top: 4px; min-height: 26px; display: flex; gap: 5px; align-items: center; padding: 2px 5px; border-radius: 6px; background: rgba(255,255,255,.12); color: #fff; }
+      .pv-hb { position: relative; text-align: center; font-size: 8px; padding-bottom: 4px; } .pv-hb img { width: 24px; height: 24px; }
+      .pv-col { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+      .pv-sink { background: linear-gradient(#cfc8b6, #a79e8a); border: 2px solid #e2dccb; border-radius: 10px; padding: 4px 6px; flex: 1; box-shadow: inset 0 6px 14px rgba(0,0,0,.22); }
+      .pv-sink .pv-lbl { color: #2b2118; text-shadow: none; } .pv-sinkin { min-height: 30px; border-radius: 6px; background: linear-gradient(#7fb8cf, #4d8ea8); box-shadow: inset 0 3px 8px rgba(0,0,0,.25); display: grid; place-items: center; }
+      .pv-st { border-radius: 10px; padding: 4px 6px; min-height: 44px; } .pv-st.fry { background: linear-gradient(#3f3a35, #29241f); border: 2px solid #6b6158; } .pv-st.mw { background: linear-gradient(#e7e0cf, #c3bba7); border: 2px solid #9b9384; } .pv-st.mw .pv-lbl { color: #2b2118; text-shadow: none; }
+      .pv-job { position: relative; text-align: center; font-size: 8.5px; color: #fff; padding-bottom: 4px; } .pv-st.mw .pv-job, .pv-sink .pv-job { color: #2b2118; } .pv-job img { width: 26px; height: 26px; }
+      .pv-burner { flex: 1.1; background: linear-gradient(#4a4440, #332e2b); border: 2px solid #6b6158; border-radius: 10px; padding: 4px 6px; }
+      .pv-pots { display: flex; gap: 4px; } .pv-pt { flex: 1; min-height: 38px; border: 2px dashed rgba(255,255,255,.45); border-radius: 8px; padding: 2px 3px; text-align: center; color: #fff; font-size: 8px; position: relative; }
+      .pv-pt.done { border-style: solid; border-color: var(--green); } .pv-pt b { font-size: 8.5px; }
+      .pv-ready { margin-top: 4px; min-height: 26px; display: flex; gap: 4px; align-items: center; color: #fff; } .pv-rd { text-align: center; font-size: 8px; } .pv-rd img { width: 24px; height: 24px; }
+      .pv-broths { display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+      .pv-broth { background: radial-gradient(ellipse at 50% 32%, #e2a23f, #8a4f10 82%); border: 2px solid #c99a55; border-radius: 40% 40% 10px 10px / 34% 34% 8px 8px; padding: 3px 6px; text-align: center; color: #fff; font-size: 8px; font-weight: 700; box-shadow: 0 3px 8px rgba(0,0,0,.3); } .pv-broth img { width: 26px; height: 26px; }
+      /* kệ topping / kệ nước */
+      .pv-shelf { flex: 0 0 auto; max-height: 32vh; overflow-y: auto; padding: 5px 8px; background: linear-gradient(#cfc4a9, #b6a98b); border-top: 4px solid #e6dcc4; }
+      .pv-shelf.soup { background: linear-gradient(#c2b79c, #a89b7d); border-top-width: 3px; }
+      .pv-pans { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 4px; }
+      .pv-pan { background: #eef1f2; border: 2px solid #6f7a80; border-radius: 5px; text-align: center; font-size: 8.5px; font-weight: 700; padding: 2px 1px; cursor: grab; box-shadow: inset 0 2px 5px rgba(0,0,0,.18); }
+      .pv-pan img { width: 26px; height: 26px; } .pv-pan small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      /* lớp gần: kệ tô/sợi · thớt · chỗ tô · thùng rác */
+      .pv-front { flex: 1; display: flex; gap: 6px; padding: 6px 8px 4px; background: linear-gradient(#f2ead8, #ddd2ba); align-items: flex-end; min-height: 0; }
+      .pv-stack { display: flex; flex-direction: column; gap: 4px; width: 62px; max-height: 196px; overflow-y: auto; }
+      .pv-src { background: #fff; border: 2px solid #d8cbb6; border-radius: 8px; text-align: center; font-size: 8.5px; font-weight: 700; padding: 3px 1px; cursor: grab; box-shadow: 0 2px 0 #cdbfa8; } .pv-src img { width: 28px; height: 28px; }
+      .pv-work { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+      .pv-boards { display: flex; gap: 5px; height: 46px; } .pv-board { flex: 1; min-height: 42px; border: 2px dashed rgba(43,33,24,.35); border-radius: 7px; background: rgba(255,255,255,.5); text-align: center; font-size: 8.5px; padding: 2px; position: relative; }
+      .pv-board.done { border-style: solid; border-color: var(--green); background: #eef8ec; } .pv-board img { width: 24px; height: 24px; }
+      .pv-slots { height: min(34vh, 210px); display: grid; grid-auto-flow: column; gap: 6px; }
+      .pv-slot { border: 3px dashed rgba(43,33,24,.28); border-radius: 46% / 38%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #6a5d4e; text-align: center; padding: 4px; transition: transform .12s, background .12s; }
+      .pv-slot.has { border-style: solid; border-color: #c9b78f; background: rgba(255,252,244,.6); }
+      .pv-bowl { position: relative; width: min(30vw, 150px); height: min(30vw, 150px); cursor: grab; } .pv-bowl > img, .pv-bowl > .emo { width: 100%; height: 100%; }
+      .pv-bowl .lay { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; transform: translate(calc(-50% + (var(--k) - 2) * 9px), calc(-56% + (var(--k) % 2) * 8px)) rotate(calc(var(--k) * 21deg)); } .pv-bowl .lay img { width: 30px; height: 30px; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+      .pv-bowl.full { animation: pop .5s infinite alternate; }
+      .pv-trash { width: 44px; border: 2px dashed rgba(43,33,24,.3); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; color: #6a5d4e; } .pv-trash small { font-size: 8px; }
+      .drop.over { outline: 3px solid var(--broth); outline-offset: 1px; background: rgba(255,209,102,.28); }
+      .pv-hl { position: fixed; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 8;
+        border: 3px solid var(--broth); border-radius: 10px; background: rgba(255,209,102,.22);
+        box-shadow: 0 0 0 2px rgba(255,255,255,.65); opacity: 0;
+        transition: opacity .1s linear, left .09s ease-out, top .09s ease-out, width .09s ease-out, height .09s ease-out; }
+      .pv-hl.on { opacity: 1; }
+      .dragsrc.lift { opacity: .35; transform: scale(.92); transition: transform .12s ease-out, opacity .12s linear; }
+      /* Ô vừa nhận đồ nảy một cái — nhìn là biết đã vô, khỏi phải dò lại bằng mắt. */
+      .drop.hit { animation: pvHit .34s cubic-bezier(.3,1.5,.5,1); }
+      @keyframes pvHit { 0% { transform: scale(1); } 38% { transform: scale(1.12); } 100% { transform: scale(1); } }
+      @media (prefers-reduced-motion: reduce) { .drop.hit { animation: none; } .dragsrc.lift { transform: none; } }
+      .pv-ghost { will-change: transform; position: fixed; left: 0; top: 0; width: 56px; height: 56px; pointer-events: none; z-index: 9; filter: drop-shadow(0 8px 10px rgba(0,0,0,.45)); } .pv-ghost img { width: 56px; height: 56px; } .pv-ghost .emo { font-size: 40px; }
+      .pv-msg { flex: 0 0 auto; padding: 6px 10px calc(max(6px, env(safe-area-inset-bottom)) + 4px); text-align: center; font-size: 12px; font-weight: 700; background: var(--paper); min-height: 32px; line-height: 1.25; }
+      .pv-msg.bad { color: var(--red); } .pv-msg.good { color: #2f8a3a; } .pv-msg.mid { color: #b07a20; }
+      .pz-msg { min-height: 18px; margin: 4px 0 6px; font-size: 12.5px; font-weight: 700; color: var(--red); text-align: center; line-height: 1.25; }
+      .pz-sticky { position: sticky; top: -16px; background: var(--paper); z-index: 2; padding-top: 4px; margin: 0 -4px; padding-left: 4px; padding-right: 4px; }
+      .pz-grid.assemble .pz.sm { padding: 4px 2px; border-radius: 9px; } .pz-grid.assemble .pz.sm img { width: 30px; height: 30px; } .pz-grid.assemble .pz.sm span { font-size: 9.5px; }
+      .pz-grid.assemble .pz.nd { grid-column: span 2; flex-direction: row; gap: 6px; padding: 4px 6px; text-align: left; } .pz.nd img { flex: 0 0 auto; } .pz.nd > span { flex: 1; } .pz.nd .opt { margin: 0; flex-direction: column; } .pz.nd .opt button { padding: 4px 6px; font-size: 10px; }
+      .pz-tickets { min-height: 50px; } .pz-tickets .tk { padding: 4px 7px 6px; } .pz-tickets .tk b { font-size: 11px; } .pz-tickets .tk span { font-size: 11px; }
+      .pz-title { font-size: 12px; margin: 2px 0 4px; }
+      .lbl.sign      .lbl.sign { font-size: 15px; font-weight: 800; letter-spacing: 3px; color: #ffe08a; text-shadow: 0 1px 0 #7a2e1a, 0 0 8px rgba(0,0,0,.6); }
+      .opt { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; margin: 6px 0 10px; }
+      .opt label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+      /* hướng dẫn: lên trên (dưới hàng pill), nền mờ — hai ô tay ở đáy không che nữa */
+      #hint { position: absolute; top: calc(max(10px, env(safe-area-inset-top)) + 58px); left: 50%; transform: translateX(-50%); max-width: min(560px, calc(100% - 24px)); text-align: center; font-size: 11.5px; line-height: 1.35; color: var(--paper); background: var(--shade); backdrop-filter: blur(4px); border-radius: 10px; padding: 6px 12px; box-sizing: border-box; }
+      #hint:empty { display: none; }
+      #banner { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%) scale(.9); text-align: center; pointer-events: none; opacity: 0; transition: opacity .25s, transform .25s; }
+      #banner.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      #banner b { display: block; font-size: 34px; font-weight: 800; color: var(--paper); text-shadow: 0 2px 0 #7a2e1a, 0 4px 16px rgba(0,0,0,.6); letter-spacing: 1px; }
+      #banner small { display: block; margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--paper); background: var(--shade); border-radius: 10px; padding: 4px 12px; backdrop-filter: blur(4px); }
+      .float { pointer-events: none; font-weight: 800; font-size: 16px; color: #ffd166; text-shadow: 0 1px 0 #7a2e1a, 0 2px 8px rgba(0,0,0,.6); white-space: nowrap; animation: floatup 1.3s ease-out forwards; }
+      .float.tip { color: #9be15d; } .float.bad { color: #ff7b6b; font-size: 14px; }
+      @keyframes floatup { from { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateY(-46px); opacity: 0; } }
+      #hint { transition: opacity .5s; } #hint.fade { opacity: 0; }
+      .overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(20, 14, 12, .5); padding: 16px; }
+      .panel { max-height: 94vh; overflow-y: auto; background: var(--paper); color: var(--ink); border-radius: 18px; padding: 24px 26px; text-align: center; width: min(400px, 100%); box-shadow: 0 18px 60px rgba(0,0,0,.55); border-top: 6px solid var(--red); }
+      h1 { margin: 0 0 4px; font-size: 38px; color: var(--red); letter-spacing: .5px; text-wrap: balance; }
+      .sub { margin: 0 0 14px; opacity: .8; font-size: 14px; }
+      button { font: inherit; font-size: 16px; font-weight: 800; padding: 12px 24px; border-radius: 12px; border: 0; background: var(--red); color: #fff; cursor: pointer; margin: 4px; box-shadow: 0 3px 0 #a8321f; }
+      button:active { transform: translateY(2px); box-shadow: 0 1px 0 #a8321f; }
+      button.secondary { background: var(--teal); box-shadow: 0 3px 0 #1f7a70; }
+      button:focus-visible { outline: 3px solid var(--broth); outline-offset: 2px; }
+      .how { text-align: left; font-size: 13.5px; line-height: 1.55; margin: 0 auto 14px; max-width: 360px; }
+      .how b { color: var(--red); }
+      button.ghost { background: transparent; color: var(--ink); box-shadow: none; border: 2px solid #eadfcd; padding: 10px 16px; }
+      button.small { font-size: 12px; padding: 6px 10px; }
+      .panel.wide { width: min(520px, 100%); max-height: 92vh; overflow-y: auto; text-align: left; }
+      .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+      .kpis div { background: #f3e9d8; border-radius: 12px; padding: 8px 4px; text-align: center; }
+      .kpis b { display: block; font-size: 20px; } .kpis small { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; opacity: .7; }
+      table.rep { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; }
+      table.rep th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; opacity: .6; padding: 4px 6px; }
+      table.rep td { padding: 6px; border-top: 1px solid #eadfcd; } table.rep .num { text-align: right; font-variant-numeric: tabular-nums; }
+      .good { color: #2f8a3a; font-weight: 700; } .mid { color: #b07a20; font-weight: 700; } .bad { color: var(--red); font-weight: 700; }
+      details { margin: 8px 0; font-size: 13px; } summary { cursor: pointer; font-weight: 700; }
+      ul.errs, ol.route { margin: 6px 0 0; padding-left: 18px; line-height: 1.5; } ul.errs .t { opacity: .6; font-variant-numeric: tabular-nums; margin-right: 4px; }
+      .mast { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; } .chip { font-size: 11px; background: #f3e9d8; border-radius: 10px; padding: 3px 8px; } .chip.good { background: #dff2df; }
+      .stars { font-size: 42px; letter-spacing: 6px; color: var(--broth); margin: 6px 0; text-shadow: 0 1px 0 #b07a20; }
+      .stat { font-size: 15px; margin: 3px 0; }
+      .hidden { display: none !important; }
+      @media (prefers-reduced-motion: reduce) { .timer.done, .ripple { animation: none; } }
+    </style>
+    <script type="module" crossorigin src="./assets/main-BuaIwh6D.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/counter-layout-D2kH0A7h.js">
+  </head>
+  <body>
+    <div id="bg2d"></div>
+    <div id="app"></div>
+    <div id="vignette"></div>
+
+    <div id="hud" class="hidden">
+      <div class="top">
+        <button id="btnBack" class="pill backbtn" title="Về menu">‹</button>
+        <div class="pill"><small>Tiền</small><span id="money">0</span>k</div>
+        <div class="pill"><small id="clockLbl">Còn</small><span id="clock">2:30</span></div>
+        <div class="pill"><small>Khách</small><span id="served">0</span> · bỏ đi <span id="left">0</span></div>
+      </div>
+      <div id="toast"></div>
+      <div id="prep" class="hidden"><div class="big" id="prepNum">10</div><div>Chuẩn bị — trụng tô, trụng sợi sẵn trước khi mở cửa</div></div>
+      <button id="btnTakeover" class="takeover hidden">Tự chơi ▶</button>
+      <button id="btnMute" class="mute">🔊</button>
+      <div id="hands"><div class="slot" data-i="0"></div><div class="slot" data-i="1"></div></div>
+      <div id="banner"></div>
+      <div id="hint">Kệ → lấy · nồi/bồn → làm · quầy ráp → bỏ đúng thứ tự · quầy giao</div>
+    </div>
+
+    <div id="menu" class="overlay">
+      <div class="panel menu">
+        <div class="mhead"><h1 class="sign">KJ's Choices<small>quán bún · phở</small></h1><div class="pts" id="ptsPill" title="Tiền quán — mua nâng cấp, trang trí">💰 <b id="ptsNow">0</b>k</div></div>
+        <div class="tabs three"><button data-tab="day" class="on">🍜 Quán</button><button data-tab="shop">🔧 Nâng cấp <span id="ptsBadge" class="badge"></span></button><button data-tab="more">🎮 Thêm</button></div>
+        <div id="loading">Đang tải…</div>
+        <section id="tab-day" class="tab main">
+          <div class="worlds" id="worldRow"></div>
+          <div class="lvgrid" id="lvGrid"></div>
+          <div class="lvcard daycard" id="lvCard"></div>
+          <button id="btnStart" class="hidden">Mở quán</button>
+          <button id="btnBot" class="ghost small">Xem bot làm mẫu</button>
+        </section>
+        <section id="tab-shop" class="tab main hidden">
+          <div class="shop upg" id="upgrades"></div>
+          <div class="sub" style="font-size:12px;margin:10px 0 4px;font-weight:700">Trang trí — mỗi món khách kiên nhẫn thêm 6 %</div>
+          <div class="shop" id="shop"></div>
+          <div class="sub" style="font-size:11px;margin:8px 0 0">Tiền quán = tiền + tip mỗi ngày (+60 mỗi sao mới) · đã kiếm <span id="ptsTotal">0</span>k</div>
+        </section>
+        <section id="tab-more" class="tab main hidden">
+          <div class="tabs sub"><button data-sub="survival" class="on">🔥 Survival</button><button data-sub="practice">🎯 Luyện</button><button data-sub="puzzle">🧩 Mini</button></div>
+          <section id="tab-survival" class="tab sub">
+            <div class="lvcard solo"><b>Đủ menu · khách tới mãi</b><small>Càng lâu khách càng dày · 3 khách bỏ đi là hết · tiền ×1.5</small><small id="survRecord"></small></div>
+            <button id="btnSurvival">Bắt đầu Survival</button>
+          </section>
+          <section id="tab-practice" class="tab sub hidden">
+            <div class="pickbar"><span id="pickCount"></span><button id="pickAll" class="ghost small">Hết</button><button id="pickWeak" class="ghost small">Chưa thuộc</button><button id="pickBun" class="ghost small">Chỉ món bún</button><button id="pickNone" class="ghost small">Bỏ</button></div>
+            <div class="dishpick" id="dishPick"></div>
+            <div class="row"><button id="btnDrill" class="secondary">Luyện 8 đơn</button><button id="btnRush" class="secondary">Rush 3 đơn</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;margin-top:10px"><b>🏃 Bếp thật (3D)</b><small>Bản cũ: đi lại trong bếp như Overcooked. Giữ lại để tập <b>đường đi</b> và thứ tự trạm cho giống lúc đứng bếp thật. Level chính giờ chơi ở quầy POV.</small><button id="btnKitchen3d" class="secondary">Chơi level này ở bếp 3D</button></div>
+          </section>
+          <section id="tab-puzzle" class="tab sub hidden">
+            <div class="mini"><div class="lvcard solo"><b>🧩 Đố nhanh</b><small>9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary">Chơi</button></div>
+            <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🧑‍🍳 Quầy POV — kéo thả <small style="display:inline;color:var(--red)">· lõi mới</small></b><small>Đứng trước quầy prep như ở tiệm, <b>đủ 18 món</b>: nồi trụng · bồn xả · thớt · chảo chiên · lò vi sóng · lò đun nước. Kéo hoặc <b>chạm đôi</b> để vật tự bay tới đích. Tô xong kéo lên đúng phiếu.</small><button id="btnPov">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🥣 Ráp tô <small style="display:inline;color:var(--red)">· bản thử lõi mới</small></b><small>Phiếu khách treo dần, ráp ngay trên kệ không cần đi lại: tô → sợi (nóng · xả lạnh · nóng lại) → topping đúng thứ tự → nước. 10 phiếu, chấm từng bước.</small><button id="btnAssemble">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1"><b>⚡ Phản xạ</b><small>Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục.</small><button id="btnReflex">Chơi</button></div></div>
+            <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — chọn món ở Luyện. Kết quả ghi vào Tiến độ nhớ món, +10k/câu sạch.</div>
+          </section>
+        </section>
+        <details class="more"><summary>Cách chơi · tuỳ chọn</summary>
+          <div class="how"><b>Chạm là đi.</b> Tủ topping → lấy đồ · nồi trụng → thả sợi (3 rọ, để lâu hư) · sợi <b>nóng → xả lạnh → nóng</b> · quầy ráp → bỏ đúng thứ tự · múc nước · bưng ra bàn khách. <b>≥1★ mở ngày kế</b>; tiền + tip → mua nâng cấp bếp, trang trí.</div>
+          <div class="opt"><label><input type="checkbox" id="optCard" /> Kệ kiểu card</label><label><input type="checkbox" id="optHideName" /> Ẩn tên trên card</label></div>
+          <button id="btnResetMastery" class="ghost small">Xoá toàn bộ tiến độ</button>
+        </details>
+      </div>
+    </div>
+
+    <div id="puzzle" class="overlay hidden">
+      <div class="panel pz-panel">
+        <div class="pz-head"><span id="pzProgress" class="pill-dark">1/9</span><b id="pzDish">Món</b><button id="pzQuit" class="ghost small">Thoát</button></div>
+        <div class="pz-sticky" id="pzSticky">
+          <div class="pz-tickets hidden" id="pzTickets"></div>
+          <div class="pz-title" id="pzTitle"></div>
+          <div class="pz-answer" id="pzAnswer"></div>
+          <div class="pz-msg" id="pzMsg"></div>
+        </div>
+        <div class="pz-grid" id="pzGrid"></div>
+        <canvas id="pzCanvas" class="pz-canvas hidden"></canvas>
+      </div>
+    </div>
+
+    <div id="pov" class="hidden"></div>
+
+    <div id="card"><div class="head"><span id="cardTitle">Kệ</span><div class="close" id="cardClose">×</div></div><div class="grid" id="cardGrid"></div><div class="foot"><span class="n" id="cardNote"></span><button id="cardTake">Lấy</button></div></div>
+
+    <div id="result" class="overlay hidden">
+      <div class="panel wide">
+        <h1 style="font-size:26px;margin:0" id="rTitle">Đóng cửa</h1>
+        <div class="stat" id="rDishes" style="font-size:13px;opacity:.8"></div>
+        <div class="stars" id="stars">☆☆☆</div>
+        <div class="money"><span id="rMoney">0</span>k</div>
+        <div class="stat">Tip <b id="rTips">0</b>k · Phục vụ <b id="rServed">0</b> · Bỏ đi <b id="rLeft">0</b> · Sai thứ tự <b id="rMistakes">0</b></div>
+        <div class="recap hidden" id="rRecap"></div>
+        <div class="unlock" id="rUnlock"></div>
+        <div class="stat" id="rPoints" style="font-size:14px;color:#b07a20"></div>
+        <div style="margin-top:10px"><button id="btnNext">Sang ngày sau →</button><button id="btnRetry" class="secondary">Chơi lại</button><button id="btnMenu" class="secondary">Menu</button></div>
+        <details class="rep"><summary>Báo cáo bếp — để làm nhanh hơn</summary><div id="report"></div></details>
+      </div>
+    </div>
+
+  </body>
+</html>
