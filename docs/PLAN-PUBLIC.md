@@ -1,4 +1,6 @@
-# PLAN-PUBLIC — "Món Việt cho thế giới" (KJ's Choices → game cho người chơi)
+# PLAN-PUBLIC — **Phở Real** — "a kitchen road trip through Việt Nam"
+
+(Tên game: **Phở Real**, Kent chốt 19/09. Kent tự kiểm tên trên app store / domain / handle mạng xã hội.)
 
 Kent quyết 19/09: **game chính là game cho người chơi, mục đích giới thiệu món Việt ra thế giới.** Chế độ luyện của Kent nằm ở tab *Thêm* (mini games), không đụng. Đã chốt: **hành trình Bắc → Nam**, **vi + en trước**, và (Kent sửa lại cùng ngày) **game chính dùng CÔNG THỨC CHUNG CỦA VIỆT NAM, không dùng công thức quán** — đồ của quán chỉ ở tab Luyện. Nhờ vậy game thêm được món quán không bán, và không lộ công thức quán.
 
@@ -29,7 +31,25 @@ Kế hoạch này viết để **bất kỳ model nào** cũng làm đúng ý. �
 | **Cảm giác / art** | ✅ kiểu C, đã "loud" | P5 onboarding, P8 nền tảng |
 | **Nói với thế giới** | ❌ chỉ tiếng Việt | P1 i18n, tên món giữ Việt + cách đọc |
 
-**Câu một dòng của game:** *Bạn là đầu bếp mới, đi từ Hà Nội vào Sài Gòn, mỗi vùng học nấu vài món thật của người ở đó — nấu đúng, nấu kịp, và mang được món đó về trong sổ tay của mình.*
+**Cốt truyện (Kent, 19/09):** *Bạn là kẻ lang bạt mê ăn, đi dọc các tỉnh thành trên bản đồ Việt Nam. Tới đâu xin vô quán đó làm, chủ quán thử thách: học món của họ, rồi đứng ca làm cho ra hồn. Mỗi tỉnh để lại một món trong sổ tay và một vật kỷ niệm.*
+
+**Vòng chơi:**
+```
+Bản đồ VN → TỈNH → xin vô QUÁN (chủ quán = nhân vật)
+  → HỌC MÓN (chủ quán chỉ tay từng bước, một lần mỗi món)
+  → CA LÀM (level của quán: món vừa học + món cũ; nhịp / combo / cao điểm)
+  → MINI-GAME của tỉnh (giải lao, thưởng vật kỷ niệm)
+  → Sổ tay ghi món + tỉnh → tỉnh kế
+```
+Ánh xạ lên code đang có — **không đập, chỉ đổi vai**:
+| Đang có | Vai mới |
+|---|---|
+| World (8) | **Quán** trong một tỉnh; ~5 tỉnh đầu, thêm tỉnh = thêm data |
+| Khách quen có thoại (`customers.js`) | **Chủ quán**: dạy món, thử thách, khen/chê; thêm màn "xin vô quán" 2–3 câu |
+| Level rút gọn `simplify` (1–3) | **Học món** — P5 áp cho MỌI món, không chỉ level 1 |
+| Level đủ bước (4+) | **Ca làm** |
+| 5 mini-game (`puzzle.js`) | **Mini-game theo tỉnh**: cùng engine, đổi data + tên (Hà Nội: nhận diện rau thơm; Huế: nêm cay; Hải Phòng: bóc cua…). Tab Luyện của Kent tách riêng, không lẫn |
+| — | **Vật kỷ niệm** mỗi tỉnh (nón lá, bát Bát Tràng…) hiện trên bản đồ |
 
 ---
 
@@ -38,15 +58,16 @@ Kế hoạch này viết để **bất kỳ model nào** cũng làm đúng ý. �
 | P | Việc | Công | Vì sao thứ tự này |
 |---|---|---|---|
 | P1 | i18n nền (vi + en) | 2 phiên | Làm trước khi thêm chữ mới, không thì phải dịch hai lần |
-| P2 | Bản đồ Việt Nam, world = vùng | 2 phiên | Cái "lý do" — mọi thứ sau treo lên nó |
+| P2 | Bản đồ Việt Nam: tỉnh → quán → chủ quán, màn "xin vô quán", vật kỷ niệm | 2.5 phiên | Cái "lý do" — mọi thứ sau treo lên nó |
 | P3 | Sổ tay món (codex) | 2 phiên + Kent viết chuyện | Phần thưởng thật của game |
 | P4 | Quyền chọn: loại khách, hàng loạt, nâng cấp đổi cách chơi | 2 phiên | Lỗ hổng lớn nhất về gameplay |
-| P5 | Onboarding 60 giây | 1 phiên | Người ngoài bỏ ở phút 2 nếu không có |
-| P6 | Chuyển 21 món sang `dishes/` (bản chung) + pipeline thêm món một lệnh | 2 phiên | Scalable = data, không code; làm trước khi thêm món |
+| P5 | "Học món": chủ quán chỉ tay từng bước, cho MỌI món (onboarding 60 s là trường hợp đầu) | 1.5 phiên | Người ngoài bỏ ở phút 2 nếu không có |
+| P6 | Chuyển 21 món sang `dishes/` (bản chung) + `stations.json` + pipeline thêm món một lệnh | 2 phiên | Scalable = data, không code; làm trước khi thêm món |
+| P6b | Mini-game theo tỉnh: 5 engine có sẵn + data tỉnh | 1 phiên | Giải lao giữa các ca, thưởng vật kỷ niệm |
 | P7 | Playtest người ngoài + đo | 0.5 phiên + Kent tìm 3 người | Nguồn sự thật duy nhất về "cuốn" |
 | P8 | Nền tảng: PWA hoàn chỉnh, chia sẻ, (sau) gói app | 1 phiên | Sau khi P7 nói là đáng |
 
-Tổng ≈ 12–13 phiên. **Không làm P8 trước P7.**
+Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
 ---
 
@@ -149,7 +170,7 @@ Tổng ≈ 12–13 phiên. **Không làm P8 trước P7.**
 
 **Hiện trạng.** Có rời rạc: `process_icons.py`, `pans_to_webp.py`, `steps_to_webp.py`, `gen_icons_map.mjs`, `_mkstamp.py`… (docs/ART-PIPELINE.md). Thêm phở gà / sốt vang / xào lăn ngày 19/09 phải sửa tay 6 chỗ (`config.js` PRICES, `SHELF_TOPPING`, `BURNER_DISHES`, `STOVETOP_DISHES`, LEVELS, i18n sau này).
 
-**Spec.** Một món = `src/data/dishes/<id>.json` (công thức chung: bước ráp, trạm, thời gian, định lượng gia đình, giá, vùng, `pron`, `gloss`, codex). Script: validate schema → gen icon nguyên liệu thiếu → gen khay → gen 4 bậc tô → thêm key i18n → chạy test "mọi món có đủ asset". Các bảng trong `config.js` (PRICES, SHELF_TOPPING, BURNER_DISHES…) suy từ `dishes/*.json` thay vì hard-code. **P6 phải làm trước khi thêm món mới nào** — và bước đầu tiên của P6 là chuyển 21 món hiện có sang `dishes/` (bản chung, không phải bản quán), giữ id/art.
+**Spec.** Một món = `src/data/dishes/<id>.json` (công thức chung: bước ráp, trạm, thời gian, định lượng gia đình, giá, vùng, `pron`, `gloss`, codex). **Trạm cũng là data** — `src/data/stations.json` (tên, sprite, thời gian mặc định, ô thả): món dùng 6 trạm sẵn có (nồi trụng, bồn, thớt, chảo chiên, lò vi sóng, mặt bếp) là thuần data; món cần động tác mới (đổ bánh xèo, hấp bánh bèo, nướng than) thì thêm MỘT trạm vào `stations.json` + sprite, engine chỉ cần code mới khi cơ chế thật sự lạ. Script: validate schema → gen icon nguyên liệu thiếu → gen khay → gen 4 bậc tô → thêm key i18n → chạy test "mọi món có đủ asset". Các bảng trong `config.js` (PRICES, SHELF_TOPPING, BURNER_DISHES…) suy từ `dishes/*.json` thay vì hard-code. **P6 phải làm trước khi thêm món mới nào** — và bước đầu tiên của P6 là chuyển 21 món hiện có sang `dishes/` (bản chung, không phải bản quán), giữ id/art.
 
 **Nghiệm thu.** Thêm một món giả `test-dish` bằng lệnh → test xanh → xoá. Không sửa file code nào.
 
