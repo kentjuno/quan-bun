@@ -420,3 +420,32 @@ khay nên chúng đứng chung với hành lá, cà chua. Nay chia theo **bướ
 Chỉ đổi **chỗ vẽ**: nguồn kéo vẫn là `kind:'item'` nên luật chơi và bot không đụng gì. Level nào
 cần nước trắng mà không có bước nhúng bồn thì vẫn phải vẽ ô bồn — nhớ nới điều kiện
 `has.sink || C.waterItems.length` ở cả `build()` lẫn `render()`.
+
+## 16. Thêm món vào game: trạm MẶT BẾP và cái bẫy trùng tên (19/09)
+
+Ba món phở mới (sốt vang, xào lăn, phở gà) cần một việc mà 5 trạm cũ không có:
+**làm ngay trên mặt bếp bằng nồi/chảo nhỏ**. Ghi lại vì chỗ này dính hai cái bẫy.
+
+**Bẫy 1 — `stove` đã có nghĩa khác.** Trong bếp 3D, `type: 'stove'` là **nồi nước phở
+nấu sẵn** (`broth: 'pour-pho-broth'`), múc bao nhiêu cũng được. Đặt trạm mới tên `stove`
+thì mọi thao tác hâm/xào bị đẩy vào nồi nước phở — bot chạy mà không phục vụ được ai,
+lại **không báo lỗi nào**. Tên đang dùng là **`stovetop`**.
+
+**Bẫy 2 — trạm một việc không gom được nhiều thứ.** Xào lăn cần **hai** thứ (thịt tái +
+rau cải). `toJobStation` (chảo chiên, lò vi sóng) chỉ nhận một token; chỗ gom nhiều
+nguyên liệu là thớt. Nên:
+- quầy POV: `toStovetop()` — gom như thớt nhưng chỉ một chỗ;
+- bếp 3D: `stovetop` đi theo `usePrep`/`finishPrep`, và `usePrep` đổi `transformsAt('prep')`
+  thành `transformsAt(s.type)` để dùng lại được.
+
+**`left === null` nghĩa là ĐANG GOM.** `null <= 0` trong JS là **true**, nên
+`job.left <= 0` sẽ coi một nồi mới gom được nửa chừng là "đã xong". Phải kiểm
+`left != null && left <= 0`.
+
+**Mặt bếp không có ô riêng trong tranh.** Nó dùng chung ô `burner` — token nào có phép
+biến đổi ở `stovetop` thì về nồi/chảo nhỏ, còn lại vào nồi nước lèo. Góc phải màn hình
+đã chật (ô kệ nước với ô chảo chiên đè nhau), thêm ô nữa là vỡ.
+
+**Món mới cần khai ở đâu (dễ quên):** `PRICES` · `SHELF_TOPPING` (không có thì cầm không
+được) · `BURNER_DISHES` / `PREP_DISHES` / `STOVETOP_DISHES` (trạm chỉ hiện khi ca có món) ·
+`LEVELS` (test bắt mọi món phải nằm trong một ca) · `worlds.js`.
