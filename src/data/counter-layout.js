@@ -6,7 +6,10 @@
 // Vẽ hitbox to hơn vật một chút cho dễ trúng ngón tay; ảnh chỉ để nhìn.
 // Đổi nền khác thì đo lại đúng bảng ZONES này, không phải sửa code.
 
-export const SCENE = { src: 'art/scene.webp', w: 768, h: 1376 };
+export const SCENE = { src: 'art/scene.webp', w: 768, h: 1376,
+  // Đồ TĨNH đã vẽ thẳng vào tranh bằng scripts/bake_scene.py (Kent 19/09: "nhìn như dán ghép").
+  // Game không vẽ sprite cho các ô này nữa. Đổi ZONES của chúng thì chạy lại bake_scene.py + draw_mats.py.
+  baked: ['trash', 'micro', 'fryer', 'stack', 'noodle'] };
 
 /** x, y, w, h tính bằng % của khung nền. */
 export const ZONES = {

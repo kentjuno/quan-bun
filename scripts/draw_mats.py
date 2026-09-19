@@ -10,7 +10,9 @@ import io, os, sys
 from PIL import Image, ImageDraw, ImageFilter
 
 R = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(R, "art", "raw", "scene", "scene-j1.webp")
+# Nguon: ban da nuong do vat (bake_scene.py) neu co, khong thi scene-j1
+SRC = os.path.join(R, "art", "raw", "scene", "scene-baked.webp")
+if not os.path.exists(SRC): SRC = os.path.join(R, "art", "raw", "scene", "scene-j1.webp")
 DST = os.path.join(R, "public", "art", "scene.webp")
 
 # ZONES.slots = x 37, y 69, w 56, h 26 (% khung tranh). Hai cho to nam o 1/4 va 3/4 be ngang o.

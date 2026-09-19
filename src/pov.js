@@ -76,9 +76,13 @@ export class Pov {
       return `<div class="pv-pan dragsrc" title="${label(it)}" style="${st}" ${src1('item', it)}><img class="pv-panimg" src="${panArt(it)}" alt="" draggable="false" onerror="this.closest('.pv-pan').classList.add('noart');this.remove()"><i class="pv-ghosticon">${img(it)}</i><small>${label(it)}</small></div>`;
     };
     // Đồ có sprite riêng thì vẽ to đầy ô; icon nhỏ giữ lại (ẩn) để làm cái bay theo ngón tay.
-    const src = (it) => { const st = stationArt(it);
+    // Đồ TĨNH đã nướng vào tranh (scripts/bake_scene.py, SCENE.baked): không vẽ sprite nữa, chỉ giữ ô bấm.
+    // Chồng tô / khay sợi: chỉ khi level có ĐÚNG 1 loại (tranh vẽ 1 cái); nhiều loại thì vẫn sprite.
+    const baked = new Set(SCENE.baked || []);
+    const bakedOne = (zk) => baked.has(zk) && (zk === 'stack' ? C.bowlItems : C.noodleItems).length === 1;
+    const src = (it, zk) => { const st = stationArt(it); const hide = !!zk && bakedOne(zk);
       return st
-        ? `<div class="pv-obj dragsrc" ${src1('item', it)}><img class="pv-objimg" src="${st}" alt="" draggable="false" onerror="this.closest('.pv-obj').classList.add('noart');this.remove()"><i class="pv-ghosticon">${img(it)}</i><small>${label(it)}</small></div>`
+        ? `<div class="pv-obj dragsrc${hide ? ' baked' : ''}" title="${label(it)}" ${src1('item', it)}>${hide ? '' : `<img class="pv-objimg" src="${st}" alt="" draggable="false" onerror="this.closest('.pv-obj').classList.add('noart');this.remove()">`}<i class="pv-ghosticon">${img(it)}</i><small>${label(it)}</small></div>`
         : `<div class="pv-src dragsrc" ${src1('item', it)}>${img(it)}<small>${label(it)}</small></div>`; };
     const zone = (k, inner, cls = '') => `<div class="pv-z ${cls}" style="${z(k)}">${inner}</div>`;
     const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
@@ -109,14 +113,14 @@ export class Pov {
               + `<img class="pv-steam s1" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()">`   // 1 wisp/nồi: 3 nồi + 2 khói nồi trụng + 1 giọt = 6 (ngân sách J9)
               + `<i class="pv-ghosticon">${img(tok)}</i><small>${label(tok)}</small></div>`).join(''),
             'row pots') : ''}
-        ${this.has.fryer ? dropz('fryer', 'fryer', `${objImg('fryer')}<div id="pvFryer"></div>`, 'st-fryer') : ''}
-        ${this.has.microwave ? dropz('micro', 'microwave', `${objImg('microwave')}<div id="pvMw"></div>`, 'st-mw') : ''}
+        ${this.has.fryer ? dropz('fryer', 'fryer', `${baked.has('fryer') ? '' : objImg('fryer')}<div id="pvFryer"></div>`, 'st-fryer') : ''}
+        ${this.has.microwave ? dropz('micro', 'microwave', `${baked.has('micro') ? '' : objImg('microwave')}<div id="pvMw"></div>`, 'st-mw') : ''}
         ${zone('prep', `<div class="pv-pans${panRows > 1 ? ' two' : ''}" id="pvTops">${panList.map(pan).join('')}</div>`, 'shelf')}
-        ${zone('stack', `<div class="pv-srcs">${C.bowlItems.map(src).join('')}</div>`, 'col')}
-        ${zone('noodle', `<div class="pv-srcs">${C.noodleItems.map(src).join('')}</div>`, 'row')}
+        ${zone('stack', `<div class="pv-srcs">${C.bowlItems.map((it) => src(it, 'stack')).join('')}</div>`, 'col')}
+        ${zone('noodle', `<div class="pv-srcs">${C.noodleItems.map((it) => src(it, 'noodle')).join('')}</div>`, 'row')}
         ${this.has.prep ? zone('boards', '<div class="pv-boards" id="pvBoards"></div>', 'row') : ''}
         ${zone('slots', '<div class="pv-slots" id="pvSlots"></div>')}
-        ${dropz('trash', 'trash', `<img class="pv-objimg" src="${trashArt()}" alt="" draggable="false" onerror="this.closest('.pv-z').classList.add('noart');this.remove()"><span class="pv-tr">🗑️</span>`, 'trash')}
+        ${dropz('trash', 'trash', baked.has('trash') ? '' : `<img class="pv-objimg" src="${trashArt()}" alt="" draggable="false" onerror="this.closest('.pv-z').classList.add('noart');this.remove()"><span class="pv-tr">🗑️</span>`, 'trash')}
       </div>
       <div class="pv-msg" id="pvMsg">Kéo hoặc chạm đôi: tô vô nồi để trụng · sợi vô rọ · topping vô tô · tô xong lên phiếu</div>`;
     // J8 — nhãn khay chỉ hiện ở level gợi ý (simplify / showLabels); level thật thì ẩn, sai 3 lần liên tiếp mới bật lại.
@@ -224,6 +228,7 @@ export class Pov {
     const tk = this.el.querySelector(`.tk[data-i="${t.id}"]`); if (!tk) return;
     const tr = tk.getBoundingClientRect();
     const cx = tr.left + tr.width / 2, cy = tr.top + tr.height / 2;
+    this._floatAt = { x: cx, y: tr.bottom + 6, t: performance.now() };   // +Nk nổ dưới phiếu
 
     // 1. tô bay lên phiếu (0–280 ms)
     const bowl = this.el.querySelector(`.pv-slot[data-i="${src?.i}"] .pv-bowl`) || this.el.querySelector('.pv-bowl');
@@ -238,6 +243,9 @@ export class Pov {
       setTimeout(() => g.remove(), 380);   // onfinish KHÔNG chạy khi tab bị nén khung hình — dọn bằng hẹn giờ
     }
     setTimeout(() => this.C.ev?.onSfx?.('serve'), 200);
+    // LOUD: nền tối một nhịp + khung rung nhẹ (phần tử riêng, tự dọn)
+    const dim = document.createElement('div'); dim.className = 'pv-dim'; this.el.appendChild(dim); setTimeout(() => dim.remove(), 500);
+    const stage = $('pvStage'); if (stage) { stage.classList.remove('jolt'); void stage.offsetWidth; stage.classList.add('jolt'); setTimeout(() => stage.classList.remove('jolt'), 320); }
 
     // 2. bản sao phiếu ở lại để đóng dấu rồi trượt đi
     const gh = tk.cloneNode(true); gh.className = 'tk pv-tkghost';
@@ -248,7 +256,7 @@ export class Pov {
       const st = document.createElement('img'); st.className = 'pv-fx pv-stamp'; st.src = fx('stamp');
       st.draggable = false; st.onerror = () => st.remove();
       // dấu cao ~0,8 chiều cao phiếu: đo lần đầu để 0.9*rộng → con dấu 65px trên phiếu 41px, to hơn cả phiếu
-      st.style.cssText = `left:${tr.right - tr.width * 0.15}px;top:${tr.top + tr.height * 0.1}px;width:${(tr.height * 0.8).toFixed(0)}px`;
+      st.style.cssText = `left:${tr.right - tr.width * 0.18}px;top:${tr.top + tr.height * 0.1}px;width:${(tr.height * 1.15).toFixed(0)}px`;   // LOUD: 1.15× cao phiếu (trước 0.8)
       this.el.appendChild(st);
       st.animate([{ transform: 'translate(-50%,-10%) rotate(-8deg) scale(1.6)', opacity: 0 },
         { transform: 'translate(-50%,-10%) rotate(-8deg) scale(1)', opacity: 1 }],
@@ -259,7 +267,7 @@ export class Pov {
       if (!t.mistakes) for (const k of [-1, 1]) {           // tô không lỗi: hai ngôi sao bay lên
         const sp = document.createElement('img'); sp.className = 'pv-fx pv-star'; sp.src = fx('sparkle');
         sp.draggable = false; sp.onerror = () => sp.remove();
-        sp.style.cssText = `left:${cx + k * tr.width * 0.22}px;top:${tr.top}px;width:${(tr.height * 0.5).toFixed(0)}px`;
+        sp.style.cssText = `left:${cx + k * tr.width * 0.22}px;top:${tr.top}px;width:${(tr.height * 0.8).toFixed(0)}px`;
         this.el.appendChild(sp);
         sp.animate([{ opacity: 0, transform: 'translate(-50%,0) scale(.6)' },
           { opacity: 1, transform: `translate(-50%,-${tr.height * 0.5}px) scale(1)`, offset: .4 },
@@ -466,7 +474,7 @@ export class Pov {
       root.classList.add('dragging');   // đang kéo mới hiện viền chỗ thả (CSS), lúc thường để tranh sạch
       ghost.style.transform = `translate(${e.clientX - 28}px, ${e.clientY - 28}px)`;
       // J8 — chạm giữ ≥ 350 ms không kéo → tooltip tên món (nhãn khay ẩn mặc định)
-      if (el.classList.contains('pv-pan')) drag.hold = setTimeout(() => { if (drag && !drag.moved) this.tip(el); }, 350);
+      if (el.classList.contains('pv-pan') || el.classList.contains('pv-obj')) drag.hold = setTimeout(() => { if (drag && !drag.moved) this.tip(el); }, 350);
     };
     // Bóng kéo bám con trỏ NGAY trong pointermove: đặt transform là việc rẻ, không đọc layout,
     // và không phụ thuộc rAF — tab bị hãm nhịp thì bóng vẫn theo tay. Chỗ nặng là dò ô
@@ -641,9 +649,11 @@ export class Pov {
   }
   moneyFloat(n) {
     const a = $('pvMoney'); if (!a) return;
+    // Nổ ngay chỗ PHIẾU vừa bưng (serveFx ghi _floatAt) — ở HUD thì bay lên là ra khỏi tranh. Không có thì ở ô tiền.
     const r = a.getBoundingClientRect(), e = document.createElement('span');
+    const at = this._floatAt && performance.now() - this._floatAt.t < 1500 ? this._floatAt : { x: r.left + r.width / 2, y: r.top + r.height + 8 };
     e.className = 'pv-float'; e.textContent = `+${n}k`;
-    e.style.left = `${r.left}px`; e.style.top = `${r.top}px`;
+    e.style.left = `${at.x}px`; e.style.top = `${at.y}px`; e.style.transform = 'translateX(-50%)';
     this.el.appendChild(e); this.o.sfx?.coin?.();
     setTimeout(() => e.remove(), 720);
   }

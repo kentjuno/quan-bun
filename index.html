@@ -448,6 +448,43 @@
         font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
         border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
 
+      /* ---- LOUD (Kent 19/09: "chữ chìm, hiệu ứng chìm"): chữ có viền giấy dày, hiệu ứng phẳng-bão-hoà-viền-đen, to gấp đôi ---- */
+      #pov .pv-stage .hint { display: none !important; }   /* #pov small {display:block} (id) đè .pv-stage .hint */
+      #pov .pv-stage .pv-obj.baked small { display: none; }        /* đồ đã vẽ trong tranh: không nhãn, chạm giữ mới hiện tên */                                   /* "tô nóng trữ ở đây", "nồi trống", "thớt 1"… — tranh sạch */
+      .pv-stage small, .pv-stage .pv-hud, .pv-stage .pv-hud span, .pv-stage .pv-hud i, .pv-rail .tk b, .pv-rail .tk span, #pov .pv-tip {
+        color: #26190f; font-weight: 700; paint-order: stroke fill; -webkit-text-stroke: .9cqw rgba(255,252,244,.96);
+        text-shadow: 0 1px 0 rgba(255,252,244,.9), 0 -1px 0 rgba(255,252,244,.9), 1px 0 0 rgba(255,252,244,.9), -1px 0 0 rgba(255,252,244,.9); }
+      .pv-stage .pv-pan small { font-size: 2.6cqw; }
+      .pv-stage .pv-src small, .pv-stage .pv-broth small { font-size: 2.8cqw; }
+      .pv-stage .pv-hud { background: rgba(255,252,244,.94); border: .45cqw solid #26190f; box-shadow: 0 .8cqw 0 #26190f55; }
+      .pv-stage .pv-hud span { font-size: 5.2cqw; }
+      .pv-streak { font-size: 4.2cqw; color: #fff; background: #d64a2c; -webkit-text-stroke: 0; text-shadow: none; border: .4cqw solid #26190f; }
+      .pv-x { border: .45cqw solid #26190f; }
+      .pv-rail .tk { border: .45cqw solid #26190f; box-shadow: .6cqw .8cqw 0 #26190f55; }
+      .pv-clock circle { stroke-width: 5; }
+      .pv-clock .bg { stroke: rgba(38,25,15,.22); }
+      /* tiền bay: vàng chói, viền đen, to gấp đôi, nảy rồi bay */
+      #pov .pv-float { font-family: "Patrick Hand", cursive; font-size: 30px; color: #ffd23f; text-shadow: none;   /* #pov: đè rule .pv-float gốc (16px) đứng sau */
+        paint-order: stroke fill; -webkit-text-stroke: 6px #26190f; animation: pvFloat .9s cubic-bezier(.2,.9,.3,1) forwards; }
+      @keyframes pvFloat { 0% { transform: translate(-50%, 6px) scale(.6); opacity: 0; } 18% { transform: translate(-50%, -4px) scale(1.25); opacity: 1; }
+        40% { transform: translate(-50%, -10px) scale(1); } 100% { transform: translate(-50%, -64px) scale(1); opacity: 0; } }
+      /* ô nhận nảy mạnh hơn + vòng loé */
+      @keyframes pvHit { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+      .pv-stage .drop:not(.pv-z) { position: relative; }
+      .drop.hit::after { content: ''; position: absolute; inset: -6%; border-radius: 14%; border: .8cqw solid #ffd23f;
+        box-shadow: 0 0 0 .45cqw #26190f, 0 0 12px #ffd23f; animation: pvRing .34s ease-out forwards; pointer-events: none; }
+      @keyframes pvRing { from { opacity: 1; transform: scale(.9); } to { opacity: 0; transform: scale(1.15); } }
+      /* khoảnh khắc bưng tô: nền tối một nhịp + rung nhẹ + phiếu loé trắng */
+      #pov .pv-dim { position: fixed; inset: 0; z-index: 17; pointer-events: none; background: #1a1008; opacity: 0; animation: pvDim .45s ease-out forwards; }
+      @keyframes pvDim { 0% { opacity: 0; } 20% { opacity: .22; } 100% { opacity: 0; } }
+      .pv-stage.jolt { animation: pvJolt .28s linear; }
+      @keyframes pvJolt { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(2px,-2px); } 50% { transform: translate(-2px,1px); } 75% { transform: translate(1px,2px); } }
+      #pov .pv-tkghost::before { content: ''; position: absolute; inset: 0; background: #fff; opacity: 0; animation: tkFlash .32s ease-out .26s; pointer-events: none; z-index: 3; }
+      @keyframes tkFlash { 0% { opacity: 0; } 30% { opacity: .85; } 100% { opacity: 0; } }
+      #pov .pv-stamp { filter: drop-shadow(0 2px 0 #26190f) drop-shadow(0 0 4px rgba(255,255,255,.8)); }
+      #pov .pv-star, #pov .pv-burst { filter: drop-shadow(0 1px 0 #26190f); }
+      @media (prefers-reduced-motion: reduce) { .pv-stage.jolt, #pov .pv-dim { animation: none; } }
+
       /* ---- J9: đời sống nền. Tất cả là CSS loop trên phần tử KHÔNG bị render() dựng lại (setHTML) ---- */
       .pv-stage .pv-z.st-pot .pv-steam { position: absolute; left: 50%; top: 4%; width: 34%; height: auto; pointer-events: none;
         opacity: 0; animation: potSteam 3s ease-out infinite; }
