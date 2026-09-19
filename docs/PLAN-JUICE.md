@@ -215,6 +215,13 @@ Helper chung `flyItem(from, to, src, ms=200)`: tạo `<img class="pv-fx pv-fly">
 - Tổng phần tử `.pv-fx` cùng lúc **≤ 6** (kiểm khi thả liên tiếp 5 lần).
 - Kent quay: một tô từ đầu tới chan nước.
 
+**ĐÃ LÀM 19/09 (sw v59).** `react(src, zone, from)` + `spawnFx()` + `flyItem()` trong `src/pov.js`.
+- Phát hiện tiện thể: `bump()` trước đây **chỉ chạy ở đường kéo**, chạm đôi thì không — đã dời vào `afterDrop()`.
+- Chạm đôi KHÔNG bay item lần nữa (`from = null`): ghost đã bay tới tâm đích rồi, bay thêm là thừa.
+- Phân biệt nồi lèo / mặt bếp trong cùng `zone.kind === 'burner'`: `#pvStove` không có `data-i` → `zone.i == null` là mặt bếp.
+- `art/fx-sizzle.webp` gen bằng Flow + `scripts/_mkstamp.py`. `fx-chop.webp` đã có sẵn, không cần gen.
+- Đo: pot/sink/slot/prep/nồi lèo/mặt bếp đều +1 fx +≥1 animation trong 40 ms; thả liên tiếp 5 lần → 5 fx, sau 600 ms về 0.
+
 **Bẫy.** Sau `render()` phải **tìm lại** phần tử đích (như `bump()` làm) — tham chiếu cũ đã rụng.
 
 ---

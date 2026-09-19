@@ -188,9 +188,12 @@ export class Pov {
   }
 
   /** Sau mỗi thao tác đúng: chan nước thì chạy A10 (docs/ART-PIPELINE.md §2·§6). */
-  afterDrop(res, src, zone) {
-    if (res?.ok && zone?.kind === 'trash') return this.toss();
-    if (!res?.ok || zone?.kind !== 'slot') return;
+  afterDrop(res, src, zone, from) {
+    if (!res?.ok) return;
+    if (zone?.kind === 'trash') return this.toss();
+    this.bump(zone);                 // trước đây chỉ đường kéo mới bump, chạm đôi thì không
+    this.react(src, zone, from);     // J5 — vật nhận nảy theo kiểu riêng
+    if (zone?.kind !== 'slot') return;
     const isBroth = ['broth', 'ready', 'burnerpot'].includes(src?.kind);
     if (!isBroth) return;
     const slot = this.el.querySelector(`.pv-slot[data-i="${zone.i}"]`);
@@ -254,6 +257,83 @@ export class Pov {
         { duration: 250, easing: 'ease-in', fill: 'forwards' });
       setTimeout(() => gh.remove(), 280);
     }, 600);
+  }
+
+  /** J5 — bảng phản ứng theo loại đích (docs/PLAN-JUICE.md J5). Chỉ gọi khi thả ĐÚNG.
+   *  Phải tìm lại phần tử SAU render() — tham chiếu cũ đã rụng. `from` = điểm nhả + icon (đường kéo),
+   *  null khi chạm đôi (ghost đã bay tới đích rồi, bay thêm lần nữa là thừa). */
+  react(src, zone, from) {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const q = (s) => this.el.querySelector(s);
+    const anim = (el, kf, ms, easing = 'ease-out') => { if (el) el.animate(kf, { duration: ms, easing }); };
+    const sink = (el) => anim(el, [{ transform: 'translateY(0)' }, { transform: 'translateY(6%)', offset: .5 }, { transform: 'translateY(0)' }], 180);
+    const mid = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height }; };
+    switch (zone.kind) {
+      case 'pot': {
+        const b = q(`.pv-basket[data-i="${zone.i}"]`) || q('.pv-z.st-pot'); if (!b) return;
+        sink(b); const m = mid(b);
+        this.spawnFx('splash-water', m.x, m.y - m.h * 0.15, Math.max(30, m.w * 1.1), 400, 'rise'); break; }
+      case 'sink': {
+        const tap = q('.pv-tap'); anim(tap, [{ transform: 'rotate(0)' }, { transform: 'rotate(2deg)' }, { transform: 'rotate(-2deg)' }, { transform: 'rotate(0)' }], 220);
+        const z = q('.pv-z.st-sink'); if (!z) return; const m = mid(z);
+        this.spawnFx('splash-water', m.x, m.y - m.h * 0.1, Math.max(30, m.w * 0.6), 400, 'rise'); break; }
+      case 'slot': {
+        const bowl = q(`.pv-slot[data-i="${zone.i}"] .pv-bowl`); if (!bowl) return;
+        const pulse = () => anim(bowl, [{ transform: 'scale(1)' }, { transform: 'scale(1.08)', offset: .45 }, { transform: 'scale(1)' }], 180);
+        if (from?.icon) this.flyItem(from, bowl.getBoundingClientRect(), from.icon, 200, pulse); else pulse();
+        break; }
+      case 'prep': {
+        const b = q(`.pv-board[data-i="${zone.i}"]`) || q('.pv-boards'); if (!b) return;
+        anim(b, [{ transform: 'translateY(0)' }, { transform: 'translateY(-4%)' }, { transform: 'translateY(0)' }, { transform: 'translateY(-4%)' }, { transform: 'translateY(0)' }], 260, 'linear');
+        const m = mid(b); this.spawnFx('chop', m.x, m.y - m.h * 0.2, Math.max(26, m.w * 0.7), 320, 'pop'); break; }
+      case 'burner': {
+        if (zone.i == null) {                                   // mặt bếp (#pvStove không có data-i)
+          const s = q('#pvStove .pv-job') || q('#pvStove'); if (!s) return;
+          anim(s, [{ transform: 'scale(1)' }, { transform: 'scale(1.1)', offset: .4 }, { transform: 'scale(1)' }], 200);
+          const m = mid(s); this.spawnFx('sizzle', m.x, m.y - m.h * 0.3, Math.max(28, m.w * 0.8), 360, 'rise');
+        } else {                                                // nồi nước lèo
+          const pt = q(`.pv-pt[data-i="${zone.i}"]`); if (!pt) return;
+          sink(pt); const m = mid(pt);
+          this.spawnFx('steam', m.x, m.y - m.h * 0.35, Math.max(30, m.w * 0.9), 450, 'rise');
+        }
+        break; }
+      case 'fryer': case 'microwave': {
+        const z = q(`.drop[data-zone="${zone.kind}"]`); if (!z) return;
+        anim(z, [{ transform: 'scale(1)' }, { transform: 'scale(1.1)', offset: .4 }, { transform: 'scale(1)' }], 200);
+        const m = mid(z); this.spawnFx(zone.kind === 'fryer' ? 'sizzle' : 'steam', m.x, m.y - m.h * 0.3, Math.max(28, m.w * 0.8), 380, 'rise');
+        break; }
+      default: break;   // ticket → J4 serveFx; trash → toss()
+    }
+  }
+  /** Một tấm fx bung lên rồi tắt. Giới hạn 6 phần tử fx cùng lúc — thả liên tiếp không được chất đống. */
+  spawnFx(name, cx, cy, w, ms, kind = 'rise') {
+    if (this.el.querySelectorAll('.pv-fx').length >= 6) return null;
+    const p = document.createElement('img'); p.className = 'pv-fx pv-burst'; p.src = fx(name); p.draggable = false;
+    p.onerror = () => p.remove();
+    p.style.cssText = `left:${cx}px;top:${cy}px;width:${w.toFixed(0)}px`;
+    this.el.appendChild(p);
+    const kf = kind === 'pop'
+      ? [{ opacity: 0, transform: 'translate(-50%,-50%) scale(.5)' }, { opacity: 1, transform: 'translate(-50%,-50%) scale(1.05)', offset: .3 }, { opacity: 0, transform: 'translate(-50%,-50%) scale(1)' }]
+      : [{ opacity: 0, transform: 'translate(-50%,-30%) scale(.7)' }, { opacity: .95, transform: 'translate(-50%,-60%) scale(1)', offset: .35 }, { opacity: 0, transform: 'translate(-50%,-95%) scale(1.08)' }];
+    p.animate(kf, { duration: ms, easing: 'ease-out' }).onfinish = () => p.remove();
+    setTimeout(() => p.remove(), ms + 80);   // onfinish không chạy khi khung hình bị nén
+    return p;
+  }
+  /** Icon bay theo CUNG từ điểm nhả tới tâm đích (điểm giữa cao hơn 18 % quãng đường). */
+  flyItem(from, to, src, ms = 200, done) {
+    const img = document.createElement('img'); img.className = 'pv-fx pv-fly'; img.src = src; img.draggable = false;
+    img.onerror = () => img.remove();
+    const tx = to.left + to.width / 2, ty = to.top + to.height / 2;
+    const sz = Math.max(24, Math.min(48, to.width * 0.5));
+    img.style.cssText = `left:${from.x}px;top:${from.y}px;width:${sz}px;height:${sz}px`;
+    this.el.appendChild(img);
+    const dx = tx - from.x, dy = ty - from.y, lift = Math.hypot(dx, dy) * 0.18;
+    img.animate([
+      { transform: 'translate(-50%,-50%) scale(.9)', opacity: 1 },
+      { transform: `translate(calc(-50% + ${(dx / 2).toFixed(1)}px), calc(-50% + ${(dy / 2 - lift).toFixed(1)}px)) scale(.8)`, offset: .5 },
+      { transform: `translate(calc(-50% + ${dx.toFixed(1)}px), calc(-50% + ${dy.toFixed(1)}px)) scale(.6)`, opacity: .8 },
+    ], { duration: ms, easing: 'cubic-bezier(.3,.6,.4,1)' });
+    setTimeout(() => { img.remove(); done?.(); }, ms);
   }
 
   /** Vứt rác: thùng rác giật một cái + bụi bay lên. */
@@ -403,8 +483,8 @@ export class Pov {
       const res = this.C.drop(sc, zn);
       if (res?.ok && res.served) this.serveFx(res.served, sc);   // J4 — phải chạy TRƯỚC render(), lúc phiếu & tô còn trong DOM
       this.render();
-      if (res?.ok) this.bump(zn);
-      this.afterDrop(res, sc, zn);
+      const ic = d.el.querySelector('.pv-ghosticon img, img')?.src;
+      this.afterDrop(res, sc, zn, { x: e.clientX, y: e.clientY, icon: ic });
     };
     root.onpointerup = end; root.onpointercancel = end;
   }
@@ -430,7 +510,7 @@ export class Pov {
     const src = this.srcOf(el); const zone = this.autoZone(src); if (!zone) { this.msg(this.whyNoZone(src), 'bad'); return; }
     const sel = zone.kind === 'ticket' ? `.tk[data-i="${zone.id}"]` : `.drop[data-zone="${zone.kind}"]${zone.i != null ? `[data-i="${zone.i}"]` : ''}`;
     const dst = this.el.querySelector(sel) || this.el.querySelector(`.drop[data-zone="${zone.kind}"]`);
-    const go = () => { const r = this.C.drop(src, zone); if (r?.ok && r.served) this.serveFx(r.served, src); this.render(); this.afterDrop(r, src, zone); };
+    const go = () => { const r = this.C.drop(src, zone); if (r?.ok && r.served) this.serveFx(r.served, src); this.render(); this.afterDrop(r, src, zone, null); };
     if (!dst) return go();
     const a = el.getBoundingClientRect(), b = dst.getBoundingClientRect();
     const g = document.createElement('div'); g.className = 'pv-ghost fly'; g.innerHTML = (el.querySelector('.pv-ghosticon img,.pv-ghosticon .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(g);

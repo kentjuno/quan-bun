@@ -458,6 +458,10 @@
         transform: translate(-50%,-20%) rotate(-8deg); }
       #pov .pv-star { position: fixed; z-index: 19; pointer-events: none; height: auto; }
 
+      /* ---- J5: vật nhận nảy + fx bung theo loại đích ---- */
+      #pov .pv-burst, #pov .pv-fly { position: fixed; z-index: 19; pointer-events: none; height: auto; object-fit: contain; }
+      #pov .pv-fly { transform: translate(-50%,-50%); }
+
       /* Số tiền bay lên — gắn thẳng vào #pov vì render() dựng lại DOM mỗi khung hình. */
       .pv-float { position: fixed; z-index: 20; pointer-events: none; font-weight: 700;
         font-size: 16px; color: #2f8a3a; text-shadow: 0 1px 3px rgba(255,250,240,.95);
