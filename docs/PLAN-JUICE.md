@@ -325,6 +325,17 @@ ghost vẫn chạy; sai 3 lần → nhãn `block`.
 Tổng phần tử động ở trạng thái rảnh **≤ 6**. Tôn trọng `prefers-reduced-motion`.
 
 **Nghiệm thu.**
+**ĐÃ LÀM 19/09 (sw v67).**
+- **Phát hiện lớn:** `render()` gán `innerHTML` cho MỌI ô mỗi khung hình, kể cả khi chuỗi y hệt → mọi CSS animation
+  bên trong bị khởi động lại liên tục = đứng yên ở khung 0 (đó là lý do `.hit` bounce cũ chưa bao giờ chạy quá 1 khung).
+  Thêm `setHTML()` / `H('id').innerHTML = …`: chỉ gán khi chuỗi đổi. Đây cũng là tối ưu FPS lớn nhất của cả J-series.
+- Spec ghi "khói nồi trụng đã có" — **chưa có**. Đã thêm 2 wisp CSS trên ô `st-pot`.
+- Bọt nồi lèo: chỉ gắn khi nồi **đã nóng** (`.pv-pt.done`, HTML ổn định). Nồi *đang đun* thì thanh thời gian đổi mỗi khung
+  → DOM dựng lại → không gắn loop được; thanh chạy là đủ "sống". Bọt vẽ bằng `::after` CSS, không cần gen `fx('bubble')`.
+- Ngân sách: nồi trụng 2 + nồi nước ≤ 3 (1 wisp/nồi) + giọt 1 = **6** lúc rảnh. Kiểm: phần tử KHÔNG bị thay qua 3 lần
+  `render()` (`sameNode === true`), mọi loop còn `getAnimations().length ≥ 1`.
+- `?fps=1` đã có; trong khung xem trước của Claude ra "0 FPS · 21171 ms" vì rAF bị nén — **chỉ tin số trên điện thoại**.
+
 - Thêm `?fps=1`: overlay đo FPS bằng rAF trong 3 s **trên điện thoại Kent** (không phải khung xem trước). Yêu cầu **≥ 50 FPS** trung bình ở level 20. Nếu < 50 thì tắt bọt trước, giọt nước sau.
 
 ---

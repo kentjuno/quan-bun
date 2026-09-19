@@ -448,6 +448,26 @@
         font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
         border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
 
+      /* ---- J9: đời sống nền. Tất cả là CSS loop trên phần tử KHÔNG bị render() dựng lại (setHTML) ---- */
+      .pv-stage .pv-z.st-pot .pv-steam { position: absolute; left: 50%; top: 4%; width: 34%; height: auto; pointer-events: none;
+        opacity: 0; animation: potSteam 3s ease-out infinite; }
+      .pv-stage .pv-z.st-pot .pv-steam.s2 { left: 62%; width: 26%; animation-delay: 1.5s; }
+      .pv-stage .pv-z.st-sink .pv-drip { position: absolute; left: 50%; top: 26%; width: 1.4cqw; height: 2.2cqw; border-radius: 50% 50% 60% 60%;
+        background: rgba(150,200,230,.85); pointer-events: none; opacity: 0; animation: drip 4s linear infinite; }
+      @keyframes drip { 0%, 78% { transform: translate(-50%, 0) scaleY(.6); opacity: 0; } 82% { opacity: .9; transform: translate(-50%, 0) scaleY(1); }
+        96% { opacity: .9; transform: translate(-50%, 160%) scaleY(1.2); } 100% { opacity: 0; transform: translate(-50%, 170%) scaleY(.4); } }
+      /* nồi lèo đã nóng (HTML ổn định) thở nhẹ + 1 bọt. Đang đun thì thanh thời gian đổi mỗi khung → DOM dựng lại → không gắn loop. */
+      .pv-stage .pv-pt.done .pv-objimg { transform-origin: 50% 100%; animation: potBreathe .9s ease-in-out infinite alternate; }
+      @keyframes potBreathe { from { transform: scaleY(1); } to { transform: scaleY(1.015); } }
+      .pv-stage .pv-pt.done::after { content: ''; position: absolute; left: 44%; top: 18%; width: 14%; aspect-ratio: 1; border-radius: 50%;
+        background: rgba(255,255,255,.75); box-shadow: inset 0 0 2px rgba(120,90,40,.5); pointer-events: none; opacity: 0; animation: bubble .9s ease-out infinite; }
+      @keyframes bubble { 0% { transform: translateY(40%) scale(.5); opacity: 0; } 30% { opacity: .9; } 100% { transform: translateY(-90%) scale(1.1); opacity: 0; } }
+      .pv-rail .tk.panic .tk-face { animation: faceShake .5s ease-in-out infinite; }
+      @keyframes faceShake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(1.5deg); } 75% { transform: rotate(-1.5deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        .pv-stage .pv-z.st-pot .pv-steam, .pv-stage .pv-z.st-sink .pv-drip, .pv-stage .pv-pt.done .pv-objimg,
+        .pv-stage .pv-pt.done::after, .pv-rail .tk.panic .tk-face { animation: none; } }
+
       /* ---- J8: nhãn khay ẩn mặc định, chạm giữ mới hiện tên ---- */
       #pov.nolabels .pv-stage .pv-pan small { display: none; }
       #pov .pv-tip { position: fixed; z-index: 21; pointer-events: none; transform: translate(-50%, -110%);
