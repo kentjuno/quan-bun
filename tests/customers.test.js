@@ -22,7 +22,7 @@ describe('khách quen & thoại', () => {
   it('level có khách quen: khách ngồi đúng tên, nói khi ngồi, ăn xong nói rồi mới trả ghế', () => {
     const L = levelById('pho-10'); const said = [];
     const w = new World({ ...L }, { onSpeak: (cu, k, t) => said.push([cu.name, k, t]) }, kitchenFor(false, L.layout), modsFor({}, 0));
-    for (let i = 0; i < (L.seconds + 30) * 30 && w.state === 'running'; i++) { const t = botDecide(w); if (t) w.tap(t); w.update(1 / 30); }
+    for (let i = 0; i < ((L.base?.seconds ?? L.seconds) + 30) * 30 && w.state === 'running'; i++) { const t = botDecide(w); if (t) w.tap(t); w.update(1 / 30); }
     const cau = w.customers.find((c) => c.regular === 'cau-hai');
     expect(cau).toBeTruthy(); expect(cau.dish).toBe('pho-tai-nam');
     expect(said.some(([n, k]) => n === 'Cậu Hai' && k === 'sit')).toBe(true);
@@ -32,7 +32,7 @@ describe('khách quen & thoại', () => {
   });
   it('khách quen kiên nhẫn hơn khách lạ cùng level', () => {
     const L = levelById('pho-10'); const w = new World({ ...L }, {}, kitchenFor(false));
-    for (let i = 0; i < L.seconds * 30 && w.state === 'running'; i++) w.update(1 / 30);
+    for (let i = 0; i < (L.base?.seconds ?? L.seconds) * 30 && w.state === 'running'; i++) w.update(1 / 30);
     const reg = w.customers.find((c) => c.regular); const str = w.customers.find((c) => !c.regular);
     expect(reg.maxPatience).toBeGreaterThan(str.maxPatience * 0.99);
   });

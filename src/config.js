@@ -197,7 +197,7 @@ export const CAMERA = { fov: 38, height: 11, back: 8.5, lookAtZ: 0.4 };
 // ============================================================
 //  WORLDS — vòng chơi chính (docs/PLAN-WORLDS.md). Ladder nằm ở src/data/worlds.js (dữ liệu thuần).
 // ============================================================
-export const WORLDS = buildWorlds(PRICES);
+export const WORLDS = buildWorlds(PRICES);   // đã áp PACE (data/pace.js) bên trong buildWorlds
 export const ALL_LEVELS = WORLDS.flatMap((w) => w.levels);
 export function worldById(id) { return WORLDS.find((w) => w.id === id) || WORLDS[0]; }
 export function levelById(id) { return ALL_LEVELS.find((l) => l.id === id) || null; }

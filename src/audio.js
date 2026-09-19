@@ -105,5 +105,8 @@ export const sfx = {
   bell() { [0, 0, 160].forEach((d, i) => setTimeout(() => tone(i === 2 ? 1568 : 1046, 0.7, 'sine', 0.06), d)); },   // chuông mở cửa
   cheer() { [0, 90, 180, 270].forEach((d, i) => setTimeout(() => tone([523, 659, 784, 1046][i], 0.35, 'triangle', 0.06), d)); },   // hết ngày / sao
   chatter() { noise(0.4, 0.015, 300, 1200); },            // tiếng quán rì rào (khách nhóm)
+  combo(n) { const b = 660 * Math.pow(1.19, Math.min(n, 6)); [0, 70, 140].forEach((d, i) => setTimeout(() => tone(b * [1, 1.25, 1.5][i], 0.18, 'square', 0.04), d)); },   // chuỗi: lên tông theo n
+  crack() { noise(0.12, 0.08, 800, 6000); tone(140, 0.35, 'sawtooth', 0.06, 0.5); },   // vỡ chuỗi
+  rush() { [0, 180, 360].forEach((d) => setTimeout(() => { tone(880, 0.12, 'square', 0.05); setTimeout(() => tone(1108, 0.12, 'square', 0.05), 80); }, d)); },   // còi cao điểm
   hum(kind) { if (kind === 'wait') tone(392, 0.18, 'sine', 0.03, 0.9); else tone(523, 0.14, 'sine', 0.03, 1.1); },   // khách lên tiếng
 };

@@ -11,6 +11,8 @@ const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 export class World {
   /** `mods`: thông số bếp sau nâng cấp (config.modsFor) — null = mặc định trong bố trí bếp. */
   constructor(shift, events = {}, kitchen = KITCHEN, mods = null) {
+    // Bếp 3D (phần phụ, có đi lại) chậm hơn quầy POV nhiều → dùng số GỐC của level, không dùng số đã áp PACE (data/pace.js).
+    if (shift?.base) shift = { ...shift, ...shift.base };
     this.shift = shift; this.ev = events; this.kitchen = kitchen; this.mods = mods;
     // ---- bậc thang level (docs/PLAN-WORLDS.md): cờ rút gọn + ràng buộc + sự kiện + mục tiêu ----
     const sim = shift.simplify || null; const con = shift.constraints || null;

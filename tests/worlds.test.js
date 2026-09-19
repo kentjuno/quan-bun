@@ -120,6 +120,7 @@ describe('cờ rút gọn (bản tập) — KHÔNG đụng công thức gốc', 
   });
 });
 
+// Bếp 3D dùng số GỐC (L.base) — PACE (data/pace.js) chỉ áp cho quầy POV.
 describe('ràng buộc · sự kiện · mục tiêu', () => {
   it('potSlots / handCapacity / brothCap / noStack đổi luật bếp', () => {
     const k = kitchenFor(false);
@@ -173,21 +174,21 @@ describe('ràng buộc · sự kiện · mục tiêu', () => {
   it('bot chơi được level 1 của mọi world (bản tập) và level có ràng buộc/bố trí lạ', () => {
     for (const w0 of WORLDS) {
       const L = w0.levels[0]; const w = new World({ ...L }, {}, kitchenFor(false, L.layout));
-      run(w, L.seconds + 30);
+      run(w, (L.base?.seconds ?? L.seconds) + 30);
       expect(w.served, `${L.id}: bot không phục vụ được ai`).toBeGreaterThanOrEqual(1);
       expect(w.mistakes, `${L.id}: bot làm sai`).toBe(0);
     }
     const hard = levelById('pho-20');   // island + boss
-    const w = new World({ ...hard }, {}, kitchenFor(false, hard.layout)); run(w, hard.seconds + 20);
+    const w = new World({ ...hard }, {}, kitchenFor(false, hard.layout)); run(w, (hard.base?.seconds ?? hard.seconds) + 20);
     expect(w.served).toBeGreaterThan(2);
     const one = levelById('pho-9');     // potSlots 1
-    const w2 = new World({ ...one }, {}, kitchenFor(false, one.layout)); run(w2, one.seconds + 20);
+    const w2 = new World({ ...one }, {}, kitchenFor(false, one.layout)); run(w2, (one.base?.seconds ?? one.seconds) + 20);
     expect(w2.served).toBeGreaterThan(1);
   });
   it('CẢ 124 level đều chơi được: bot phục vụ ít nhất 1 khách, không kẹt', () => {
     const bad = [];
     for (const w0 of WORLDS) for (const L of w0.levels) {
-      const w = new World({ ...L }, {}, kitchenFor(false, L.layout)); run(w, L.seconds + 40);
+      const w = new World({ ...L }, {}, kitchenFor(false, L.layout)); run(w, (L.base?.seconds ?? L.seconds) + 40);
       if (w.served < 1) bad.push(`${L.id}: 0 khách`);
       if (w.state !== 'over') bad.push(`${L.id}: không kết thúc`);
     }

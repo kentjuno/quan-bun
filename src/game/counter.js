@@ -4,6 +4,7 @@
 import { D, recipeFor, soupRecipeFor, label, tokenMatches, actionTime } from './recipes.js';
 import { POT, SOUP, SHELF_TOPPING, PRICES } from '../config.js';
 import { REGULARS, STRANGER_LINES, lineFor } from '../data/customers.js';
+import { comboMult } from '../data/pace.js';
 
 const isBroth = (t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t);
 const BOWLISH = /bowl|^tray$|tray-paper|^dia-|mam-dan|chao-ap-ca|serving-plate|banh-trang/;
@@ -36,6 +37,8 @@ export class Counter {
     // Hết giờ là ĐÓNG CA thật (Kent 19/09). Trước đây `seconds` của level chỉ in ra menu
     // chứ quầy POV không dùng — menu hứa "180s" mà chơi bao lâu cũng được.
     this.seconds = Number.isFinite(o.seconds) ? o.seconds : null;
+    // Giờ cao điểm (data/pace.js PACE.rush): tới mốc `at` của ca thì khách còn lại tới dày gấp đôi trong `len` giây, tiền ×mult.
+    this.rush = o.rush || null; this.rushUntil = 0; this._rushed = false;
     this.maxTickets = c?.tickets ?? o.maxTickets ?? 3;   // số phiếu treo cùng lúc — càng nhiều càng làm song song được
     this.time = 0; this.spawned = 0; this.done = 0; this.over = false; this.results = [];
     this.nextSpawn = 1;
@@ -51,7 +54,9 @@ export class Counter {
     this.boards = Array.from({ length: c?.boards ?? 2 }, () => null);          // thớt
     this.fryer = null; this.microwave = null; this.sinkJob = null; this.stovetop = null;   // chảo chiên · lò vi sóng · bồn (nhúng bánh tráng) · mặt bếp (nồi/chảo nhỏ)
     this.burner = { pots: Array.from({ length: o.burners ?? 1 }, () => null), ready: [] };
-    if (sim?.soupReady) for (const r of Object.values(this.soups)) for (let i = 0; i < (sim.soupReady === true ? 2 : sim.soupReady); i++) this.burner.ready.push({ name: r.name, output: r.output, items: r.items });
+    // `soupReady: true` = nước nấu sẵn ĐỦ CHO CẢ CA (this.rounds). Trước đây cứng 2 phần → level 2 của 4 world
+    // (3 khách) không bao giờ làm được tô thứ 3; kiên nhẫn 190 s che mất (khách bỏ đi, level vẫn kết thúc). Phát hiện 19/09 khi siết giờ ca.
+    if (sim?.soupReady) for (const r of Object.values(this.soups)) for (let i = 0; i < (sim.soupReady === true ? Math.max(2, this.rounds) : sim.soupReady); i++) this.burner.ready.push({ name: r.name, output: r.output, items: r.items });
     this.stackMax = c?.brothCap ?? SOUP.stackMax; this.noStack = !!c?.noStack;
     this.tickets = [];
     // bản tập bỏ bước: lấy item nào trên kệ thì nhận thẳng token kết quả (vd tô đã nóng sẵn)
@@ -307,18 +312,24 @@ export class Counter {
     const price = PRICES[t.dish] || 30;
     const tipRate = t.mistakes ? 0 : sec <= t.pat * 0.45 ? 0.2 : sec <= t.pat * 0.7 ? 0.1 : 0;
     const tip = Math.round(price * tipRate * (t.tipMult || 1));
-    this.money += price + tip; this.tips += tip;
+    // Chuỗi tô sạch (combo) nhân tiền — tính TRƯỚC khi cộng tiền để tô này được hưởng. Sai 1 tô là về 0.
+    const hadStreak = this.streak;
     if (t.mistakes) this.streak = 0; else { this.streak++; this.bestStreak = Math.max(this.bestStreak, this.streak); }
+    const mult = comboMult(this.streak) * (this.rushUntil ? this.rush.mult : 1);
+    const gain = Math.round((price + tip) * mult);
+    this.money += gain; this.tips += tip;
+    if (t.mistakes && hadStreak >= 2) this.ev.onComboBreak?.(hadStreak);
+    else if (this.streak >= 2) this.ev.onCombo?.(this.streak, comboMult(this.streak));
     if (t.regular) this.regulars[t.regular] = { id: t.regular, name: t.name, served: true };
     this.tickets.splice(this.tickets.indexOf(t), 1); this.done++; this.ev.onSfx?.('serve');
     if (this.done >= this.rounds && this.clearedAt == null) this.clearedAt = +this.time.toFixed(1);
     const say = t.mistakes ? (t.regular ? lineFor({ regular: t.regular }, 'wrong') : 'Ừ… cũng được.') : (t.regular ? lineFor({ regular: t.regular }, 'good') : STRANGER_LINES.good[Math.floor(this.rnd() * STRANGER_LINES.good.length)]);
-    this.ev.onServe?.(t, { sec, quality: q, say });
+    this.ev.onServe?.(t, { sec, quality: q, say, gain, mult });
     this.checkEnd(); return { ok: true, msg: `${t.name}: “${say}”`, served: t };
   }
   expire(t) {
     this.results.push({ dish: t.dish, mistakes: t.mistakes + 3, sec: t.pat, taps: t.taps, quality: 0 });
-    this.left++; this.streak = 0;
+    this.left++; if (this.streak >= 2) this.ev.onComboBreak?.(this.streak); this.streak = 0;
     if (t.regular) this.regulars[t.regular] = { id: t.regular, name: t.name, served: false };
     this.tickets.splice(this.tickets.indexOf(t), 1); this.done++; this.ev.onSfx?.('mistake'); this.ev.onExpire?.(t); this.checkEnd();
   }
@@ -330,6 +341,14 @@ export class Counter {
   update(dt) {
     if (this.over) return; this.time += dt;
     if (this.seconds != null && this.time >= this.seconds) return this.endShift();
+    if (this.rush && this.seconds != null) {
+      if (!this._rushed && this.time >= this.seconds * this.rush.at) {
+        this._rushed = true; this.rushUntil = this.time + this.rush.len;
+        // khách chưa tới: dồn về gấp đôi (khoảng cách còn lại chia 2)
+        for (let i = this.spawned; i < this.arrivals.length; i++) { const a = this.arrivals[i]; if (a.t > this.time) a.t = +(this.time + (a.t - this.time) / 2).toFixed(2); }
+        this.ev.onRush?.(true, this.rush);
+      } else if (this.rushUntil && this.time >= this.rushUntil) { this.rushUntil = 0; this.ev.onRush?.(false, this.rush); }
+    }
     if (this.arrivals.length) {
       // khách tới theo lịch; quầy chỉ treo 3 phiếu nên người tới sớm phải đợi chỗ trống
       while (this.spawned < this.rounds && this.tickets.length < this.maxTickets && this.time >= this.arrivals[this.spawned].t) this.spawn(null, this.arrivals[this.spawned]);

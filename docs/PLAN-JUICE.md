@@ -371,3 +371,27 @@ Pipeline: `scripts/process_icons.py` (cắt magenta) → webp. Ghi vào `docs/AR
 - Dùng `localStorage` cho trạng thái chơi.
 - Kết luận "mượt rồi" từ khung xem trước của Claude.
 - Đổi engine. CSS + Web Animations + `rAF` đủ cho toàn bộ kế hoạch này.
+
+
+---
+
+## J10 — NHỊP (Kent 19/09: "vẫn không cuốn hút") — ĐÃ LÀM, sw v74
+
+**Chẩn đoán bằng số (bot chạy 129 level, trước khi sửa):** kiên nhẫn 140–210 s, bot làm 1 tô 6–22 s (≈ **17×**),
+bot xong ở **40 %** giờ ca, **0/129** level có khách bỏ đi. Không có gì ép tay → "như bài tập có hình đẹp".
+
+**Luật mới — tất cả ở `src/data/pace.js` (`PACE`), KHÔNG sửa từng level; số gốc giữ ở `L.base`:**
+- Kiên nhẫn = k × giây/tô bot (`POV_SECONDS`), k 6 → 4 từ level đầu → cuối world (người ≈ 2× bot → 3 tô → 2 tô). Sàn 30 s, level rút gọn 45 s.
+- Giờ ca = 4 + (khách + 2) × giây/tô (khách cuối + đuôi 3 tô). Sàn 60 s. Khách = count + cặp + đoàn boss.
+- Combo: chuỗi tô sạch ×1 / 1.25 / 1.5 / 1.75 / 2 (2/3/4/5+); sai 1 tô hay khách bỏ đi → về 0 + "VỠ CHUỖI" + tiếng vỡ.
+- Giờ cao điểm: mốc 60 % ca, 30 s, khách còn lại tới dày gấp đôi, tiền ×1.5, viền đỏ nhấp + còi. Level `challenge.rush` (đã dồn 3 phiếu) thì không.
+- Mốc sao 0.5 / 0.85 / **1.2** × tổng giá gốc (trước 0.4/0.6/0.8) — có combo nên 3 sao = sạch VÀ gần tốc độ bot.
+- Bếp 3D (phần phụ) dùng `L.base` — PACE chỉ áp cho quầy POV.
+
+**Kết quả bot (test `PACE: bot 3 sao ở cả 129 level`):** bot 129/129 ★★★, không khách bỏ đi. Bot nghĩ chậm 2×: 129 ★★★.
+Chậm 3×: 115 ★★★ · 13 ★★ · 1 ★, 11 khách bỏ đi. Kiên nhẫn trung bình 173 → 76 s, giờ ca 195 → 110 s.
+
+**Bug lòi ra khi siết giờ:** `soupReady: true` cấp cứng **2 phần** nước → level 2 của 4 world (3 khách) **không bao giờ làm được tô thứ 3**;
+kiên nhẫn 190 s che mất (khách bỏ đi, level vẫn kết thúc ≥ 1 sao). Sửa: nấu sẵn đủ cho cả ca.
+
+**Kent chưa thấy (rAF khung xem trước ≈ 1 Hz):** COMBO / VỠ CHUỖI / GIỜ CAO ĐIỂM nổ giữa màn, viền đỏ nhấp. Nghiệm thu trên điện thoại.

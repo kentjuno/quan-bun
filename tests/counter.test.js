@@ -225,6 +225,32 @@ describe('Nhịp khách ở quầy POV', () => {
     expect(bad, bad.slice(0, 10).join(' | ')).toEqual([]);
   }, 180000);
 
+  // NHỊP THẬT (data/pace.js, Kent 19/09): kiên nhẫn ≈ 4–6 × giây/tô bot, giờ ca = khách cuối + 3 tô, combo ×2, cao điểm.
+  // Bot (trần trên) phải 3 sao MỌI level, nếu không thang level đã bị siết quá tay → chỉnh PACE, không chỉnh từng level.
+  it('PACE: bot 3 sao ở cả 129 level, không khách nào bỏ đi; level 2 mỗi world có đủ nước nấu sẵn cho cả ca', () => {
+    const bad = [];
+    for (const w of WORLDS) for (const L of w.levels) {
+      expect(L.paced, `${L.id} chưa áp PACE`).toBe(true);
+      expect(L.base.patience, `${L.id}: số gốc phải giữ trong L.base`).toBeGreaterThan(L.patience);
+      const C = new Counter({ dishes: L.dishes, arrivals: povArrivals(L), simplify: L.simplify, constraints: L.constraints, goal: L.goal,
+        moneyTargets: L.moneyTargets, patience: L.patience, seconds: L.seconds, rush: L.rush, rnd: () => 0.37 });
+      play(C, L.seconds + 5); const r = C.result(); const T = L.moneyTargets;
+      if (C.money < T[2]) bad.push(`${L.id}: ${C.money}k < ${T[2]}k`);
+      if (r.left) bad.push(`${L.id}: bỏ đi ${r.left}`);
+    }
+    expect(bad, bad.slice(0, 8).join(' | ')).toEqual([]);
+  }, 180000);
+
+  it('combo: chuỗi tô sạch nhân tiền, sai 1 tô là về 1×; giờ cao điểm dồn khách còn lại và nhân tiền', () => {
+    const C = new Counter({ dishes: ['pho-tai-nam'], rounds: 6, patience: 900, gap: 0.1, seconds: 300, rush: { at: 0.03, len: 20, mult: 1.5 }, rnd: () => 0.5 });   // cao điểm ở giây 9, lúc bot còn đang làm
+    const events = []; C.ev.onCombo = (n, m) => events.push(['combo', n, m]); C.ev.onComboBreak = (n) => events.push(['break', n]); C.ev.onRush = (on) => events.push(['rush', on]);
+    play(C, 400);
+    expect(events.some((e) => e[0] === 'combo' && e[1] >= 2)).toBe(true);
+    expect(C.money).toBeGreaterThan(6 * 40);                       // có nhân combo → hơn giá gốc
+    expect(events.some((e) => e[0] === 'rush' && e[1] === true)).toBe(true);
+    expect(events.some((e) => e[0] === 'rush' && e[1] === false)).toBe(true);
+  });
+
   it('nén lịch nhưng KHÔNG làm level thành bất khả thi: bot vẫn không để khách bỏ đi nhiều', () => {
     const bad = [];
     for (const w of WORLDS) for (const L of w.levels) {

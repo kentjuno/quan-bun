@@ -33,11 +33,13 @@ export class Pov {
     const o = this.o;
     this.C = new Counter({
       dishes: o.dishes, rounds: o.rounds ?? 8, arrivals: o.arrivals, simplify: o.simplify, constraints: o.constraints,
-      goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1, seconds: o.seconds,
+      goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1, seconds: o.seconds, rush: o.rush,
       patience: o.patience ?? 90, gap: o.gap ?? 16, weights: o.weights,
       ev: { onSfx: (k) => o.sfx?.[k]?.(), onMsg: (m, c) => this.msg(m, c), onEnd: (r) => this.finish(r),
         onServe: (t, r) => this.msg(`${t.name}: “${r.say}” · ${r.sec.toFixed(0)}s · ${r.quality === 100 ? 'hoàn hảo' : r.quality >= 60 ? 'được' : 'ẩu'}`, r.quality === 100 ? 'good' : 'mid'),
-        onExpire: (t) => this.msg(`${t.name} bỏ đi — chờ lâu quá`, 'bad'), onSpoil: () => this.msg('Sợi để lâu bị hư — đem vứt', 'bad') },
+        onExpire: (t) => this.msg(`${t.name} bỏ đi — chờ lâu quá`, 'bad'), onSpoil: () => this.msg('Sợi để lâu bị hư — đem vứt', 'bad'),
+        onCombo: (n, m) => this.banner(`COMBO ×${m}`, 'combo', n), onComboBreak: (n) => this.banner('VỠ CHUỖI', 'break'),
+        onRush: (on, r) => this.rushUI(on, r) },
     });
     if (!this.C.dishes.length) return o.onDone(this.C.result());
     this.build(); this.el.classList.remove('hidden'); this.C.spawn(); this.render(); this.loop();
@@ -616,6 +618,20 @@ export class Pov {
       if (u.dataset.c !== cls) { u.dataset.c = cls; u.className = cls; }
       u.closest('.tk')?.classList.toggle('panic', f < 0.2);      // J9: mặt lắc khi sắp bỏ đi
     }
+  }
+
+  /** Chữ to giữa màn (COMBO ×2 / VỠ CHUỖI / GIỜ CAO ĐIỂM). Phần tử riêng trong #pov, tự dọn. */
+  banner(text, kind, n = 0) {
+    const e = document.createElement('div'); e.className = `pv-banner ${kind}`; e.textContent = text;
+    if (kind === 'combo') e.style.setProperty('--n', Math.min(n, 6));
+    this.el.appendChild(e);
+    if (kind === 'combo') this.o.sfx?.combo?.(n); else if (kind === 'break') { this.o.sfx?.crack?.(); this.el.classList.add('shake'); setTimeout(() => this.el.classList.remove('shake'), 320); }
+    setTimeout(() => e.remove(), kind === 'rush' ? 1600 : 900);
+  }
+  rushUI(on, r) {
+    const stage = $('pvStage'); if (!stage) return;
+    stage.classList.toggle('rush', !!on);
+    if (on) { this.banner(`GIỜ CAO ĐIỂM ×${r.mult}`, 'rush'); this.o.sfx?.rush?.(); }
   }
 
   /** Đồng hồ + chuỗi + số tiền bay lên. Gọi mỗi khung hình nên chỉ đụng DOM khi giá trị ĐỔI. */

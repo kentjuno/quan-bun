@@ -5,6 +5,8 @@
 // đó là `whatsNew` — bắt buộc, một dòng. Không viết được whatsNew thì cắt level đó.
 // File này là DỮ LIỆU THUẦN: không import config (tránh vòng lặp import). `buildWorlds(prices)` ở cuối ráp thành WORLDS.
 
+import { applyPace, PACE } from './pace.js';   // data → data, không vòng lặp import
+
 /** Một level. `n` = số thứ tự trong world. Mọi field khác đều tuỳ chọn. */
 const lv = (n, title, whatsNew, o = {}) => ({
   n, title, whatsNew,
@@ -465,8 +467,10 @@ export function buildWorlds(prices) {
       const total = avg * (L.count + (L.challenge?.kind === 'boss' ? (L.challenge.group || 0) : 0) + L.pair);
       return { ...L, dishes, world: w.id, id: `${w.id}-${L.n}`, name: `${w.name} ${L.n}`,
         training: !!(L.simplify && Object.keys(L.simplify).length),
-        moneyTargets: [0.4, 0.6, 0.8].map((f) => Math.max(10, Math.round(total * f / 10) * 10)) };
+        // Mốc sao theo PACE.targets (có combo nhân tiền nên 3 sao phải > 100 % giá gốc = chỉ đạt khi chơi sạch)
+        moneyTargets: PACE.targets.map((f) => Math.max(10, Math.round(total * f / 10) * 10)) };
     });
+    levels.forEach((L, i) => applyPace(L, i, levels.length));   // nhịp thật: kiên nhẫn / giờ ca / cao điểm theo tốc độ bot
     const starsToUnlock = Math.floor(prevMax * 3 * 0.6 / 5) * 5;
     prevMax = w.levels.length;
     return { ...w, levels, maxStars: levels.length * 3, starsToUnlock };
