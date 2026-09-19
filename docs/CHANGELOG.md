@@ -253,3 +253,9 @@ Kent sau khi thử Ráp tô: "ok, nhưng kéo thả vô tô sẽ có cảm giác
 - Kiểm kiến thức ngay tại chỗ thả: phở chưa xả lạnh mà trút vô tô, bún bò đem xả lạnh, nấu nước sai thứ tự, sai bước ráp, giao nhầm phiếu — đều báo lý do cụ thể và tính lỗi cho TÔ đó.
 - Giao diện quầy dựng theo món của màn (trạm nào không dùng thì ẩn), chia lớp xa/giữa/gần; chạm đôi báo lý do khi chưa biết đem đi đâu ("Chưa có tô nào trên thớt", "Chưa cần X — kế tiếp: Y").
 - `counterMove(C)` = bot cho quầy (dùng cho test và sẽ dùng cho par). `tests/counter.test.js`: 11 test, trong đó **bot làm xong cả 18 món, 0 lỗi**. Tổng 75 unit test pass, smoke 0 lỗi.
+
+## 0.9.1 — J1: nền quầy có tương phản thật (19/09)
+- `public/art/scene.webp` vẽ lại bằng `edit-image` (giữ nguyên bố cục): nét mực đậm hơn, màu no hơn, mặt trước tủ tối hẳn, vignette bốn góc. Dải xanh lá của tường bị kéo bão hoà xuống 30 % bằng script để rau trong khay không bị tường nuốt.
+- Số đo (`scripts/contrast_report.py`): bố cục `struct` 0.786 · p5 độ sáng 99.1 → 35.6 (−64 %) · biên độ +30.3 % · mặt tủ 221.5 → 114.3.
+- Thêm `scripts/contrast_report.py`. Bài học: **SSIM trên độ sáng không đo được "bố cục có trôi không"** khi đổi tông màu — phải dùng tương quan độ lớn gradient.
+- Bản gốc giữ ở `art/raw/scene/scene-base.webp` để còn so sánh; các bản thử ở `scene-v1/v4/v5.webp`.

@@ -457,3 +457,21 @@ copy file vào `/mnt/user-data/outputs/` trong máy Claude rồi gọi `device_c
 với `stagedPath` — file đi thẳng, không qua ngữ cảnh model. Dùng cho ảnh tham chiếu,
 tài liệu dài, sprite đã xử lý sẵn. Ảnh đích của quầy POV nằm ở `art/ref/concept-pov.jpg`
 nhờ đường này. Kế hoạch nâng cảm giác game: `docs/PLAN-JUICE.md`.
+
+## 18. Đo "bố cục có trôi không" khi đổi tông màu (19/09)
+
+Làm J1 (tăng tương phản nền) thì phải chắc Flow **không dời đồ**, vì `ZONES` đo trên tranh.
+Tui chọn SSIM — **sai**. SSIM có hạng tử độ sáng và độ tương phản, nên chỉ cần đổi tông màu là
+nó tụt (bản đạt nhất chỉ 0.73) dù hình y nguyên. Thứ đo đúng là **tương quan độ lớn gradient**:
+chỉ phụ thuộc hình, không phụ thuộc sáng tối. Xem `scripts/contrast_report.py` → `struct_corr`.
+
+Ngưỡng đang dùng: `struct >= 0.75`. Đối chiếu thực tế: v1 0.83 (giữ hình tốt nhất),
+v2 0.74, v3 0.70 (nhìn mắt cũng thấy đồ đã xê dịch) — thang này khớp với mắt.
+
+**Sửa màu theo dải màu thì làm bằng script, đừng nhờ Flow.** Bản v4 tường xanh quá gắt,
+mà rau trong khay cũng xanh → nhờ Flow chỉnh lại là nó vẽ lại cả tranh. Chuyển sang HSV,
+lấy đúng dải 95°–190°, nhân bão hoà 0.70: 27.4 % pixel đổi, `struct` không giảm.
+
+**Xem ảnh mà không tốn token:** đừng kéo base64 về. Copy các bản thử vào `public/art/_j1/`
+kèm một trang HTML xếp cạnh nhau → deploy → mở bằng khung xem trước → chụp màn hình.
+Xong thì xoá thư mục đó trong lần deploy chốt.
