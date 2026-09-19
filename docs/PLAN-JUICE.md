@@ -133,6 +133,19 @@ Chạy 3 lần, giữ bản có SSIM cao nhất so với bản cũ (xem nghiệm
 - Ở level có `seconds`: vòng đồng hồ giảm đều; tại 25 % và 10 % đổi màu đúng (kiểm bằng `C.time` giả).
 - Ảnh điện thoại: không thấy dải màu be phẳng hai bên tranh.
 
+**ĐÃ LÀM 19/09 (sw v54) — 3 chỗ LỆCH SPEC, có lý do:**
+1. *§3 nguồn giờ.* Spec ghi `C.o.seconds` — **không tồn tại**. `seconds` của level chỉ được in ra menu
+   ("160s"), quầy POV không hề dùng: level chỉ kết thúc khi phục vụ hết khách. Kent chốt 19/09:
+   **hết giờ là đóng ca thật** → `Counter.seconds` + `Counter.endShift()`, `main.js` truyền `L.seconds`.
+   Thêm test `hết giờ là đóng ca`: cả 124 level bot vẫn phục vụ ≥ 60 % khách trong đúng `seconds`.
+2. *§3 màu vòng.* Spec ghi `--broth` khi còn > 25 %. `--broth` = `#e8a33c`, gần y hệt màu cảnh báo
+   `#e0a030` → mốc 25 % nhìn không ra. Đổi màu "còn nhiều giờ" sang **xanh `#3f8f4f`**.
+3. *§5 hàng icon tô.* **Không đủ chỗ.** Đo thật: `hudR` rộng 47 % ≈ 173 px; vòng đồng hồ 48 px +
+   nút ✕ 33 px + khoảng cách ≈ 93 px, chỉ còn ~80 px — không nhét nổi 8 icon 5 cqw (18 px).
+   Tạm giữ chữ `n/N tô`. **Không tự sửa ZONES**: muốn có hàng icon thì Kent nới `hudR` trong
+   `tools/zones.html` (rộng hơn hoặc cao 9 %), rồi làm sau.
+   Nút ✕ đang 9 cqw ≈ 33 px, nhỏ hơn ngưỡng chạm 44 px — cố ý, để đừng lỡ tay thoát giữa ca.
+
 **Bẫy.** `hudL {x:2,y:1.5,w:41.5,h:7.5}` và `hudR` cao 7.5 % ≈ 49 px — vòng 13 cqw ≈ 48 px vừa khít; nếu chật thì đề xuất Kent nới `hudR.h` lên 9 trong `tools/zones.html`, **không** tự sửa.
 
 ---

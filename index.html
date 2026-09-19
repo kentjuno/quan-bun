@@ -207,7 +207,7 @@
       .pz.busy { opacity: .55; } .pz.busy .opt button { pointer-events: none; }
       .pz.bw { border-color: #c9d9e8; } .pz.br { border-color: #f1c27d; }
       /* ===== Quầy POV — kéo thả / chạm đôi (lõi mới, docs/PLAN-CORE.md) ===== */
-      #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; overscroll-behavior: none; background: linear-gradient(#cdbb98 0%, #c4b18d 20%, #d7cdb5 21%, #cfc3a8 40%, #ece0c9 41%, #f5ecda 100%); color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
+      #pov { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); overscroll-behavior: none; background: #6b5740; color: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; overflow: hidden; }
       #pov.shake { animation: shake .3s; }
       /* art C: ảnh tô thật trong ô ráp — thay cho chồng icon */
       /* mặt khách trên phiếu */
@@ -410,6 +410,50 @@
         font-weight: 700; color: #3b2a1e; background: rgba(255,252,244,.88);
         border: 1px solid rgba(90,66,44,.35); border-radius: 6px; padding: 3px 7px;
         box-shadow: 0 2px 5px rgba(60,44,28,.22); white-space: nowrap; }
+
+      /* ---- J3: HUD nằm TRONG tranh, tranh tràn viền, đồng hồ ca ---- */
+      /* Nền ngoài khung = chính tấm tranh phóng to + làm mờ, nên mắt không thấy cái khung be.
+         --pv-bg do pov.js gắn (SCENE.src đổi theo base path của Pages). */
+      #pov::before { content: ''; position: absolute; inset: 0; z-index: -1;
+        background: var(--pv-bg, none) center / cover no-repeat #6b5740;
+        filter: blur(14px) brightness(.78) saturate(.9); transform: scale(1.12); }
+      .pv-stage .pv-hud span { font-size: 4.6cqw; line-height: 1; }
+      .pv-stage .pv-hud i { font-size: 2.8cqw; opacity: .75; }
+      .pv-stage .pv-hud { gap: 1.6cqw; padding: 1cqw 2cqw; border-radius: 2cqw; }
+      .pv-streak:empty { display: none; }
+      .pv-streak { font-size: 3.6cqw; color: #b5521f; background: rgba(230,160,60,.22);
+        border-radius: 999px; padding: .3cqw 1.4cqw; }
+      .pv-streak.pop { animation: pvPop .2s ease-out; }
+      @keyframes pvPop { from { transform: scale(1.4); } to { transform: scale(1); } }
+
+      .pv-clock { position: relative; width: 13cqw; height: 13cqw; flex: none; }
+      .pv-clock svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+      .pv-clock circle { fill: none; stroke-width: 4.2; }
+      .pv-clock .bg { stroke: rgba(90,66,44,.18); }
+      /* stroke-dashoffset do JS gán (calc() ra số không đơn vị không phải trình duyệt nào cũng chịu) */
+      /* XANH khi còn nhiều giờ — KHÔNG dùng var(--broth) như spec: --broth là #e8a33c,
+         gần y hệt màu cảnh báo #e0a030 nên mốc 25% nhìn không ra. */
+      .pv-clock .fg { stroke: #3f8f4f; stroke-linecap: round; stroke-dasharray: 97.4; stroke-dashoffset: 0;
+        transition: stroke-dashoffset .2s linear; }
+      .pv-clock.warn .fg { stroke: #e0a030; }
+      .pv-clock.hot .fg { stroke: #d64a2c; }
+      .pv-clock.hot { animation: pvTick .6s infinite; }
+      .pv-clock.up .fg { display: none; }
+      @keyframes pvTick { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+      .pv-clock u { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+        font-size: 4.2cqw; font-weight: 700; text-decoration: none; color: #3b2a1e; }
+      .pv-clock.hot u { color: #d64a2c; }
+
+      .pv-x { width: 9cqw; height: 9cqw; flex: none; display: flex; align-items: center; justify-content: center;
+        font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
+        border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
+
+      /* Số tiền bay lên — gắn thẳng vào #pov vì render() dựng lại DOM mỗi khung hình. */
+      .pv-float { position: fixed; z-index: 20; pointer-events: none; font-weight: 700;
+        font-size: 16px; color: #2f8a3a; text-shadow: 0 1px 3px rgba(255,250,240,.95);
+        animation: pvFloat .7s ease-out forwards; }
+      @keyframes pvFloat { from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(-40px); opacity: 0; } }
       .pv-hud.r { left: auto !important; right: 2%; }
       .pv-hud i { font-style: normal; opacity: .6; font-weight: 600; }
       /* thanh trên cùng + lời nhắc: nổi trên cảnh, không chiếm chỗ */

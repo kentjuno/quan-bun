@@ -33,6 +33,9 @@ export class Counter {
     this.arrivals = (o.arrivals || []).filter((a) => !a.dish || this.dishes.includes(a.dish));
     this.rounds = this.arrivals.length || (o.rounds ?? 8);
     this.patience = o.patience ?? 90; this.gap = o.gap ?? 16;
+    // Hết giờ là ĐÓNG CA thật (Kent 19/09). Trước đây `seconds` của level chỉ in ra menu
+    // chứ quầy POV không dùng — menu hứa "180s" mà chơi bao lâu cũng được.
+    this.seconds = Number.isFinite(o.seconds) ? o.seconds : null;
     this.maxTickets = c?.tickets ?? o.maxTickets ?? 3;   // số phiếu treo cùng lúc — càng nhiều càng làm song song được
     this.time = 0; this.spawned = 0; this.done = 0; this.over = false; this.results = [];
     this.nextSpawn = 1;
@@ -320,10 +323,13 @@ export class Counter {
     this.tickets.splice(this.tickets.indexOf(t), 1); this.done++; this.ev.onSfx?.('mistake'); this.ev.onExpire?.(t); this.checkEnd();
   }
   checkEnd() { if (this.done >= this.rounds && !this.over) { this.over = true; this.ev.onEnd?.(this.result()); } }
+  /** Đóng ca vì hết giờ. Khách chưa tới thì thôi không tới; phiếu đang treo coi như khách về. */
+  endShift() { if (this.over) return; this.over = true; this.ev.onSfx?.('done'); this.ev.onEnd?.(this.result()); }
 
   // ---------- đồng hồ ----------
   update(dt) {
     if (this.over) return; this.time += dt;
+    if (this.seconds != null && this.time >= this.seconds) return this.endShift();
     if (this.arrivals.length) {
       // khách tới theo lịch; quầy chỉ treo 3 phiếu nên người tới sớm phải đợi chỗ trống
       while (this.spawned < this.rounds && this.tickets.length < this.maxTickets && this.time >= this.arrivals[this.spawned].t) this.spawn(null, this.arrivals[this.spawned]);

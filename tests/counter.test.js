@@ -210,6 +210,21 @@ describe('Nhịp khách ở quầy POV', () => {
     }
   });
 
+  // Từ 19/09 `seconds` là HẠN GIỜ THẬT (Counter.endShift). Trước đó nó chỉ in ra menu.
+  // Nếu chuông reo mà bot còn quá nửa số khách chưa phục vụ thì level đó hứa suông.
+  it('hết giờ là đóng ca: trong đúng `seconds` bot vẫn phục vụ được phần lớn khách', () => {
+    const bad = [];
+    for (const w of WORLDS) for (const L of w.levels) {
+      const C = new Counter({ dishes: L.dishes, arrivals: povArrivals(L), simplify: L.simplify,
+        constraints: L.constraints, goal: L.goal, moneyTargets: L.moneyTargets, patience: L.patience,
+        seconds: L.seconds, rnd: () => 0.37 });
+      play(C, L.seconds + 60);
+      const r = C.result();
+      if (r.served < Math.ceil(C.rounds * 0.6)) bad.push(`${L.id}: ${r.served}/${C.rounds} trong ${L.seconds}s`);
+    }
+    expect(bad, bad.slice(0, 10).join(' | ')).toEqual([]);
+  }, 180000);
+
   it('nén lịch nhưng KHÔNG làm level thành bất khả thi: bot vẫn không để khách bỏ đi nhiều', () => {
     const bad = [];
     for (const w of WORLDS) for (const L of w.levels) {

@@ -238,7 +238,7 @@ function startLevelPov(L) {
   pov = new Pov({
     dishes: L.dishes, weights: weightsFor(L.dishes), level: L,
     arrivals: povArrivals(L), simplify: L.simplify, constraints: con,
-    goal: L.goal, moneyTargets: L.moneyTargets, events: L.events,
+    goal: L.goal, moneyTargets: L.moneyTargets, events: L.events, seconds: L.seconds,
     burners: mods.burners || 1, patience: L.patience, sfx,
     onDone: (r) => showResult(r), onQuit: () => { $('menu').classList.remove('hidden'); },
   });

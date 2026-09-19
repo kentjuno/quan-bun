@@ -28,7 +28,7 @@ export class Pov {
     const o = this.o;
     this.C = new Counter({
       dishes: o.dishes, rounds: o.rounds ?? 8, arrivals: o.arrivals, simplify: o.simplify, constraints: o.constraints,
-      goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1,
+      goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1, seconds: o.seconds,
       patience: o.patience ?? 90, gap: o.gap ?? 16, weights: o.weights,
       ev: { onSfx: (k) => o.sfx?.[k]?.(), onMsg: (m, c) => this.msg(m, c), onEnd: (r) => this.finish(r),
         onServe: (t, r) => this.msg(`${t.name}: “${r.say}” · ${r.sec.toFixed(0)}s · ${r.quality === 100 ? 'hoàn hảo' : r.quality >= 60 ? 'được' : 'ẩu'}`, r.quality === 100 ? 'good' : 'mid'),
@@ -77,13 +77,17 @@ export class Pov {
     const zone = (k, inner, cls = '') => `<div class="pv-z ${cls}" style="${z(k)}">${inner}</div>`;
     const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
 
+    this.el.style.setProperty('--pv-bg', `url(${SCENE.src})`);   // nền ngoài khung = chính tranh, làm mờ
     this.el.innerHTML = `
-      <div class="pv-top"><span class="pill-dark" id="pvProg">0/${C.rounds}</span><button class="ghost small" id="pvQuit">Thoát</button></div>
       <div class="pv-stage scene" id="pvStage">
         <img class="pv-scene" src="${SCENE.src}" alt="" draggable="false"
              onerror="this.closest('.pv-stage').classList.remove('scene');this.remove()">
-        <div class="pv-hud" style="${z('hudL')}"><span id="pvMoney">0k</span><i>tiền</i></div>
-        <div class="pv-hud r" style="${z('hudR')}"><span id="pvServed">0/${C.rounds}</span><i>tô</i></div>
+        <div class="pv-hud" style="${z('hudL')}"><span id="pvMoney">0k</span><i>tiền</i><b class="pv-streak" id="pvStreak"></b></div>
+        <div class="pv-hud r" style="${z('hudR')}">
+          <div class="pv-clock" id="pvClock"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" cx="18" cy="18" r="15.5"/></svg><u id="pvTime">0</u></div>
+          <span id="pvServed">0/${C.rounds}</span><i>tô</i>
+          <button class="pv-x" id="pvQuit" aria-label="Thoát" title="Thoát">✕</button>
+        </div>
         <div class="pv-rail" id="pvTickets" style="${z('rail')}"></div>
         ${this.has.pot ? dropz('pot', 'pot', '<div class="pv-baskets" id="pvBaskets"></div>', 'st-pot') : ''}
         ${this.has.pot ? zone('hot', '<div class="pv-hot" id="pvHot"></div>') : ''}
@@ -112,9 +116,9 @@ export class Pov {
   // ---------- vẽ phần động ----------
   render() {
     const C = this.C;
-    $('pvProg').textContent = `${C.done}/${C.rounds}`;
     const mo = $('pvMoney'); if (mo) mo.textContent = `${Math.round(C.money)}k`;
     const sv = $('pvServed'); if (sv) sv.textContent = `${C.results.length - C.left}/${C.rounds}`;
+    this.hud();
     $('pvTickets').innerHTML = C.tickets.map((t) => `<div class="tk drop${t.regular ? ' reg' : ''}" data-zone="ticket" data-i="${t.id}"><img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()"><b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u style="width:${C.patienceOf(t) * 100}%;background:${C.patienceOf(t) < 0.25 ? 'var(--red)' : C.patienceOf(t) < 0.5 ? 'var(--broth)' : 'var(--green)'}"></u></i></div>`).join('');
     // Rổ đang xả / đã xả thì đứng ở BỒN chứ không còn trong nồi (Kent 18/09).
     const atSink = (b) => !!b && (b.state === 'rinsing' || b.state === 'rinsed');
@@ -396,6 +400,44 @@ export class Pov {
     if (this.has.burner && C.soupItems.includes(tok)) { let i = C.burner.pots.findIndex((p) => p && p.left === null); if (i < 0) i = C.burner.pots.findIndex((p) => !p); return i >= 0 ? { kind: 'burner', i } : null; }
     return null;
   }
+  /** Đồng hồ + chuỗi + số tiền bay lên. Gọi mỗi khung hình nên chỉ đụng DOM khi giá trị ĐỔI. */
+  hud() {
+    const C = this.C;
+    // tiền tăng → +Nk bay lên. Phần tử riêng gắn vào #pov vì render() dựng lại DOM mỗi khung.
+    const m = Math.round(C.money);
+    if (this._money == null) this._money = m;
+    else if (m > this._money) { this.moneyFloat(m - this._money); this._money = m; }
+    else if (m !== this._money) this._money = m;
+    // chuỗi tô đúng
+    const sk = $('pvStreak');
+    if (sk) { const s = C.streak >= 2 ? `×${C.streak}` : '';
+      if (sk.textContent !== s) { sk.textContent = s; if (s) { sk.classList.remove('pop'); void sk.offsetWidth; sk.classList.add('pop'); } } }
+    // đồng hồ ca
+    const cl = $('pvClock'), tm = $('pvTime'); if (!cl || !tm) return;
+    if (C.seconds == null) {                       // luyện đơn lẻ / rush: không có hạn giờ → đếm lên, không tô vòng
+      cl.classList.add('up');
+      const up = Math.floor(C.time); if (this._tsec !== up) { this._tsec = up; tm.textContent = `${Math.floor(up / 60)}:${String(up % 60).padStart(2, '0')}`; }
+      return;
+    }
+    const leftS = Math.max(0, C.seconds - C.time), f = leftS / C.seconds;
+    const fg = cl.querySelector('.fg'); if (fg) fg.style.strokeDashoffset = (97.4 * (1 - f)).toFixed(2);
+    const w = f > 0.25 ? '' : f > 0.10 ? 'warn' : 'hot';
+    if (this._clw !== w) { this._clw = w; cl.className = 'pv-clock ' + w; }
+    const s = Math.ceil(leftS);
+    if (this._tsec !== s) {
+      this._tsec = s; tm.textContent = s >= 60 ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}` : `${s}`;
+      if (s <= 10 && s > 0) this.o.sfx?.tap?.();
+    }
+  }
+  moneyFloat(n) {
+    const a = $('pvMoney'); if (!a) return;
+    const r = a.getBoundingClientRect(), e = document.createElement('span');
+    e.className = 'pv-float'; e.textContent = `+${n}k`;
+    e.style.left = `${r.left}px`; e.style.top = `${r.top}px`;
+    this.el.appendChild(e); this.o.sfx?.coin?.();
+    setTimeout(() => e.remove(), 720);
+  }
+
   loop() { let last = performance.now();
     const tick = (now) => { if (this.C.over) return; const dt = Math.min(0.1, (now - last) / 1000); last = now; this.C.update(dt); this.render(); this._raf = requestAnimationFrame(tick); };
     this._raf = requestAnimationFrame(tick); }
