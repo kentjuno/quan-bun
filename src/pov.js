@@ -1,6 +1,7 @@
 // QUẦY POV — lớp vẽ + kéo thả. Mọi luật bếp nằm ở game/counter.js (Counter), file này chỉ hiển thị và chuyển thao tác thành `C.drop(src, zone)`.
 // Điều khiển: KÉO vật tới chỗ, hoặc CHẠM ĐÔI để nó tự bay tới đích hợp lý nhất (Kent: kéo chính xác trên điện thoại khó).
 import { D, label, tokenMatches, recipeFor } from './game/recipes.js';
+import { t as T } from './i18n.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
 import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt, trashArt, potArt } from './game/art.js';
@@ -36,9 +37,9 @@ export class Pov {
       goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1, seconds: o.seconds, rush: o.rush,
       patience: o.patience ?? 90, gap: o.gap ?? 16, weights: o.weights,
       ev: { onSfx: (k) => o.sfx?.[k]?.(), onMsg: (m, c) => this.msg(m, c), onEnd: (r) => this.finish(r),
-        onServe: (t, r) => this.msg(`${t.name}: “${r.say}” · ${r.sec.toFixed(0)}s · ${r.quality === 100 ? 'hoàn hảo' : r.quality >= 60 ? 'được' : 'ẩu'}`, r.quality === 100 ? 'good' : 'mid'),
-        onExpire: (t) => this.msg(`${t.name} bỏ đi — chờ lâu quá`, 'bad'), onSpoil: () => this.msg('Sợi để lâu bị hư — đem vứt', 'bad'),
-        onCombo: (n, m) => this.banner(`COMBO ×${m}`, 'combo', n), onComboBreak: (n) => this.banner('VỠ CHUỖI', 'break'),
+        onServe: (t, r) => this.msg(T('pov.served', { name: t.name, say: r.say, sec: r.sec.toFixed(0), quality: T(r.quality === 100 ? 'pov.quality.perfect' : r.quality >= 60 ? 'pov.quality.ok' : 'pov.quality.sloppy') }), r.quality === 100 ? 'good' : 'mid'),
+        onExpire: (t) => this.msg(T('pov.left', { name: t.name }), 'bad'), onSpoil: () => this.msg(T('pov.spoil'), 'bad'),
+        onCombo: (n, m) => this.banner(T('pov.combo', { m }), 'combo', n), onComboBreak: (n) => this.banner(T('pov.comboBreak'), 'break'),
         onRush: (on, r) => this.rushUI(on, r) },
     });
     if (!this.C.dishes.length) return o.onDone(this.C.result());
@@ -94,11 +95,11 @@ export class Pov {
       <div class="pv-stage scene" id="pvStage">
         <img class="pv-scene" src="${SCENE.src}" alt="" draggable="false"
              onerror="this.closest('.pv-stage').classList.remove('scene');this.remove()">
-        <div class="pv-hud" style="${z('hudL')}"><span id="pvMoney">0k</span><i>tiền</i><b class="pv-streak" id="pvStreak"></b></div>
+        <div class="pv-hud" style="${z('hudL')}"><span id="pvMoney">0k</span><i>${T('hud.money')}</i><b class="pv-streak" id="pvStreak"></b></div>
         <div class="pv-hud r" style="${z('hudR')}">
           <div class="pv-clock" id="pvClock"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" cx="18" cy="18" r="15.5"/></svg><u id="pvTime">0</u></div>
-          <span id="pvServed">0/${C.rounds}</span><i>tô</i>
-          <button class="pv-x" id="pvQuit" aria-label="Thoát" title="Thoát">✕</button>
+          <span id="pvServed">0/${C.rounds}</span><i>${T('hud.bowls')}</i>
+          <button class="pv-x" id="pvQuit" aria-label="${T('hud.quit')}" title="${T('hud.quit')}">✕</button>
         </div>
         <div class="pv-rail" id="pvTickets" style="${z('rail')}"></div>
         ${this.has.pot ? dropz('pot', 'pot', '<div class="pv-baskets" id="pvBaskets"></div>' + `<img class="pv-steam s1" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()"><img class="pv-steam s2" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()">`, 'st-pot') : ''}   // J9: khói nồi trụng
@@ -124,7 +125,7 @@ export class Pov {
         ${zone('slots', '<div class="pv-slots" id="pvSlots"></div>')}
         ${dropz('trash', 'trash', baked.has('trash') ? '' : `<img class="pv-objimg" src="${trashArt()}" alt="" draggable="false" onerror="this.closest('.pv-z').classList.add('noart');this.remove()"><span class="pv-tr">🗑️</span>`, 'trash')}
       </div>
-      <div class="pv-msg" id="pvMsg">Kéo hoặc chạm đôi: tô vô nồi để trụng · sợi vô rọ · topping vô tô · tô xong lên phiếu</div>`;
+      <div class="pv-msg" id="pvMsg">${T('pov.hint')}</div>`;
     // J8 — nhãn khay chỉ hiện ở level gợi ý (simplify / showLabels); level thật thì ẩn, sai 3 lần liên tiếp mới bật lại.
     this.el.classList.toggle('nolabels', !(C.sim || this.o.level?.showLabels));
     this._miss = 0;
@@ -202,7 +203,7 @@ export class Pov {
       const inner = art
         ? `<img class="pv-art" src="${art}" alt="" draggable="false" onerror="this.remove()">`
         : `${img(b.placed[0].replace(/^bowl-hot:/, ''))}${b.placed.slice(1).map((t, k) => `<i class="lay" style="--k:${k}">${img(t)}</i>`).join('')}`;
-      return `<div class="pv-slot drop has" data-zone="slot" data-i="${i}"><div class="pv-bowl dragsrc${full ? ' full' : ''}" ${src1('madebowl', null, i)}>${inner}</div><small>${full ? 'Xong — lên phiếu' : `${b.placed.length}/${(fit[0]?.steps.length) || '?'} bước`}</small></div>`;
+      return `<div class="pv-slot drop has" data-zone="slot" data-i="${i}"><div class="pv-bowl dragsrc${full ? ' full' : ''}" ${src1('madebowl', null, i)}>${inner}</div><small>${full ? T('pov.slot.done') : T('pov.slot.steps', { k: b.placed.length, n: (fit[0]?.steps.length) || '?' })}</small></div>`;
     }).join('');
   }
 
@@ -561,11 +562,11 @@ export class Pov {
   /** Vì sao chạm đôi không biết đem đi đâu — nói cho người chơi thứ họ cần làm trước. */
   whyNoZone(src) {
     const C = this.C; const tok = C.token(src);
-    if (tok == null) return 'Chưa xong — chờ chút';
-    if (!C.slots.some(Boolean)) return 'Chưa có tô nào trên thớt — lấy tô (mẹt/dĩa) ra trước';
+    if (tok == null) return T('pov.wait');
+    if (!C.slots.some(Boolean)) return T('pov.noBowl');
     const t = C.tickets[0]; const b = C.slots.find(Boolean);
     const want = b ? [...new Set(C.fits(b.placed).map((x) => x.steps[b.placed.length]).filter(Boolean))] : [];
-    return want.length ? `Chưa cần ${label(tok)} — kế tiếp: ${want.map(label).join(' / ')}` : `Chưa biết đem ${label(tok)} đi đâu — thử kéo tay`;
+    return want.length ? T('pov.notYet', { item: label(tok), next: want.map(label).join(' / ') }) : T('pov.noWhere', { item: label(tok) });
   }
   autoZone(src) {
     const C = this.C; const tok = C.token(src); if (tok == null) return null;
@@ -631,7 +632,7 @@ export class Pov {
   rushUI(on, r) {
     const stage = $('pvStage'); if (!stage) return;
     stage.classList.toggle('rush', !!on);
-    if (on) { this.banner(`GIỜ CAO ĐIỂM ×${r.mult}`, 'rush'); this.o.sfx?.rush?.(); }
+    if (on) { this.banner(T('pov.rush', { m: r.mult }), 'rush'); this.o.sfx?.rush?.(); }
   }
 
   /** Đồng hồ + chuỗi + số tiền bay lên. Gọi mỗi khung hình nên chỉ đụng DOM khi giá trị ĐỔI. */
@@ -676,13 +677,13 @@ export class Pov {
 
   /** J9 — `?fps=1`: đo FPS bằng rAF trong 3 s TRÊN ĐIỆN THOẠI (khung xem trước của Claude bị nén rAF, không dùng được). */
   fpsMeter() {
-    const box = document.createElement('div'); box.id = 'pvFps'; box.textContent = 'đo FPS…';
+    const box = document.createElement('div'); box.id = 'pvFps'; box.textContent = T('pov.fps');
     box.style.cssText = 'position:fixed;left:8px;bottom:48px;z-index:99;background:#000c;color:#fff;font:700 14px monospace;padding:4px 8px;border-radius:6px;pointer-events:none';
     document.body.appendChild(box);
     let n = 0; const t0 = performance.now(); const gaps = []; let last = t0;
     const tick = (now) => { n++; gaps.push(now - last); last = now; if (now - t0 < 3000) requestAnimationFrame(tick); else {
       const avg = n / ((now - t0) / 1000); const worst = Math.max(...gaps);
-      box.textContent = `${avg.toFixed(0)} FPS tb · khung tệ nhất ${worst.toFixed(0)}ms`; box.style.background = avg >= 50 ? '#2f8a3acc' : '#d64a2ccc';
+      box.textContent = T('pov.fps.result', { fps: avg.toFixed(0), ms: worst.toFixed(0) }); box.style.background = avg >= 50 ? '#2f8a3acc' : '#d64a2ccc';
     } };
     requestAnimationFrame(tick);
   }

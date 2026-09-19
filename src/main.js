@@ -1,3 +1,5 @@
+import { t as T, tl, initLang, setLang, lang, applyDom, onLang } from './i18n.js';
+initLang();
 import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
 import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
@@ -262,7 +264,7 @@ function renderMenu() {
   $('worldRow').replaceChildren(...WORLDS.map((w, i) => {
     const un = worldUnlocked(w.id); const el = document.createElement('div');
     el.className = 'wd' + (i === worldIdx ? ' on' : '') + (un ? '' : ' locked');
-    el.innerHTML = `<div class="ic">${un ? w.icon : '🔒'}</div><b>${w.name}</b><small>${un ? `${worldStars(w.id)}/${w.maxStars} ★` : `cần ${w.starsToUnlock}★`}</small>`;
+    el.innerHTML = `<div class="ic">${un ? w.icon : '🔒'}</div><b>${tl(`world.${w.id}.name`, w.name)}</b><small>${un ? `${worldStars(w.id)}/${w.maxStars} ★` : T('menu.locked', { n: w.starsToUnlock })}</small>`;
     el.onclick = () => { worldIdx = i; const first = w.levels.find((L) => !levelUnlocked(L)) || w.levels[0]; selectLevel(w.levels.find((L) => L.id === cur.id) ? cur : (levelUnlocked(first) ? first : w.levels[0])); };
     return el;
   }));
@@ -287,13 +289,14 @@ function renderMenu() {
     level.regulars.length ? `<span class="tag">🙋 ${level.regulars.map((id) => REGULARS.find((r) => r.id === id)?.name).join(', ')}</span>` : '',
   ].filter(Boolean).join('');
   card.innerHTML = un
-    ? `<b>${level.name} — ${level.title}</b><span class="st">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span>
-       <small class="whatsnew">${level.whatsNew}</small>
+    ? `<b>${tl(`world.${level.world}.name`, worldById(level.world).name)} ${level.n} — ${tl(`level.${level.id}.title`, level.title)}</b><span class="st">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span>
+       <small class="whatsnew">${tl(`level.${level.id}.new`, level.whatsNew)}</small>
        <small class="dish">${level.dishes.length > 4 ? `${level.dishes.length} món` : level.dishes.map(dishName).join(' · ')}</small>
        <div class="tags">${tags}</div>
-       <small>${level.seconds}s · ${level.count} khách · mục tiêu ${level.moneyTargets[0]}k${learned ? ` · thuộc ${learned}/${level.dishes.length} món` : ''}</small>`
+       <small>${T('menu.card.meta', { sec: level.seconds, n: level.count, money: level.moneyTargets[0] })}${learned && lang() === 'vi' ? ` · thuộc ${learned}/${level.dishes.length} món` : ''}</small>`
     : `<b>🔒 ${level.name}</b><small>${worldUnlocked(level.world) ? `Đạt ≥1★ ở ${W.name} ${level.n - 1} để mở` : `Cần ${W.starsToUnlock}★ ở ${WORLDS[worldIdx - 1].name} để mở world này`}</small>`;
-  $('btnStart').disabled = !un; $('btnStart').textContent = un ? (st ? `Chơi lại ${level.name}` : `Vô bếp — ${level.name}`) : '🔒 Chưa mở';
+  const lvName = `${tl(`world.${level.world}.name`, worldById(level.world).name)} ${level.n}`;
+  $('btnStart').disabled = !un; $('btnStart').textContent = un ? (st ? T('menu.replay', { name: lvName }) : T('menu.enter', { name: lvName })) : '🔒 ' + T('menu.notOpen');
   // nâng cấp bếp
   const total = totalStars();
   $('upgrades').replaceChildren(...UPGRADES.map((u) => { const lv2 = upgradeLevel(u.id); const cost = upgradeCost(u.id); const locked = !upgradeUnlocked(u.id); const el = document.createElement('div'); el.className = 'sh' + (!locked && cost == null ? ' max' : '') + (locked ? ' locked' : '');
@@ -412,6 +415,10 @@ function tick(dt) {
     if (show3d) { view.sync(world, dt); if (running) syncHands(); }
   } else if (show3d) view.renderer.render(view.scene, view.camera);
 }
+// i18n: đổ chữ tĩnh, nút VI/EN, đổi ngôn ngữ thì vẽ lại menu
+applyDom();
+$('btnLang')?.addEventListener('click', () => { setLang(lang() === 'vi' ? 'en' : 'vi'); });
+onLang(() => { applyDom(); renderMenu(); });
 // dựng bếp sẵn để menu có nền
 world = newWorld(); rebuild(); set3D(false);
 if (new URLSearchParams(location.search).has('bot')) start(true);

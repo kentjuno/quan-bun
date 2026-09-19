@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>KJ's Choices</title>
+    <title>Phở Real</title>
     <meta name="theme-color" content="#e84a3b" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
@@ -444,6 +444,7 @@
         font-size: 4.2cqw; font-weight: 700; text-decoration: none; color: #3b2a1e; }
       .pv-clock.hot u { color: #d64a2c; }
 
+      .menu .mhead .lang { margin-left: auto; margin-right: 6px; padding: 2px 8px; font-weight: 700; }
       .pv-x { width: 9cqw; height: 9cqw; flex: none; display: flex; align-items: center; justify-content: center;
         font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
         border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
@@ -745,24 +746,24 @@
 
     <div id="menu" class="overlay">
       <div class="panel menu">
-        <div class="mhead"><h1 class="sign">KJ's Choices<small>quán bún · phở</small></h1><div class="pts" id="ptsPill" title="Tiền quán — mua nâng cấp, trang trí">💰 <b id="ptsNow">0</b>k</div></div>
-        <div class="tabs three"><button data-tab="day" class="on">🍜 Quán</button><button data-tab="shop">🔧 Nâng cấp <span id="ptsBadge" class="badge"></span></button><button data-tab="more">🎮 Thêm</button></div>
-        <div id="loading">Đang tải…</div>
+        <div class="mhead"><h1 class="sign"><span data-i18n="app.name">Phở Real</span><small data-i18n="app.tagline">hành trình bếp dọc Việt Nam</small></h1><button id="btnLang" class="ghost small lang" data-i18n="lang.switch">EN</button><div class="pts" id="ptsPill" data-i18n-title="menu.money.title" title="Tiền quán — mua nâng cấp, trang trí">💰 <b id="ptsNow">0</b>k</div></div>
+        <div class="tabs three"><button data-tab="day" class="on" data-i18n="menu.tab.play">🍜 Quán</button><button data-tab="shop"><span data-i18n="menu.tab.shop">🔧 Nâng cấp</span> <span id="ptsBadge" class="badge"></span></button><button data-tab="more" data-i18n="menu.tab.more">🎮 Thêm</button></div>
+        <div id="loading" data-i18n="menu.loading">Đang tải…</div>
         <section id="tab-day" class="tab main">
           <div class="worlds" id="worldRow"></div>
           <div class="lvgrid" id="lvGrid"></div>
           <div class="lvcard daycard" id="lvCard"></div>
           <button id="btnStart" class="hidden">Mở quán</button>
-          <button id="btnBot" class="ghost small">Xem bot làm mẫu</button>
+          <button id="btnBot" class="ghost small" data-i18n="menu.bot">Xem bot làm mẫu</button>
         </section>
         <section id="tab-shop" class="tab main hidden">
           <div class="shop upg" id="upgrades"></div>
-          <div class="sub" style="font-size:12px;margin:10px 0 4px;font-weight:700">Trang trí — mỗi món khách kiên nhẫn thêm 6 %</div>
+          <div class="sub" style="font-size:12px;margin:10px 0 4px;font-weight:700" data-i18n="menu.decor.head">Trang trí — mỗi món khách kiên nhẫn thêm 6 %</div>
           <div class="shop" id="shop"></div>
           <div class="sub" style="font-size:11px;margin:8px 0 0">Tiền quán = tiền + tip mỗi ngày (+60 mỗi sao mới) · đã kiếm <span id="ptsTotal">0</span>k</div>
         </section>
         <section id="tab-more" class="tab main hidden">
-          <div class="tabs sub"><button data-sub="survival" class="on">🔥 Survival</button><button data-sub="practice">🎯 Luyện</button><button data-sub="puzzle">🧩 Mini</button></div>
+          <div class="tabs sub"><button data-sub="survival" class="on" data-i18n="more.survival">🔥 Survival</button><button data-sub="practice" data-i18n="more.practice">🎯 Luyện</button><button data-sub="puzzle" data-i18n="more.mini">🧩 Mini</button></div>
           <section id="tab-survival" class="tab sub">
             <div class="lvcard solo"><b>Đủ menu · khách tới mãi</b><small>Càng lâu khách càng dày · 3 khách bỏ đi là hết · tiền ×1.5</small><small id="survRecord"></small></div>
             <button id="btnSurvival">Bắt đầu Survival</button>
