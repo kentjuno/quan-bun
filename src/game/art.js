@@ -82,6 +82,13 @@ export const STATION_ART = {
 };
 export const stationArt = (tok) => STATION_ART[tok] || null;
 
+/** J7 — nồi nước đặt trên họng bếp: `pot-<token>.webp`. Nước phở sẵn (`broth:…`) dùng nồi nước phở;
+ *  hai loại cháo chung một nồi. Thiếu ảnh thì pov.js quay về chip icon cũ. */
+export const potArt = (tok) => {
+  const k = /^broth:/.test(tok) ? 'nuoc-pho' : /^chao-/.test(tok) ? 'chao' : tok;
+  return `${BASE}pot-${k}.webp`;
+};
+
 /** Rổ trụng: rỗng / đang có sợi. Thiếu ảnh thì pov.js quay về icon cũ. */
 export const basketArt = (full = false) => `${BASE}st-basket${full ? '-noodle' : ''}.webp`;
 

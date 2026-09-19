@@ -276,6 +276,16 @@ Helper chung `flyItem(from, to, src, ms=200)`: tạo `<img class="pv-fx pv-fly">
 - Level phở: thấy nồi trên bếp, khói bay; `img[src*="pot-nuoc-pho"]` `naturalWidth > 0`.
 - Test guard vẫn xanh; thêm case: `brothSrc.length + stockItems.length ≤ 3` cho mọi level.
 
+**ĐÃ LÀM 19/09 (sw v64).** 6 sprite `pot-*.webp` (300×223, cùng một nồi gốc, chỉ đổi nước) qua `edit-image`
+từ `art/raw/stages/st-soup-pot.png`, cắt bằng `scripts/pots_to_webp.py`. `potArt(tok)` trong `art.js`
+(`broth:*` → nước phở, `chao-*` → chung một nồi cháo). Khói = 2 wisp CSS loop, không JS mỗi khung.
+Test mới: không level nào > 3 nồi.
+
+**ĐO THẬT — ô `broth` 14 % ≈ 52 px:** 1 nồi (58 level) = 52 px, đẹp. 2 nồi (18 level) = 25 px. 3 nồi (5 level)
+xếp hàng ngang = **17 px** — tạm cho xuống dòng 2 + 1 → ~24 px. Vẫn dưới ngưỡng chạm 44 px, bán kính hít 34 px
+cứu được phần nào. Đề xuất Kent trong `tools/zones.html`: nồi cần ≥ 10 % mỗi cái → 3 nồi cần ô rộng ~30 %,
+tức `broth` phải ăn sang dải họng bếp (x ≈ 68–99) và dời `burner`/`fryer`. **Chưa làm** — Kent quyết.
+
 **Bẫy.** Nếu Kent muốn nồi ngồi **trên họng bếp thật** (x 62–99 %, y 28–42 %) thì phải chia lại dải bếp: đề xuất `burner {x:58.5,w:22}`, `broth {x:81.5,w:17}` và dời `fryer` sang chỗ khác — việc này Kent quyết trong `tools/zones.html`.
 
 ---

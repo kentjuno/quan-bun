@@ -448,6 +448,29 @@
         font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
         border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
 
+      /* ---- J7: nồi nước thật trên họng bếp ---- */
+      /* Ô broth chỉ rộng 14 % ≈ 52 px: 1 nồi thì đẹp, 3 nồi = 17 px mỗi cái. Cho xuống dòng (2 + 1)
+         để còn ~24 px — vẫn nhỏ; muốn đàng hoàng phải chia lại dải bếp trong tools/zones.html (Kent quyết). */
+      .pv-stage .pv-z.pots { display: flex; flex-wrap: wrap; gap: 2%; align-content: flex-end; align-items: flex-end; justify-content: center; }
+      .pv-stage .pv-potb { flex: 1 1 40%; max-width: 100%; height: auto; max-height: 100%; }
+      .pv-stage .pv-potb { position: relative; min-width: 0; padding: 0; border: 0; border-radius: 0;
+        background: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; color: var(--ink); }
+      .pv-stage .pv-potb .pv-potimg { width: 100%; height: auto; object-fit: contain;
+        filter: drop-shadow(0 2px 3px rgba(60,44,28,.35)); }
+      .pv-stage .pv-potb .pv-ghosticon { display: none; }
+      .pv-stage .pv-potb.noart { background: radial-gradient(ellipse at 50% 32%, #e2a23f, #8a4f10 82%); border: 2px solid #c99a55;
+        border-radius: 40% 40% 10px 10px / 34% 34% 8px 8px; color: #fff; }
+      .pv-stage .pv-potb.noart .pv-ghosticon { display: block; }
+      .pv-stage .pv-potb.noart .pv-steam { display: none; }
+      .pv-stage .pv-potb small { font-size: 3cqw; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+        text-shadow: 0 1px 2px rgba(255,250,240,.95), 0 0 3px rgba(255,250,240,.9); }
+      .pv-stage .pv-potb .pv-steam { position: absolute; left: 50%; bottom: 62%; width: 55%; height: auto; pointer-events: none;
+        opacity: 0; filter: none; animation: potSteam 2.6s ease-out infinite; }
+      .pv-stage .pv-potb .pv-steam.s2 { animation-delay: 1.3s; width: 42%; left: 58%; }
+      @keyframes potSteam { 0% { transform: translate(-50%, 0) scale(.7); opacity: 0; } 25% { opacity: .65; }
+        100% { transform: translate(-50%, -80%) scale(1.15); opacity: 0; } }
+      @media (prefers-reduced-motion: reduce) { .pv-stage .pv-potb .pv-steam { animation: none; } }
+
       /* ---- J6: phiếu khách to, kẹp gỗ, icon nguyên liệu. Mọi kích thước theo cqw ---- */
       #pov .pv-tkghost, .pv-rail .tk { margin-top: 3.5%; padding: 1.2cqw 1.6cqw 2.2cqw; max-width: 32%; overflow: visible;
         display: grid; grid-template-columns: 12cqw 1fr; grid-template-rows: auto auto auto; column-gap: 1.2cqw; align-items: start;

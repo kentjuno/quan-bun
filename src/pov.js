@@ -3,7 +3,7 @@
 import { D, label, tokenMatches, recipeFor } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
-import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt, trashArt } from './game/art.js';
+import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt, trashArt, potArt } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES, PAN_GAP, PAN_MAX1, PAN_ROW_GAP } from './data/counter-layout.js';
 export { povOk };
 
@@ -95,10 +95,14 @@ export class Pov {
         ${this.has.burner || this.has.ready ? zone('burner', `<div class="pv-pots" id="pvPots"></div><div class="pv-ready" id="pvReady"></div>`
             + (this.has.stovetop ? `<div class="pv-stove drop" data-zone="burner" id="pvStove"></div>` : ''), 'st-burner') : ''}
         ${C.brothSrc.length + C.stockItems.length ? zone('broth',
-            C.brothSrc.map((b) => `<div class="pv-broth dragsrc" ${src1('broth', b)}>${img(b)}<small>${label(b)}</small></div>`).join('')
-            // Can nước cốt / nồi cháo đứng cạnh bếp. Vẫn là kind 'item' — chỉ đổi CHỖ VẼ, luật chơi y nguyên.
-            + C.stockItems.map((t) => `<div class="pv-broth dragsrc" title="${label(t)}" ${src1('item', t)}>${img(t)}<small>${label(t)}</small></div>`).join(''),
-            'row') : ''}
+            // J7 — nồi nước THẬT trên bếp, có khói. Vẫn là kind 'broth' / 'item' — chỉ đổi CHỖ VẼ, luật chơi y nguyên.
+            // Thiếu sprite → .noart → quay về chip icon cũ.
+            [...C.brothSrc.map((b) => ['broth', b]), ...C.stockItems.map((t) => ['item', t])].map(([kind, tok]) =>
+              `<div class="pv-broth pv-potb dragsrc" title="${label(tok)}" ${src1(kind, tok)}>`
+              + `<img class="pv-potimg" src="${potArt(tok)}" alt="" draggable="false" onerror="this.closest('.pv-broth').classList.add('noart');this.remove()">`
+              + `<img class="pv-steam s1" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()"><img class="pv-steam s2" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()">`
+              + `<i class="pv-ghosticon">${img(tok)}</i><small>${label(tok)}</small></div>`).join(''),
+            'row pots') : ''}
         ${this.has.fryer ? dropz('fryer', 'fryer', `${objImg('fryer')}<div id="pvFryer"></div>`, 'st-fryer') : ''}
         ${this.has.microwave ? dropz('micro', 'microwave', `${objImg('microwave')}<div id="pvMw"></div>`, 'st-mw') : ''}
         ${zone('prep', `<div class="pv-pans${panRows > 1 ? ' two' : ''}" id="pvTops">${panList.map(pan).join('')}</div>`, 'shelf')}

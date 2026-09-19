@@ -300,6 +300,17 @@ describe('kệ nước — nước cốt & nước trắng không nằm trên kh
     expect(clash).toEqual([]);
   });
 
+  // J7: kệ nước là MỘT HÀNG NỒI trong ô broth rộng 14 % — quá 3 nồi thì mỗi nồi < 17 px, không bấm nổi.
+  it('không level nào quá 3 nồi nước (brothSrc + stockItems ≤ 3)', () => {
+    const bad = [];
+    for (const w of WORLDS) for (const lv of (w.levels || [])) {
+      const dishes = lv.dishes || lv.menu || []; if (!dishes.length) continue;
+      const C = new Counter({ dishes, rounds: 1, patience: 600, gap: 3, rnd: () => 0.99 });
+      const n = C.brothSrc.length + C.stockItems.length; if (n > 3) bad.push(`${lv.id}: ${n}`);
+    }
+    expect(bad).toEqual([]);
+  });
+
   it('bún riêu: cốt cua ở kệ nước, miếng nước ở bồn, huyết vẫn ở khay', () => {
     const C = mk(['bun-rieu-cua']);
     expect(C.stockItems).toContain('cot-cua');
