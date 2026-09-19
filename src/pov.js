@@ -166,7 +166,7 @@ export class Pov {
       const done = b.left === 0; return `<div class="pv-board drop ${done ? 'done' : ''}" data-zone="prep" data-i="${i}"><div class="${done ? 'dragsrc' : ''}" ${src1('board', null, i)}>${done ? img(b.output) : b.have.filter(Boolean).map(img).join('')}<small>${b.left === null ? `thiếu ${b.tf.inputs.filter((_, k) => !b.have[k]).map(label).join(', ')}` : done ? label(b.output) : b.name + '…'}</small>${bar(b.left, b.total)}</div></div>`;
     }).join('');
     $('pvSlots').innerHTML = C.slots.map((b, i) => {
-      if (!b) return `<div class="pv-slot drop" data-zone="slot" data-i="${i}"><small>chỗ tô ${i + 1}</small></div>`;
+      if (!b) return `<div class="pv-slot drop" data-zone="slot" data-i="${i}"></div>`;   // ô trống: để tranh sạch, tấm lót đã vẽ trong nền (J2)
       const fit = C.fits(b.placed); const full = fit.some((t) => t.steps.length === b.placed.length);
       // Một ảnh liền lạc cho cả cái tô — không đè icon rời lên nữa.
       // Còn nhiều món khớp thì lấy món đầu: cùng bậc này chúng nhìn như nhau.

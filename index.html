@@ -230,7 +230,7 @@
          Quạt từ mép màn hình là Back của HỆ ĐIỀU HÀNH — trang web KHÔNG tắt được.
          Chỉ tránh được bằng cách đừng để thứ kéo được nằm trong dải đó.
          Thu cả khung tranh vào thay vì dịch từng ô — giữ nguyên căn chỉnh ô với tranh. */
-      .pv-stage { position: relative; width: calc(100% - var(--pv-gutter) * 2); aspect-ratio: 768 / 1376;
+      .pv-stage { position: relative; container-type: inline-size; width: calc(100% - var(--pv-gutter) * 2); aspect-ratio: 768 / 1376;
         max-width: min(calc(100% - var(--pv-gutter) * 2), calc((100vh - 74px) * 768 / 1376)); margin: auto;
         border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(60,44,28,.28); }
       .pv-scene { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -373,14 +373,18 @@
         filter: drop-shadow(0 0 6px rgba(255,209,102,.95)); }
       .pv-stage .pv-basket.rinsed .pv-objimg { filter: drop-shadow(0 0 6px rgba(127,211,255,.95)); }
       .pv-stage .pv-basket.bad .pv-objimg { filter: drop-shadow(0 0 6px rgba(214,64,44,.95)); }
+      /* Cột PHẢI đều nhau: ô nào có tô thì grid cho nó rộng hơn, tô lệch khỏi tấm lót vẽ trong tranh. */
       .pv-stage .pv-slots { position: absolute; inset: 0; height: auto; display: grid;
-        grid-auto-flow: column; gap: 2%; }
-      .pv-stage .pv-slot { border: 0; background: radial-gradient(ellipse at 50% 62%, rgba(90,66,44,.16), transparent 62%); }
+        grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2%; }
+      .pv-stage .pv-slot { border: 0; background: radial-gradient(ellipse at 50% 62%, rgba(90,66,44,.10), transparent 62%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; }
       .pv-stage .pv-slot small { opacity: .45; font-size: 9px; }
       .pv-stage .pv-slot.has { background: radial-gradient(ellipse at 50% 62%, rgba(90,66,44,.2), transparent 64%); }
       /* đang kéo mới hiện viền chỗ thả — lúc bình thường để tranh sạch */
       #pov.dragging .pv-stage .pv-slot { border: 2px dashed rgba(90,66,44,.5); border-radius: 46% / 38%; }
-      .pv-stage .pv-bowl { width: min(26vw, 148px); height: min(26vw, 148px); }
+      /* Tô ráp bám BỀ NGANG Ô chứ không bám vw: khung tranh đã chừa mép và bị giới hạn
+         theo chiều cao màn hình, nên vw không nói lên tô to bao nhiêu trong tranh. */
+      .pv-stage .pv-bowl { width: 99%; aspect-ratio: 1; height: auto; flex: none; }
       .pv-stage .pv-tr { font-size: 20px; }
       /* dây kẹp phiếu khách — như kẹp giấy trên dây trong bếp thật */
       .pv-rail { position: absolute; display: flex; gap: 2%; align-items: stretch; justify-content: flex-start; }
