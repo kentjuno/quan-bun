@@ -171,6 +171,20 @@ Chạy 3 lần, giữ bản có SSIM cao nhất so với bản cũ (xem nghiệm
 - Gọi `pov.C.ev.onServe(t, {say:'', sec:20, quality:100})` giả → trong 300 ms tồn tại `.pv-serve` và ảnh dấu ✓ (`img[src*="stamp"]`), sau 1 s không còn phần tử nào sót (`querySelectorAll('.pv-fx').length` về như trước).
 - Kent quay 5 giây một lần bưng tô.
 
+**ĐÃ LÀM 19/09 (sw v58) — 3 điều spec chưa lường:**
+1. *Gọi ở đâu.* Spec ngụ ý móc vào `ev.onServe`. Không được: cả hai chỗ thả đều chạy
+   `C.drop()` → **`render()`** → `afterDrop()`, nên tới lúc đó phiếu và tô đã bị xoá khỏi DOM.
+   Phải gọi `serveFx()` **giữa `drop()` và `render()`**, lúc còn đo được toạ độ.
+2. *Phiếu trượt đi.* Không animate được phiếu thật (render() thay nó ngay khung sau) →
+   tạo **bản sao** `.pv-tkghost` gắn vào `#pov`, đóng dấu & trượt trên bản sao.
+3. *`el.animate().onfinish` KHÔNG chạy khi khung hình bị nén* (tab nền, máy yếu) → hiệu ứng
+   kẹt lại trên màn hình vĩnh viễn. Mọi phần tử fx giờ có thêm `setTimeout(...remove)` dự phòng.
+   Lỗi này có sẵn trong `toss()` từ trước — đã vá luôn.
+   Kích thước dấu: spec không ghi, lần đầu để `0.9 × rộng phiếu` ra con dấu 65 px trên phiếu 41 px
+   (to hơn cả phiếu). Số đúng là **0,8 × CHIỀU CAO phiếu** → 37×36 px.
+   `art/fx-stamp.webp` gen bằng Flow rồi cắt nền bằng `scripts/_mkstamp.py` (ngưỡng alpha 200 —
+   ngưỡng 235 để lại ô vuông giấy mờ).
+
 **Bẫy.** Phiếu `t` có thể đã bị `render()` thay DOM giữa chừng → lấy rect phiếu **ngay lúc bắt đầu**, lưu số, không giữ tham chiếu phần tử.
 
 ---

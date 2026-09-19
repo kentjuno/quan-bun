@@ -448,6 +448,16 @@
         font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
         border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
 
+      /* ---- J4: khoảnh khắc thắng. Tất cả là BẢN SAO gắn vào #pov, toạ độ fixed,
+         vì render() dựng lại #pvTickets / #pvSlots ngay khung hình kế. ---- */
+      #pov .pv-serve { position: fixed; z-index: 18; pointer-events: none; }
+      #pov .pv-serve img { width: 100%; height: 100%; object-fit: contain; }
+      #pov .pv-serve small { display: none; }
+      #pov .pv-tkghost { position: fixed; z-index: 18; pointer-events: none; margin: 0; }
+      #pov .pv-stamp { position: fixed; z-index: 19; pointer-events: none; height: auto;
+        transform: translate(-50%,-20%) rotate(-8deg); }
+      #pov .pv-star { position: fixed; z-index: 19; pointer-events: none; height: auto; }
+
       /* Số tiền bay lên — gắn thẳng vào #pov vì render() dựng lại DOM mỗi khung hình. */
       .pv-float { position: fixed; z-index: 20; pointer-events: none; font-weight: 700;
         font-size: 16px; color: #2f8a3a; text-shadow: 0 1px 3px rgba(255,250,240,.95);

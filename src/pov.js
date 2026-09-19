@@ -196,6 +196,66 @@ export class Pov {
     const slot = this.el.querySelector(`.pv-slot[data-i="${zone.i}"]`);
     if (slot) this.pour(slot);
   }
+  /** J4 — bưng tô lên phiếu: tô bay → đóng dấu ✓ → mặt khách nở → phiếu trượt đi (0,85 giây).
+   *  render() dựng lại DOM mỗi khung hình nên MỌI thứ ở đây là bản sao gắn vào #pov,
+   *  và toạ độ phải đo NGAY lúc bắt đầu chứ không giữ tham chiếu phần tử (docs/PLAN-JUICE.md J4). */
+  serveFx(t, src) {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const tk = this.el.querySelector(`.tk[data-i="${t.id}"]`); if (!tk) return;
+    const tr = tk.getBoundingClientRect();
+    const cx = tr.left + tr.width / 2, cy = tr.top + tr.height / 2;
+
+    // 1. tô bay lên phiếu (0–280 ms)
+    const bowl = this.el.querySelector(`.pv-slot[data-i="${src?.i}"] .pv-bowl`) || this.el.querySelector('.pv-bowl');
+    if (bowl) {
+      const br = bowl.getBoundingClientRect();
+      const g = bowl.cloneNode(true); g.className = 'pv-fx pv-serve';
+      g.style.cssText = `left:${br.left}px;top:${br.top}px;width:${br.width}px;height:${br.height}px`;
+      this.el.appendChild(g);
+      g.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 },
+        { transform: `translate(${cx - br.left - br.width / 2}px,${cy - br.top - br.height / 2}px) scale(.55)`, opacity: .7 }],
+        { duration: 280, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = () => g.remove();
+      setTimeout(() => g.remove(), 380);   // onfinish KHÔNG chạy khi tab bị nén khung hình — dọn bằng hẹn giờ
+    }
+    setTimeout(() => this.C.ev?.onSfx?.('serve'), 200);
+
+    // 2. bản sao phiếu ở lại để đóng dấu rồi trượt đi
+    const gh = tk.cloneNode(true); gh.className = 'tk pv-tkghost';
+    gh.style.cssText = `left:${tr.left}px;top:${tr.top}px;width:${tr.width}px;height:${tr.height}px`;
+    this.el.appendChild(gh);
+
+    setTimeout(() => {
+      const st = document.createElement('img'); st.className = 'pv-fx pv-stamp'; st.src = fx('stamp');
+      st.draggable = false; st.onerror = () => st.remove();
+      // dấu cao ~0,8 chiều cao phiếu: đo lần đầu để 0.9*rộng → con dấu 65px trên phiếu 41px, to hơn cả phiếu
+      st.style.cssText = `left:${tr.right - tr.width * 0.15}px;top:${tr.top + tr.height * 0.1}px;width:${(tr.height * 0.8).toFixed(0)}px`;
+      this.el.appendChild(st);
+      st.animate([{ transform: 'translate(-50%,-10%) rotate(-8deg) scale(1.6)', opacity: 0 },
+        { transform: 'translate(-50%,-10%) rotate(-8deg) scale(1)', opacity: 1 }],
+        { duration: 220, easing: 'cubic-bezier(.3,1.5,.5,1)', fill: 'forwards' });
+      setTimeout(() => st.remove(), 600);
+      const f = gh.querySelector('.tk-face');
+      f?.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.15)', offset: .5 }, { transform: 'scale(1)' }], { duration: 300 });
+      if (!t.mistakes) for (const k of [-1, 1]) {           // tô không lỗi: hai ngôi sao bay lên
+        const sp = document.createElement('img'); sp.className = 'pv-fx pv-star'; sp.src = fx('sparkle');
+        sp.draggable = false; sp.onerror = () => sp.remove();
+        sp.style.cssText = `left:${cx + k * tr.width * 0.22}px;top:${tr.top}px;width:${(tr.height * 0.5).toFixed(0)}px`;
+        this.el.appendChild(sp);
+        sp.animate([{ opacity: 0, transform: 'translate(-50%,0) scale(.6)' },
+          { opacity: 1, transform: `translate(-50%,-${tr.height * 0.5}px) scale(1)`, offset: .4 },
+          { opacity: 0, transform: `translate(-50%,-${tr.height * 1.1}px) scale(1.1)` }],
+          { duration: 520, easing: 'ease-out', delay: k > 0 ? 90 : 0 }).onfinish = () => sp.remove();
+        setTimeout(() => sp.remove(), 700);
+      }
+    }, 280);
+
+    setTimeout(() => {
+      gh.animate([{ transform: 'translateX(0)', opacity: 1 }, { transform: 'translateX(-120%)', opacity: 0 }],
+        { duration: 250, easing: 'ease-in', fill: 'forwards' });
+      setTimeout(() => gh.remove(), 280);
+    }, 600);
+  }
+
   /** Vứt rác: thùng rác giật một cái + bụi bay lên. */
   toss() {
     const z = this.el.querySelector('.pv-z.trash'); if (!z) return;
@@ -213,6 +273,7 @@ export class Pov {
       { opacity: .9, transform: 'translate(-50%,-70%) scale(1)', offset: .35 },
       { opacity: 0, transform: 'translate(-50%,-100%) scale(1.05)' },
     ], { duration: 520, easing: 'linear' }).onfinish = () => p.remove();
+    setTimeout(() => p.remove(), 700);   // cùng bẫy: onfinish không chạy khi khung hình bị nén
     this.C.ev?.onSfx?.('mistake');
   }
   /** A10 — tay cầm vá trượt vào, nghiêng, dòng nước chảy xuống mặt nước trong tô rồi rút ra. */
@@ -340,6 +401,7 @@ export class Pov {
       setTimeout(() => d.ghost.remove(), 150);
       const sc = this.srcOf(d.el), zn = this.zoneOf(zone);
       const res = this.C.drop(sc, zn);
+      if (res?.ok && res.served) this.serveFx(res.served, sc);   // J4 — phải chạy TRƯỚC render(), lúc phiếu & tô còn trong DOM
       this.render();
       if (res?.ok) this.bump(zn);
       this.afterDrop(res, sc, zn);
@@ -368,7 +430,7 @@ export class Pov {
     const src = this.srcOf(el); const zone = this.autoZone(src); if (!zone) { this.msg(this.whyNoZone(src), 'bad'); return; }
     const sel = zone.kind === 'ticket' ? `.tk[data-i="${zone.id}"]` : `.drop[data-zone="${zone.kind}"]${zone.i != null ? `[data-i="${zone.i}"]` : ''}`;
     const dst = this.el.querySelector(sel) || this.el.querySelector(`.drop[data-zone="${zone.kind}"]`);
-    const go = () => { const r = this.C.drop(src, zone); this.render(); this.afterDrop(r, src, zone); };
+    const go = () => { const r = this.C.drop(src, zone); if (r?.ok && r.served) this.serveFx(r.served, src); this.render(); this.afterDrop(r, src, zone); };
     if (!dst) return go();
     const a = el.getBoundingClientRect(), b = dst.getBoundingClientRect();
     const g = document.createElement('div'); g.className = 'pv-ghost fly'; g.innerHTML = (el.querySelector('.pv-ghosticon img,.pv-ghosticon .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(g);
