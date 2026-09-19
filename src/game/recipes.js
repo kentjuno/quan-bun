@@ -116,14 +116,20 @@ function buildTransforms(dishId, sim) {
 /** Nối chuỗi thay thế: a→b, b→c ⇒ a→c (chả giò: chiên rồi cắt, bỏ cả hai thì kệ phát thẳng token cuối). */
 function chase(subs, tok) { let cur = tok; for (let g = 0; g < 6 && subs[cur] && subs[cur] !== cur; g++) cur = subs[cur]; return cur; }
 
-/** Trạm theo hành động. pot: trụng/ủ ấm · sink: xả · microwave · prep (thớt/bàn soạn): cắt, đập, làm chén, lót mẹt, múc cháo… */
+/** Việc làm ngay trên MẶT BẾP bằng nồi/chảo nhỏ — Kent kể 19/09.
+ *  Liệt kê thẳng tên chứ không bắt theo chữ: `stir-fry-xao-lan` có chữ "fry" (dễ rơi vào chảo
+ *  chiên) và `warm-sot-vang` có chữ "warm" (dễ rơi vào nồi trụng), cả hai đều sai chỗ. */
+const STOVE_ACTIONS = new Set(['warm-sot-vang', 'stir-fry-xao-lan']);
+
+/** Trạm theo hành động. pot: trụng/ủ ấm · sink: xả · microwave · stovetop: mặt bếp · prep (thớt/bàn soạn): cắt, đập, làm chén, lót mẹt, múc cháo… */
 function stationForAction(actionId) {
+  if (STOVE_ACTIONS.has(actionId)) return 'stovetop';   // 'stove' đã là NỒI NƯỚC PHỞ SẴN trong bếp 3D — đừng dùng lại tên đó
   if (/microwave/.test(actionId)) return 'microwave';
   if (/fry/.test(actionId)) return 'fryer';
   if (/soak/.test(actionId)) return 'sink';
   if (/blanch|reblanch|warm/.test(actionId)) return 'pot';
   if (/rinse/.test(actionId)) return 'sink';
-  if (/heat|stock|water|blood|porridge-in-pot/.test(actionId)) return 'stove';   // (không dùng: chuỗi nước lèo đi qua soupRecipe)
+  if (/heat|stock|water|blood|porridge-in-pot|add-pho-broth/.test(actionId)) return 'stovetop';   // (không tới đây: chuỗi nước lèo bị lọc ở soupChainIds)
   return 'prep';
 }
 

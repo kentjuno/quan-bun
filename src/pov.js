@@ -46,8 +46,11 @@ export class Pov {
   // Ảnh hỏng/chưa có thì `.pv-stage` mất class `scene` → quay về bố cục khung cũ, vẫn chơi được.
   build() {
     const C = this.C; const need = (st) => Object.values(C.recs).some((r) => r.transforms.some((t) => t.station === st));
+    // "Mặt bếp" không phải ô riêng — vẫn là ô `burner`. Tuỳ món mà nó là nồi nước lèo
+    // hay nồi/chảo nhỏ để hâm sốt vang / xào lăn (Kent 19/09).
+    const soupHere = !!Object.keys(C.soups).length && !C.sim?.soupReady;
     this.has = { pot: need('pot'), sink: need('sink'), prep: need('prep'), fryer: need('fryer'), microwave: need('microwave'),
-      burner: !!Object.keys(C.soups).length && !C.sim?.soupReady, ready: !!Object.keys(C.soups).length };
+      stovetop: need('stovetop'), burner: soupHere || need('stovetop'), ready: !!Object.keys(C.soups).length };
     const z = (k) => { const b = ZONES[k]; return `left:${b.x}%;top:${b.y}%;width:${b.w}%;height:${b.h}%`; };
     // Khay là sprite nên có bao nhiêu món thì xếp bấy nhiêu khay, chia đều cả dải.
     // Trước đây bám theo khay vẽ trong tranh nên Hải Phòng (14 món / 9 khay) đồn 6 món lên một khay.
@@ -85,7 +88,8 @@ export class Pov {
         ${this.has.pot ? dropz('pot', 'pot', '<div class="pv-baskets" id="pvBaskets"></div>', 'st-pot') : ''}
         ${this.has.pot ? zone('hot', '<div class="pv-hot" id="pvHot"></div>') : ''}
         ${this.has.sink || C.waterItems.length ? dropz('sink', 'sink', '<div class="pv-sinkin" id="pvSink"></div>', 'st-sink') : ''}
-        ${this.has.ready ? zone('burner', `<div class="pv-pots" id="pvPots"></div><div class="pv-ready" id="pvReady"></div>`, 'st-burner') : ''}
+        ${this.has.burner || this.has.ready ? zone('burner', `<div class="pv-pots" id="pvPots"></div><div class="pv-ready" id="pvReady"></div>`
+            + (this.has.stovetop ? `<div class="pv-stove drop" data-zone="burner" id="pvStove"></div>` : ''), 'st-burner') : ''}
         ${C.brothSrc.length + C.stockItems.length ? zone('broth',
             C.brothSrc.map((b) => `<div class="pv-broth dragsrc" ${src1('broth', b)}>${img(b)}<small>${label(b)}</small></div>`).join('')
             // Can nước cốt / nồi cháo đứng cạnh bếp. Vẫn là kind 'item' — chỉ đổi CHỖ VẼ, luật chơi y nguyên.
@@ -138,6 +142,15 @@ export class Pov {
       // Vòi nước: miếng nước trắng hứng ở đây rồi đem vô nồi, không phải lấy trên khay.
       const tap = C.waterItems.map((t) => `<div class="pv-tap dragsrc" title="${label(t)}" ${src1('item', t)}>${img(t)}<small>${label(t)}</small></div>`).join('');
       $('pvSink').innerHTML = tap + rinse + jobHtml;
+    }
+    if (this.has.stovetop && $('pvStove')) {
+      const j = C.stovetop;
+      const gathering = j && j.left === null;
+      $('pvStove').innerHTML = j
+        ? `<div class="pv-job ${j.left != null && j.left <= 0 ? 'dragsrc' : ''}" ${src1('stovetop')}>${img(j.input)}<small>${
+            gathering ? 'thiếu ' + j.tf.inputs.filter((_, i) => !j.have[i]).map(label).join(', ') : j.left > 0 ? j.name : 'xong'
+          }</small>${gathering ? '' : bar(j.left, j.total)}</div>`
+        : '<small class="hint">nồi/chảo nhỏ</small>';
     }
     for (const [k, id] of [['fryer', 'pvFryer'], ['microwave', 'pvMw']]) { if (!this.has[k]) continue; const j = C[k];
       $(id).innerHTML = j ? `<div class="pv-job ${j.left > 0 ? '' : 'dragsrc'}" ${src1(k)}>${img(j.input)}<small>${j.left > 0 ? j.name : 'xong'}</small>${bar(j.left, j.total)}</div>` : '<small class="hint">trống</small>'; }

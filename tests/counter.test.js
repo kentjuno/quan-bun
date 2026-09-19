@@ -18,12 +18,12 @@ function play(C, seconds = 600) {
 const mk = (dishes, o = {}) => new Counter({ dishes, rounds: o.rounds ?? 2, patience: o.patience ?? 600, gap: o.gap ?? 3, rnd: () => 0.99, ...o });
 
 describe('Counter — lõi quầy POV', () => {
-  it('cả 18 món đều chơi được ở quầy (mọi transform có chỗ thả)', () => {
-    expect(ALL_DISHES.filter(povOk).length).toBe(18);
-    for (const d of ALL_DISHES) for (const t of recipeFor(d).transforms) expect(['pot', 'sink', 'prep', 'fryer', 'microwave'], `${d}/${t.action}`).toContain(t.station);
+  it('cả 21 món đều chơi được ở quầy (mọi transform có chỗ thả)', () => {
+    expect(ALL_DISHES.filter(povOk).length).toBe(21);
+    for (const d of ALL_DISHES) for (const t of recipeFor(d).transforms) expect(['pot', 'sink', 'prep', 'fryer', 'microwave', 'stovetop'], `${d}/${t.action}`).toContain(t.station);
   });
 
-  it('bot làm xong CẢ 18 MÓN, đúng chuỗi ráp, không lỗi', () => {
+  it('bot làm xong CẢ 21 MÓN, đúng chuỗi ráp, không lỗi', () => {
     const bad = [];
     for (const d of ALL_DISHES) {
       const C = mk([d], { rounds: 2 }); play(C, 900);

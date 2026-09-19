@@ -11,7 +11,7 @@ const run = (w, secs, bot = true) => { for (let i = 0; i < secs * 30 && w.state 
 
 describe('bậc thang world/level', () => {
   it('8 world; độ dài đúng; id duy nhất; mọi món có trong sim-data', () => {
-    expect(WORLDS.map((w) => w.levels.length)).toEqual([20, 12, 12, 16, 20, 16, 16, 12]);
+    expect(WORLDS.map((w) => w.levels.length)).toEqual([25, 12, 12, 16, 20, 16, 16, 12]);
     expect(new Set(ALL_LEVELS.map((l) => l.id)).size).toBe(ALL_LEVELS.length);
     for (const w of WORLDS) for (const d of w.dishes) expect(D.recipes[d]).toBeTruthy();
     expect(WORLDS[0].starsToUnlock).toBe(0);
@@ -71,7 +71,7 @@ describe('bậc thang world/level', () => {
   });
   it('nextLevel đi hết world rồi dừng', () => {
     expect(nextLevel(levelById('pho-1')).id).toBe('pho-2');
-    expect(nextLevel(levelById('pho-20'))).toBeNull();
+    expect(nextLevel(levelById('pho-25'))).toBeNull();
   });
 });
 
@@ -219,10 +219,10 @@ describe('tiến trình: sao mở level/world, nâng cấp theo sao', () => {
     expect(P.playerMods().bowlSlots).toBe(4);
 
     for (const L of WORLDS[0].levels) P.recordLevel(L.id, { stars: 3, money: 0, tips: 0 });
-    expect(P.worldStars('pho')).toBe(60);
+    expect(P.worldStars('pho')).toBe(75);
     expect(P.worldUnlocked('bun-rieu')).toBe(true);
     expect(P.currentLevel().world).toBe('bun-rieu');
-    expect(P.unlocksAfter(levelById('pho-20')).some((u) => u.kind === 'world' && u.id === 'bun-rieu')).toBe(true);
+    expect(P.unlocksAfter(levelById('pho-25')).some((u) => u.kind === 'world' && u.id === 'bun-rieu')).toBe(true);
     expect(P.unlocksAfter(levelById('pho-10')).some((u) => u.kind === 'dish' && u.id === 'pho-dac-biet')).toBe(true);
     expect(P.unlocksAfter(levelById('pho-9')).some((u) => u.kind === 'regular' && u.id === 'cau-hai')).toBe(true);
     delete globalThis.localStorage;

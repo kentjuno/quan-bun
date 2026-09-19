@@ -8,7 +8,7 @@ import { REGULARS, STRANGER_LINES, lineFor } from '../data/customers.js';
 const isBroth = (t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t);
 const BOWLISH = /bowl|^tray$|tray-paper|^dia-|mam-dan|chao-ap-ca|serving-plate|banh-trang/;
 /** Mọi món đều chơi được ở quầy POV: mỗi transform phải rơi vào một trạm có chỗ thả. */
-const STATIONS = ['pot', 'sink', 'prep', 'fryer', 'microwave'];
+const STATIONS = ['pot', 'sink', 'prep', 'fryer', 'microwave', 'stovetop'];
 export function povOk(dish) { const r = recipeFor(dish); return r.transforms.every((t) => STATIONS.includes(t.station)); }
 
 export class Counter {
@@ -46,7 +46,7 @@ export class Counter {
     this.baskets = Array.from({ length: c?.potSlots ?? POT.noodleSlots }, () => null);   // rọ trong nồi trụng
     this.hot = [];                                                             // tô đang/đã trụng nóng trong nồi
     this.boards = Array.from({ length: c?.boards ?? 2 }, () => null);          // thớt
-    this.fryer = null; this.microwave = null; this.sinkJob = null;             // chảo chiên · lò vi sóng · bồn (nhúng bánh tráng)
+    this.fryer = null; this.microwave = null; this.sinkJob = null; this.stovetop = null;   // chảo chiên · lò vi sóng · bồn (nhúng bánh tráng) · mặt bếp (nồi/chảo nhỏ)
     this.burner = { pots: Array.from({ length: o.burners ?? 1 }, () => null), ready: [] };
     if (sim?.soupReady) for (const r of Object.values(this.soups)) for (let i = 0; i < (sim.soupReady === true ? 2 : sim.soupReady); i++) this.burner.ready.push({ name: r.name, output: r.output, items: r.items });
     this.stackMax = c?.brothCap ?? SOUP.stackMax; this.noStack = !!c?.noStack;
@@ -73,7 +73,7 @@ export class Counter {
     //   add-water                              → miếng nước trắng: hứng ở vòi bồn rửa
     //   còn lại (huyết)                        → đồ rắn, vẫn nằm khay
     const sAct = Object.assign({}, ...Object.values(this.soups).map((r) => r.byAction || {}));
-    this.stockItems = this.soupItems.filter((t) => /^put-(stock|porridge)-in-pot$/.test(sAct[t] || ''));
+    this.stockItems = this.soupItems.filter((t) => /^(put-(stock|porridge)-in-pot|add-pho-broth)$/.test(sAct[t] || ''));
     this.waterItems = this.soupItems.filter((t) => (sAct[t] || '') === 'add-water');
     const onPan = (t) => !this.stockItems.includes(t) && !this.waterItems.includes(t);
     this.panItems = [...this.soupItems.filter(onPan), ...this.topItems];
@@ -131,6 +131,7 @@ export class Counter {
     if (src.kind === 'board') { const b = this.boards[src.i]; return b && b.left === 0 ? b.output : null; }
     if (src.kind === 'fryer') return this.fryer && this.fryer.left <= 0 ? this.fryer.output : null;
     if (src.kind === 'microwave') return this.microwave && this.microwave.left <= 0 ? this.microwave.output : null;
+    if (src.kind === 'stovetop') return this.stovetop && this.stovetop.left != null && this.stovetop.left <= 0 ? this.stovetop.output : null;
     if (src.kind === 'sink') return this.sinkJob && this.sinkJob.left <= 0 ? this.sinkJob.output : null;
     if (src.kind === 'ready') return this.burner.ready[src.i]?.output || null;
     if (src.kind === 'burnerpot') { const p = this.burner.pots[src.i]; return p && p.left <= 0 ? p.output : null; }
@@ -144,6 +145,7 @@ export class Counter {
     else if (src.kind === 'board') this.boards[src.i] = null;
     else if (src.kind === 'fryer') this.fryer = null;
     else if (src.kind === 'microwave') this.microwave = null;
+    else if (src.kind === 'stovetop') this.stovetop = null;
     else if (src.kind === 'sink') this.sinkJob = null;
     else if (src.kind === 'ready') this.burner.ready.splice(src.i, 1);
     else if (src.kind === 'burnerpot') this.burner.pots[src.i] = null;
@@ -163,7 +165,9 @@ export class Counter {
       case 'prep': return this.toPrep(src, tok, zone.i);
       case 'fryer': return this.toJobStation('fryer', src, tok);
       case 'microwave': return this.toJobStation('microwave', src, tok);
-      case 'burner': return this.toBurner(src, tok, zone.i);
+      // Ô bếp làm hai việc: nồi/chảo nhỏ (hâm, xào) và nồi nước lèo. Token nào thuộc mặt bếp thì về đó.
+      case 'burner': return this.transformsAt('stovetop').some((t) => t.inputs.some((req) => tokenMatches(req, tok)))
+        ? this.toStovetop(src, tok) : this.toBurner(src, tok, zone.i);
       case 'slot': return this.toSlot(src, tok, zone.i);
       case 'ticket': return this.toTicket(src, zone.id);
       default: return this.err('Chỗ này không thả được');
@@ -190,10 +194,27 @@ export class Counter {
     this.take(src); this.ev.onSfx?.('splash'); return this.ok(`${label(tok)}: ${this.sinkJob.name}`);
   }
   toJobStation(kind, src, tok) {
-    const t = this.transformAt(kind, tok); if (!t) return this.err(`${label(tok)} không làm ở ${kind === 'fryer' ? 'chảo chiên' : 'lò vi sóng'}`);
-    if (this[kind]) return this.err(kind === 'fryer' ? 'Chảo đang chiên' : 'Lò đang chạy');
+    const where = { fryer: 'chảo chiên', microwave: 'lò vi sóng', stovetop: 'mặt bếp' }[kind];
+    const busyMsg = { fryer: 'Chảo đang chiên', microwave: 'Lò đang chạy', stovetop: 'Mặt bếp đang bận' }[kind];
+    const t = this.transformAt(kind, tok); if (!t) return this.err(`${label(tok)} không làm ở ${where}`);
+    if (this[kind]) return this.err(busyMsg);
     this[kind] = { input: tok, output: t.output, left: t.time, total: t.time, name: D.actions[t.action]?.name || t.action };
-    this.take(src); this.ev.onSfx?.(kind === 'fryer' ? 'sizzle' : 'drop'); return this.ok(`${label(tok)}: ${this[kind].name}`);
+    this.take(src); this.ev.onSfx?.(kind === 'microwave' ? 'drop' : 'sizzle'); return this.ok(`${label(tok)}: ${this[kind].name}`);
+  }
+  /** Mặt bếp: một nồi/chảo nhỏ, gom đủ đồ rồi mới chạy (xào lăn cần thịt tái + rau cải). */
+  toStovetop(src, tok) {
+    let s = this.stovetop;
+    if (s && s.left !== null) return this.err(s.left > 0 ? `${s.name}: còn ${s.left.toFixed(0)}s` : `${s.name} xong rồi — lấy ra`);
+    if (!s) {
+      const t = this.transformsAt('stovetop').find((x) => x.inputs.some((req) => tokenMatches(req, tok)));
+      if (!t) return this.err(`${label(tok)} không làm ở mặt bếp`);
+      s = this.stovetop = { tf: t, have: t.inputs.map(() => null), left: null, total: t.time, input: tok, output: t.output, name: D.actions[t.action]?.name || t.action };
+    }
+    const k = s.tf.inputs.findIndex((req, i) => !s.have[i] && tokenMatches(req, tok));
+    if (k < 0) return this.err(`Mặt bếp đang làm ${s.name} — chưa cần ${label(tok)}`);
+    s.have[k] = tok; this.take(src); this.ev.onSfx?.('place');
+    if (s.have.every(Boolean)) { s.left = s.tf.time; this.ev.onSfx?.('sizzle'); return this.ok(`${s.name}…`); }
+    return this.ok(`${s.name}: còn thiếu ${s.tf.inputs.filter((_, i) => !s.have[i]).map(label).join(', ')}`);
   }
   toPrep(src, tok, idx) {
     const tfs = this.transformsAt('prep');
@@ -316,7 +337,7 @@ export class Counter {
     }
     for (const h of this.hot) tickJob(h);
     for (const b of this.boards) tickJob(b);
-    tickJob(this.fryer); tickJob(this.microwave); tickJob(this.sinkJob);
+    tickJob(this.fryer); tickJob(this.microwave); tickJob(this.sinkJob); tickJob(this.stovetop);
     this.burner.pots.forEach((p, i) => { if (!p || p.left === null) return; tickJob(p);
       if (p.left === 0 && !this.noStack && this.burner.ready.length < this.stackMax) { this.burner.ready.push({ name: p.name, output: p.output, items: p.items }); this.burner.pots[i] = null; } });
     for (const t of [...this.tickets]) if (this.time - t.born >= t.pat) this.expire(t);
@@ -386,6 +407,7 @@ function findReady(C, need) {
   for (let i = 0; i < C.boards.length; i++) { const b = C.boards[i]; if (b && b.left === 0 && m(b.output)) return { kind: 'board', i }; }
   if (C.fryer && C.fryer.left <= 0 && m(C.fryer.output)) return { kind: 'fryer' };
   if (C.microwave && C.microwave.left <= 0 && m(C.microwave.output)) return { kind: 'microwave' };
+  if (C.stovetop && C.stovetop.left != null && C.stovetop.left <= 0 && m(C.stovetop.output)) return { kind: 'stovetop' };
   if (C.sinkJob && C.sinkJob.left <= 0 && m(C.sinkJob.output)) return { kind: 'sink' };
   for (let i = 0; i < C.burner.ready.length; i++) if (m(C.burner.ready[i].output)) return { kind: 'ready', i };
   for (let i = 0; i < C.burner.pots.length; i++) { const p = C.burner.pots[i]; if (p && p.left === 0 && m(p.output)) return { kind: 'burnerpot', i }; }
@@ -411,12 +433,14 @@ function backtrack(C, rec, need, slotZone, depth = 0) {
   if (depth > 8) return null;
   const t = rec.transforms.find((x) => tokenMatches(need, x.output)); if (!t) return null;
   // đang làm dở ở trạm? → chờ
-  const busy = [...C.baskets, ...C.boards, C.fryer, C.microwave, C.sinkJob].some((j) => j && j.output === t.output && j.left > 0);
+  const busy = [...C.baskets, ...C.boards, C.fryer, C.microwave, C.sinkJob, C.stovetop].some((j) => j && j.output === t.output && j.left > 0);
   if (busy) return null;
-  const zone = t.station === 'prep' ? { kind: 'prep' } : { kind: t.station };
+  const zone = t.station === 'prep' ? { kind: 'prep' } : { kind: t.station === 'stovetop' ? 'burner' : t.station };
   // thớt nhiều đầu vào: đem thứ còn thiếu tới
-  if (t.station === 'prep') {
-    const b = C.boards.find((x) => x && x.left === null && x.tf.output === t.output);
+  if (t.station === 'prep' || t.station === 'stovetop') {
+    const b = t.station === 'prep'
+      ? C.boards.find((x) => x && x.left === null && x.tf.output === t.output)
+      : (C.stovetop && C.stovetop.left === null && C.stovetop.tf.output === t.output ? C.stovetop : null);
     const missing = t.inputs.filter((req, i) => !(b && b.have[i]));
     for (const req of missing) { const q = req.split('|')[0];
       const r = findReady(C, q); if (r) return { src: r, zone };

@@ -34,7 +34,7 @@ export class World {
     this.stations = kitchen.stations.filter((s) => !s.dishes || s.dishes.some((d) => shift.dishes.includes(d))).filter((s) => !s.extra || (mods?.seats ?? 3) >= s.extra).map((s) => ({
       ...s, stand: standPoint(s, kitchen), jobs: [], burners: s.type === 'burner' ? (mods?.burners ?? s.burners ?? 2) : s.burners,
       items: s.type === 'shelf' ? s.items.filter((it) => used.has(it) || (s.alwaysShow || []).includes(it)) : s.items,
-      slots: s.type === 'counter' ? Array.from({ length: s.slots ?? RULES.bowlSlots }, () => null) : s.type === 'burner' ? Array.from({ length: mods?.burners ?? s.burners ?? 2 }, () => null) : s.type === 'prep' ? Array.from({ length: s.boards ?? 2 }, () => null) : [],
+      slots: s.type === 'counter' ? Array.from({ length: s.slots ?? RULES.bowlSlots }, () => null) : s.type === 'burner' ? Array.from({ length: mods?.burners ?? s.burners ?? 2 }, () => null) : (s.type === 'prep' || s.type === 'stovetop') ? Array.from({ length: s.boards ?? 2 }, () => null) : [],
     }));
     // nước lèo phải nấu trên lò (bếp thật: phở có sẵn; riêu/bún bò lấy nồi cho cốt → huyết → nước rồi đun)
     this.soups = Object.fromEntries(shift.dishes.map((d) => [d, soupRecipeFor(d)]).filter(([, v]) => v));
@@ -80,7 +80,7 @@ export class World {
     if (st.type === 'shelf') { if (!arg) return { station: st, item: null }; if (!st.items.includes(arg)) return null; return { station: st, item: arg }; }   // không có item = tới kệ rồi mở card chọn (chế độ card)
     if (st.type === 'counter') { const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= st.slots.length) return null; return { station: st, slot: i }; }
     if (st.type === 'pot' && arg) { if (arg.startsWith('bowl')) return { station: st, slot: arg }; /* 'bowl' = chồng tô (tự chọn loại đang cần), 'bowl.soup-bowl' = đúng loại */ const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= POT.noodleSlots) return null; return { station: st, slot: i }; }   // 'pot:0..2' = rọ sợi cụ thể, 'pot:bowl' = chồng tô nóng
-    if (st.type === 'prep') { if (!arg) return { station: st }; const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= st.slots.length) return null; return { station: st, slot: i }; }   // 'prep:0' = một thớt
+    if (st.type === 'prep' || st.type === 'stovetop') { if (!arg) return { station: st }; const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= st.slots.length) return null; return { station: st, slot: i }; }   // 'prep:0' = một thớt
     if (st.type === 'burner') { if (arg && arg.startsWith('ready')) return { station: st, slot: 'ready', want: arg.includes('.') ? arg.slice(6) : null }; const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= st.slots.length) return null; return { station: st, slot: i }; }   // 'burner:0' = một bếp lò · 'burner:ready' / 'burner:ready.<token>' = kệ nước đã đun
     if (st.type === 'trash' && arg) { const i = Number(arg); if (!Number.isInteger(i) || i < 0 || i >= this.handCap) return null; return { station: st, slot: i }; }   // 'trash:0' = vứt riêng ô tay 0
     return { station: st };
@@ -154,7 +154,7 @@ export class World {
     let r = Math.random() * sum; for (let i = 0; i < ds.length; i++) { r -= wts[i]; if (r <= 0) return ds[i]; } return ds[ds.length - 1];
   }
   updateStations(dt) {
-    for (const s of this.stations) if (s.type === 'prep') for (const b of s.slots) { if (b && b.left > 0) { b.left -= dt; if (b.left <= 0) { b.left = 0; this.ev.onJobDone?.(s, b); } } }
+    for (const s of this.stations) if (s.type === 'prep' || s.type === 'stovetop') for (const b of s.slots) { if (b && b.left > 0) { b.left -= dt; if (b.left <= 0) { b.left = 0; this.ev.onJobDone?.(s, b); } } }
     for (const s of this.stations) if (s.type === 'burner') s.slots.forEach((b, i) => { if (b && b.left > 0) { b.left -= dt; if (b.left <= 0) { b.left = 0; this.ev.onJobDone?.(s, b); if (!this.noStack && s.ready.length < this.stackMax) { s.ready.push(b); s.slots[i] = null; this.toast(`${b.name} đã nóng — để sẵn trên kệ nước`); } else this.toast(this.noStack ? `${b.name} đã nóng — lấy ra khỏi lò đi` : `${b.name} đã nóng — kệ nước đầy, còn trên lò`); } } });
     for (const s of this.stations) for (const j of s.jobs) {
       if (j.left > 0) { j.left -= dt; if (j.left <= 0) { j.left = 0; this.ev.onJobDone?.(s, j); } continue; }
@@ -190,7 +190,8 @@ export class World {
     switch (s.type) {
       case 'shelf': return this.takeFromShelf(s, tg.item);
       case 'pot': case 'sink': case 'stove': case 'microwave': case 'fryer': return this.useStation(s, tg.slot);
-      case 'prep': return this.usePrep(s, tg.slot);
+      // Mặt bếp gom nhiều thứ (xào lăn = thịt tái + rau cải) nên đi theo cơ chế của thớt, không phải trạm một việc.
+      case 'prep': case 'stovetop': return this.usePrep(s, tg.slot);
       case 'counter': return this.useCounter(s, tg.slot);
       case 'serve': case 'seat': return this.serve(s);
       case 'trash': return this.useTrash(s, tg.slot);
@@ -198,7 +199,7 @@ export class World {
       default: c.target = null;
     }
   }
-  arrive(tg) { /* gọi sau khi việc active xong */ const s = tg.station; if (s.type === 'pot' || s.type === 'sink') { this.collectJobs(s, s.activeJobs || []); s.activeJobs = null; } else if (s.type === 'microwave' || s.type === 'fryer') this.collectJobs(s, s.activeJobs || []); else if (s.type === 'stove') this.finishStove(s); else if (s.type === 'burner') this.finishBurner(s, tg.slot); else if (s.type === 'prep') this.finishPrep(s); }
+  arrive(tg) { /* gọi sau khi việc active xong */ const s = tg.station; if (s.type === 'pot' || s.type === 'sink') { this.collectJobs(s, s.activeJobs || []); s.activeJobs = null; } else if (s.type === 'microwave' || s.type === 'fryer') this.collectJobs(s, s.activeJobs || []); else if (s.type === 'stove') this.finishStove(s); else if (s.type === 'burner') this.finishBurner(s, tg.slot); else if (s.type === 'prep' || s.type === 'stovetop') this.finishPrep(s); }
 
   // ---------- kệ ----------
   /** Lấy ĐÚNG nguyên liệu người chơi chạm; lấy 2 cái giống nhau được (vd. 2 tô cho 2 khách). Tay đầy mà chạm thứ đang cầm = trả lại kệ; muốn bỏ 1 thứ thì dùng nút × ở ô tay. Không tự đoán. */
@@ -314,7 +315,7 @@ export class World {
   /** Thớt nào đang chứa một phần nguyên liệu của phép biến đổi `t`? */
   prepSlotFor(s, t) { return s.slots.findIndex((b) => b && b.tf === t && b.left === null); }
   usePrep(s, slot) {
-    const c = this.chef; const tfs = this.transformsAt('prep');
+    const c = this.chef; const tfs = this.transformsAt(s.type);   // dùng lại cho mặt bếp (s.type === 'stovetop')
     // 1) thả từng thứ trên tay vào thớt đang cần nó (ưu tiên thớt đã có một phần), hoặc thớt trống được chỉ định / trống bất kỳ
     const dropped = []; let busy = 0; const startedActive = [];
     for (const tok of [...c.hand]) {

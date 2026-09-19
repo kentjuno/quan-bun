@@ -29,8 +29,9 @@ const lv = (n, title, whatsNew, o = {}) => ({
 
 // ============================== WORLD 1 — PHỞ (20 level) ==============================
 const PHO = ['pho-tai-nam'], PHO2 = ['pho-tai-nam', 'pho-dac-biet'], PHO3 = [...PHO2, 'pho-tai-dap'], PHO4 = [...PHO3, 'pho-suon-tai'];
+const PHO7 = [...PHO4, 'pho-ga', 'pho-sot-vang', 'pho-xao-lan'];   // 3 món Kent kể 19/09
 const W_PHO = {
-  id: 'pho', name: 'Phở', icon: '🍜', sub: 'Hà Nội gánh về', dishes: PHO4,
+  id: 'pho', name: 'Phở', icon: '🍜', sub: 'Hà Nội gánh về', dishes: PHO7,
   levels: [
     lv(1, 'Tô phở đầu tiên', 'Học chạm-là-đi: trụng sợi → ráp → bưng ra bàn', { dishes: PHO, count: 2, patience: 200, seconds: 120, prep: 12,
       simplify: { skipRinse: true, hotBowl: true, toppings: ['nam', 'bo-tai'], noSpoil: true },
@@ -86,6 +87,21 @@ const W_PHO = {
     lv(20, '⭐ Cuối tuần — đoàn khách', 'Thử thách cuối: quầy ráp ra giữa quán + đoàn 4 người', { dishes: PHO4, count: 6, patience: 150, seconds: 240,
       layout: 'island', challenge: { kind: 'boss', group: 4 }, regulars: ['cau-hai', 'chu-tu'],
       hint: 'Quầy ráp ra giữa sàn, phải đi vòng. Giữa buổi có đoàn 4 người — trụng sẵn thật nhiều trước khi họ tới.' }),
+    lv(21, 'Phở gà', 'Món mới: nước phở gà phải tự pha cốt với nước phở rồi đun ở lò', { dishes: ['pho-ga'], count: 4, patience: 180, seconds: 220,
+      unlocks: { dish: 'pho-ga' },
+      hint: 'Nước phở gà không có sẵn: lấy cốt phở gà vô nồi, pha thêm nước phở rồi đun. Trong lúc chờ thì chặt gà luộc ở thớt. Món này chỉ có size M.' }),
+    lv(22, 'Gà chen vô menu bò', 'Mục tiêu: đừng nhầm nước — phở bò múc sẵn, phở gà phải tự đun', { dishes: [...PHO4, 'pho-ga'], count: 6, patience: 160, seconds: 220,
+      goal: { kind: 'no-waste' }, mix: true,
+      hint: 'Hai loại nước trên bếp. Nhớ đun nồi phở gà TRƯỚC khi khách gọi, đừng để nồi nguội rồi mới chạy.' }),
+    lv(23, 'Phở sốt vang', 'Món mới: hâm cốt sốt vang bằng nồi nhỏ ngay trên mặt bếp', { dishes: ['pho-sot-vang'], count: 4, patience: 175, seconds: 200,
+      unlocks: { dish: 'pho-sot-vang' },
+      hint: 'Cốt sốt vang bỏ lên mặt bếp hâm nóng (chạy nền) rồi mới cho lên tô. Vẫn chan nước phở như thường. Món này chỉ có size M.' }),
+    lv(24, 'Phở xào lăn', 'Món mới: xào thịt tái + rau cải ngay trên mặt bếp', { dishes: ['pho-xao-lan'], count: 4, patience: 175, seconds: 200,
+      unlocks: { dish: 'pho-xao-lan' },
+      hint: 'Thịt tái với rau cải đem lên mặt bếp xào lăn, xong mới bỏ lên phở đã trụng, rồi chan nước phở. Món này chỉ có size L.' }),
+    lv(25, '⭐ Cả menu phở', 'Thử thách: bảy món phở cùng lúc — mặt bếp với lò đun chạy song song', { dishes: PHO7, count: 7, patience: 150, seconds: 250,
+      challenge: { kind: 'boss', group: 3 }, regulars: ['cau-hai'],
+      hint: 'Đủ bảy món. Mặt bếp chỉ có MỘT chỗ — xếp thứ tự hâm/xào cho khéo, đừng để nó kẹt.' }),
   ],
 };
 

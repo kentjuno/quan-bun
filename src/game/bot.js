@@ -186,7 +186,7 @@ function howToGet(w, recipe, tok, slotId, depth = 0) {
   const t = recipe.transforms.find((x) => tokenMatches(tok, x.output));
   if (!t) return null;
   const st = w.stations.find((s) => s.type === t.station); if (!st) return null;
-  if (st.type === 'prep') {   // thớt: gom đủ nguyên liệu (nhiều thứ) rồi làm
+  if (st.type === 'prep' || st.type === 'stovetop') {   // thớt & mặt bếp: gom đủ nguyên liệu (nhiều thứ) rồi làm
     const doneIdx = st.slots.findIndex((b) => b && b.tf.output === t.output && b.left === 0);
     if (doneIdx >= 0) return c.hand.length < w.handCap ? `${st.id}:${doneIdx}` : null;
     if (st.slots.some((b) => b && b.tf.output === t.output && b.left > 0)) return null;   // đang làm → chờ
