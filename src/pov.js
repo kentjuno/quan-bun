@@ -119,7 +119,7 @@ export class Pov {
     const mo = $('pvMoney'); if (mo) mo.textContent = `${Math.round(C.money)}k`;
     const sv = $('pvServed'); if (sv) sv.textContent = `${C.results.length - C.left}/${C.rounds}`;
     this.hud();
-    $('pvTickets').innerHTML = C.tickets.map((t) => `<div class="tk drop${t.regular ? ' reg' : ''}" data-zone="ticket" data-i="${t.id}"><img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()"><b>${t.name}</b><span>${D.recipes[t.dish].name}</span><i class="bar"><u style="width:${C.patienceOf(t) * 100}%;background:${C.patienceOf(t) < 0.25 ? 'var(--red)' : C.patienceOf(t) < 0.5 ? 'var(--broth)' : 'var(--green)'}"></u></i></div>`).join('');
+    this.renderTickets();
     // Rổ đang xả / đã xả thì đứng ở BỒN chứ không còn trong nồi (Kent 18/09).
     const atSink = (b) => !!b && (b.state === 'rinsing' || b.state === 'rinsed');
     if (this.has.pot) $('pvBaskets').innerHTML = C.baskets.map((b0, i) => {
@@ -542,6 +542,43 @@ export class Pov {
     if (this.has.burner && C.soupItems.includes(tok)) { let i = C.burner.pots.findIndex((p) => p && p.left === null); if (i < 0) i = C.burner.pots.findIndex((p) => !p); return i >= 0 ? { kind: 'burner', i } : null; }
     return null;
   }
+  /** J6 — phiếu khách: thẻ giấy kẹp trên dây, mặt to, tên món to, hàng icon nguyên liệu (chỉ level gợi ý).
+   *  Dựng lại DOM CHỈ KHI bộ phiếu / số bước đã vào tô đổi — dựng mỗi khung hình thì
+   *  animation "thẻ mới trượt xuống" bị khởi động lại liên tục. Thanh kiên nhẫn cập nhật riêng mỗi khung. */
+  renderTickets() {
+    const C = this.C, el = $('pvTickets'); if (!el) return;
+    const hint = !!C.sim || this.o.level?.hintIcons === true;        // level đủ bước thật thì ẩn — mục tiêu là THUỘC
+    // tô đang ráp khớp phiếu này (tiền tố thứ tự) → số bước đã vào
+    const doneSteps = (t) => Math.max(0, ...C.slots.filter(Boolean)
+      .filter((b) => b.placed.every((tok, i) => t.steps[i] === tok)).map((b) => b.placed.length));
+    const key = C.tickets.map((t) => `${t.id}:${t.regular ? 1 : 0}:${hint ? doneSteps(t) : 0}`).join('|');
+    if (key !== this._tkKey) {
+      this._tkKey = key;
+      this._seenTk ??= new Set();
+      let fresh = false;
+      el.innerHTML = C.tickets.map((t) => {
+        const isNew = !this._seenTk.has(t.id); if (isNew) { this._seenTk.add(t.id); fresh = true; }
+        const k = doneSteps(t);
+        // tối đa 7 icon: 7 × 3.8cqw ≈ 108px vừa lòng thẻ 112px, 8 thì tràn
+        const icons = hint ? t.steps.map((tok, i) => ({ tok, i })).filter(({ tok }) => !/^@/.test(tok) && tok !== 'base-ready' && iconUrl(tok.replace(/^bowl-hot:/, '')))
+          .slice(0, 7).map(({ tok, i }) => `<img class="${i < k ? 'on' : ''}" src="${iconUrl(tok.replace(/^bowl-hot:/, ''))}" alt="" draggable="false" title="${label(tok)}">`).join('') : '';
+        return `<div class="tk drop${t.regular ? ' reg' : ''}${isNew ? ' new' : ''}" data-zone="ticket" data-i="${t.id}">`
+          + `<img class="tk-clip" src="${fx('clip')}" alt="" draggable="false" onerror="this.remove()">`
+          + `<img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()">`
+          + `<b>${t.name}</b><span>${D.recipes[t.dish].name}</span>`
+          + (icons ? `<div class="tk-ing">${icons}</div>` : '')
+          + `<i class="bar"><u></u></i></div>`;
+      }).join('');
+      if (fresh && C.time > 0.5) this.o.sfx?.arrive?.();
+    }
+    for (const t of C.tickets) {
+      const u = el.querySelector(`.tk[data-i="${t.id}"] .bar u`); if (!u) continue;
+      const f = C.patienceOf(t); u.style.width = `${(f * 100).toFixed(1)}%`;
+      const cls = f < 0.2 ? 'hot' : f < 0.5 ? 'warn' : '';
+      if (u.dataset.c !== cls) { u.dataset.c = cls; u.className = cls; }
+    }
+  }
+
   /** Đồng hồ + chuỗi + số tiền bay lên. Gọi mỗi khung hình nên chỉ đụng DOM khi giá trị ĐỔI. */
   hud() {
     const C = this.C;

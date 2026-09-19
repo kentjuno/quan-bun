@@ -448,6 +448,29 @@
         font-size: 4.2cqw; line-height: 1; padding: 0; cursor: pointer; color: #3b2a1e;
         border: 1px solid rgba(90,66,44,.35); border-radius: 50%; background: rgba(255,252,244,.9); }
 
+      /* ---- J6: phiếu khách to, kẹp gỗ, icon nguyên liệu. Mọi kích thước theo cqw ---- */
+      #pov .pv-tkghost, .pv-rail .tk { margin-top: 3.5%; padding: 1.2cqw 1.6cqw 2.2cqw; max-width: 32%; overflow: visible;
+        display: grid; grid-template-columns: 12cqw 1fr; grid-template-rows: auto auto auto; column-gap: 1.2cqw; align-items: start;
+        border-radius: .8cqw; }
+      .pv-rail .tk:before { display: none; }                      /* kẹp cũ (khối xám) → sprite kẹp gỗ */
+      #pov .pv-tkghost .tk-clip, .pv-rail .tk .tk-clip { position: absolute; left: 50%; top: -3cqw; height: 6.5cqw; width: auto; transform: translateX(-50%); z-index: 2;
+        filter: drop-shadow(0 1px 1px rgba(40,28,18,.35)); }
+      #pov .pv-tkghost.reg .tk-clip, .pv-rail .tk.reg .tk-clip { filter: sepia(1) saturate(4) hue-rotate(-8deg) drop-shadow(0 1px 1px rgba(40,28,18,.35)); }   /* khách quen: kẹp vàng */
+      /* #pov .tk-face (id) thắng .pv-stage .tk-face — phải kê #pov vào mới đè được 26px cũ */
+      #pov .pv-stage .tk-face, #pov .pv-tkghost .tk-face { grid-row: 1 / 3; width: 12cqw;   /* mặt chiếm 2 hàng: tên + tên món xếp cạnh, không đội thẻ lên 105px */ height: 12cqw; margin: 0; float: none;
+        border: .45cqw solid #3b2a1e; box-sizing: border-box; }
+      #pov .pv-tkghost b, .pv-rail .tk b { grid-column: 2; grid-row: 1; align-self: end; font-size: 3.4cqw; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      #pov .pv-tkghost span, .pv-rail .tk span { grid-column: 2; grid-row: 2; font-size: 4.2cqw; font-weight: 700; color: #3b2a1e; opacity: 1; line-height: 1.05; }
+      #pov .pv-tkghost .tk-ing, .pv-rail .tk .tk-ing { grid-column: 1 / -1; grid-row: 3; display: flex; flex-wrap: nowrap; overflow: hidden; gap: .4cqw; margin-top: .8cqw; }
+      #pov .pv-tkghost .tk-ing img, .pv-rail .tk .tk-ing img { width: 3.8cqw; height: 3.8cqw; flex: none; object-fit: contain; opacity: .45; }
+      #pov .pv-tkghost .tk-ing img.on, .pv-rail .tk .tk-ing img.on { opacity: 1; }
+      #pov .pv-tkghost .bar, .pv-rail .tk .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 1.4cqw; margin: 0; border-radius: 0; }
+      #pov .pv-tkghost .bar u, .pv-rail .tk .bar u { background: var(--green); transition: width .25s linear; }
+      #pov .pv-tkghost .bar u.warn, .pv-rail .tk .bar u.warn { background: #e0a030; }
+      #pov .pv-tkghost .bar u.hot, .pv-rail .tk .bar u.hot { background: #d64a2c; animation: pvTick .6s infinite; }
+      .pv-rail .tk.new { animation: tkIn .22s cubic-bezier(.2,.8,.3,1.2); }
+      @keyframes tkIn { from { transform: translateY(-40%) rotate(var(--tilt, 0deg)); opacity: 0; } to { transform: translateY(0) rotate(var(--tilt, 0deg)); opacity: 1; } }
+
       /* ---- J4: khoảnh khắc thắng. Tất cả là BẢN SAO gắn vào #pov, toạ độ fixed,
          vì render() dựng lại #pvTickets / #pvSlots ngay khung hình kế. ---- */
       #pov .pv-serve { position: fixed; z-index: 18; pointer-events: none; }

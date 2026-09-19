@@ -245,6 +245,17 @@ Helper chung `flyItem(from, to, src, ms=200)`: tạo `<img class="pv-fx pv-fly">
 - Level 1 (có `simplify`): thấy icon; level 4 (đủ bước): không có `.tk-ing`.
 - Thanh đổi màu đúng ngưỡng (giả `C.time`).
 
+**ĐÃ LÀM 19/09 (sw v62) — chọn cách (a), KHÔNG nới `rail.h`:**
+- Mặt 12 cqw chiếm **2 hàng grid**, tên + tên món xếp bên phải mặt; hàng icon ở hàng 3. Thẻ cao **78 px** trong rail 92 px.
+  (Lần đầu để tên và tên món mỗi thứ một hàng grid → thẻ 105 px, tràn 28 px khỏi rail.)
+- Icon **3,8 cqw (14 px), tối đa 7** — không phải 6 cqw × 7 như spec: 7 × 22 px = 154 px, thẻ chỉ rộng 112 px trong.
+  7 × 14 + khoảng cách = 108 px vừa khít. Phở có 8 token vẽ được → cắt còn 7 (bỏ token cuối).
+- `#pov .tk-face` (id) đè `.pv-stage .tk-face` → phải viết `#pov .pv-stage .tk-face` mới lên được 44 px.
+- DOM phiếu chỉ dựng lại khi bộ phiếu / số bước đã vào tô đổi (`_tkKey`), nếu không animation "thẻ mới trượt xuống"
+  bị khởi động lại mỗi khung hình. Thanh kiên nhẫn cập nhật riêng.
+- `fx-clip.webp` gen bằng Flow ra cái kẹp **rất mảnh** (81×320) — trên thẻ trông như cây đinh. Dùng được, nhưng muốn
+  đẹp thì gen lại với prompt "wide wooden clothespin, front view".
+
 **Bẫy.** `rail.h = 14 %` ≈ 92 px. Mặt 44 + tên 2 dòng 32 + icon 22 + bar 5 = 103 > 92. Hai cách, chọn một và nói rõ: (a) icon nằm **đè lên nửa dưới mặt khách** theo hàng ngang bên phải mặt; (b) đề xuất Kent nới `rail.h` lên 17 bằng `tools/zones.html`. Không tự đổi ZONES.
 
 ---
