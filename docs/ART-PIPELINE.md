@@ -449,3 +449,11 @@ biến đổi ở `stovetop` thì về nồi/chảo nhỏ, còn lại vào nồi
 **Món mới cần khai ở đâu (dễ quên):** `PRICES` · `SHELF_TOPPING` (không có thì cầm không
 được) · `BURNER_DISHES` / `PREP_DISHES` / `STOVETOP_DISHES` (trạm chỉ hiện khi ca có món) ·
 `LEVELS` (test bắt mọi món phải nằm trong một ca) · `worlds.js`.
+
+## 17. Chuyển file Claude → máy Kent không tốn token (19/09)
+
+`device_stage_files` hỏng trên ổ F: (nlink > 1), nhưng chiều ngược lại thì có đường rẻ:
+copy file vào `/mnt/user-data/outputs/` trong máy Claude rồi gọi `device_commit_files`
+với `stagedPath` — file đi thẳng, không qua ngữ cảnh model. Dùng cho ảnh tham chiếu,
+tài liệu dài, sprite đã xử lý sẵn. Ảnh đích của quầy POV nằm ở `art/ref/concept-pov.jpg`
+nhờ đường này. Kế hoạch nâng cảm giác game: `docs/PLAN-JUICE.md`.
