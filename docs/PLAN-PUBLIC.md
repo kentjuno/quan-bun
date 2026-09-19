@@ -1,6 +1,6 @@
 # PLAN-PUBLIC — "Món Việt cho thế giới" (KJ's Choices → game cho người chơi)
 
-Kent quyết 19/09: **game chính là game cho người chơi, mục đích giới thiệu món Việt ra thế giới.** Chế độ luyện của Kent nằm ở tab *Thêm* (mini games), không đụng. Ba quyết định đã chốt: **hành trình Bắc → Nam**, **vi + en trước**, **giữ công thức thật của quán** (thứ tự thật, định lượng thật, ghi "theo cách làm của quán KJ").
+Kent quyết 19/09: **game chính là game cho người chơi, mục đích giới thiệu món Việt ra thế giới.** Chế độ luyện của Kent nằm ở tab *Thêm* (mini games), không đụng. Đã chốt: **hành trình Bắc → Nam**, **vi + en trước**, và (Kent sửa lại cùng ngày) **game chính dùng CÔNG THỨC CHUNG CỦA VIỆT NAM, không dùng công thức quán** — đồ của quán chỉ ở tab Luyện. Nhờ vậy game thêm được món quán không bán, và không lộ công thức quán.
 
 Kế hoạch này viết để **bất kỳ model nào** cũng làm đúng ý. Đọc §0 trước. Mỗi P = một hạng mục, có *Hiện trạng* (đọc code trước khi tin), *Spec*, *Nghiệm thu đo được*, *Bẫy*. Làm xong một P = **một commit + một deploy + Kent thử trên điện thoại**, không gộp.
 
@@ -8,7 +8,7 @@ Kế hoạch này viết để **bất kỳ model nào** cũng làm đúng ý. �
 
 ## 0. Luật cho model (đọc trước, không bỏ)
 
-1. **Sự thật bếp chỉ từ `src/data/sim-data.js`** (gốc `F:\AntiGravity\cooking-note\sim-data.js`). Không bịa bước, định lượng, xuất xứ món. Chuyện kể về món (sổ tay) **model được viết nháp**, nhưng mọi câu về lịch sử / vùng miền / cách ăn phải gắn thẻ `[cần Kent duyệt]` cho tới khi Kent gật — game này đại diện ẩm thực Việt, sai một câu là mất uy tín.
+1. **Hai nguồn sự thật, không trộn.** Tab *Luyện* (mini games): `src/data/sim-data.js` = bếp quán, không đụng. **Game chính: `src/data/dishes/<id>.json`** = công thức **phổ biến của Việt Nam** (mức gia đình, không phải quán), cùng schema với engine (bước ráp, trạm, thời gian). Model **được viết nháp** công thức, chuyện, cách ăn, vùng — nhưng **mọi món gắn `[cần Kent duyệt]`** cho tới khi Kent gật; game này đại diện ẩm thực Việt ra thế giới, sai một câu là mất uy tín. Không ghi "theo cách quán KJ" ở đâu cả.
 2. **Tên món KHÔNG dịch.** "Phở", "Bún Bò Huế", "Bánh Đa Cua" giữ nguyên dấu ở mọi ngôn ngữ, kèm cách đọc (`pron`) và một dòng giải nghĩa (`gloss`). Người chơi *học* tên Việt — đó là mục đích.
 3. **Mọi chữ hiện ra màn hình đi qua `t()`** (`src/i18n.js`). Không hard-code tiếng Việt hay tiếng Anh trong HTML/JS sau P1. Chữ trong *comment* thì tiếng Việt thoải mái.
 4. **Thêm món = thêm data + chạy script, không sửa code.** Nếu một món mới cần sửa code thì đó là bug của pipeline (P6), sửa pipeline trước.
@@ -42,11 +42,11 @@ Kế hoạch này viết để **bất kỳ model nào** cũng làm đúng ý. �
 | P3 | Sổ tay món (codex) | 2 phiên + Kent viết chuyện | Phần thưởng thật của game |
 | P4 | Quyền chọn: loại khách, hàng loạt, nâng cấp đổi cách chơi | 2 phiên | Lỗ hổng lớn nhất về gameplay |
 | P5 | Onboarding 60 giây | 1 phiên | Người ngoài bỏ ở phút 2 nếu không có |
-| P6 | Pipeline thêm món một lệnh | 1 phiên | Scalable = data, không code |
+| P6 | Chuyển 21 món sang `dishes/` (bản chung) + pipeline thêm món một lệnh | 2 phiên | Scalable = data, không code; làm trước khi thêm món |
 | P7 | Playtest người ngoài + đo | 0.5 phiên + Kent tìm 3 người | Nguồn sự thật duy nhất về "cuốn" |
 | P8 | Nền tảng: PWA hoàn chỉnh, chia sẻ, (sau) gói app | 1 phiên | Sau khi P7 nói là đáng |
 
-Tổng ≈ 11–12 phiên. **Không làm P8 trước P7.**
+Tổng ≈ 12–13 phiên. **Không làm P8 trước P7.**
 
 ---
 
@@ -83,10 +83,10 @@ Tổng ≈ 11–12 phiên. **Không làm P8 trước P7.**
    |---|---|---|
    | Hà Nội | `pho`, `cha-ca`, `mon-kho` (bún chả, bún đậu, bún nem) | bánh hỏi thịt heo trong `mon-kho` là món Nam/Trung — Kent quyết để đâu |
    | Hải Phòng | `hai-phong` | |
-   | Huế | `bun-bo` | |
-   | Sài Gòn | `khai-vi` (gỏi cuốn, chả giò), `chao`, `bun-rieu` | bún riêu gốc Bắc nhưng bản quán là kiểu Nam — Kent quyết |
+   | Huế / miền Trung | `bun-bo`, `bun-rieu` | **Kent xếp bún riêu vào miền Trung (19/09).** Lưu ý trung thực: nhiều tài liệu xếp gốc Bắc Bộ — dòng "vùng" của món này là chỗ dễ bị người Việt khác cãi; nếu không chắc, ghi "phổ biến khắp ba miền, miền Trung có bản riêng". |
+   | Sài Gòn | `khai-vi` (gỏi cuốn, chả giò), `chao` | |
 
-   Kent có thể tách thêm vùng (Nha Trang, Cần Thơ…) sau khi có món; cấu trúc cho phép vùng 1 world.
+   Vì đã rời menu quán, **danh sách món là quyết định thiết kế**: đề xuất mỗi vùng 3–4 món thế giới biết tên — Hà Nội: phở, bún chả, chả cá; Huế: bún bò, bánh bèo; Quảng/Đà Nẵng: mì Quảng, cao lầu; Sài Gòn: hủ tiếu, cơm tấm, bánh xèo, gỏi cuốn `[cần Kent duyệt]`. Món mới đi qua P6. Cấu trúc cho phép vùng 1 world.
 2. Màn bản đồ thay lưới world: ảnh `art/map-vn.webp` (gen Flow, kiểu C, bản đồ Việt Nam cách điệu, các vùng là "ghim" tranh nhỏ). Vùng khoá = xám mờ + ổ khoá; mở = màu + số sao. Chạm vùng → danh sách level của vùng (lưới cũ giữ, chỉ đổi khung).
 3. Mở vùng theo **tổng sao** (đang có `starsToUnlock`) — giữ.
 4. Chuyển vùng có một màn "đi đường" 2 giây: đường vẽ nét mực chạy từ vùng cũ tới vùng mới trên bản đồ + tên vùng + 1 dòng `[cần Kent duyệt]` ("Huế — cố đô, ăn cay, nước lèo có sả và mắm ruốc").
@@ -99,19 +99,19 @@ Tổng ≈ 11–12 phiên. **Không làm P8 trước P7.**
 
 ## P3 — Sổ tay món (codex): phần thưởng thật
 
-**Mục tiêu.** Nấu đúng một món lần đầu → "mở trang sổ tay": tranh tô đầy, tên Việt + cách đọc, vùng, 3–5 dòng chuyện, cách ăn, và **công thức thật của quán** (từ sim-data, trình bày đẹp).
+**Mục tiêu.** Nấu đúng một món lần đầu → "mở trang sổ tay": tranh tô đầy, tên Việt + cách đọc, vùng, 3–5 dòng chuyện, cách ăn, và **công thức phổ biến** (từ `data/dishes/`, mức gia đình, trình bày đẹp).
 
 **Hiện trạng.** Đã có: tranh tô 4 bậc (`dishArt`), `mastery.js` biết món nào đã "thuộc", công thức ở `recipeFor()`. Chưa có màn codex, chưa có chuyện.
 
 **Spec.**
 1. `src/data/codex/<dish>.json`: `{ region, story: { vi, en }, eat: { vi, en }, pairs: [...] }`. Model viết nháp **có dấu `[cần Kent duyệt]`** ở đầu mỗi chuỗi cho tới khi Kent xoá dấu. Chuyện ≤ 60 từ, giọng người kể chuyện quán, không wiki.
-2. Trang codex: tab "Sổ tay" ở menu, lưới 21 ô (ô chưa mở = tranh mờ + "???"). Mở ô: tranh tô `wet` to, tên + `pron` + `gloss`, vùng, chuyện, cách ăn, công thức thật (danh sách bước từ `recipeFor(dish).assembly` với `label`, định lượng từ sim-data nếu có), dòng "Theo cách làm của quán KJ".
+2. Trang codex: tab "Sổ tay" ở menu, lưới N ô (ô chưa mở = tranh mờ + "???"). Mở ô: tranh tô `wet` to, tên + `pron` + `gloss`, vùng, chuyện, cách ăn, công thức phổ biến (bước từ `recipeFor(dish).assembly` với `label`, định lượng gia đình từ `dishes/<id>.json`).
 3. Mở khoá: lần đầu bưng món đó **sạch** (0 lỗi) → cuối ca hiện thẻ "Mở sổ tay: Phở Tái Nạm" (đã có khung thẻ mở khoá từ 0.7.0) → chạm vào là tới trang.
 4. Chia sẻ: nút "Chia sẻ" tạo ảnh PNG 1080×1350 (canvas) = tranh + tên + 1 dòng chuyện + "KJ's Choices" — người chơi đăng lên mạng là quảng cáo miễn phí.
 
 **Nghiệm thu.** 21/21 món có codex JSON (test). Bưng sạch Phở lần đầu → thẻ mở → trang đúng món. Ảnh chia sẻ tải được trên Android Chrome.
 
-**Bẫy.** Định lượng thật của quán là tài sản của Kent — Kent chốt "giữ thật", nhưng nếu đổi ý thì chỉ ẩn phần `qty`, không xoá data.
+**Bẫy.** Không để lọt bất kỳ số liệu / thứ tự riêng của quán từ sim-data vào codex — test: codex chỉ đọc `data/dishes/`.
 
 ---
 
@@ -149,7 +149,7 @@ Tổng ≈ 11–12 phiên. **Không làm P8 trước P7.**
 
 **Hiện trạng.** Có rời rạc: `process_icons.py`, `pans_to_webp.py`, `steps_to_webp.py`, `gen_icons_map.mjs`, `_mkstamp.py`… (docs/ART-PIPELINE.md). Thêm phở gà / sốt vang / xào lăn ngày 19/09 phải sửa tay 6 chỗ (`config.js` PRICES, `SHELF_TOPPING`, `BURNER_DISHES`, `STOVETOP_DISHES`, LEVELS, i18n sau này).
 
-**Spec.** Một món = một thư mục `dishes/<id>/`: `recipe` (trỏ sim-data), `meta.json` (giá, trạm, vùng), `codex.json`, art gen ra `public/art/...`. Script: kiểm sim-data có món → gen icon nguyên liệu thiếu → gen khay → gen 4 bậc tô → tạo codex nháp `[cần Kent duyệt]` → thêm key i18n → chạy test "mọi món có đủ asset". Các bảng trong `config.js` (PRICES, SHELF_TOPPING…) đọc từ `meta.json` thay vì hard-code.
+**Spec.** Một món = `src/data/dishes/<id>.json` (công thức chung: bước ráp, trạm, thời gian, định lượng gia đình, giá, vùng, `pron`, `gloss`, codex). Script: validate schema → gen icon nguyên liệu thiếu → gen khay → gen 4 bậc tô → thêm key i18n → chạy test "mọi món có đủ asset". Các bảng trong `config.js` (PRICES, SHELF_TOPPING, BURNER_DISHES…) suy từ `dishes/*.json` thay vì hard-code. **P6 phải làm trước khi thêm món mới nào** — và bước đầu tiên của P6 là chuyển 21 món hiện có sang `dishes/` (bản chung, không phải bản quán), giữ id/art.
 
 **Nghiệm thu.** Thêm một món giả `test-dish` bằng lệnh → test xanh → xoá. Không sửa file code nào.
 
@@ -174,7 +174,7 @@ PWA đã có (`sw.js`, manifest). Thêm: màn "cài vào máy" cho Android/iOS; 
 ## Không được làm
 
 - Dịch tên món. Bịa xuất xứ, chuyện, cách ăn mà không gắn `[cần Kent duyệt]`.
-- Đơn giản hoá công thức trong game (Kent chốt giữ thật). Rút gọn chỉ ở thang tập bằng `simplify` như hiện tại.
+- Lấy công thức / định lượng / thứ tự riêng của quán (sim-data) vào game chính. Rút gọn cho người mới chỉ bằng `simplify` như hiện tại.
 - Sửa `worlds.js` để "xếp lại cho hợp vùng" bằng cách đổi id level — tiến độ người chơi treo vào id.
 - Thêm ngôn ngữ thứ ba trước khi P7 xong.
 - Làm P8 (app store) trước P7.
