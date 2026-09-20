@@ -45,8 +45,8 @@ Số 6★ là đề xuất — chỉnh ở một chỗ (`PACE.recipeStars` hoặ
 | Mốc | Tên | Gồm | Công | Kent cần làm |
 |---|---|---|---|---|
 | **M0** | Đã xong (19–20/09) | J1–J9 juice · nhịp thật (pace) · hết dán ghép · i18n phần 1 · tên KJ Phở Real · demo roadtrip chốt | — | — |
-| **M1** | Nền tảng nội dung | P1 phần 2 (i18n đủ) · P6: schema `dishes/`, chuyển 21 món sang bản chung, `stations.json`, `add_dish.mjs` | 3 phiên | Duyệt 21 công thức chung |
-| **M2** | Hành trình | P2: 5 mảnh bản đồ, đường + quán mỗi mảnh, gắn vào game thay lưới world, chủ quán + màn xin vô quán, cảnh mở đầu văn phòng, cơ chế sao mở tỉnh | 3 phiên | Duyệt thoại chủ quán, tên quán |
+| **M1** ✅ | Nền tảng nội dung | P1 phần 2 (i18n đủ) · P6: schema `dishes/`, chuyển 21 món sang bản chung, `stations.json`, `add_dish.mjs` | 3 phiên | Duyệt 21 công thức chung |
+| **M2** ✅ (còn 'khen' + bản đồ tổng) | Hành trình | P2: 5 mảnh bản đồ, đường + quán mỗi mảnh, gắn vào game thay lưới world, chủ quán + màn xin vô quán, cảnh mở đầu văn phòng, cơ chế sao mở tỉnh | 3 phiên | Duyệt thoại chủ quán, tên quán |
 | **M3** | Học & thưởng | P5 học món cho mọi món · P3 sổ tay 3 mốc sao · **công thức nấu thật** 21 món (nghiên cứu mạng, ghi nguồn) · nút in/lưu · chia sẻ ảnh | 3 phiên | Duyệt 21 công thức thật + chuyện |
 | **M4** | Chơi cho ra game | P4: loại khách, thưởng hàng loạt, 2 nâng cấp đổi cách chơi, nối sự kiện vào quầy · P6b mini-game theo tỉnh · vật kỷ niệm | 3 phiên | Chơi thử, chỉnh PACE |
 | **M5** | Mở rộng món đợt 1 | mì Quảng, cao lầu, hủ tiếu Nam Vang, bún thang, bún chả cá (0 trạm mới) qua `add_dish.mjs`; level cho tỉnh Quảng Nam / Nha Trang | 2 phiên | Duyệt 5 món |
@@ -69,11 +69,11 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 - [ ] **P6.5 (mới, phát sinh):** ảnh từng bước `public/art/step/<dish>-kN.webp` được vẽ theo THỨ TỰ BẢN QUÁN → với bản chung, bậc `k` lệch ở món đổi thứ tự (bún riêu, bánh đa cua, bún đậu, bánh hỏi, bún nem…). Tô 4 bậc (s0/dry/top/wet) vẫn đúng. Gen lại step cho ~8 món sau khi Kent duyệt bảng §5b (1 phiên art).
 
 ### M2 — Hành trình
-- [ ] Gen 5 mảnh (HP→Huế, Huế→ĐN, ĐN→Nha Trang, NT→Sài Gòn, SG→Miền Tây) cùng prompt khuôn; kiểm tông giữa các mảnh (`contrast_report.py`).
-- [ ] Đường + điểm quán cho mỗi mảnh bằng `roadtrip.html?edit=1`; lưu vào `src/data/regions.js` (tỉnh, mảnh, PTS, ranh, quán → world id).
-- [ ] Màn bản đồ trong game thay hàng world: xe đậu ở quán hiện tại, tỉnh khoá xám, chạm quán → lưới level cũ; chuyến xe khi mở tỉnh mới (bỏ qua được sau lần đầu).
-- [ ] Chủ quán: 8 khách quen → chủ 8 quán (tên quán, 3 câu: chào / thử thách / khen). Màn "xin vô quán" cắt giấy: cửa mở, chủ quán trượt vào, bong bóng.
-- [ ] Cảnh mở đầu văn phòng 30 s (4 tấm Flow + chuyển cảnh), bỏ qua được.
+- [x] **(20/09)** Gen 5 mảnh (HP→Huế, Huế→ĐN, ĐN→Nha Trang, NT→Sài Gòn, SG→Miền Tây) cùng prompt khuôn — `public/art/map/map-*.webp`, raw ở `art/raw/map/`. Chưa chạy `contrast_report.py` (nhìn mắt: cùng tông).
+- [x] **(20/09)** Đường + điểm quán: `src/data/regions.js` (PROVINCES 7 tỉnh · QUAN 8 quán + chủ quán + greet/dare · PIECES 6 mảnh: pts đo bằng mắt trên lưới, ranh, bảng hiệu, thoại). Điểm đường 5 mảnh mới chưa tinh chỉnh bằng `?edit=1` — Kent thấy xe lệch đường thì báo mảnh nào.
+- [x] **(20/09)** Menu: hàng TỈNH (Bắc→Nam, khoá xám, 'sắp mở' cho ĐN/NT/Miền Tây) + hàng QUÁN trong tỉnh + lưới level cũ. Tỉnh mở khi tỉnh trước đủ `unlockStars` (40/20/30/20/30/20); quán mở theo thứ tự trong tỉnh. Chuyến xe (`src/trip.js`, overlay #trip) chạy lần đầu khi bấm 'Level kế' sang tỉnh mới hoặc chạm tỉnh; nút 🛵 xem lại; bỏ qua được. *Chưa làm:* xe đậu ở quán hiện tại trên một bản đồ tổng (hiện là hàng thẻ, không phải bản đồ cuộn).
+- [x] **(20/09)** Chủ quán: 6 khách quen lên chủ 6 quán + 2 quán Sài Gòn chủ ẩn danh (tên quán + chào + thử thách trong `regions.js` QUAN, `[cần Kent duyệt]`). Màn xin vô quán `src/scene.js playOwner()` chạy lần đầu vô mỗi quán. *Chưa:* câu 'khen' cuối quán.
+- [x] **(20/09)** Cảnh mở đầu: 4 tấm Flow (`public/art/intro/`, nhân vật: nam trẻ kính tròn sơ mi trắng — Kent 'duyệt hết' nên chốt 1 nhân vật, không cho chọn) + lời dẫn `intro.1..4`, chạy lần đầu bấm Mở quán, bỏ qua được, xem lại ở Cách chơi.
 - [ ] Sao mở tỉnh dùng `starsToUnlock` sẵn có; hiện số ★ cần trên tỉnh khoá.
 - *Nghiệm thu:* 129 level còn nguyên id; tiến độ cũ giữ; Kent đi hết HN → Miền Tây trên điện thoại không kẹt; mỗi chuyến ≤ 12 s.
 
@@ -173,6 +173,7 @@ Sprite còn thiếu cho bản chung: gà nướng, tôm nướng, giò heo (đan
 ## 7. Đang chờ Kent
 
 - [ ] Kiểm "KJ Phở Real" trên Play / App Store / domain / TikTok / IG.
-- [ ] Duyệt danh sách món theo tỉnh (PLAN-PUBLIC §P2) — đã ok mặc định, sửa nếu muốn.
-- [ ] Số sao mở công thức thật (đề xuất 6★).
-- [ ] Nhân vật chính: nam hay nữ, hay cho chọn? (ảnh hưởng cảnh mở đầu + sprite xe). Đề xuất: cho chọn 2 tấm, cùng xe.
+- [x] Duyệt danh sách món theo tỉnh + bảng bản chung 21 món §5b — **Kent 'duyệt hết' 20/09**.
+- [x] Số sao mở công thức thật = 6★ (Kent duyệt hết 20/09).
+- [ ] Duyệt tên 8 quán + thoại chủ quán (`regions.js` QUAN) — mặc định đã dùng.
+- [x] Nhân vật chính: chốt 1 nhân vật (nam trẻ, kính tròn, sơ mi trắng — 4 tấm mở đầu đã gen). Muốn cho chọn nữ thì gen thêm 4 tấm sau.
