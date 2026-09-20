@@ -12,6 +12,7 @@ import { dishArtAt } from './game/art.js';
 import { PROVINCES } from './data/regions.js';
 import { t as T, tl, lang } from './i18n.js';
 import { labelL, setSource, source } from './game/recipes.js';
+import { ev as logEv } from './playlog.js';
 
 export const RECIPE_STARS = 6;   // Kent duyệt 20/09
 
@@ -50,6 +51,7 @@ export function renderGrid(el, onOpen) {
 let cur = null;
 export function openPage(dish, { sfx } = {}) {
   const D = DISHES[dish]; if (!D) return; closePage();
+  logEv('codex.open', { dish, stars: dishStars(dish), real: realRecipeOpen(dish) });
   const L = lang(); const st = dishStars(dish); const art = dishArtAt(dish, 'wet');
   const real = D.real; const R = real ? (real[L] || real.vi) : null;
   const list = (arr) => `<ol>${(arr || []).map((x) => `<li>${x}</li>`).join('')}</ol>`;

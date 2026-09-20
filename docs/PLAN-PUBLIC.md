@@ -215,6 +215,10 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
 **Nghiệm thu = quyết định:** tô đầu < 60 s cho 3/3 → P5 đạt; ≥ 2/3 chơi hết 10 phút không được bảo → mới đáng làm P8.
 
+**ĐÃ LÀM (20/09, M6 phần model):** `src/playlog.js` — bật bằng `?log=1` (nhớ trong localStorage, tắt `?log=0`), ghi vào `localStorage['qb.log']`, **không có server, không gửi đi đâu**. Sự kiện: `boot` (ngôn ngữ, cỡ màn, tổng ★) · `level.start` (id, quán, số món, pov/3d/drill/rush/survival) · `serve` (món, giây chờ, chất lượng — tô ĐẦU của phiên có cờ `first`) · `level.end` (★, phục vụ, bỏ đi, lỗi, tiền) · `level.quit` · `mini.start` / `mini.end` · `codex.open` (món, ★, đã mở công thức thật chưa) · `tut.done` / `tut.skip` · `lang`. Mọi `at` là giây kể từ lúc mở app → trả lời thẳng câu "phút mấy bưng tô đầu".
+Hộp log nằm trong *Cách chơi · tuỳ chọn*, chỉ hiện khi bật: một dòng tóm tắt (sự kiện · tô đầu · level xong · mở sổ tay mấy lần) + **Xuất log** (tải JSON có cả `summary`) + **Xoá log**. Test `tests/playlog.test.js` (4). Đã thử bằng Chromium: `boot → level.start → serve FIRST → tut.done`, file JSON tải xuống đúng.
+**Kent làm tiếp:** mở `…/quan-bun/?log=1` trên điện thoại đưa cho người chơi, xong bấm Xuất log gửi tui.
+
 ---
 
 ## P8 — Nền tảng

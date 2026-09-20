@@ -1180,5 +1180,9 @@
  "quan.hu-tieu.name": "Chú Chín Hủ Tiếu Nam Vang",
  "quan.hu-tieu.who": "Chú Chín",
  "quan.hu-tieu.greet": "Hủ tiếu Nam Vang came from Cambodia, but Sài Gòn made it its own.",
- "quan.hu-tieu.dare": "The broth must stay clear. One hard boil and it clouds — I can tell at a glance."
+ "quan.hu-tieu.dare": "The broth must stay clear. One hard boil and it clouds — I can tell at a glance.",
+ "log.export": "Export log",
+ "log.clear": "Clear log",
+ "log.sum": "Log: {n} events · first bowl {first} · {lv} levels done · notebook {cx}×",
+ "log.exported": "Downloaded {n} events"
 }

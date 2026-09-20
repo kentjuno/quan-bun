@@ -50,7 +50,7 @@ Số 6★ là đề xuất — chỉnh ở một chỗ (`PACE.recipeStars` hoặ
 | **M3** ✅ | Học & thưởng | P5 học món cho mọi món · P3 sổ tay 3 mốc sao · **công thức nấu thật** 21 món (nghiên cứu mạng, ghi nguồn) · nút in/lưu · chia sẻ ảnh | 3 phiên | Duyệt 21 công thức thật + chuyện |
 | **M4** ✅ | Chơi cho ra game | P4: loại khách, thưởng hàng loạt, 2 nâng cấp đổi cách chơi, nối sự kiện vào quầy · P6b mini-game theo tỉnh · vật kỷ niệm | 3 phiên | Chơi thử, chỉnh PACE |
 | **M5** ✅ | Mở rộng món đợt 1 | mì Quảng, cao lầu, hủ tiếu Nam Vang, bún thang, bún chả cá (0 trạm mới) qua `add_dish.mjs`; level cho tỉnh Quảng Nam / Nha Trang | 2 phiên | Duyệt 5 món |
-| **M6** | Playtest | P7: 3 người ngoài × 10 phút, log local, sửa theo kết quả | 1 phiên + Kent | Tìm 3 người, ngồi nhìn |
+| **M6** ⏳ (chờ Kent) | Playtest | P7: 3 người ngoài × 10 phút, log local, sửa theo kết quả | 1 phiên + Kent | Tìm 3 người, ngồi nhìn |
 | **M7** | Phát hành web | P8: PWA hoàn chỉnh, màn cài app, Open Graph tiếng Anh, trang landing một màn, nút chia sẻ | 1 phiên | Kiểm tên/handle, chọn domain |
 | **M8** | Trạm mới + store | `stations.json` thêm nướng / đổ chảo / hấp / khuôn; cơm tấm, bánh xèo, bánh bèo, bánh cuốn, bánh căn; gói Capacitor lên Play / App Store | 3–4 phiên | Tài khoản store |
 
@@ -101,7 +101,7 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 - *Nghiệm thu:* 130 test xanh, bot 3★ đủ 163 level, 0 khách bỏ đi.
 
 ### M6 — Playtest
-- [ ] `?log=1` ghi sự kiện local, nút xuất JSON.
+- [x] `?log=1` ghi sự kiện local, nút xuất JSON — `src/playlog.js` + hộp log trong *Cách chơi · tuỳ chọn* (`tests/playlog.test.js`).
 - [ ] Kent: 3 người ngoài, 10 phút, không giải thích; ghi phút tô đầu / phút bỏ / câu nói đầu / có mở sổ tay không.
 - *Quyết định:* tô đầu < 60 s cho 3/3 → M3 đạt; ≥ 2/3 chơi hết 10 phút → làm M7.
 

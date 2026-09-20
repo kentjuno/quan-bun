@@ -20,6 +20,7 @@ import { Puzzle, assembleOk } from './puzzle.js';
 import { counterMove } from './game/counter.js';
 import { Pov, povOk } from './pov.js';
 import { recordResult, masteryOf, isMastered, weightsFor, allMastery, resetMastery } from './game/mastery.js';
+import { ev as logEv, logOn, exportLog, summary as logSummary, readLog, clearLog } from './playlog.js';
 
 const $ = (id) => document.getElementById(id);
 const lib = await loadModels((p, n) => { $('loading').textContent = T('menu.loading3d', { p: Math.round(p * 100) }); });
@@ -146,6 +147,7 @@ function start(bot = false, mode = playMode) {
   rebuild();   // mỗi level có thể khác trạm (bếp lớn dần) → dựng lại
   $('card').classList.remove('show');
   running = true; $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.remove('hidden'); armBackGuard();
+  logEv('level.start', { id: playMode === 'level' ? level.id : playMode, mode: playMode === 'level' ? '3d' : playMode, bot: botMode || undefined });
   showHint(botMode ? T('m3d.hint.bot') : playMode === 'drill' ? T('m3d.hint.drill') : playMode === 'rush' ? T('m3d.hint.rush') : playMode === 'survival' ? T('m3d.hint.survival') : (tl(`level.${level.id}.hint`, level.hint) || tl(`level.${level.id}.new`, level.whatsNew)), playMode === 'level' ? 9000 : 6000);
   // ẩn tên trên card khi mọi món trong ca đã thuộc (≥3 tô sạch liên tiếp), trừ khi Kent tự tick
   opts.hideNameAuto = world.shift.dishes.every(isMastered);
@@ -156,6 +158,7 @@ function showResult(r) {
   running = false; setBoil(false); setMood(playMode === 'day' ? 'close' : 'calm'); if (r.stars >= 1 || (r.puzzle)) setTimeout(() => sfx.cheer(), 300); $('hud').classList.add('hidden'); $('result').classList.remove('hidden'); $('card').classList.remove('show');
   const isPz = !!r.puzzle; const st = r.stats || { bowls: [], idle: 0, taps: 0, trips: 0 }; const isDay = playMode === 'level';
   const sh = isPz ? { id: 'puzzle', name: T(`mini.${['ninja', 'reflex', 'assemble', 'pov'].includes(lastPuzzle.kinds[0]) ? lastPuzzle.kinds[0] : 'quiz'}`), dishes: [...new Set(st.bowls.map((b) => b.dish))] } : (povLevel || world.shift);
+  logEv(isPz ? 'mini.end' : 'level.end', { id: sh.id, stars: r.stars || 0, served: r.served, left: r.left, mistakes: r.mistakes, money: r.money });
   const kitchen = world.kitchen;
   // quầy POV không đi lại nên không so được với lộ trình bot của bếp 3D
   const par = (dish) => (isPz || r.pov) ? { seconds: null, taps: 0, route: [] } : parFor(sh, kitchen, dish);
@@ -224,6 +227,7 @@ function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9, prov 
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
   lastPuzzle = { kinds, rounds, prov: prov?.id || null }; armBackGuard();
   puzzle = new Puzzle({ dishes, weights, rounds, kinds, sfx, onDone: (r) => showResult(r) }); puzzle.start();
+  logEv('mini.start', { kind: kinds[0], rounds, prov: prov?.id || undefined });
 }
 /** Mini-game của một tỉnh (data/regions.js MINIS) — đạt `pass` câu sạch thì được vật kỷ niệm. */
 function startProvinceMini(p) { const m = MINIS[p.id]; if (!m) return; startPuzzle([m.kind], m.rounds, p); }
@@ -263,10 +267,11 @@ function startLevelPov(L) {
     arrivals: povArrivals(L), simplify: L.simplify, constraints: con,
     goal: L.goal, moneyTargets: L.moneyTargets, events: L.events, seconds: L.seconds, rush: L.rush,
     burners: mods.burners || 1, patience: L.patience, sfx,
-    tutorial: L.id === 'pho-1' && !tutSeen(), onTutorialDone: () => markTut(), onTutorialSkip: () => markTut(),
-    onDone: (r) => showResult(r), onQuit: () => { $('menu').classList.remove('hidden'); },
+    tutorial: L.id === 'pho-1' && !tutSeen(), onTutorialDone: () => { markTut(); logEv('tut.done'); }, onTutorialSkip: () => { markTut(); logEv('tut.skip'); },
+    onDone: (r) => showResult(r), onQuit: () => { logEv('level.quit', { id: L.id, mode: 'pov' }); $('menu').classList.remove('hidden'); },
   });
   pov.start();
+  logEv('level.start', { id: L.id, world: L.world, dishes: L.dishes.length, mode: 'pov' });
   showHint(L.hint ? tl(`level.${L.id}.hint`, L.hint) : tl(`level.${L.id}.new`, L.whatsNew), 9000);
 }
 $('btnPov').onclick = () => startPov(8);
@@ -409,8 +414,19 @@ $('btnTakeover').onclick = takeover;
 // nút loa
 const btnMute = $('btnMute'); const paintMute = () => { btnMute.textContent = isMuted() ? '🔇' : '🔊'; btnMute.title = isMuted() ? T('menu.unmute') : T('menu.mute'); }; paintMute();
 btnMute.onclick = () => { ensureAudio(); setMuted(!isMuted()); paintMute(); };
-$('btnBack').onclick = () => { if (!running) return; running = false; setBoil(false); setMood('calm'); botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
+$('btnBack').onclick = () => { if (!running) return; logEv('level.quit', { id: playMode === 'level' ? level.id : playMode, mode: '3d' }); running = false; setBoil(false); setMood('calm'); botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
 $('btnMenu').onclick = () => { running = false; set3D(false); $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'level'; if (bestStars(level.id) >= 1) level = currentLevel(); selectLevel(level); };
+// P7 — hộp log playtest (chỉ hiện khi ?log=1)
+function paintLog() {
+  const box = $('logBox'); if (!box) return;
+  box.classList.toggle('hidden', !logOn()); if (!logOn()) return;
+  const s = logSummary();
+  $('logSum').textContent = T('log.sum', { n: s.events, first: s.firstBowlAt == null ? '—' : `${s.firstBowlAt}s`, lv: s.levelsFinished, cx: s.codexOpened });
+}
+$('btnLogExport')?.addEventListener('click', () => { const n = exportLog(); toast(T('log.exported', { n })); });
+$('btnLogClear')?.addEventListener('click', () => { clearLog(); paintLog(); });
+if (logOn()) { logEv('boot', { lang: lang(), w: innerWidth, h: innerHeight, stars: totalStars() }); setInterval(paintLog, 5000); }
+paintLog(); onLang(paintLog);
 $('loading').classList.add('hidden'); $('btnStart').classList.remove('hidden');
 
 // ---- chặn nút/cử chỉ Back của trình duyệt khi đang chơi (Kent: quẹt trái/phải trên điện thoại bị back ra khỏi game) ----
@@ -478,7 +494,7 @@ function tick(dt) {
 }
 // i18n: đổ chữ tĩnh, nút VI/EN, đổi ngôn ngữ thì vẽ lại menu
 applyDom();
-$('btnLang')?.addEventListener('click', () => { setLang(lang() === 'vi' ? 'en' : 'vi'); });
+$('btnLang')?.addEventListener('click', () => { const to = lang() === 'vi' ? 'en' : 'vi'; logEv('lang', { to }); setLang(to); });
 onLang(() => { applyDom(); renderMenu(); });
 // dựng bếp sẵn để menu có nền
 world = newWorld(); rebuild(); set3D(false);

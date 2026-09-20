@@ -6,6 +6,7 @@ import { iconUrl } from './game/icons.js';
 import { Counter, povOk, counterMove } from './game/counter.js';
 import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt, trashArt, potArt } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES, PAN_GAP, PAN_MAX1, PAN_ROW_GAP } from './data/counter-layout.js';
+import { ev as logEv } from './playlog.js';
 export { povOk };
 
 const $ = (id) => document.getElementById(id);
@@ -37,7 +38,7 @@ export class Pov {
       goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1, seconds: o.seconds, rush: o.rush, events: o.events,
       patience: o.patience ?? 90, gap: o.gap ?? 16, weights: o.weights,
       ev: { onSfx: (k) => o.sfx?.[k]?.(), onMsg: (m, c) => this.msg(m, c), onEnd: (r) => this.finish(r),
-        onServe: (t, r) => this.msg(T('pov.served', { name: t.name, say: r.say, sec: r.sec.toFixed(0), quality: T(r.quality === 100 ? 'pov.quality.perfect' : r.quality >= 60 ? 'pov.quality.ok' : 'pov.quality.sloppy') }), r.quality === 100 ? 'good' : 'mid'),
+        onServe: (t, r) => { logEv('serve', { dish: t.dish, sec: +r.sec.toFixed(1), quality: r.quality }); return  this.msg(T('pov.served', { name: t.name, say: r.say, sec: r.sec.toFixed(0), quality: T(r.quality === 100 ? 'pov.quality.perfect' : r.quality >= 60 ? 'pov.quality.ok' : 'pov.quality.sloppy') }), r.quality === 100 ? 'good' : 'mid'); },
         onExpire: (t) => this.msg(T('pov.left', { name: t.name }), 'bad'), onSpoil: () => this.msg(T('pov.spoil'), 'bad'),
         onCombo: (n, m) => this.banner(T('pov.combo', { m }), 'combo', n), onComboBreak: (n) => this.banner(T('pov.comboBreak'), 'break'),
         onRush: (on, r) => this.rushUI(on, r),
