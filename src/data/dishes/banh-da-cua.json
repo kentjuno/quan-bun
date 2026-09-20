@@ -1,0 +1,51 @@
+{
+  "id": "banh-da-cua",
+  "name": "Bánh Đa Cua Hải Phòng",
+  "pron": "bang dah koo-ah",
+  "gloss": "Hải Phòng red-noodle crab soup",
+  "region": "hai-phong",
+  "price": 55,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "banh-da",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "cook": [
+      "cot-cua",
+      "mieng-nuoc"
+    ],
+    "out": "crab-broth-ready",
+    "action": "pour-crab-broth"
+  },
+  "prep": [
+    {
+      "action": "blanch-veg",
+      "in": [
+        "rau-muong"
+      ],
+      "out": "veg-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "veg-ready",
+    "cha-ca",
+    "bo-la-lot",
+    "tom",
+    "ca-chua",
+    "hanh-phi",
+    "$broth"
+  ],
+  "codex": {
+    "story": "Sợi bánh đa đỏ nâu là đặc sản Hải Phòng; nước riêu cua đồng, chả cá, chả lá lốt, rau muống — tô \"đầy đủ\" của đất Cảng.",
+    "region_note": "",
+    "how_to_eat": "Ăn với ớt chưng, rau sống, chút mắm tôm.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

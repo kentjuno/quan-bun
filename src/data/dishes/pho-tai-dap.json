@@ -1,0 +1,46 @@
+{
+  "id": "pho-tai-dap",
+  "name": "Phở Tái Đập",
+  "pron": "fuh tie dup",
+  "gloss": "pho with ginger-pounded rare beef",
+  "region": "ha-noi",
+  "price": 50,
+  "serve": {
+    "vessel": "pho-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "pho-noodle",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "action": "pour-pho-broth"
+  },
+  "prep": [
+    {
+      "action": "pound-beef",
+      "in": [
+        "bo-tai",
+        "gung"
+      ],
+      "out": "tai-dap-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "nam",
+    "tai-dap-ready",
+    "hanh-tay",
+    "hanh-la",
+    "ngo-ri-ngo-gai",
+    "$broth"
+  ],
+  "codex": {
+    "story": "Thịt bò đập với gừng cho mềm và thơm rồi chần bằng nước dùng nóng ngay lúc chan.",
+    "region_note": "",
+    "how_to_eat": "Chan nước thật sôi để thịt vừa chín tới.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

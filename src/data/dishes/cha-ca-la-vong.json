@@ -1,0 +1,87 @@
+{
+  "id": "cha-ca-la-vong",
+  "name": "Chả Cá Lã Vọng",
+  "pron": "chah kah lah vong",
+  "gloss": "turmeric-dill fried fish, Hanoi",
+  "region": "ha-noi",
+  "price": 120,
+  "serve": {
+    "vessel": "mam-dan"
+  },
+  "prep": [
+    {
+      "action": "make-chen-mam-tom",
+      "in": [
+        "mam-tom",
+        "mo-hanh"
+      ],
+      "out": "chen-mam-tom-ready"
+    },
+    {
+      "action": "make-chen-chanh",
+      "in": [
+        "nuoc-cot-chanh"
+      ],
+      "out": "chen-chanh-ready"
+    },
+    {
+      "action": "make-chen-dau-phong",
+      "in": [
+        "dau-phong-rang"
+      ],
+      "out": "chen-dau-phong-ready"
+    },
+    {
+      "action": "make-chen-ot",
+      "in": [
+        "ot-do"
+      ],
+      "out": "chen-ot-ready"
+    },
+    {
+      "action": "pick-herbs",
+      "in": [
+        "kinh-gioi",
+        "tia-to",
+        "bac-ha"
+      ],
+      "out": "chen-rau-ready"
+    },
+    {
+      "action": "make-dia-thi-la",
+      "in": [
+        "dia-lon",
+        "thi-la",
+        "goc-hanh-la",
+        "hanh-tay"
+      ],
+      "out": "dia-thi-la-ready"
+    },
+    {
+      "action": "fill-ca-pan",
+      "in": [
+        "chao-ap-ca",
+        "hanh-tay",
+        "thi-la"
+      ],
+      "out": "chao-ap-ca-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "chen-mam-tom-ready",
+    "chen-chanh-ready",
+    "chen-dau-phong-ready",
+    "chen-ot-ready",
+    "chen-rau-ready",
+    "dia-thi-la-ready",
+    "chao-ap-ca-ready"
+  ],
+  "codex": {
+    "story": "Món cá lăng ướp nghệ, nướng rồi áp chảo với thì là và hành ngay trên bàn, có từ thời Pháp thuộc ở phố Chả Cá, Hà Nội.",
+    "region_note": "",
+    "how_to_eat": "Gắp cá nóng vào bát bún, thêm rau, đậu phộng, chấm mắm tôm đánh sủi bọt với chanh.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

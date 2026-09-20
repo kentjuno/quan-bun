@@ -1,7 +1,7 @@
 // LÕI "QUẦY POV" — trạng thái thuần, KHÔNG đụng DOM (docs/PLAN-CORE.md §3). pov.js chỉ vẽ + bắt kéo thả rồi gọi các hàm ở đây.
 // Mọi thao tác là "đem VẬT A tới CHỖ B" (kéo hoặc chạm đôi) — đúng như đứng trước quầy prep thật.
 // Công thức lấy từ recipeFor(dish, simplify): KHÔNG bịa bước; mọi `transform` của món đều phải có một chỗ thả tương ứng.
-import { D, recipeFor, soupRecipeFor, label, labelL as L, actName, soupName, dishLabel, tokenMatches, actionTime } from './recipes.js';
+import { D, recipeFor, soupRecipeFor, label, labelL as L, actName, soupName, dishLabel, tokenMatches, actionTime, STATIONS as STATION_DEFS } from './recipes.js';
 import { t as T } from '../i18n.js';
 import { POT, SOUP, SHELF_TOPPING, PRICES } from '../config.js';
 import { REGULARS, lineFor } from '../data/customers.js';
@@ -10,7 +10,7 @@ import { comboMult } from '../data/pace.js';
 const isBroth = (t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t);
 const BOWLISH = /bowl|^tray$|tray-paper|^dia-|mam-dan|chao-ap-ca|serving-plate|banh-trang/;
 /** Mọi món đều chơi được ở quầy POV: mỗi transform phải rơi vào một trạm có chỗ thả. */
-const STATIONS = ['pot', 'sink', 'prep', 'fryer', 'microwave', 'stovetop'];
+const STATIONS = STATION_DEFS.filter((s) => s.kind !== 'soup').map((s) => s.id);   // data/stations.json (P6.3)
 export function povOk(dish) { const r = recipeFor(dish); return r.transforms.every((t) => STATIONS.includes(t.station)); }
 
 export class Counter {

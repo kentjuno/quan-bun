@@ -7,6 +7,7 @@
 import vi from './data/i18n/vi.json';
 import en from './data/i18n/en.json';
 import items from './data/i18n/items.json';
+import { DISHES } from './data/dishes/index.js';
 
 const TABLES = { vi, en };
 export const LANGS = Object.keys(TABLES);
@@ -62,9 +63,9 @@ export function applyDom(root = (typeof document !== 'undefined' ? document : nu
 
 // ---- tên món / nguyên liệu: giữ tiếng Việt, thêm giải nghĩa + cách đọc (P1 §2) ----
 /** Giải nghĩa tiếng Anh của món (`dishes`) hoặc nguyên liệu (`items`); '' nếu không có hoặc đang chơi tiếng Việt. */
-export function gloss(tok) { if (cur === 'vi') return ''; return items.dishes[tok]?.en || items.items[tok]?.en || ''; }
+export function gloss(tok) { if (cur === 'vi') return ''; return DISHES[tok]?.gloss || items.items[tok]?.en || ''; }
 /** Cách đọc kiểu Anh gần đúng ("fuh tie nahm"); '' nếu không có. */
-export const pron = (tok) => items.dishes[tok]?.pron || items.items[tok]?.pron || '';
+export const pron = (tok) => DISHES[tok]?.pron || items.items[tok]?.pron || '';
 /** Tên Việt + giải nghĩa: "Nạm (brisket)". Tiếng Việt → chỉ tên. */
 export function withGloss(viName, tok) { const g = gloss(tok); return g ? `${viName} (${g})` : viName; }
 /** Tên hành động ở trạm (không phải tên riêng → dịch hẳn). */

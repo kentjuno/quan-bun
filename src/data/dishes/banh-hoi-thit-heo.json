@@ -1,0 +1,33 @@
+{
+  "id": "banh-hoi-thit-heo",
+  "name": "Bánh Hỏi Thịt Heo",
+  "pron": "bang hoy tit hay-o",
+  "gloss": "fine rice noodle sheets with pork",
+  "region": "hue",
+  "price": 80,
+  "serve": {
+    "vessel": "tray",
+    "liner": "tray-paper"
+  },
+  "noodle": {
+    "item": "banh-hoi",
+    "flow": "hot-rinse-hot"
+  },
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "mo-hanh",
+    "thit-luoc",
+    "dua-leo",
+    "xa-lach",
+    "tia-to",
+    "do-chua"
+  ],
+  "codex": {
+    "story": "Bánh hỏi là bún sợi rất mảnh ép thành miếng, rưới mỡ hành, ăn với thịt heo luộc hoặc quay — món cỗ ở miền Trung, Nam Trung Bộ.",
+    "region_note": "Kent xếp vào miền Trung (20/09).",
+    "how_to_eat": "Cuốn bánh hỏi + thịt + rau trong bánh tráng hoặc ăn thẳng, chấm nước mắm chua ngọt.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

@@ -1,0 +1,43 @@
+{
+  "id": "bun-dau-mam-tom",
+  "name": "Bún Đậu Mắm Tôm",
+  "pron": "boon dow mum tom",
+  "gloss": "vermicelli, fried tofu & shrimp paste",
+  "region": "ha-noi",
+  "price": 70,
+  "serve": {
+    "vessel": "tray",
+    "liner": "tray-paper"
+  },
+  "noodle": {
+    "item": "bun",
+    "flow": "hot-rinse-hot"
+  },
+  "prep": [
+    {
+      "action": "make-chen-mam-tom",
+      "in": [
+        "mam-tom",
+        "mo-hanh"
+      ],
+      "out": "chen-mam-tom-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "dau-hu",
+    "cha-lua",
+    "dua-leo",
+    "kinh-gioi",
+    "tia-to",
+    "chen-mam-tom-ready"
+  ],
+  "codex": {
+    "story": "Bữa trưa vỉa hè Hà Nội: bún lá, đậu phụ chiên giòn, chả, rau thơm — tất cả xoay quanh chén mắm tôm.",
+    "region_note": "",
+    "how_to_eat": "Đánh mắm tôm với đường, chanh, ớt, mỡ nóng cho sủi bọt rồi chấm từng thứ.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

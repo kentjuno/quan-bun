@@ -5,7 +5,7 @@ import { View, loadModels } from './game/view.js';
 import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
 import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter } from './game/progress.js';
-import { D, recipeFor } from './game/recipes.js';
+import { D, recipeFor, setSource } from './game/recipes.js';
 import { botDecide } from './game/bot.js';
 import { label, labelL, dishLabel } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
@@ -136,6 +136,7 @@ function renderSoupSel() {
   $('cardTake').textContent = cardSel.length ? T('m3d.heat') : T('m3d.noHeat');
 }
 function start(bot = false, mode = playMode) {
+  setSource('shop');   // bếp 3D / Luyện / Rush / Survival: công thức quán (sim-data)
   ensureAudio(); startMusic(); playMode = mode; povLevel = null; set3D(true);
   botMode = bot === true; world = newWorld();
   rebuild();   // mỗi level có thể khác trạm (bếp lớn dần) → dựng lại
@@ -203,7 +204,7 @@ function countUp(el, to, ms) {
 }
 let puzzle = null;
 function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9) {
-  ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
+  setSource('shop'); ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
   let dishes = practice.length ? practice : ALL_DISHES; if (kinds[0] === 'assemble') { dishes = dishes.filter(assembleOk); if (!dishes.length) dishes = ALL_DISHES.filter(assembleOk); } const weights = weightsFor(dishes);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
   lastPuzzle = { kinds, rounds }; armBackGuard();
@@ -212,7 +213,7 @@ function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9) {
 let lastPuzzle = { kinds: ['order', 'intruder', 'missing'], rounds: 9 };
 let pov = null;
 function startPov(rounds = 8) {
-  ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false; set3D(false);
+  setSource('shop'); ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false; set3D(false);
   let dishes = (practice.length ? practice : ALL_DISHES).filter(povOk); if (!dishes.length) dishes = ALL_DISHES.filter(povOk);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
   lastPuzzle = { kinds: ['pov'], rounds }; povLevel = null; armBackGuard();
@@ -232,6 +233,7 @@ function set3D(on) {
   document.body.classList.toggle('flat', !show3d);
 }
 function startLevelPov(L) {
+  setSource('game');   // game chính: công thức chung Việt Nam (dishes/*.json)
   ensureAudio(); startMusic(); playMode = 'level'; running = false; botMode = false; povLevel = L; set3D(false);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden'); $('card').classList.remove('show');
   armBackGuard();

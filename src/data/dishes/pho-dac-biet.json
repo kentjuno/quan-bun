@@ -1,0 +1,47 @@
+{
+  "id": "pho-dac-biet",
+  "name": "Phở Đặc Biệt",
+  "pron": "fuh dak bee-et",
+  "gloss": "the works: rare beef, brisket, tripe, meatballs",
+  "region": "ha-noi",
+  "price": 60,
+  "serve": {
+    "vessel": "pho-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "pho-noodle",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "action": "pour-pho-broth"
+  },
+  "prep": [
+    {
+      "action": "blanch-beef-ball",
+      "in": [
+        "bo-vien"
+      ],
+      "out": "bo-vien-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "nam",
+    "bo-tai",
+    "la-sach",
+    "bo-vien-ready",
+    "hanh-tay",
+    "hanh-la",
+    "ngo-ri-ngo-gai",
+    "$broth"
+  ],
+  "codex": {
+    "story": "\"Đặc biệt\" là tô có đủ mọi thứ quán có: tái, nạm, lá sách, bò viên.",
+    "region_note": "",
+    "how_to_eat": "Bò viên chấm tương đen pha tương ớt.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
 const VI = /[ăâđêôơưĂÂĐÊÔƠƯàáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ]/;
 /** File được phép chứa tiếng Việt: bảng dịch, data nguồn (tl() lấy làm nguồn vi), sim-data của quán, script/công cụ. */
-const ALLOW = [/src[\\/]data[\\/]i18n[\\/]/, /sim-data/, /src[\\/]data[\\/]worlds\.js$/, /src[\\/]data[\\/]customers\.js$/, /src[\\/]data[\\/]dishes[\\/]/, /src[\\/]config\.js$/,
+const ALLOW = [/src[\\/]data[\\/]i18n[\\/]/, /sim-data/, /src[\\/]data[\\/]worlds\.js$/, /src[\\/]data[\\/]customers\.js$/, /src[\\/]data[\\/]dishes[\\/]/, /src[\\/]config\.js$/, /src[\\/]game[\\/]dishlib\.js$/,
   // Bếp 3D bản cũ (Thêm → "Bếp thật (3D)"): không thuộc game chính, không dịch — thẻ menu ghi rõ "chỉ tiếng Việt".
   /src[\\/]game[\\/](world|par|bot|view|view\.blockout)\.js$/];
 /** Dòng có `// vi-src` = chuỗi tiếng Việt là NGUỒN dữ liệu (fallback cho tl()/actName()) — được phép. */

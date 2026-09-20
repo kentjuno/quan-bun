@@ -1,0 +1,41 @@
+{
+  "id": "bun-rieu-cua",
+  "name": "Bún Riêu Cua",
+  "pron": "boon ree-oo koo-ah",
+  "gloss": "crab & tomato vermicelli soup",
+  "region": "hue",
+  "price": 50,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "bun",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "cook": [
+      "cot-cua",
+      "huyet",
+      "mieng-nuoc"
+    ],
+    "out": "crab-broth-ready",
+    "action": "pour-crab-broth"
+  },
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "dau-hu",
+    "cha-cua",
+    "ca-chua",
+    "$broth",
+    "hanh-la"
+  ],
+  "codex": {
+    "story": "Riêu là gạch cua đồng giã lọc, nấu với cà chua chua nhẹ. Món ăn dân dã có khắp ba miền, mỗi nơi một kiểu.",
+    "region_note": "Kent xếp vào miền Trung (20/09); nhiều tài liệu ghi gốc Bắc Bộ — sổ tay ghi \"khắp ba miền, miền Trung có bản riêng\".",
+    "how_to_eat": "Thêm mắm tôm, rau muống chẻ, giá, kinh giới.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

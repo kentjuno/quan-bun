@@ -1,0 +1,35 @@
+{
+  "id": "goi-cuon-tom-thit",
+  "name": "Gỏi Cuốn Tôm Thịt",
+  "pron": "goy koo-un tom tit",
+  "gloss": "fresh shrimp & pork summer rolls",
+  "region": "sai-gon",
+  "price": 32,
+  "serve": {
+    "vessel": "dia-dai"
+  },
+  "prep": [
+    {
+      "action": "soak-rice-paper",
+      "in": [
+        "banh-trang"
+      ],
+      "out": "banh-trang-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "banh-trang-ready",
+    "thit-luoc",
+    "tom-luoc",
+    "bun",
+    "xa-lach"
+  ],
+  "codex": {
+    "story": "Cuốn tươi không chiên: bánh tráng nhúng nước, tôm, thịt luộc, bún, rau. Nhẹ, mát, món ăn chơi miền Nam.",
+    "region_note": "",
+    "how_to_eat": "Chấm tương đen pha đậu phộng hoặc nước mắm chua ngọt.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

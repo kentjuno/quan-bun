@@ -1,0 +1,175 @@
+{
+ "_": "SINH TỰ ĐỘNG bởi scripts/_art_manifest.mjs — đừng sửa tay. Ảnh tô theo bậc: -s0 -dry -top -wet; ảnh từng bước: step/<dish>-k<N>.webp",
+ "dishArt": [
+  "banh-da-cua",
+  "banh-hoi-thit-heo",
+  "bun-bo-hue",
+  "bun-ca-hai-phong",
+  "bun-cha-ha-noi",
+  "bun-dau-mam-tom",
+  "bun-ga-nuong",
+  "bun-nem-cua-thit-nuong-tom-nuong",
+  "bun-rieu-cua",
+  "cha-ca-la-vong",
+  "cha-gio-viet-nam",
+  "chao-long",
+  "chao-suon",
+  "goi-cuon-tom-thit",
+  "pho-dac-biet",
+  "pho-suon-tai",
+  "pho-tai-dap",
+  "pho-tai-nam"
+ ],
+ "dishTop": [
+  "banh-da-cua",
+  "bun-bo-hue",
+  "bun-ca-hai-phong",
+  "bun-rieu-cua",
+  "chao-long",
+  "chao-suon",
+  "pho-dac-biet",
+  "pho-suon-tai",
+  "pho-tai-dap",
+  "pho-tai-nam"
+ ],
+ "dishS0": [
+  "banh-da-cua",
+  "bun-bo-hue",
+  "bun-ca-hai-phong",
+  "bun-ga-nuong",
+  "bun-nem-cua-thit-nuong-tom-nuong",
+  "bun-rieu-cua",
+  "chao-long",
+  "chao-suon",
+  "goi-cuon-tom-thit",
+  "pho-dac-biet",
+  "pho-suon-tai",
+  "pho-tai-dap",
+  "pho-tai-nam"
+ ],
+ "steps": {
+  "banh-da-cua": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "banh-hoi-thit-heo": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11
+  ],
+  "bun-bo-hue": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "bun-ca-hai-phong": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "bun-cha-ha-noi": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "bun-dau-mam-tom": [
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "bun-ga-nuong": [
+   2,
+   3
+  ],
+  "bun-nem-cua-thit-nuong-tom-nuong": [
+   2,
+   3
+  ],
+  "bun-rieu-cua": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "cha-gio-viet-nam": [
+   2,
+   3
+  ],
+  "chao-long": [
+   2
+  ],
+  "chao-suon": [
+   2
+  ],
+  "goi-cuon-tom-thit": [
+   2,
+   3,
+   4,
+   5
+  ],
+  "pho-dac-biet": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "pho-suon-tai": [
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "pho-tai-dap": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "pho-tai-nam": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ]
+ }
+}

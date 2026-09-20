@@ -1,0 +1,41 @@
+{
+  "id": "chao-long",
+  "name": "Cháo Lòng",
+  "pron": "chow long",
+  "gloss": "pork offal rice porridge",
+  "region": "sai-gon",
+  "price": 45,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "broth": {
+    "cook": [
+      "chao-long",
+      "mieng-nuoc"
+    ],
+    "out": "porridge-ready",
+    "porridge": true
+  },
+  "prep": [
+    {
+      "action": "cut-youtiao",
+      "in": [
+        "quay"
+      ],
+      "out": "youtiao-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "youtiao-ready",
+    "hanh-la"
+  ],
+  "codex": {
+    "story": "Cháo nấu từ nước luộc lòng heo, ăn với lòng, dồi, quẩy — món sáng bình dân khắp nước.",
+    "region_note": "",
+    "how_to_eat": "Rắc tiêu, hành, ăn nóng với quẩy.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

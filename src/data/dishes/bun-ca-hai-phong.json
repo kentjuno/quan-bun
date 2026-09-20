@@ -1,0 +1,65 @@
+{
+  "id": "bun-ca-hai-phong",
+  "name": "Bún Cá Hải Phòng",
+  "pron": "boon kah hai fong",
+  "gloss": "Hải Phòng fish noodle soup",
+  "region": "hai-phong",
+  "price": 50,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "bun",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "cook": [
+      "nuoc-ca",
+      "mieng-nuoc"
+    ],
+    "out": "fish-broth-ready",
+    "action": "pour-fish-broth"
+  },
+  "prep": [
+    {
+      "action": "blanch-veg",
+      "in": [
+        "can-nuoc"
+      ],
+      "out": "veg-ready"
+    },
+    {
+      "action": "cut-fish-cake",
+      "in": [
+        "cha-ca"
+      ],
+      "out": "cha-ca-ready"
+    },
+    {
+      "action": "cut-dill",
+      "in": [
+        "thi-la"
+      ],
+      "out": "thi-la-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "ca-chua",
+    "ca-chien",
+    "cha-ca-ready",
+    "veg-ready",
+    "hanh-la",
+    "$broth",
+    "thi-la-ready"
+  ],
+  "codex": {
+    "story": "Cá rô/cá quả chiên giòn, chả cá, rau cần, thì là trên nước xương cá trong — món sáng quen thuộc của Hải Phòng.",
+    "region_note": "",
+    "how_to_eat": "Thì là bỏ sau cùng cho thơm; chấm cá với mắm ớt.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

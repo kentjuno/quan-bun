@@ -1,0 +1,41 @@
+{
+  "id": "bun-ga-nuong",
+  "name": "Bún Gà Nướng",
+  "pron": "boon gah noo-ung",
+  "gloss": "vermicelli with grilled chicken",
+  "region": "sai-gon",
+  "price": 45,
+  "serve": {
+    "vessel": "dry-bowl"
+  },
+  "noodle": {
+    "item": "bun",
+    "flow": "hot-rinse-hot"
+  },
+  "prep": [
+    {
+      "action": "cut-salad",
+      "in": [
+        "xa-lach",
+        "dua-leo",
+        "do-chua"
+      ],
+      "out": "salad-cut-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "salad-cut-ready",
+    "ga-luoc",
+    "dau-phong-rang",
+    "hanh-phi"
+  ],
+  "codex": {
+    "story": "Bún khô với gà ướp sả nướng than, rau sống, đậu phộng, hành phi.",
+    "region_note": "Chưa có sprite gà nướng — đang dùng gà luộc tạm.",
+    "how_to_eat": "Chan nước mắm chua ngọt, trộn đều.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

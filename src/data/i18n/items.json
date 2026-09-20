@@ -1,105 +1,271 @@
 {
-  "_": "Tên món / nguyên liệu KHÔNG dịch (PLAN-PUBLIC P1 §2). `en` = giải nghĩa ngắn, `pron` = cách đọc kiểu Anh gần đúng. actions/labels = dịch hẳn (không phải tên riêng).",
-  "dishes": {
-    "pho-dac-biet": { "pron": "fuh dak bee-et", "en": "the works: rare beef, brisket, tripe, meatballs" },
-    "pho-tai-nam": { "pron": "fuh tie nahm", "en": "rare beef & brisket noodle soup" },
-    "pho-tai-dap": { "pron": "fuh tie dup", "en": "pho with ginger-pounded rare beef" },
-    "pho-suon-tai": { "pron": "fuh soo-un tie", "en": "pho with beef rib & rare beef" },
-    "pho-sot-vang": { "pron": "fuh sot vahng", "en": "pho with red-wine braised beef" },
-    "pho-xao-lan": { "pron": "fuh sow lun", "en": "pho with stir-fried beef & greens" },
-    "pho-ga": { "pron": "fuh gah", "en": "chicken pho" },
-    "bun-rieu-cua": { "pron": "boon ree-oo koo-ah", "en": "crab & tomato vermicelli soup" },
-    "banh-da-cua": { "pron": "bang dah koo-ah", "en": "Hải Phòng red-noodle crab soup" },
-    "bun-bo-hue": { "pron": "boon baw hway", "en": "spicy Huế beef noodle soup" },
-    "bun-ca-hai-phong": { "pron": "boon kah hai fong", "en": "Hải Phòng fish noodle soup" },
-    "cha-ca-la-vong": { "pron": "chah kah lah vong", "en": "turmeric-dill fried fish, Hanoi" },
-    "bun-dau-mam-tom": { "pron": "boon dow mum tom", "en": "vermicelli, fried tofu & shrimp paste" },
-    "banh-hoi-thit-heo": { "pron": "bang hoy tit hay-o", "en": "fine rice noodle sheets with pork" },
-    "bun-nem-cua-thit-nuong-tom-nuong": { "pron": "boon nem koo-ah", "en": "vermicelli with crab rolls, grilled pork & shrimp" },
-    "bun-ga-nuong": { "pron": "boon gah noo-ung", "en": "vermicelli with grilled chicken" },
-    "bun-cha-ha-noi": { "pron": "boon chah hah noy", "en": "Hanoi grilled pork with vermicelli" },
-    "cha-gio-viet-nam": { "pron": "chah yaw", "en": "Vietnamese fried spring rolls" },
-    "goi-cuon-tom-thit": { "pron": "goy koo-un tom tit", "en": "fresh shrimp & pork summer rolls" },
-    "chao-long": { "pron": "chow long", "en": "pork offal rice porridge" },
-    "chao-suon": { "pron": "chow soo-un", "en": "pork rib rice porridge" }
-  },
+  "_": "Nguyên liệu KHÔNG dịch (PLAN-PUBLIC P1 §2): `en` = giải nghĩa ngắn, `pron` = cách đọc kiểu Anh. Món: pron/gloss nằm trong dishes/<id>.json. actions/labels = dịch hẳn (không phải tên riêng).",
   "items": {
-    "pho-noodle": { "pron": "fuh", "en": "flat rice noodles" },
-    "bun": { "pron": "boon", "en": "rice vermicelli" },
-    "bun-to": { "pron": "boon taw", "en": "thick vermicelli" },
-    "banh-da": { "pron": "bang dah", "en": "red rice noodles" },
-    "banh-hoi": { "pron": "bang hoy", "en": "fine noodle sheets" },
-    "serving-plate": { "en": "liner plate" },
-    "pho-bowl": { "en": "pho bowl" },
-    "soup-bowl": { "en": "soup bowl" },
-    "dry-bowl": { "en": "dry-noodle bowl" },
-    "extra-bowl": { "en": "side bowl" },
-    "tray": { "pron": "met", "en": "bamboo tray" },
-    "tray-paper": { "en": "tray liner paper" },
-    "noodle-basket": { "en": "noodle basket" },
-    "meat-basket": { "en": "topping basket" },
-    "nam": { "pron": "nahm", "en": "brisket" },
-    "la-sach": { "pron": "lah sak", "en": "tripe" },
-    "bo-tai": { "pron": "baw tie", "en": "rare beef" },
-    "bo-vien": { "pron": "baw vee-en", "en": "beef meatballs" },
-    "suon-cay": { "pron": "soo-un kay", "en": "beef rib" },
-    "gung": { "pron": "goong", "en": "ginger" },
-    "thit-luoc": { "pron": "tit loo-uk", "en": "boiled pork" },
-    "bap-bo": { "pron": "bup baw", "en": "beef shank" },
-    "cha-lua": { "pron": "chah loo-ah", "en": "pork sausage" },
-    "cha-re": { "pron": "chah reh", "en": "crab cake in net" },
-    "tom": { "pron": "tom", "en": "fried shrimp" },
-    "huyet": { "pron": "hwee-et", "en": "blood pudding" },
-    "dau-hu": { "pron": "dow hoo", "en": "fried tofu" },
-    "cha-cua": { "pron": "chah koo-ah", "en": "crab cake" },
-    "bo-la-lot": { "pron": "baw lah lot", "en": "beef in betel leaf" },
-    "cha-hap": { "pron": "chah hup", "en": "steamed fish cake" },
-    "cha-chien": { "pron": "chah chee-en", "en": "fried fish cake" },
-    "ca-chien": { "pron": "kah chee-en", "en": "fried fish" },
-    "cha-ca": { "pron": "chah kah", "en": "fried fish cake" },
-    "hanh-tay": { "en": "onion" },
-    "ngo-ri-ngo-gai": { "en": "coriander & sawtooth herb" },
-    "hanh-la": { "en": "scallion" },
-    "rau-ram": { "pron": "rao rum", "en": "Vietnamese coriander" },
-    "ca-chua": { "en": "tomato" },
-    "rau-muong": { "pron": "rao moo-ung", "en": "water spinach" },
-    "can-nuoc": { "en": "water celery" },
-    "thi-la": { "pron": "tee lah", "en": "dill" },
-    "xa-lach": { "en": "lettuce" },
-    "kinh-gioi": { "pron": "king yoy", "en": "Vietnamese balm" },
-    "bac-ha": { "pron": "bak hah", "en": "mint" },
-    "tia-to": { "pron": "tee-ah taw", "en": "perilla" },
-    "mam-dan": { "en": "woven tray" },
-    "dia-lon": { "en": "large plate" },
-    "chao-ap-ca": { "en": "fish pan" },
-    "nuoc-cot-chanh": { "en": "lime juice" },
-    "dau-phong-rang": { "en": "roasted peanuts" },
-    "ot-do": { "en": "sliced red chili" },
-    "mam-tom": { "pron": "mum tom", "en": "fermented shrimp paste" },
-    "mo-hanh": { "en": "scallion oil" },
-    "goc-hanh-la": { "en": "shredded scallion root" },
-    "sot-vang": { "pron": "sot vahng", "en": "red-wine beef stew" },
-    "rau-cai": { "en": "mustard greens" },
-    "ga-luoc": { "en": "poached chicken" },
-    "cot-pho-ga": { "en": "chicken pho stock" },
-    "nuoc-pho": { "en": "pho broth" },
-    "cot-cua": { "en": "crab stock" },
-    "nuoc-bun-bo": { "en": "bún bò broth" },
-    "nuoc-ca": { "en": "fish broth" },
-    "mieng-nuoc": { "en": "portion of water" },
-    "chao-long": { "en": "offal porridge" },
-    "chao-suon": { "en": "rib porridge" },
-    "quay": { "pron": "kway", "en": "fried dough stick" },
-    "top-mo": { "en": "pork cracklings" },
-    "dua-leo": { "en": "cucumber" },
-    "cha-gio": { "pron": "chah yaw", "en": "2 spring rolls" },
-    "banh-trang": { "pron": "bang chahng", "en": "rice paper" },
-    "tom-luoc": { "en": "boiled shrimp" },
-    "dia-dai": { "en": "long plate" },
-    "do-chua": { "en": "pickles" },
-    "xoai": { "en": "mango" },
-    "thit-nuong": { "pron": "tit noo-ung", "en": "grilled pork" },
-    "hanh-phi": { "en": "fried shallots" }
+    "pho-noodle": {
+      "pron": "fuh",
+      "en": "flat rice noodles"
+    },
+    "bun": {
+      "pron": "boon",
+      "en": "rice vermicelli"
+    },
+    "bun-to": {
+      "pron": "boon taw",
+      "en": "thick vermicelli"
+    },
+    "banh-da": {
+      "pron": "bang dah",
+      "en": "red rice noodles"
+    },
+    "banh-hoi": {
+      "pron": "bang hoy",
+      "en": "fine noodle sheets"
+    },
+    "serving-plate": {
+      "en": "liner plate"
+    },
+    "pho-bowl": {
+      "en": "pho bowl"
+    },
+    "soup-bowl": {
+      "en": "soup bowl"
+    },
+    "dry-bowl": {
+      "en": "dry-noodle bowl"
+    },
+    "extra-bowl": {
+      "en": "side bowl"
+    },
+    "tray": {
+      "pron": "met",
+      "en": "bamboo tray"
+    },
+    "tray-paper": {
+      "en": "tray liner paper"
+    },
+    "noodle-basket": {
+      "en": "noodle basket"
+    },
+    "meat-basket": {
+      "en": "topping basket"
+    },
+    "nam": {
+      "pron": "nahm",
+      "en": "brisket"
+    },
+    "la-sach": {
+      "pron": "lah sak",
+      "en": "tripe"
+    },
+    "bo-tai": {
+      "pron": "baw tie",
+      "en": "rare beef"
+    },
+    "bo-vien": {
+      "pron": "baw vee-en",
+      "en": "beef meatballs"
+    },
+    "suon-cay": {
+      "pron": "soo-un kay",
+      "en": "beef rib"
+    },
+    "gung": {
+      "pron": "goong",
+      "en": "ginger"
+    },
+    "thit-luoc": {
+      "pron": "tit loo-uk",
+      "en": "boiled pork"
+    },
+    "bap-bo": {
+      "pron": "bup baw",
+      "en": "beef shank"
+    },
+    "cha-lua": {
+      "pron": "chah loo-ah",
+      "en": "pork sausage"
+    },
+    "cha-re": {
+      "pron": "chah reh",
+      "en": "crab cake in net"
+    },
+    "tom": {
+      "pron": "tom",
+      "en": "fried shrimp"
+    },
+    "huyet": {
+      "pron": "hwee-et",
+      "en": "blood pudding"
+    },
+    "dau-hu": {
+      "pron": "dow hoo",
+      "en": "fried tofu"
+    },
+    "cha-cua": {
+      "pron": "chah koo-ah",
+      "en": "crab cake"
+    },
+    "bo-la-lot": {
+      "pron": "baw lah lot",
+      "en": "beef in betel leaf"
+    },
+    "cha-hap": {
+      "pron": "chah hup",
+      "en": "steamed fish cake"
+    },
+    "cha-chien": {
+      "pron": "chah chee-en",
+      "en": "fried fish cake"
+    },
+    "ca-chien": {
+      "pron": "kah chee-en",
+      "en": "fried fish"
+    },
+    "cha-ca": {
+      "pron": "chah kah",
+      "en": "fried fish cake"
+    },
+    "hanh-tay": {
+      "en": "onion"
+    },
+    "ngo-ri-ngo-gai": {
+      "en": "coriander & sawtooth herb"
+    },
+    "hanh-la": {
+      "en": "scallion"
+    },
+    "rau-ram": {
+      "pron": "rao rum",
+      "en": "Vietnamese coriander"
+    },
+    "ca-chua": {
+      "en": "tomato"
+    },
+    "rau-muong": {
+      "pron": "rao moo-ung",
+      "en": "water spinach"
+    },
+    "can-nuoc": {
+      "en": "water celery"
+    },
+    "thi-la": {
+      "pron": "tee lah",
+      "en": "dill"
+    },
+    "xa-lach": {
+      "en": "lettuce"
+    },
+    "kinh-gioi": {
+      "pron": "king yoy",
+      "en": "Vietnamese balm"
+    },
+    "bac-ha": {
+      "pron": "bak hah",
+      "en": "mint"
+    },
+    "tia-to": {
+      "pron": "tee-ah taw",
+      "en": "perilla"
+    },
+    "mam-dan": {
+      "en": "woven tray"
+    },
+    "dia-lon": {
+      "en": "large plate"
+    },
+    "chao-ap-ca": {
+      "en": "fish pan"
+    },
+    "nuoc-cot-chanh": {
+      "en": "lime juice"
+    },
+    "dau-phong-rang": {
+      "en": "roasted peanuts"
+    },
+    "ot-do": {
+      "en": "sliced red chili"
+    },
+    "mam-tom": {
+      "pron": "mum tom",
+      "en": "fermented shrimp paste"
+    },
+    "mo-hanh": {
+      "en": "scallion oil"
+    },
+    "goc-hanh-la": {
+      "en": "shredded scallion root"
+    },
+    "sot-vang": {
+      "pron": "sot vahng",
+      "en": "red-wine beef stew"
+    },
+    "rau-cai": {
+      "en": "mustard greens"
+    },
+    "ga-luoc": {
+      "en": "poached chicken"
+    },
+    "cot-pho-ga": {
+      "en": "chicken pho stock"
+    },
+    "nuoc-pho": {
+      "en": "pho broth"
+    },
+    "cot-cua": {
+      "en": "crab stock"
+    },
+    "nuoc-bun-bo": {
+      "en": "bún bò broth"
+    },
+    "nuoc-ca": {
+      "en": "fish broth"
+    },
+    "mieng-nuoc": {
+      "en": "portion of water"
+    },
+    "chao-long": {
+      "en": "offal porridge"
+    },
+    "chao-suon": {
+      "en": "rib porridge"
+    },
+    "quay": {
+      "pron": "kway",
+      "en": "fried dough stick"
+    },
+    "top-mo": {
+      "en": "pork cracklings"
+    },
+    "dua-leo": {
+      "en": "cucumber"
+    },
+    "cha-gio": {
+      "pron": "chah yaw",
+      "en": "2 spring rolls"
+    },
+    "banh-trang": {
+      "pron": "bang chahng",
+      "en": "rice paper"
+    },
+    "tom-luoc": {
+      "en": "boiled shrimp"
+    },
+    "dia-dai": {
+      "en": "long plate"
+    },
+    "do-chua": {
+      "en": "pickles"
+    },
+    "xoai": {
+      "en": "mango"
+    },
+    "thit-nuong": {
+      "pron": "tit noo-ung",
+      "en": "grilled pork"
+    },
+    "hanh-phi": {
+      "en": "fried shallots"
+    }
   },
   "actions": {
     "load-noodle": "Load noodles into basket",

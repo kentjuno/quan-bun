@@ -54,7 +54,6 @@ describe('i18n', () => {
 
   test('items.json: giải nghĩa đủ cho mọi món, nguyên liệu, hành động, nhãn trạng thái', () => {
     const miss = [];
-    for (const id of Object.keys(D.recipes)) if (!items.dishes[id]?.en) miss.push(`dish ${id}`);
     for (const id of Object.keys(D.items)) if (!items.items[id]?.en) miss.push(`item ${id}`);
     for (const id of Object.keys(D.actions)) if (!items.actions[id]) miss.push(`action ${id}`);
     for (const id of Object.keys(D.labels)) if (!items.labels[id]) miss.push(`label ${id}`);

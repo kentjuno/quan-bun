@@ -3,28 +3,15 @@
 // Mỗi món có ĐÚNG MỘT cái tô, hai trạng thái: `-dry` (chưa có nước) và `-wet` (xong).
 // Không có ảnh thì trả null → pov.js tự quay về icon cũ, không bao giờ vỡ giao diện.
 
+// Danh sách ảnh có sẵn: src/data/art-manifest.json — SINH bởi scripts/_art_manifest.mjs (add_dish.mjs gọi), không sửa tay.
+import ART from '../data/art-manifest.json';
 const BASE = 'art/';
 /** Món nào đã có ảnh tô (cập nhật khi gen thêm). */
-export const DISH_ART = new Set([
-  'pho-dac-biet', 'pho-tai-nam', 'pho-tai-dap', 'pho-suon-tai',
-  'bun-rieu-cua', 'banh-da-cua', 'bun-bo-hue', 'bun-ca-hai-phong',
-  'cha-ca-la-vong', 'bun-dau-mam-tom', 'banh-hoi-thit-heo',
-  'bun-nem-cua-thit-nuong-tom-nuong', 'bun-ga-nuong', 'bun-cha-ha-noi',
-  'cha-gio-viet-nam', 'goi-cuon-tom-thit', 'chao-long', 'chao-suon',
-]);
+export const DISH_ART = new Set(ART.dishArt);
 /** Món nào có thêm ảnh giữa `-top` (đủ topping, chưa chan nước). */
-export const DISH_TOP = new Set([
-  'pho-dac-biet', 'pho-tai-nam', 'pho-tai-dap', 'pho-suon-tai',
-  'bun-rieu-cua', 'banh-da-cua', 'bun-bo-hue', 'bun-ca-hai-phong',
-  'chao-long', 'chao-suon',
-]);
+export const DISH_TOP = new Set(ART.dishTop);
 /** Món nào có ảnh vỏ trống `-s0` (mới lấy tô/dĩa ra, chưa bỏ gì). */
-export const DISH_S0 = new Set([
-  'pho-dac-biet', 'pho-tai-nam', 'pho-tai-dap', 'pho-suon-tai',
-  'bun-rieu-cua', 'banh-da-cua', 'bun-bo-hue', 'bun-ca-hai-phong',
-  'chao-long', 'chao-suon', 'bun-ga-nuong',
-  'bun-nem-cua-thit-nuong-tom-nuong', 'goi-cuon-tom-thit',
-]);
+export const DISH_S0 = new Set(ART.dishS0);
 const RE_BROTH = /^@pour|^broth:|-broth-ready$|^porridge-ready$/;
 const RE_VESSEL = /^bowl|^dry-bowl$|^tray|^dia-|^chen-|^mẹt/;
 const RE_BASE = /^base-ready$|^noodle|^bun$|^banh-hoi-ready$|-bun-ready$|^banh-trang-ready$|^banh-da/;
@@ -110,25 +97,7 @@ export const panArt = (tok) => `${BASE}pan/${tok}.webp`;
  * (bớt món) nên số thứ tự bước không khớp — vẽ theo đây sẽ hiện cả món mà level đó
  * cố tình chưa dạy, tức là dạy sai. Những level đó quay về thang 4 bậc.
  */
-export const DISH_STEPS = {
-  'banh-da-cua': [2, 3, 4, 5, 6, 7, 8, 9, 10],
-  'banh-hoi-thit-heo': [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-  'bun-bo-hue': [2, 3, 4, 5, 6, 7, 8, 9, 10],
-  'bun-ca-hai-phong': [2, 3, 4, 5, 6, 7, 8],
-  'bun-cha-ha-noi': [2, 3, 4, 5, 6, 7],
-  'bun-dau-mam-tom': [2, 3, 4, 5, 6],
-  'bun-ga-nuong': [2, 3],
-  'bun-nem-cua-thit-nuong-tom-nuong': [2, 3],
-  'bun-rieu-cua': [2, 3, 4, 5, 6, 7],
-  'cha-gio-viet-nam': [2, 3],
-  'chao-long': [2],
-  'chao-suon': [2],
-  'goi-cuon-tom-thit': [2, 3, 4, 5],
-  'pho-dac-biet': [2, 3, 4, 5, 6, 7, 8, 9],
-  'pho-suon-tai': [2, 3, 4, 5, 6],
-  'pho-tai-dap': [2, 3, 4, 5, 6, 7],
-  'pho-tai-nam': [2, 3, 4, 5, 6, 7],
-};
+export const DISH_STEPS = ART.steps;
 export function dishStepArt(dish, placed) {
   // Công thức thật tách "lấy tô" và "bỏ sợi" thành HAI bước, còn ảnh đánh số theo
   // công thức gọn (`base-ready` = tô + sợi). Nên bỏ vào n thứ thì ảnh là k = n - 1.

@@ -1,0 +1,44 @@
+{
+  "id": "pho-suon-tai",
+  "name": "Phở Sườn Tái",
+  "pron": "fuh soo-un tie",
+  "gloss": "pho with beef rib & rare beef",
+  "region": "ha-noi",
+  "price": 65,
+  "serve": {
+    "vessel": "pho-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "pho-noodle",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "action": "pour-pho-broth"
+  },
+  "prep": [
+    {
+      "action": "warm-rib",
+      "in": [
+        "suon-cay"
+      ],
+      "out": "rib-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "bo-tai",
+    "rib-ready",
+    "hanh-tay",
+    "hanh-la",
+    "$broth"
+  ],
+  "codex": {
+    "story": "Sườn bò ninh mềm trong nồi nước dùng, ăn kèm tái — tô phở \"no bụng\" cho người lao động.",
+    "region_note": "",
+    "how_to_eat": "Gặm sườn trước, ăn phở sau.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

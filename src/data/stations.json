@@ -1,0 +1,23 @@
+{
+  "_": "P6.3 — Trạm là DATA. Thêm trạm mới (nướng, đổ chảo, hấp, khuôn) = thêm mục ở đây + sprite + zone trong counter-layout.js; engine chỉ cần code khi CƠ CHẾ thật sự lạ. `actions` = hành động (sim-data.actions) rơi vào trạm này; hành động không liệt kê → recipes.js đoán theo tên (regex) rồi mặc định 'prep'.",
+  "stations": [
+    { "id": "pot",       "name": "Nồi trụng",   "en": "Blanching pot", "zone": "pot",    "sprite": "st-soup-pot",  "kind": "basket",
+      "actions": ["blanch-noodle", "blanch-noodle-once", "reblanch", "blanch-bowl", "blanch-beef-ball", "blanch-banh-hoi", "blanch-veg", "warm-rib"],
+      "note": "3 rọ sợi + tô nóng trữ (POT.bowlSlots); sợi để lâu hư (POT.noodleSpoilAfter)" },
+    { "id": "sink",      "name": "Bồn xả lạnh", "en": "Sink",          "zone": "sink",   "sprite": null,           "kind": "single",
+      "actions": ["cold-rinse", "soak-rice-paper"] },
+    { "id": "prep",      "name": "Thớt",        "en": "Board",         "zone": "boards", "sprite": null,           "kind": "boards",
+      "actions": ["pound-beef", "cut-rib", "cut-salad", "cut-crab-cake", "cut-diagonal", "cut-dill", "cut-fish-cake", "prepare-tray", "cut-youtiao", "pour-porridge", "make-chen-chanh", "make-chen-dau-phong", "make-chen-ot", "make-chen-mam-tom", "pick-herbs", "make-dia-thi-la", "fill-ca-pan", "chop-chicken", "prepare-two-bowls"],
+      "note": "gom đủ đầu vào rồi mới chạy; nhiều thớt (boards)" },
+    { "id": "fryer",     "name": "Chảo chiên",  "en": "Fryer",         "zone": "fryer",  "sprite": "st-fryer",     "kind": "single",
+      "actions": ["deep-fry"] },
+    { "id": "microwave", "name": "Lò vi sóng",  "en": "Microwave",     "zone": "micro",  "sprite": "st-microwave", "kind": "single",
+      "actions": ["microwave-rib"] },
+    { "id": "stovetop",  "name": "Mặt bếp",     "en": "Stovetop",      "zone": "burner", "sprite": null,           "kind": "single",
+      "actions": ["warm-sot-vang", "stir-fry-xao-lan"],
+      "note": "nồi/chảo nhỏ trên mặt bếp — gom đủ đầu vào rồi chạy; chung ô thả với lò đun nước" },
+    { "id": "burner",    "name": "Lò đun nước", "en": "Broth burner",  "zone": "burner", "sprite": "st-soup-pot",  "kind": "soup",
+      "actions": ["put-stock-in-pot", "put-porridge-in-pot", "add-water", "add-blood", "add-pho-broth", "heat-soup", "heat-porridge"],
+      "note": "chuỗi nấu nước lèo/cháo (soupRecipeFor) — không phải transform ở trạm" }
+  ]
+}

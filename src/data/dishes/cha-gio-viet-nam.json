@@ -1,0 +1,40 @@
+{
+  "id": "cha-gio-viet-nam",
+  "name": "Chả Giò Việt Nam",
+  "pron": "chah yaw",
+  "gloss": "Vietnamese fried spring rolls",
+  "region": "sai-gon",
+  "price": 30,
+  "serve": {
+    "vessel": "dia-dai"
+  },
+  "prep": [
+    {
+      "action": "deep-fry",
+      "in": [
+        "cha-gio"
+      ],
+      "out": "cha-gio-fried"
+    },
+    {
+      "action": "cut-diagonal",
+      "in": [
+        "cha-gio-fried"
+      ],
+      "out": "cha-gio-cut"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "cha-gio-cut",
+    "xa-lach",
+    "do-chua"
+  ],
+  "codex": {
+    "story": "Miền Nam gọi chả giò, miền Bắc gọi nem rán: bánh tráng cuốn thịt, tôm, miến, mộc nhĩ rồi chiên vàng.",
+    "region_note": "",
+    "how_to_eat": "Cuốn với xà lách, rau thơm, chấm nước mắm chua ngọt.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

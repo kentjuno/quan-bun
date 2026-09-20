@@ -1,0 +1,43 @@
+{
+  "id": "pho-sot-vang",
+  "name": "Phở Sốt Vang",
+  "pron": "fuh sot vahng",
+  "gloss": "pho with red-wine braised beef",
+  "region": "ha-noi",
+  "price": 50,
+  "serve": {
+    "vessel": "pho-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "pho-noodle",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "action": "pour-pho-broth"
+  },
+  "prep": [
+    {
+      "action": "warm-sot-vang",
+      "in": [
+        "sot-vang"
+      ],
+      "out": "sot-vang-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "sot-vang-ready",
+    "hanh-tay",
+    "hanh-la",
+    "$broth"
+  ],
+  "codex": {
+    "story": "Sốt vang là bò hầm rượu vang kiểu Pháp được người Hà Nội \"Việt hoá\", chan lên phở thành món riêng.",
+    "region_note": "",
+    "how_to_eat": "Thường ăn với bánh mì hoặc phở, ít rau thơm.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

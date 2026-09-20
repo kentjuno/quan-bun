@@ -1,0 +1,43 @@
+{
+  "id": "pho-xao-lan",
+  "name": "Phở Xào Lăn",
+  "pron": "fuh sow lun",
+  "gloss": "pho with stir-fried beef & greens",
+  "region": "ha-noi",
+  "price": 55,
+  "serve": {
+    "vessel": "pho-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "pho-noodle",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "action": "pour-pho-broth"
+  },
+  "prep": [
+    {
+      "action": "stir-fry-xao-lan",
+      "in": [
+        "bo-tai",
+        "rau-cai"
+      ],
+      "out": "xao-lan-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "xao-lan-ready",
+    "hanh-la",
+    "$broth"
+  ],
+  "codex": {
+    "story": "Bò xào nhanh với rau cải trên lửa lớn rồi đặt lên phở, chan chút nước dùng — lai giữa phở nước và phở xào.",
+    "region_note": "",
+    "how_to_eat": "Ăn ngay khi rau còn giòn.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

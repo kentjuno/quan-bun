@@ -1,0 +1,43 @@
+{
+  "id": "bun-bo-hue",
+  "name": "Bún Bò Huế",
+  "pron": "boon baw hway",
+  "gloss": "spicy Huế beef noodle soup",
+  "region": "hue",
+  "price": 55,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "bun-to",
+    "flow": "hot-once"
+  },
+  "broth": {
+    "cook": [
+      "nuoc-bun-bo",
+      "huyet",
+      "mieng-nuoc"
+    ],
+    "out": "bun-bo-broth-ready",
+    "action": "pour-bun-bo"
+  },
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "bap-bo",
+    "thit-luoc",
+    "cha-cua",
+    "hanh-tay",
+    "rau-ram",
+    "hanh-la",
+    "$broth"
+  ],
+  "codex": {
+    "story": "Nước dùng hầm xương bò và giò heo, thơm sả và mắm ruốc, màu đỏ của dầu điều ớt. Bún cọng to đặc trưng Huế.",
+    "region_note": "",
+    "how_to_eat": "Rau chuối bào, giá, rau thơm; vắt chanh, thêm ớt sa tế.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

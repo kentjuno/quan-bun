@@ -2,26 +2,29 @@
 // Số đo bằng bot (3 phiếu tới cùng lúc, lấy tổng thời gian / 3), không phải ước lượng tay.
 // Dùng để giãn/nén lịch khách của level cho khớp với tốc độ thật của quầy —
 // lịch gốc trong data/worlds.js được canh cho BẾP 3D (có đi lại) nên ở quầy sẽ thưa gấp 2–3 lần.
-// `tests/counter.test.js` đo lại và báo lỗi nếu lệch quá 40% → sửa bảng này.
+// Đo với NGUỒN GAME (dishes/*.json — công thức chung, P6). `tests/counter.test.js` đo lại và báo lỗi nếu lệch quá 40% → sửa bảng này.
 export const POV_SECONDS = {
   'goi-cuon-tom-thit': 4.8,
-  'bun-dau-mam-tom': 4.8,
-  'chao-long': 11.4,
-  'chao-suon': 11.4,
-  'cha-gio-viet-nam': 11.8,
-  'pho-tai-nam': 12.0,
-  'bun-nem-cua-thit-nuong-tom-nuong': 13.2,
-  'bun-ga-nuong': 13.2,
+  'chao-long': 11.8,
+  'chao-suon': 11.8,
+  'pho-tai-nam': 12,
+  'cha-gio-viet-nam': 12.1,
+  'pho-sot-vang': 13.1,
+  'pho-xao-lan': 13.1,
   'bun-cha-ha-noi': 13.2,
+  'banh-hoi-thit-heo': 13.5,
+  'pho-suon-tai': 13.8,
+  'bun-ga-nuong': 14.2,
   'pho-tai-dap': 15.2,
+  'bun-bo-hue': 15.5,
   'pho-dac-biet': 15.9,
-  'bun-bo-hue': 16.2,
-  'pho-suon-tai': 18.3,
-  'bun-rieu-cua': 19.0,
-  'cha-ca-la-vong': 19.5,
-  'banh-da-cua': 21.8,
-  'banh-hoi-thit-heo': 22.6,
-  'bun-ca-hai-phong': 25.0,
+  'bun-dau-mam-tom': 16,
+  'bun-rieu-cua': 18.7,
+  'cha-ca-la-vong': 19.8,
+  'pho-ga': 20.1,
+  'banh-da-cua': 21.1,
+  'bun-ca-hai-phong': 25,
+  'bun-nem-cua-thit-nuong-tom-nuong': 14.9,
 };
 export const POV_DEFAULT = 15;
 /** Giây/tô trung bình của các món trong level. */

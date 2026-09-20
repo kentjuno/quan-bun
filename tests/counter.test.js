@@ -4,6 +4,7 @@ import { Counter, counterMove, povOk } from '../src/game/counter.js';
 import { ALL_DISHES, levelById, WORLDS } from '../src/config.js';
 import { makeLevelArrivals, povArrivals } from '../src/game/levels.js';
 import { POV_SECONDS, POV_DEFAULT } from '../src/data/pace.js';
+import { setSource } from '../src/game/recipes.js';
 import { recipeFor, D } from '../src/game/recipes.js';
 
 /** Chạy quầy bằng bot: mỗi 0.35 s làm một nước đi, còn lại để đồng hồ chạy. */
@@ -186,8 +187,8 @@ describe('Quầy POV chạy được world/level', () => {
 
 // ---- nhịp khách ở quầy (Kent 14/09: "tần suất khách xuất hiện ít quá") ----
 describe('Nhịp khách ở quầy POV', () => {
-  it('bảng giây/tô còn khớp với bot (lệch >40% là phải đo lại)', () => {
-    const off = [];
+  it('bảng giây/tô còn khớp với bot (lệch >40% là phải đo lại) — đo với nguồn game (P6)', () => {
+    setSource('game'); const off = [];
     for (const d of ALL_DISHES) {
       const C = new Counter({ dishes: [d], rounds: 3, patience: 900, gap: 0.1, rnd: () => 0.5 });
       let acc = 0;
@@ -195,7 +196,7 @@ describe('Nhịp khách ở quầy POV', () => {
       const real = C.time / 3; const book = POV_SECONDS[d] ?? POV_DEFAULT;
       if (Math.abs(real - book) / book > 0.4) off.push(`${d}: bảng ${book}s, đo ${real.toFixed(1)}s`);
     }
-    expect(off, off.join(' | ')).toEqual([]);
+    setSource('shop'); expect(off, off.join(' | ')).toEqual([]);
   }, 120000);
 
   it('khách đầu tới sớm và khoảng cách bám theo tốc độ thật của quầy', () => {
@@ -227,8 +228,8 @@ describe('Nhịp khách ở quầy POV', () => {
 
   // NHỊP THẬT (data/pace.js, Kent 19/09): kiên nhẫn ≈ 4–6 × giây/tô bot, giờ ca = khách cuối + 3 tô, combo ×2, cao điểm.
   // Bot (trần trên) phải 3 sao MỌI level, nếu không thang level đã bị siết quá tay → chỉnh PACE, không chỉnh từng level.
-  it('PACE: bot 3 sao ở cả 129 level, không khách nào bỏ đi; level 2 mỗi world có đủ nước nấu sẵn cho cả ca', () => {
-    const bad = [];
+  it('PACE: bot 3 sao ở cả 129 level (nguồn game — công thức chung), không khách nào bỏ đi', () => {
+    setSource('game'); const bad = [];
     for (const w of WORLDS) for (const L of w.levels) {
       expect(L.paced, `${L.id} chưa áp PACE`).toBe(true);
       expect(L.base.patience, `${L.id}: số gốc phải giữ trong L.base`).toBeGreaterThan(L.patience);
@@ -238,7 +239,7 @@ describe('Nhịp khách ở quầy POV', () => {
       if (C.money < T[2]) bad.push(`${L.id}: ${C.money}k < ${T[2]}k`);
       if (r.left) bad.push(`${L.id}: bỏ đi ${r.left}`);
     }
-    expect(bad, bad.slice(0, 8).join(' | ')).toEqual([]);
+    setSource('shop'); expect(bad, bad.slice(0, 8).join(' | ')).toEqual([]);
   }, 180000);
 
   it('combo: chuỗi tô sạch nhân tiền, sai 1 tô là về 1×; giờ cao điểm dồn khách còn lại và nhân tiền', () => {

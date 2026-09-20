@@ -1,0 +1,49 @@
+{
+  "id": "pho-ga",
+  "name": "Phở Gà",
+  "pron": "fuh gah",
+  "gloss": "chicken pho",
+  "region": "ha-noi",
+  "price": 45,
+  "serve": {
+    "vessel": "pho-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "pho-noodle",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "cook": [
+      "cot-pho-ga",
+      "nuoc-pho"
+    ],
+    "out": "chicken-broth-ready",
+    "action": "pour-chicken-broth"
+  },
+  "prep": [
+    {
+      "action": "chop-chicken",
+      "in": [
+        "ga-luoc"
+      ],
+      "out": "ga-chat"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "ga-chat",
+    "hanh-tay",
+    "hanh-la",
+    "ngo-ri-ngo-gai",
+    "$broth"
+  ],
+  "codex": {
+    "story": "Phở gà Hà Nội: gà ta luộc, nước trong, thơm gừng nướng. Xuất hiện khi thịt bò khan hiếm những năm 1940.",
+    "region_note": "",
+    "how_to_eat": "Thêm lá chanh thái sợi, tiêu, chanh ớt.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

@@ -1,0 +1,43 @@
+{
+  "id": "bun-nem-cua-thit-nuong-tom-nuong",
+  "name": "Bún Nem Cua, Thịt Nướng, Tôm Nướng",
+  "pron": "boon nem koo-ah",
+  "gloss": "vermicelli with crab rolls, grilled pork & shrimp",
+  "region": "sai-gon",
+  "price": 55,
+  "serve": {
+    "vessel": "dry-bowl"
+  },
+  "noodle": {
+    "item": "bun",
+    "flow": "hot-rinse-hot"
+  },
+  "prep": [
+    {
+      "action": "cut-salad",
+      "in": [
+        "xa-lach",
+        "dua-leo",
+        "do-chua"
+      ],
+      "out": "salad-cut-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "salad-cut-ready",
+    "cha-gio",
+    "thit-nuong",
+    "tom-luoc",
+    "dau-phong-rang",
+    "hanh-phi"
+  ],
+  "codex": {
+    "story": "Tô bún khô kiểu Nam: bún, rau, đồ chua, nem (chả giò), thịt nướng, tôm — chan nước mắm chua ngọt.",
+    "region_note": "Bản chung: nem đã chiên sẵn (world Khai vị mới dạy chiên); tôm nướng chưa có sprite — dùng tôm luộc tạm.",
+    "how_to_eat": "Trộn đều từ dưới lên trước khi ăn.",
+    "review": "cần Kent duyệt"
+  },
+  "real": null
+}

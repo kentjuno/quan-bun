@@ -1,10 +1,24 @@
 // Chuyển dữ liệu bếp thật (sim-data.js) thành "công thức game": chuỗi ráp + các phép biến đổi ở trạm.
 // Quy tắc: được GỘP bước cho nhanh, KHÔNG được đổi thứ tự bếp thật.
 import { SIM_DATA } from '../data/sim-data.js';
+import { GAME_DATA } from './gamedata.js';
+import STATIONS_JSON from '../data/stations.json';
 import { ACTION_TIME, PRICES } from '../config.js';
 import { t, lang, withGloss, actionName, stateLabel } from '../i18n.js';
 
-export const D = SIM_DATA;
+/**
+ * Hai nguồn sự thật (docs/PLAN-PUBLIC.md §0):
+ *   'shop' = sim-data.js — công thức THẬT của quán, cho tab Luyện / mini-game / bếp 3D (và mọi test cũ).
+ *   'game' = dishes/*.json qua dishlib — công thức CHUNG Việt Nam, cho game chính (level trên bản đồ).
+ * `D` là object sống: setSource() đổi ruột nó, mọi nơi đọc D.recipes/D.items… thấy ngay. Mặc định 'shop' để test/mini-game giữ nguyên.
+ */
+const SOURCES = { shop: SIM_DATA, game: GAME_DATA };
+export const D = { ...SIM_DATA };
+let curSource = 'shop';
+/** Đổi nguồn: 'shop' | 'game' | một object dữ liệu (test / add_dish). */
+export function setSource(name) { const src = typeof name === 'object' ? name : SOURCES[name]; if (!src) throw new Error(`source lạ: ${name}`); for (const k of Object.keys(D)) delete D[k]; Object.assign(D, src); curSource = typeof name === 'object' ? 'custom' : name; return curSource; }   // vi-src
+export const source = () => curSource;
+export const GAME = GAME_DATA; export const SHOP = SIM_DATA;
 
 export function actionTime(actionId) { return ACTION_TIME[actionId] ?? ACTION_TIME.default; }
 
@@ -142,15 +156,19 @@ function chase(subs, tok) { let cur = tok; for (let g = 0; g < 6 && subs[cur] &&
  *  chiên) và `warm-sot-vang` có chữ "warm" (dễ rơi vào nồi trụng), cả hai đều sai chỗ. */
 const STOVE_ACTIONS = new Set(['warm-sot-vang', 'stir-fry-xao-lan']);
 
-/** Trạm theo hành động. pot: trụng/ủ ấm · sink: xả · microwave · stovetop: mặt bếp · prep (thớt/bàn soạn): cắt, đập, làm chén, lót mẹt, múc cháo… */
-function stationForAction(actionId) {
+/** Trạm theo hành động: bảng data/stations.json trước (P6.3), hành động lạ thì đoán theo tên. pot: trụng/ủ ấm · sink: xả · microwave · stovetop: mặt bếp · prep: cắt, đập, làm chén, lót mẹt, múc cháo… */
+export const STATIONS = STATIONS_JSON.stations;
+const ACTION_STATION = Object.fromEntries(STATIONS.flatMap((s) => (s.actions || []).map((a) => [a, s.id])));
+export function stationForAction(actionId) {
+  const known = ACTION_STATION[actionId];
+  if (known) return known === 'burner' ? 'stovetop' : known;   // chuỗi nước lèo bị lọc ở soupChainIds; nếu lọt thì rơi vào ô bếp
   if (STOVE_ACTIONS.has(actionId)) return 'stovetop';   // 'stove' đã là NỒI NƯỚC PHỞ SẴN trong bếp 3D — đừng dùng lại tên đó
   if (/microwave/.test(actionId)) return 'microwave';
   if (/fry/.test(actionId)) return 'fryer';
   if (/soak/.test(actionId)) return 'sink';
   if (/blanch|reblanch|warm/.test(actionId)) return 'pot';
   if (/rinse/.test(actionId)) return 'sink';
-  if (/heat|stock|water|blood|porridge-in-pot|add-pho-broth/.test(actionId)) return 'stovetop';   // (không tới đây: chuỗi nước lèo bị lọc ở soupChainIds)
+  if (/heat|stock|water|blood|porridge-in-pot|add-pho-broth/.test(actionId)) return 'stovetop';
   return 'prep';
 }
 
@@ -194,7 +212,7 @@ export function recipeFor(dishId, sim = null) {
   for (const k of Object.keys(subs)) { if (!D.items[k] || made.has(k)) continue; const v = chase(subs, k); if ([...needTok].some((t) => tokenMatches(t, v))) shelfSubs[k] = v; }
   const need = [r.base?.noodle, sim?.hotBowl ? null : r.base?.bowl, ...items(assembly), ...items(transforms.flatMap((t) => t.inputs))].filter(Boolean);
   const shelfItems = [...new Set([...Object.keys(shelfSubs), ...need])].filter((it) => !made.has(it));
-  return { id: dishId, name: r.name, price: PRICES[dishId] ?? 40, transforms, assembly, brothAction, simplify: sim || null, shelfSubs,
+  return { id: dishId, name: r.name, price: r.price ?? PRICES[dishId] ?? 40, region: r.region || null, transforms, assembly, brothAction, simplify: sim || null, shelfSubs,
     noodle: r.base?.noodle, bowl: r.base?.bowl, opener: assembly[0], menuCode: r.menuCode || null,
     /** Nguyên liệu người chơi phải lấy từ kệ (item id) */
     shelfItems };
