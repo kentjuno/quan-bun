@@ -1,6 +1,6 @@
-# PLAN-PUBLIC — **Phở Real** — "a kitchen road trip through Việt Nam"
+# PLAN-PUBLIC — **KJ Phở Real** — "a kitchen road trip through Việt Nam"
 
-(Tên game: **Phở Real**, Kent chốt 19/09. Kent tự kiểm tên trên app store / domain / handle mạng xã hội.)
+(Tên game: **KJ Phở Real** — Kent chốt 20/09 sau khi thấy domain "phoreal" đã có người lấy; tiền tố KJ để chắc không đụng. Bảng hiệu / title / manifest / store đều dùng đúng chuỗi này.)
 
 Kent quyết 19/09: **game chính là game cho người chơi, mục đích giới thiệu món Việt ra thế giới.** Chế độ luyện của Kent nằm ở tab *Thêm* (mini games), không đụng. Đã chốt: **hành trình Bắc → Nam**, **vi + en trước**, và (Kent sửa lại cùng ngày) **game chính dùng CÔNG THỨC CHUNG CỦA VIỆT NAM, không dùng công thức quán** — đồ của quán chỉ ở tab Luyện. Nhờ vậy game thêm được món quán không bán, và không lộ công thức quán.
 
@@ -102,12 +102,24 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
    | Vùng | World gom vào | Ghi chú `[cần Kent duyệt]` |
    |---|---|---|
-   | Hà Nội | `pho`, `cha-ca`, `mon-kho` (bún chả, bún đậu, bún nem) | bánh hỏi thịt heo trong `mon-kho` là món Nam/Trung — Kent quyết để đâu |
+   | Hà Nội | `pho`, `cha-ca`, `mon-kho` (bún chả, bún đậu, bún nem) | bánh hỏi thịt heo tách ra khỏi `mon-kho` → miền Trung (Kent 20/09) |
    | Hải Phòng | `hai-phong` | |
-   | Huế / miền Trung | `bun-bo`, `bun-rieu` | **Kent xếp bún riêu vào miền Trung (19/09).** Lưu ý trung thực: nhiều tài liệu xếp gốc Bắc Bộ — dòng "vùng" của món này là chỗ dễ bị người Việt khác cãi; nếu không chắc, ghi "phổ biến khắp ba miền, miền Trung có bản riêng". |
+   | Huế / miền Trung | `bun-bo`, `bun-rieu`, bánh hỏi | **Kent xếp bún riêu và bánh hỏi vào miền Trung (19–20/09).** Lưu ý trung thực: nhiều tài liệu xếp bún riêu gốc Bắc Bộ — nếu bị hỏi, sổ tay ghi "phổ biến khắp ba miền, miền Trung có bản riêng". |
    | Sài Gòn | `khai-vi` (gỏi cuốn, chả giò), `chao` | |
 
-   Vì đã rời menu quán, **danh sách món là quyết định thiết kế**: đề xuất mỗi vùng 3–4 món thế giới biết tên — Hà Nội: phở, bún chả, chả cá; Huế: bún bò, bánh bèo; Quảng/Đà Nẵng: mì Quảng, cao lầu; Sài Gòn: hủ tiếu, cơm tấm, bánh xèo, gỏi cuốn `[cần Kent duyệt]`. Món mới đi qua P6. Cấu trúc cho phép vùng 1 world.
+   **Danh sách món — Kent giao model quyết (20/09): "món nào ngon, đặc biệt của vùng đó là được".** Tiêu chí: thế giới biết tên hoặc nhìn là mê; mỗi vùng 3–4 món; ưu tiên món làm được bằng 6 trạm sẵn có trước, món cần trạm mới để sau. Lộ trình (21 món hiện có giữ, thêm dần qua P6):
+
+   | Tỉnh / vùng (thứ tự đi) | Có sẵn | Thêm (P6, theo thứ tự) | Trạm mới? |
+   |---|---|---|---|
+   | Hà Nội | phở tái nạm, đặc biệt, tái đập, sườn tái, gà, sốt vang, xào lăn; bún chả; bún đậu mắm tôm; bún nem; chả cá Lã Vọng | **bún thang**, **bánh cuốn** | bánh cuốn: tráng hơi (trạm mới) |
+   | Hải Phòng | bánh đa cua, bún cá | **bánh mì cay** (kèm) | chảo chiên có sẵn |
+   | Huế / miền Trung | bún bò Huế, bún riêu cua, bánh hỏi thịt heo | **bánh bèo**, **bún hến / cơm hến** | bánh bèo: hấp (trạm mới) |
+   | Quảng Nam / Đà Nẵng | — | **mì Quảng**, **cao lầu** | không (trụng + topping + chan ít nước) |
+   | Nha Trang / Phan Thiết | — | **bún chả cá**, **bánh căn** | bánh căn: khuôn nướng (trạm mới) |
+   | Sài Gòn / Nam Bộ | gỏi cuốn, chả giò, cháo lòng, cháo sườn | **hủ tiếu Nam Vang**, **cơm tấm sườn bì chả**, **bánh xèo**, **bún mắm** | cơm tấm: nướng (trạm mới); bánh xèo: đổ chảo (trạm mới) |
+   | Miền Tây | — | **bún cá Châu Đốc**, **bánh khọt** | bánh khọt: khuôn (dùng chung trạm bánh căn) |
+
+   Thứ tự thêm: mì Quảng → cao lầu → hủ tiếu → bún thang → bún chả cá (đều 0 trạm mới), rồi mới tới nhóm cần trạm: cơm tấm, bánh xèo, bánh bèo, bánh cuốn, bánh căn/khọt. Mỗi món `[cần Kent duyệt]` công thức + vùng + chuyện.
 2. Màn bản đồ thay lưới world: ảnh `art/map-vn.webp` (gen Flow, kiểu C, bản đồ Việt Nam cách điệu, các vùng là "ghim" tranh nhỏ). Vùng khoá = xám mờ + ổ khoá; mở = màu + số sao. Chạm vùng → danh sách level của vùng (lưới cũ giữ, chỉ đổi khung).
 3. Mở vùng theo **tổng sao** (đang có `starsToUnlock`) — giữ.
 4. Chuyển vùng có một màn "đi đường" 2 giây: đường vẽ nét mực chạy từ vùng cũ tới vùng mới trên bản đồ + tên vùng + 1 dòng `[cần Kent duyệt]` ("Huế — cố đô, ăn cay, nước lèo có sả và mắm ruốc").
@@ -120,12 +132,14 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
 ## P3 — Sổ tay món (codex): phần thưởng thật
 
-**Mục tiêu.** Nấu đúng một món lần đầu → "mở trang sổ tay": tranh tô đầy, tên Việt + cách đọc, vùng, 3–5 dòng chuyện, cách ăn, và **công thức phổ biến** (từ `data/dishes/`, mức gia đình, trình bày đẹp).
+**Mục tiêu.** Nấu đúng một món lần đầu → "mở trang sổ tay": tranh tô đầy, tên Việt + cách đọc, vùng, 3–5 dòng chuyện, cách ăn, và **công thức NẤU THẬT NGOÀI ĐỜI** (Kent 20/09: "ngoài chơi ra còn học nấu ăn ngoài đời thật"). Đây là hai lớp khác nhau, không trộn:
+- *Công thức trong game* (`dishes/<id>.json` → bước ráp, trạm) — để chơi.
+- *Công thức đời thật* (`dishes/<id>.recipe.<lang>.md`): nguyên liệu cho 4 người + định lượng, các bước nấu (kể cả nấu nước dùng 3–6 tiếng mà game bỏ qua), mẹo, thời gian. **Model nghiên cứu trên mạng** (WebSearch), tổng hợp từ ≥ 2 nguồn tiếng Việt uy tín, **ghi nguồn cuối trang**, viết lại bằng lời mình (không chép), gắn `[cần Kent duyệt]`. Bản en dịch từ bản vi. Có nút "In / lưu công thức".
 
 **Hiện trạng.** Đã có: tranh tô 4 bậc (`dishArt`), `mastery.js` biết món nào đã "thuộc", công thức ở `recipeFor()`. Chưa có màn codex, chưa có chuyện.
 
 **Spec.**
-1. `src/data/codex/<dish>.json`: `{ region, story: { vi, en }, eat: { vi, en }, pairs: [...] }`. Model viết nháp **có dấu `[cần Kent duyệt]`** ở đầu mỗi chuỗi cho tới khi Kent xoá dấu. Chuyện ≤ 60 từ, giọng người kể chuyện quán, không wiki.
+1. `src/data/codex/<dish>.json`: `{ region, story: { vi, en }, eat: { vi, en }, pairs: [...], recipe: 'dishes/<id>.recipe' }`. Model viết nháp **có dấu `[cần Kent duyệt]`** ở đầu mỗi chuỗi cho tới khi Kent xoá dấu. Chuyện ≤ 60 từ, giọng người kể chuyện quán, không wiki. Công thức đời thật theo mẫu cố định: *Nguyên liệu (4 người) · Nước dùng / phần nấu lâu · Sơ chế · Ráp tô · Ăn kèm · Mẹo · Nguồn*.
 2. Trang codex: tab "Sổ tay" ở menu, lưới N ô (ô chưa mở = tranh mờ + "???"). Mở ô: tranh tô `wet` to, tên + `pron` + `gloss`, vùng, chuyện, cách ăn, công thức phổ biến (bước từ `recipeFor(dish).assembly` với `label`, định lượng gia đình từ `dishes/<id>.json`).
 3. Mở khoá: lần đầu bưng món đó **sạch** (0 lỗi) → cuối ca hiện thẻ "Mở sổ tay: Phở Tái Nạm" (đã có khung thẻ mở khoá từ 0.7.0) → chạm vào là tới trang.
 4. Chia sẻ: nút "Chia sẻ" tạo ảnh PNG 1080×1350 (canvas) = tranh + tên + 1 dòng chuyện + "KJ's Choices" — người chơi đăng lên mạng là quảng cáo miễn phí.
