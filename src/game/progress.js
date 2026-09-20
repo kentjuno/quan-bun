@@ -70,6 +70,8 @@ export function worldUnlocked(worldId) {
 /** Chuyến xe sang tỉnh đã xem chưa (M2: xem lần đầu khi tỉnh mở, sau đó bỏ qua được). */
 export function tripSeen(provId) { return !!(data.trips || {})[provId]; }
 export function markTrip(provId) { data.trips = data.trips || {}; data.trips[provId] = 1; save(); }
+export function ownerMet(worldId) { return !!(data.owners || {})[worldId]; }
+export function markOwner(worldId) { data.owners = data.owners || {}; data.owners[worldId] = 1; save(); }
 export function introSeen() { return !!data.intro; }
 export function markIntro() { data.intro = 1; save(); }
 /** Level mở khi level trước trong world đã ≥1★ (level 1 luôn mở nếu world mở). */

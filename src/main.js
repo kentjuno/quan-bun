@@ -4,9 +4,10 @@ import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
 import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
-import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds } from './game/progress.js';
+import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner } from './game/progress.js';
 import { PROVINCES, QUAN, provinceOf, prevProvince } from './data/regions.js';
 import { playTrip, tripRunning } from './trip.js';
+import { playIntro, playOwner, sceneRunning } from './scene.js';
 import { D, recipeFor, setSource } from './game/recipes.js';
 import { botDecide } from './game/bot.js';
 import { label, labelL, dishLabel } from './game/recipes.js';
@@ -361,12 +362,19 @@ $('pickBun').onclick = () => { practice = ALL_DISHES.filter((d) => /^bun-/.test(
 $('pickWeak').onclick = () => { practice = ALL_DISHES.filter((d) => !isMastered(d)); setPractice(practice); renderMenu(); };
 function selectLevel(L) { if (!L) return; level = L; worldIdx = Math.max(0, WORLDS.findIndex((w) => w.id === L.world)); renderMenu(); if (!running) { world = newWorld(); rebuild(); } }
 renderMenu();
-$('btnStart').onclick = () => { if (!levelUnlocked(level)) return; levelOnPov(level) ? startLevelPov(level) : start(false, 'level'); }; $('btnRetry').onclick = () => playMode === 'puzzle' ? (lastPuzzle.kinds[0] === 'pov' ? startPov(lastPuzzle.rounds) : startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds)) : playMode === 'level' && levelOnPov(level) ? startLevelPov(level) : start(botMode, playMode);
+/** Vô bếp một level: lần đầu tiên → mở đầu văn phòng; lần đầu vô một quán → chủ quán chào + thử thách; rồi mới nấu. */
+function enterLevel(L) {
+  const go = () => (levelOnPov(L) ? startLevelPov(L) : start(false, 'level'));
+  const owner = () => { if (QUAN[L.world] && !ownerMet(L.world)) { markOwner(L.world); playOwner(L.world, { sfx, onDone: go }); } else go(); };
+  if (!introSeen()) { markIntro(); ensureAudio(); playIntro({ sfx, onDone: owner }); } else owner();
+}
+$('btnStart').onclick = () => { if (!levelUnlocked(level)) return; enterLevel(level); };
+$('btnIntro').onclick = () => playIntro({ sfx }); $('btnRetry').onclick = () => playMode === 'puzzle' ? (lastPuzzle.kinds[0] === 'pov' ? startPov(lastPuzzle.rounds) : startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds)) : playMode === 'level' && levelOnPov(level) ? startLevelPov(level) : start(botMode, playMode);
 $('btnNext').onclick = () => {
   const n = nextLevel(level); if (n) selectLevel(n); else { const J = journeyWorlds(); const w = J[J.indexOf(worldById(level.world)) + 1]; if (w) selectLevel(w.levels[0]); }
   // sang tỉnh mới lần đầu → chuyến xe trước, rồi mới vô bếp
-  const pv = provinceOf(level.world); if (pv?.piece && provinceUnlocked(pv.id) && !tripSeen(pv.id)) { $('result').classList.add('hidden'); markTrip(pv.id); playTrip(pv.piece, { sfx, onDone: () => { levelOnPov(level) ? startLevelPov(level) : start(false, 'level'); } }); return; }
-  levelOnPov(level) ? startLevelPov(level) : start(false, 'level');
+  const pv = provinceOf(level.world); if (pv?.piece && provinceUnlocked(pv.id) && !tripSeen(pv.id)) { $('result').classList.add('hidden'); markTrip(pv.id); playTrip(pv.piece, { sfx, onDone: () => enterLevel(level) }); return; }
+  enterLevel(level);
 };
 $('btnBot').onclick = () => start(true);
 function takeover() { if (!botMode) return; botMode = false; $('btnTakeover').classList.add('hidden'); showHint(T('m3d.takeover'), 4000); }
@@ -454,4 +462,4 @@ requestAnimationFrame(frame);
 if (import.meta.env.PROD && 'serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/claude\.ai/.test(location.host)) {
   navigator.serviceWorker.register('./sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const nw = reg.installing; nw?.addEventListener('statechange', () => { if (nw.state === 'installed' && navigator.serviceWorker.controller) toast(T('menu.newVersion'), 3000); }); }); }).catch(() => {});
 }
-window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, counterMove, tick, startPuzzle, D, recipeFor, playTrip, tripRunning };
+window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, counterMove, tick, startPuzzle, D, recipeFor, playTrip, tripRunning, playIntro, playOwner };

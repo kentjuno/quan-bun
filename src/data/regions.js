@@ -21,14 +21,14 @@ export const PROVINCES = [
 
 /** Quán = world: tên quán + chủ quán (khách quen cũ lên làm chủ — M2 "chủ quán"). `[cần Kent duyệt]` tên quán. */
 export const QUAN = {
-  pho: { name: 'Phở Cậu Hai', owner: 'cau-hai' },
-  'mon-kho': { name: 'Mẹt Út Mười', owner: 'ut-muoi' },
-  'cha-ca': { name: 'Chả Cá Lã Vọng', owner: 'chu-tu' },
-  'hai-phong': { name: 'Quán Ông Năm', owner: 'ong-nam' },
-  'bun-rieu': { name: 'Riêu Dì Ba', owner: 'di-ba' },
-  'bun-bo': { name: 'Bún Bò Thím Bảy', owner: 'thim-bay' },
-  chao: { name: 'Cháo Sáng Bến Thành', owner: null },
-  'khai-vi': { name: 'Cuốn & Chả Giò Cô Sáu', owner: null },
+  pho: { name: 'Phở Cậu Hai', owner: 'cau-hai', greet: 'Bỏ việc đi học nấu ăn hả? Gan đó. Phở là môn đầu — làm được tô phở tử tế rồi hẵng nói chuyện đi xa.', dare: 'Đứng ca cho ra hồn, đủ sao cậu đưa công thức thật cho mà mang về nấu.' },
+  'mon-kho': { name: 'Mẹt Út Mười', owner: 'ut-muoi', greet: 'Anh là người bỏ văn phòng đi học nấu đó hả? Em theo dõi anh trên mạng nè!', dare: 'Mẹt bún chả, bún đậu phải đẹp mới lên hình được. Rau trước bún sau, nhớ nghe.' },
+  'cha-ca': { name: 'Chả Cá Lã Vọng', owner: 'chu-tu', greet: 'Quán này trăm năm rồi con. Chả cá không có thứ tự bắt buộc, nhưng bảy phần phải đủ.', dare: 'Làm cho khéo, cho nhanh. Chú không vội nhưng khách thì vội.' },
+  'hai-phong': { name: 'Quán Ông Năm', owner: 'ong-nam', greet: 'Tới Hải Phòng rồi hả. Bánh đa đỏ, chả cá, nước cua — đất cảng ăn phải đậm.', dare: 'Ông chạy xe cả ngày, sáng chỉ có mười phút. Làm lẹ mà đúng nghe.' },
+  'bun-rieu': { name: 'Riêu Dì Ba', owner: 'di-ba', greet: 'Con đi từ ngoài Bắc vô tới đây học riêu hả? Ngồi xuống, dì kể cho nghe nồi riêu này nấu sao.', dare: 'Cốt cua, huyết, nước — đúng thứ tự thì nước mới trong. Sai một lần là đục cả nồi.' },
+  'bun-bo': { name: 'Bún Bò Thím Bảy', owner: 'thim-bay', greet: 'Bún bò Huế phải cay, phải thơm sả, phải đỏ dầu điều. Con ăn cay được không?', dare: 'Nhiều topping nhất đường này đó. Nhớ được hết là thím phục.' },
+  chao: { name: 'Cháo Sáng Bến Thành', owner: null, greet: 'Sài Gòn dậy sớm lắm con. Bốn giờ sáng nồi cháo phải sôi rồi.', dare: 'Cháo đun lâu — chưa có khách đã phải đun. Ai chờ cháo là mất khách.' },
+  'khai-vi': { name: 'Cuốn & Chả Giò Cô Sáu', owner: null, greet: 'Gỏi cuốn với chả giò, món nào khách Tây cũng mê. Con học xong là đi khắp thế giới được.', dare: 'Cuốn phải chắc tay, chiên phải lửa nhỏ. Hai việc hai nhịp, làm song song mới kịp.' },
 };
 
 /**
