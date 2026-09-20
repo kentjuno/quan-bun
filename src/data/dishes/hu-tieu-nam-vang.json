@@ -1,0 +1,163 @@
+{
+  "id": "hu-tieu-nam-vang",
+  "name": "Hủ Tiếu Nam Vang",
+  "pron": "hoo tee-oo nahm vahng",
+  "gloss": "Phnom Penh-style clear pork & shrimp noodle soup",
+  "region": "sai-gon",
+  "price": 52,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "hu-tieu",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "cook": [
+      "cot-hu-tieu",
+      "mieng-nuoc"
+    ],
+    "out": "hu-tieu-broth-ready",
+    "action": "pour-hu-tieu"
+  },
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "thit-luoc",
+    "tom-luoc",
+    "cha-lua",
+    "$broth",
+    "hanh-la",
+    "top-mo"
+  ],
+  "codex": {
+    "story": "Người Hoa ở Nam Vang mang xuống Sài Gòn: nước trong ngọt xương, tôm thịt đủ đầy, ăn nước hoặc ăn khô đều được.",
+    "region_note": "",
+    "how_to_eat": "Thêm giá, hẹ, tỏi phi; ăn khô thì chan nước riêng ra chén.",
+    "review": "cần Kent duyệt"
+  },
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 40 phút · nấu 2 giờ",
+      "ingredients": [
+        "500 g hủ tiếu dai (sợi nhỏ) hoặc hủ tiếu tươi",
+        "1 kg xương ống heo chặt khúc",
+        "300 g củ cải trắng, 1 củ hành tây",
+        "50 g tôm khô, 20 g mực khô (tuỳ chọn, cho vị ngọt hậu)",
+        "250 g thịt nạc thăn heo (luộc, thái lát)",
+        "200 g thịt heo xay",
+        "250 g tôm sú tươi, lột vỏ chừa đuôi",
+        "150 g gan heo, 150 g tim heo",
+        "20 quả trứng cút luộc",
+        "1 củ gừng nướng, 4 củ hành tím nướng, 1 củ tỏi băm phi vàng",
+        "2 muỗng canh rượu trắng (khử tanh nội tạng)",
+        "Gia vị: 3 muỗng canh nước mắm, 1 muỗng canh đường phèn, 2 muỗng cà phê muối, hạt nêm, tiêu",
+        "Ăn kèm: 200 g giá đỗ, 100 g hẹ, cần tây, xà lách, tỏi phi, tỏi ngâm chua, chanh, ớt, xì dầu"
+      ],
+      "broth": [
+        "Chần xương ống 5 phút trong nước sôi có gừng, rửa sạch rồi cho vào nồi 3 lít nước lạnh.",
+        "Rang tôm khô và mực khô cho dậy mùi, bỏ vào nồi cùng gừng nướng, hành tím nướng, củ cải trắng và hành tây.",
+        "Hầm lửa nhỏ 90-120 phút, hớt bọt liên tục và không đậy vung kín để nước dùng trong veo, màu vàng nhạt.",
+        "Vớt bỏ xác xương, rau củ, lọc qua rây; nêm nước mắm, đường phèn, muối, hạt nêm cho vị ngọt thanh chứ không gắt.",
+        "Ướp thịt xay với chút nước mắm, tiêu, tỏi băm rồi xào săn với tỏi phi khoảng 8-10 phút, để riêng."
+      ],
+      "prep": [
+        "Ngâm gan heo trong nước muối loãng hoặc sữa tươi 20 phút cho ra hết máu, rửa lại sạch.",
+        "Luộc riêng thịt thăn, tim và gan trong nước có gừng đập dập và rượu trắng; gan chỉ luộc 10-12 phút rồi ngâm nước lạnh để lát cắt mịn không bở.",
+        "Thái thịt, tim, gan thành lát mỏng 3 mm.",
+        "Luộc tôm vừa chín tới 2 phút trong chính nước dùng để giữ vị ngọt; luộc trứng cút 10 phút rồi bóc vỏ.",
+        "Trụng hủ tiếu trong nước sôi 20-30 giây (sợi khô thì ngâm mềm trước), xóc ráo và trộn ít tỏi phi."
+      ],
+      "assemble": [
+        "Cho hủ tiếu đã trụng vào tô cùng một nhúm giá và hẹ cắt khúc.",
+        "Xếp lần lượt lát thịt, tim, gan, tôm và 5 quả trứng cút quanh miệng tô.",
+        "Múc một muỗng thịt bằm xào vào giữa tô.",
+        "Chan 350-400 ml nước dùng nóng già ngập mặt hủ tiếu.",
+        "Rắc tỏi phi, hành lá, cần tây thái nhỏ và tiêu xay."
+      ],
+      "serve": "Ăn kèm giá sống, xà lách, chanh, ớt hiểm, tỏi ngâm chua và một chén xì dầu; có thể gọi phiên bản khô với nước dùng để riêng.",
+      "tips": [
+        "Không đun sôi bùng nước dùng và phải hớt bọt đều tay — đó là điều kiện duy nhất để nước trong đúng kiểu Nam Vang.",
+        "Tôm khô và mực khô rang trước khi hầm là bí quyết tạo vị ngọt hậu đặc trưng, khác hẳn hủ tiếu chỉ hầm xương.",
+        "Gan luộc quá lâu sẽ bở và đắng; vớt ra ngâm nước lạnh ngay khi vừa chín tới."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu hủ tiếu Nam Vang - món ngon trăm năm của Nam Bộ – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-hu-tieu-nam-vang-4605412.html"
+        },
+        {
+          "title": "Cách nấu hủ tiếu nam vang cực ngon như ngoài tiệm – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-mon-hu-tieu-nam-vang-ngon-dung-dieu-nhu-ngoai-hang-00979"
+        },
+        {
+          "title": "Cách Nấu Hủ Tiếu Nam Vang Ngon Chuẩn Vị – Hướng Nghiệp Á Âu",
+          "url": "https://www.huongnghiepaau.com/hu-tieu-nam-vang"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "40 min prep · 2 hr cooking",
+      "ingredients": [
+        "500 g hủ tiếu dai noodles (thin, chewy tapioca-rice noodles)",
+        "1 kg pork leg bones, cut into pieces",
+        "300 g daikon radish and 1 onion",
+        "50 g dried shrimp and 20 g dried squid (optional, for the lingering sweetness)",
+        "250 g pork loin, boiled and sliced",
+        "200 g minced pork",
+        "250 g fresh tiger prawns, peeled with tails on",
+        "150 g pork liver and 150 g pork heart",
+        "20 boiled quail eggs",
+        "1 knob of charred ginger, 4 charred shallots, 1 head of garlic minced and fried golden",
+        "2 tbsp rice wine, to clean the offal",
+        "Seasoning: 3 tbsp fish sauce, 1 tbsp rock sugar, 2 tsp salt, stock powder, pepper",
+        "To serve: 200 g bean sprouts, 100 g garlic chives, celery leaf, lettuce, fried garlic, pickled garlic, lime, chilli, soy sauce"
+      ],
+      "broth": [
+        "Blanch the bones for 5 minutes in boiling water with ginger, rinse them, and put them into 3 litres of cold water.",
+        "Toast the dried shrimp and dried squid until fragrant and add them with the charred ginger and shallots, the daikon and the onion.",
+        "Simmer very gently for 90-120 minutes, skimming constantly and leaving the lid ajar so the broth stays crystal clear and pale gold.",
+        "Strain out the bones and vegetables, then season with fish sauce, rock sugar, salt and stock powder for a clean sweetness rather than a heavy one.",
+        "Season the minced pork with fish sauce, pepper and garlic and stir-fry it with fried garlic for 8-10 minutes; set aside."
+      ],
+      "prep": [
+        "Soak the liver in lightly salted water or milk for 20 minutes to draw out the blood, then rinse.",
+        "Poach the loin, heart and liver separately in water with bruised ginger and rice wine; give the liver only 10-12 minutes and chill it in cold water so it slices cleanly.",
+        "Slice the pork, heart and liver about 3 mm thick.",
+        "Poach the prawns for 2 minutes in the broth itself to keep their sweetness; boil the quail eggs 10 minutes and peel.",
+        "Dip the noodles in boiling water for 20-30 seconds (soak dried ones first), shake dry and toss with a little fried garlic."
+      ],
+      "assemble": [
+        "Put the noodles in each bowl with a handful of bean sprouts and cut garlic chives.",
+        "Arrange the sliced pork, heart, liver, prawns and 5 quail eggs around the rim.",
+        "Spoon the stir-fried minced pork into the centre.",
+        "Ladle in 350-400 ml of near-boiling broth to cover the noodles.",
+        "Finish with fried garlic, spring onion, chopped celery leaf and ground pepper."
+      ],
+      "serve": "Serve with raw bean sprouts, lettuce, lime, bird's-eye chilli, pickled garlic and a saucer of soy sauce; it can also be eaten 'khô', with the broth on the side.",
+      "tips": [
+        "Never let the broth boil hard, and skim it faithfully — that alone is what keeps it Nam Vang clear.",
+        "Toasting the dried shrimp and squid before simmering gives the deep background sweetness that plain bone broth lacks.",
+        "Over-cooked liver turns crumbly and bitter; pull it out and chill it the moment it is just done."
+      ],
+      "sources": [
+        {
+          "title": "Hủ tiếu Nam Vang, a century-old southern dish – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-hu-tieu-nam-vang-4605412.html"
+        },
+        {
+          "title": "Restaurant-style hủ tiếu Nam Vang at home – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-mon-hu-tieu-nam-vang-ngon-dung-dieu-nhu-ngoai-hang-00979"
+        },
+        {
+          "title": "Authentic hủ tiếu Nam Vang – Hướng Nghiệp Á Âu culinary school",
+          "url": "https://www.huongnghiepaau.com/hu-tieu-nam-vang"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
+}

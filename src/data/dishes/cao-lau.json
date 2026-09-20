@@ -1,0 +1,149 @@
+{
+  "id": "cao-lau",
+  "name": "Cao Lầu",
+  "pron": "cow loh",
+  "gloss": "Hội An chewy noodles with char siu pork",
+  "region": "da-nang",
+  "price": 48,
+  "serve": {
+    "vessel": "dry-bowl"
+  },
+  "noodle": {
+    "item": "cao-lau",
+    "flow": "hot-once"
+  },
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "thit-luoc",
+    "xa-lach",
+    "rau-cai",
+    "dau-phong-rang",
+    "hanh-phi"
+  ],
+  "codex": {
+    "story": "Chỉ Hội An mới có: sợi cao lầu nhào bằng nước giếng Bá Lễ và tro củi Cù Lao Chàm, dai sần sật, ăn gần như khô.",
+    "region_note": "",
+    "how_to_eat": "Trộn đều với chút nước xíu đậm, ăn kèm rau sống Trà Quế và miếng cao lầu chiên giòn.",
+    "review": "cần Kent duyệt"
+  },
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút (ướp thịt 3 giờ) · nấu 1 giờ 30 phút",
+      "ingredients": [
+        "600 g sợi cao lầu Hội An (tươi, sợi vàng dai; nếu khô thì 300 g)",
+        "600 g thịt nạc dăm hoặc thịt đùi heo, cắt miếng dài dọc thớ",
+        "400 g xương heo (nấu nước dùng để xíu thịt)",
+        "4 củ hành tím + 4 tép tỏi giã nhuyễn",
+        "1 muỗng cà phê (5 g) ngũ vị hương",
+        "3 muỗng canh nước tương, 1,5 muỗng canh đường, 1 muỗng canh dầu màu điều",
+        "1 muỗng cà phê muối, 1 muỗng cà phê hạt nêm, nửa muỗng cà phê tiêu, nửa muỗng cà phê ớt bột",
+        "100 g da heo chiên giòn hoặc miếng cao lầu khô cắt vuông chiên phồng (ram)",
+        "200 g giá đỗ",
+        "Rau Trà Quế: cải con, húng lủi, húng quế, tía tô, xà lách (tổng khoảng 300 g)",
+        "2 quả chanh, ớt xiêm xanh, tương ớt Hội An"
+      ],
+      "broth": [
+        "Trộn thịt với hành tỏi giã, ngũ vị hương, nước tương, đường, dầu màu điều, muối, hạt nêm, tiêu và ớt bột; ướp tối thiểu 3 giờ, tốt nhất để qua đêm trong tủ lạnh.",
+        "Chần xương heo 3 phút rồi hầm với 1,5 lít nước, lửa nhỏ 60 phút, lọc lấy nước dùng trong.",
+        "Vớt thịt ra khỏi nước ướp, áp chảo lửa vừa cho vàng săn đều hai mặt rồi gắp ra; phi thơm phần xác hành tỏi trong chính chảo đó.",
+        "Cho thịt trở lại chảo cùng toàn bộ nước ướp và nước dùng xương xâm xấp mặt thịt, đun sôi rồi hạ lửa liu riu 40-50 phút, lật thịt sau 15 phút.",
+        "Chắt riêng khoảng 250 ml nước xíu ra chén làm nước chan — phải đậm và hơi sánh; phần thịt còn lại rim tiếp cho nước keo lại, thịt lên màu nâu đỏ."
+      ],
+      "prep": [
+        "Sợi cao lầu tươi thì trụng hoặc hấp lại cho nóng; sợi khô ngâm 1-2 giờ cho nở, trụng nước sôi rồi để ráo và trộn chút dầu cho khỏi dính.",
+        "Trụng giá đỗ 20 giây trong nước sôi rồi vớt ra nước lạnh cho giòn.",
+        "Nhặt rửa rau Trà Quế, vẩy thật ráo, thái nhỏ phần cải con và húng lủi.",
+        "Thái thịt xíu đã nguội bớt thành lát mỏng ngang thớ, khoảng 3 mm.",
+        "Chiên ram cao lầu (hoặc da heo) trong dầu nóng cho phồng giòn, để ráo giấy thấm dầu."
+      ],
+      "assemble": [
+        "Lót giá trụng và một ít rau thái nhỏ dưới đáy tô.",
+        "Xếp sợi cao lầu lên trên, ấn nhẹ cho gọn.",
+        "Bày các lát thịt xíu phủ mặt sợi mì.",
+        "Rưới 4-5 muỗng canh nước xíu (khoảng 60 ml mỗi tô) khắp mặt — chỉ đủ thấm sợi mì, không thành nước lèo.",
+        "Cắm vài miếng ram giòn lên trên, rắc tiêu."
+      ],
+      "serve": "Ăn kèm đĩa rau Trà Quế tươi, chanh, ớt xiêm xanh và tương ớt Hội An; trộn đều tô trước khi ăn.",
+      "tips": [
+        "Cao lầu gần như là món trộn — nước xíu chỉ 50-70 ml mỗi tô, chan nhiều là hỏng.",
+        "Ướp thịt qua đêm và rim lửa thật nhỏ mới cho màu nâu đỏ và vị ngọt sâu của thịt xíu chính gốc.",
+        "Không thay sợi cao lầu bằng mì trứng: sợi cao lầu ngâm nước tro nên dai và thoảng mùi tro đặc trưng."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu cao lầu Hội An - đặc sản phố Hội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cao-lau-hoi-an-4580793.html"
+        },
+        {
+          "title": "Cách nấu cao lầu Hội An thơm ngon chuẩn vị – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-cao-lau-dac-san-hoi-an-thom-ngon-chuan-vi-don-gian-05509"
+        },
+        {
+          "title": "Học ngay cách nấu cao lầu chuẩn vị Hội An – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/cach-nau-cao-lau-161751"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "30 min prep (3 hr marinating) · 1 hr 30 min cooking",
+      "ingredients": [
+        "600 g fresh cao lầu noodles (thick, chewy, yellow; or 300 g dried)",
+        "600 g pork shoulder or leg, cut into long pieces along the grain",
+        "400 g pork bones for the braising stock",
+        "4 shallots and 4 garlic cloves, pounded to a paste",
+        "1 tsp (5 g) five-spice powder",
+        "3 tbsp soy sauce, 1.5 tbsp sugar, 1 tbsp annatto oil",
+        "1 tsp salt, 1 tsp stock powder, ½ tsp pepper, ½ tsp chilli powder",
+        "100 g crisp-fried pork crackling or squares of dried cao lầu dough fried until puffed (ram)",
+        "200 g bean sprouts",
+        "About 300 g Trà Quế herbs: young mustard greens, mint, Thai basil, perilla, lettuce",
+        "2 limes, green bird's-eye chillies, Hội An chilli sauce"
+      ],
+      "broth": [
+        "Rub the pork with the shallot-garlic paste, five-spice, soy sauce, sugar, annatto oil, salt, stock powder, pepper and chilli powder; marinate at least 3 hours, ideally overnight in the fridge.",
+        "Blanch the pork bones 3 minutes, then simmer them in 1.5 litres of water for an hour over low heat and strain.",
+        "Lift the pork from the marinade and sear it golden on both sides, then fry the leftover shallot-garlic solids in the same pan.",
+        "Return the pork with all the marinade and enough bone stock to come just level with the meat; bring to a boil, then braise gently for 40-50 minutes, turning after 15.",
+        "Pour off about 250 ml of the braising liquid as the nước xíu (pouring sauce) — it must be dark and slightly syrupy; keep reducing the rest around the pork until it glazes to a red-brown."
+      ],
+      "prep": [
+        "Reheat fresh noodles by dipping or steaming; soak dried noodles 1-2 hours, blanch, drain well and toss with a little oil.",
+        "Blanch the bean sprouts 20 seconds and refresh in cold water so they stay crunchy.",
+        "Wash and thoroughly dry the herbs, finely shredding the mustard greens and mint.",
+        "Let the braised pork rest, then slice it across the grain about 3 mm thick.",
+        "Fry the ram (cao lầu crackers or pork crackling) in hot oil until puffed and drain on paper."
+      ],
+      "assemble": [
+        "Put the blanched sprouts and some shredded herbs in the bottom of each bowl.",
+        "Pile the cao lầu noodles on top.",
+        "Fan the sliced pork over the noodles.",
+        "Spoon over only 4-5 tbsp (about 60 ml) of the nước xíu — enough to coat the noodles, never enough to make a soup.",
+        "Stand a few crisp ram on top and grind over black pepper."
+      ],
+      "serve": "Serve with a plate of fresh Trà Quế herbs, lime, green chillies and Hội An chilli sauce, tossing the bowl before eating.",
+      "tips": [
+        "Cao lầu is closer to a tossed noodle dish than a soup — 50-70 ml of sauce per bowl is the limit.",
+        "Overnight marinating plus a very slow braise is what gives thịt xíu its red-brown colour and depth.",
+        "Don't substitute egg noodles: real cao lầu strands are treated with lye water, which gives their chew and faint ashy aroma."
+      ],
+      "sources": [
+        {
+          "title": "Cao lầu Hội An, the speciality of the old town – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cao-lau-hoi-an-4580793.html"
+        },
+        {
+          "title": "Authentic cao lầu Hội An – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-cao-lau-dac-san-hoi-an-thom-ngon-chuan-vi-don-gian-05509"
+        },
+        {
+          "title": "How to cook cao lầu the Hội An way – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/cach-nau-cao-lau-161751"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
+}

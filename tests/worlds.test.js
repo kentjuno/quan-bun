@@ -7,18 +7,23 @@ import { botDecide } from '../src/game/bot.js';
 import { recipeFor, D } from '../src/game/recipes.js';
 import { REGULARS } from '../src/data/customers.js';
 
+// Bếp 3D bản cũ chạy trên dữ liệu QUÁN (sim-data) → chỉ kiểm các world có món của quán.
+// World M5 (mì Quảng, bún chả cá, hủ tiếu, bún thang) chỉ có ở game chính — quầy POV kiểm trong counter.test.js.
+const SHOP_WORLDS = WORLDS.filter((w) => w.levels.every((L) => L.dishes.every((d) => PRICES[d])));
+
 const run = (w, secs, bot = true) => { for (let i = 0; i < secs * 30 && w.state === 'running'; i++) { if (bot) { const t = botDecide(w); if (t) w.tap(t); } w.update(1 / 30); } };
 
 describe('bậc thang world/level', () => {
-  it('8 world; độ dài đúng; id duy nhất; mọi món có trong sim-data', () => {
-    expect(WORLDS.map((w) => w.levels.length)).toEqual([25, 12, 12, 16, 20, 16, 16, 12]);
+  it('12 world (8 quán + 4 quán M5); độ dài đúng; id duy nhất; món của quán có trong sim-data', () => {
+    expect(WORLDS.map((w) => w.levels.length)).toEqual([25, 12, 12, 16, 20, 16, 16, 12, 10, 8, 8, 8]);
+    expect(SHOP_WORLDS.length).toBe(8);
     expect(new Set(ALL_LEVELS.map((l) => l.id)).size).toBe(ALL_LEVELS.length);
-    for (const w of WORLDS) for (const d of w.dishes) expect(D.recipes[d]).toBeTruthy();
+    for (const w of SHOP_WORLDS) for (const d of w.dishes) expect(D.recipes[d]).toBeTruthy();
     expect(WORLDS[0].starsToUnlock).toBe(0);
-    for (let i = 1; i < WORLDS.length; i++) expect(WORLDS[i].starsToUnlock).toBeGreaterThan(0);
+    for (let i = 1; i < SHOP_WORLDS.length; i++) expect(SHOP_WORLDS[i].starsToUnlock).toBeGreaterThan(0);
   });
   it('L1–3 là bản tập, TỪ L4 đủ bước thật và giữ vậy tới hết world', () => {
-    for (const w of WORLDS) {
+    for (const w of SHOP_WORLDS) {
       expect(w.levels[0].training).toBe(true);
       for (const L of w.levels) if (L.n >= 4) expect(L.simplify, `${L.id} phải đủ bước thật`).toBeNull();
     }
@@ -33,13 +38,13 @@ describe('bậc thang world/level', () => {
   });
   it('không có 3 level liên tiếp cùng một trục biến thiên', () => {
     const axis = (L) => (L.unlocks?.dish ? 'dish' : L.layout !== 'default' ? 'layout' : L.constraints ? 'con' : L.events ? 'ev' : L.goal ? 'goal' : L.challenge ? 'ch' : L.rule ? 'rule' : L.mix ? 'mix' : 'none');
-    for (const w of WORLDS) for (let i = 7; i < w.levels.length; i++) {
+    for (const w of SHOP_WORLDS) for (let i = 7; i < w.levels.length; i++) {
       const a = [w.levels[i - 2], w.levels[i - 1], w.levels[i]].map(axis);
       expect(a[0] === a[1] && a[1] === a[2] && a[0] !== 'none', `${w.levels[i].id}: ba level liền cùng trục ${a[0]}`).toBe(false);
     }
   });
   it('mục tiêu tiền hợp lý và món chỉ lớn dần trong world', () => {
-    for (const w of WORLDS) { let prev = 0;
+    for (const w of SHOP_WORLDS) { let prev = 0;
       for (const L of w.levels) {
         expect(L.moneyTargets[0]).toBeLessThan(L.moneyTargets[2]);
         if (L.challenge?.kind !== 'only') { expect(L.dishes.length).toBeGreaterThanOrEqual(prev); prev = L.dishes.length; }
@@ -172,7 +177,7 @@ describe('ràng buộc · sự kiện · mục tiêu', () => {
     bf.clearedAt = 200; expect(bf.starsForGoal(0)).toBe(1);
   });
   it('bot chơi được level 1 của mọi world (bản tập) và level có ràng buộc/bố trí lạ', () => {
-    for (const w0 of WORLDS) {
+    for (const w0 of SHOP_WORLDS) {
       const L = w0.levels[0]; const w = new World({ ...L }, {}, kitchenFor(false, L.layout));
       run(w, (L.base?.seconds ?? L.seconds) + 30);
       expect(w.served, `${L.id}: bot không phục vụ được ai`).toBeGreaterThanOrEqual(1);
@@ -187,7 +192,7 @@ describe('ràng buộc · sự kiện · mục tiêu', () => {
   });
   it('CẢ 124 level đều chơi được: bot phục vụ ít nhất 1 khách, không kẹt', () => {
     const bad = [];
-    for (const w0 of WORLDS) for (const L of w0.levels) {
+    for (const w0 of SHOP_WORLDS) for (const L of w0.levels) {
       const w = new World({ ...L }, {}, kitchenFor(false, L.layout)); run(w, (L.base?.seconds ?? L.seconds) + 40);
       if (w.served < 1) bad.push(`${L.id}: 0 khách`);
       if (w.state !== 'over') bad.push(`${L.id}: không kết thúc`);

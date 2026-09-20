@@ -1,6 +1,7 @@
 // i18n: tiếng Việt ở đây là NGUỒN (P1 §0). UPGRADES/DECOR/KITCHEN_VARIANTS hiện lên UI qua tl('upgrade.<id>.name', …) — bản dịch ở data/i18n/en.json.
 // LEVELS/STATIONS/CUSTOMERS chỉ dùng cho bếp 3D bản cũ (không dịch).
 import { buildWorlds } from './data/worlds.js';
+import { DISH_IDS, DISHES } from './data/dishes/index.js';
 
 // ============================================================
 //  THÔNG SỐ CÂN BẰNG & BỐ TRÍ BẾP — sửa ở đây, không sửa trong logic.
@@ -62,7 +63,10 @@ export const CUSTOMERS = {
 export const PRICES = { 'cha-gio-viet-nam': 30, 'goi-cuon-tom-thit': 32, 'pho-tai-nam': 45, 'pho-dac-biet': 60, 'bun-rieu-cua': 50, 'bun-bo-hue': 55, 'pho-tai-dap': 50, 'pho-suon-tai': 65, 'banh-da-cua': 55, 'bun-ca-hai-phong': 50, 'cha-ca-la-vong': 120, 'bun-dau-mam-tom': 70, 'banh-hoi-thit-heo': 80, 'bun-nem-cua-thit-nuong-tom-nuong': 55, 'bun-ga-nuong': 45, 'bun-cha-ha-noi': 50, 'chao-long': 45, 'chao-suon': 40, 'pho-ga': 45, 'pho-sot-vang': 50, 'pho-xao-lan': 55 };
 
 // Level: khách tới lúc nào, loại gì; món ngẫu nhiên trong `dishes` (hoặc `dish` cố định). Mỗi level thêm món để nhớ dần; qua level (≥1★) mở level kế; tiền + tip → điểm mua trang trí quán.
+/** Món của QUÁN (sim-data) — dùng cho Luyện / Survival / mini ở tab Thêm / bếp 3D. Món chỉ có ở game chính nằm trong DISH_IDS. */
 export const ALL_DISHES = Object.keys(PRICES);
+/** Mọi món của GAME CHÍNH (src/data/dishes/*.json) — sổ tay, mini-game theo tỉnh. */
+export const GAME_DISHES = DISH_IDS;
 const ARR = [{ t: 2, type: 'office' }, { t: 30, type: 'xeom' }, { t: 60, type: 'office' }, { t: 85, type: 'tourist' }, { t: 115, type: 'xeom' }, { t: 140, type: 'office' }];
 const ARR_LONG = ARR.map((a, i) => ({ ...a, t: a.t + i * 8, patience: 170 }));   // ca món phức tạp: khách kiên nhẫn hơn, tới thưa hơn
 export const LEVELS = [
@@ -200,7 +204,9 @@ export const CAMERA = { fov: 38, height: 11, back: 8.5, lookAtZ: 0.4 };
 // ============================================================
 //  WORLDS — vòng chơi chính (docs/PLAN-WORLDS.md). Ladder nằm ở src/data/worlds.js (dữ liệu thuần).
 // ============================================================
-export const WORLDS = buildWorlds(PRICES);   // đã áp PACE (data/pace.js) bên trong buildWorlds
+/** Giá dùng để đặt mốc sao: món của quán lấy PRICES, món chỉ có ở game chính lấy `price` trong dishes/<id>.json. */
+export const DISH_PRICES = { ...Object.fromEntries(Object.values(DISHES).map((d) => [d.id, d.price])), ...PRICES };
+export const WORLDS = buildWorlds(DISH_PRICES);   // đã áp PACE (data/pace.js) bên trong buildWorlds
 export const ALL_LEVELS = WORLDS.flatMap((w) => w.levels);
 export function worldById(id) { return WORLDS.find((w) => w.id === id) || WORLDS[0]; }
 export function levelById(id) { return ALL_LEVELS.find((l) => l.id === id) || null; }

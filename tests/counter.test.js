@@ -146,6 +146,7 @@ describe('Quầy POV chạy được world/level', () => {
   });
 
   it('CẢ 124 level đều chơi được ở quầy: bot phục vụ được khách, không kẹt', () => {
+    setSource('game');   // level của game chính chạy trên công thức chung (M5 có món chỉ ở dishes/)
     const bad = [];
     for (const w of WORLDS) for (const L of w.levels) {
       const C = lvCounter(L); play(C, L.seconds + 240);
@@ -214,6 +215,7 @@ describe('Nhịp khách ở quầy POV', () => {
   // Từ 19/09 `seconds` là HẠN GIỜ THẬT (Counter.endShift). Trước đó nó chỉ in ra menu.
   // Nếu chuông reo mà bot còn quá nửa số khách chưa phục vụ thì level đó hứa suông.
   it('hết giờ là đóng ca: trong đúng `seconds` bot vẫn phục vụ được phần lớn khách', () => {
+    setSource('game');   // level của game chính chạy trên công thức chung (M5 có món chỉ ở dishes/)
     const bad = [];
     for (const w of WORLDS) for (const L of w.levels) {
       const C = new Counter({ dishes: L.dishes, arrivals: povArrivals(L), simplify: L.simplify,
@@ -253,6 +255,7 @@ describe('Nhịp khách ở quầy POV', () => {
   });
 
   it('nén lịch nhưng KHÔNG làm level thành bất khả thi: bot vẫn không để khách bỏ đi nhiều', () => {
+    setSource('game');   // level của game chính chạy trên công thức chung (M5 có món chỉ ở dishes/)
     const bad = [];
     for (const w of WORLDS) for (const L of w.levels) {
       const C = new Counter({ dishes: L.dishes, arrivals: povArrivals(L), simplify: L.simplify,
@@ -299,6 +302,7 @@ describe('tô đổi theo từng món bỏ vào', () => {
 
 describe('kệ nước — nước cốt & nước trắng không nằm trên khay topping', () => {
   it('cả 124 level: đồ nấu nước đứng đúng chỗ, không lẫn vào dải khay', () => {
+    setSource('game');   // level của game chính chạy trên công thức chung (M5 có món chỉ ở dishes/)
     const bad = [];
     for (const w of WORLDS) for (const lv of (w.levels || [])) {
       const dishes = lv.dishes || lv.menu || []; if (!dishes.length) continue;

@@ -1,0 +1,159 @@
+{
+  "id": "mi-quang",
+  "name": "Mì Quảng",
+  "pron": "mee kwahng",
+  "gloss": "turmeric noodles with pork, shrimp & peanuts",
+  "region": "da-nang",
+  "price": 50,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "mi-quang",
+    "flow": "hot-once"
+  },
+  "broth": {
+    "cook": [
+      "cot-mi-quang",
+      "mieng-nuoc"
+    ],
+    "out": "mi-quang-broth-ready",
+    "action": "pour-mi-quang"
+  },
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "thit-luoc",
+    "tom",
+    "rau-cai",
+    "$broth",
+    "dau-phong-rang",
+    "hanh-la"
+  ],
+  "codex": {
+    "story": "Món \"quốc hồn\" của xứ Quảng: sợi mì vàng nghệ, chỉ chan xâm xấp nước chứ không ngập như phở, ăn kèm bánh tráng mè nướng bẻ vụn.",
+    "region_note": "",
+    "how_to_eat": "Trộn đều cho nước thấm sợi, bẻ bánh tráng mè vào, thêm ớt xanh và rau sống.",
+    "review": "cần Kent duyệt"
+  },
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · nấu 2 giờ",
+      "ingredients": [
+        "600 g sợi mì Quảng tươi (sợi bản to, nhuộm nghệ)",
+        "500 g xương ống hoặc xương đuôi heo",
+        "300 g thịt ba chỉ (hoặc nạc mông) thái lát dày 0,5 cm",
+        "300 g tôm đất/tôm sú tươi, cắt râu, rút chỉ lưng, để nguyên vỏ",
+        "12 quả trứng cút luộc bóc vỏ",
+        "1 củ hành tây, 150 g củ cải trắng (ngọt nước dùng)",
+        "6 củ hành tím + 4 tép tỏi băm",
+        "1 muỗng canh nghệ tươi giã (hoặc 1 muỗng cà phê bột nghệ)",
+        "100 g đậu phộng rang, xát vỏ, giã thô",
+        "4 bánh tráng mè nướng",
+        "60 ml dầu đậu phộng + 2 muỗng canh dầu điều",
+        "Gia vị: 4 muỗng canh nước mắm, 1,5 muỗng cà phê muối, 1 muỗng canh đường, 1 muỗng cà phê tiêu, hạt nêm",
+        "Rau sống: bắp cải bào, xà lách, húng quế, rau răm, giá đỗ, bắp chuối bào; 2 quả chanh, ớt xanh, ớt sa tế Hội An"
+      ],
+      "broth": [
+        "Chần xương heo 5 phút trong nước sôi cho ra bọt bẩn, rửa lại rồi hầm với 2,5 lít nước cùng hành tây và củ cải trắng, lửa nhỏ 90 phút, hớt bọt liên tục để nước trong.",
+        "Ướp thịt ba chỉ với nửa phần hành tỏi băm, nghệ, 1 muỗng canh nước mắm, 1 muỗng cà phê đường, tiêu, hạt nêm trong 30 phút; ướp tôm riêng với chút muối, tiêu, hành tỏi 20 phút.",
+        "Phi thơm phần hành tỏi còn lại trong dầu đậu phộng, thêm dầu điều, cho thịt vào xào săn 4-5 phút rồi cho tôm vào xào thêm 3 phút cho tôm đỏ đều.",
+        "Múc khoảng 1,2 lít nước hầm xương đã lọc vào chảo tôm thịt, thả trứng cút, đun liu riu 20-25 phút cho thấm — đây là 'nước nhân' xâm xấp đặc trưng, đậm hơn nước phở.",
+        "Nêm lại bằng nước mắm, đường, muối sao cho vị mặn - ngọt rõ, hơi gắt khi nếm riêng, vì mì Quảng chan rất ít nước."
+      ],
+      "prep": [
+        "Xóc sợi mì với 1 muỗng canh dầu phi hành cho tơi, không dính; nếu mì để tủ lạnh thì trụng nước sôi 10 giây rồi để ráo.",
+        "Rửa sạch rau sống, để thật ráo; bắp chuối và bắp cải bào ngâm nước chanh loãng 5 phút cho trắng giòn.",
+        "Rang đậu phộng lửa nhỏ đến vàng thơm, xát vỏ và giã thô để giữ độ bùi.",
+        "Nướng bánh tráng mè trên lửa than hoặc bếp gas cho phồng giòn, bẻ đôi khi ăn."
+      ],
+      "assemble": [
+        "Lót một nắm rau sống trộn dưới đáy tô, xếp sợi mì lên trên.",
+        "Gắp 3-4 lát thịt, 3 con tôm và 3 quả trứng cút phủ mặt mì.",
+        "Chan nước nhân nóng chỉ xâm xấp mặt mì, khoảng 150-180 ml mỗi tô, không ngập như bún phở.",
+        "Rắc đậu phộng giã, hành lá và hành phi, thêm vài lát ớt xanh."
+      ],
+      "serve": "Ăn kèm bánh tráng mè nướng bẻ vụn, chanh, ớt xanh và một chén ớt sa tế Hội An, trộn đều toàn tô trước khi ăn.",
+      "tips": [
+        "Nước nhân phải đặc và ít — nguyên tắc 'mì Quảng không lội nước', chan quá tay sẽ mất vị.",
+        "Giữ nguyên vỏ tôm khi xào để nước nhân có màu đỏ cam tự nhiên và vị ngọt đậm.",
+        "Dùng dầu đậu phộng phi hành tím là mùi đặc trưng xứ Quảng, không thay bằng dầu ăn thường."
+      ],
+      "sources": [
+        {
+          "title": "Cách Nấu Mì Quảng Tôm Thịt Ngon Đậm Đà Chuẩn Vị – Hướng Nghiệp Á Âu",
+          "url": "https://www.huongnghiepaau.com/mi-quang-tom-thit"
+        },
+        {
+          "title": "Cách nấu mì quảng tôm thịt thơm ngon chuẩn vị – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-mi-quang-tom-thit-thom-ngon-ai-cung-me-chuan-vi-don-06737"
+        },
+        {
+          "title": "Cách Nấu Mì Quảng Ngon Chuẩn Vị Miền Trung Tại Nhà – CET",
+          "url": "https://www.cet.edu.vn/cach-nau-mi-quang"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "30 min prep · 2 hr cooking",
+      "ingredients": [
+        "600 g fresh mì Quảng noodles (wide turmeric-tinted rice noodles)",
+        "500 g pork leg or tail bones",
+        "300 g pork belly, sliced 0.5 cm thick",
+        "300 g fresh shrimp, feelers trimmed, deveined, shells left on",
+        "12 boiled quail eggs, peeled",
+        "1 onion and 150 g daikon radish for the stock",
+        "6 shallots and 4 garlic cloves, minced",
+        "1 tbsp pounded fresh turmeric (or 1 tsp turmeric powder)",
+        "100 g roasted peanuts, skinned and coarsely crushed",
+        "4 sheets bánh tráng mè (grilled sesame rice crackers)",
+        "60 ml peanut oil plus 2 tbsp annatto oil",
+        "Seasoning: 4 tbsp fish sauce, 1.5 tsp salt, 1 tbsp sugar, 1 tsp pepper, stock powder",
+        "Herb plate: shredded cabbage, lettuce, Thai basil, rau răm (Vietnamese coriander), bean sprouts, shredded banana blossom, 2 limes, green chilli, Hội An chilli paste"
+      ],
+      "broth": [
+        "Blanch the pork bones for 5 minutes, rinse, then simmer in 2.5 litres of water with the onion and daikon for 90 minutes over low heat, skimming often so the stock stays clear.",
+        "Marinate the pork belly for 30 minutes with half the shallot-garlic, the turmeric, 1 tbsp fish sauce, 1 tsp sugar, pepper and stock powder; marinate the shrimp separately for 20 minutes with salt, pepper and aromatics.",
+        "Fry the remaining shallot and garlic in the peanut oil, add the annatto oil, sear the pork for 4-5 minutes, then add the shrimp and stir-fry 3 minutes more until they turn red.",
+        "Ladle about 1.2 litres of strained stock over the pork and shrimp, add the quail eggs and simmer gently for 20-25 minutes — this concentrated 'nước nhân' is the point of the dish, richer than a phở broth.",
+        "Adjust with fish sauce, sugar and salt until it tastes assertively salty-sweet on its own, because only a small ladleful goes into each bowl."
+      ],
+      "prep": [
+        "Toss the noodles with 1 tbsp of the shallot oil to loosen them; if refrigerated, dip in boiling water for 10 seconds and drain well.",
+        "Wash the herbs and drain them thoroughly; soak the shredded banana blossom and cabbage in lightly acidulated water for 5 minutes to stay white and crisp.",
+        "Toast the peanuts over low heat until fragrant, rub off the skins and crush coarsely.",
+        "Grill the sesame rice crackers over a flame until puffed and crisp, breaking them in half at the table."
+      ],
+      "assemble": [
+        "Line each bowl with a handful of the mixed raw herbs, then pile the noodles on top.",
+        "Arrange 3-4 pork slices, 3 shrimp and 3 quail eggs over the noodles.",
+        "Ladle in only 150-180 ml of the hot nước nhân — it should barely reach the noodles, never submerge them.",
+        "Finish with crushed peanuts, spring onion, fried shallots and a few slices of green chilli."
+      ],
+      "serve": "Serve with grilled sesame rice crackers crumbled over the top, lime, green chilli and a dish of Hội An chilli paste; toss the whole bowl before eating.",
+      "tips": [
+        "Keep the broth thick and scarce — mì Quảng is a 'dry' noodle bowl, and over-ladling flattens the flavour.",
+        "Leave the shrimp shells on while frying: they give the broth its natural orange colour and sweetness.",
+        "Peanut oil infused with shallots is the signature aroma of Quảng Nam; ordinary neutral oil loses it."
+      ],
+      "sources": [
+        {
+          "title": "Mì Quảng with shrimp and pork – Hướng Nghiệp Á Âu culinary school",
+          "url": "https://www.huongnghiepaau.com/mi-quang-tom-thit"
+        },
+        {
+          "title": "Mì Quảng with shrimp and pork, authentic style – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-mi-quang-tom-thit-thom-ngon-ai-cung-me-chuan-vi-don-06737"
+        },
+        {
+          "title": "Cooking mì Quảng the Central Vietnamese way – CET",
+          "url": "https://www.cet.edu.vn/cach-nau-mi-quang"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
+}

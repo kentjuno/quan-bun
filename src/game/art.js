@@ -66,6 +66,9 @@ export const STATION_ART = {
   'bun': `${BASE}st-noodle-tray.webp`,
   'bun-to': `${BASE}st-noodle-tray.webp`,
   'banh-da': `${BASE}st-noodle-tray.webp`,
+  'mi-quang': `${BASE}st-noodle-tray.webp`,
+  'cao-lau': `${BASE}st-noodle-tray.webp`,
+  'hu-tieu': `${BASE}st-noodle-tray.webp`,
 };
 export const stationArt = (tok) => STATION_ART[tok] || null;
 

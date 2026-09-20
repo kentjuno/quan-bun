@@ -265,6 +265,24 @@
     },
     "hanh-phi": {
       "en": "fried shallots"
+    },
+    "mi-quang": {
+      "pron": "mee kwahng",
+      "en": "turmeric-tinted flat rice noodles"
+    },
+    "cao-lau": {
+      "pron": "cow loh",
+      "en": "chewy Hội An noodles"
+    },
+    "hu-tieu": {
+      "pron": "hoo tee-oo",
+      "en": "thin clear rice noodles"
+    },
+    "cot-mi-quang": {
+      "en": "mì Quảng broth concentrate"
+    },
+    "cot-hu-tieu": {
+      "en": "hủ tiếu pork stock"
     }
   },
   "actions": {
@@ -317,7 +335,9 @@
     "pour-crab-broth": "Ladle crab broth",
     "pour-bun-bo": "Ladle bún bò broth",
     "pour-fish-broth": "Ladle fish broth",
-    "finish": "Finish"
+    "finish": "Finish",
+    "pour-mi-quang": "Ladle mì Quảng broth",
+    "pour-hu-tieu": "Ladle hủ tiếu broth"
   },
   "labels": {
     "chen-chanh-ready": "Lime juice cup",
@@ -379,6 +399,8 @@
     "fish-broth-ready": "Fish broth, hot",
     "porridge-in-pot": "Porridge in pot",
     "porridge-mixed": "Porridge mixed",
-    "porridge-ready": "Porridge, hot"
+    "porridge-ready": "Porridge, hot",
+    "mi-quang-broth-ready": "Mì Quảng broth, hot",
+    "hu-tieu-broth-ready": "Hủ tiếu broth, hot"
   }
 }

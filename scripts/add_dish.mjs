@@ -9,8 +9,8 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SIM_DATA } from '../src/data/sim-data.js';
-import { validateDish, dishToSim } from '../src/game/dishlib.js';
+import { validateDish, dishToSim, SIM } from '../src/game/dishlib.js';
+const SIM_DATA = SIM;   // từ điển nguồn GAME (sim-data + game-extras)
 import { writeArtManifest, ROOT } from './_art_manifest.mjs';
 
 const args = process.argv.slice(2); const id = args.find((a) => !a.startsWith('--'));
@@ -54,7 +54,7 @@ for (const st of ['dry', 'wet']) if (!has(`art/${id}-${st}.webp`)) { miss.push(`
 for (const st of ['s0', 'top']) if (!has(`art/${id}-${st}.webp`)) opt.push(`tô bậc ${st}: public/art/${id}-${st}.webp — thiếu thì lùi về dry/wet`);
 for (const it of items) {
   if (!has(`icons/${it}.png`)) { miss.push(`icon ${it}: public/icons/${it}.png`); todo.add('gen icon: scripts/process_icons.py rồi node scripts/gen_icons_map.mjs'); }
-  if (!/bowl|tray|dia-|mam-dan|chao-ap-ca|serving-plate|basket|mieng-nuoc|^nuoc-|^cot-|^chao-|noodle|^bun$|^bun-to$|^banh-da$|^banh-hoi$/.test(it) && !has(`art/pan/${it}.webp`)) { miss.push(`khay ${it}: public/art/pan/${it}.webp`); todo.add('gen khay: scripts/pans_to_webp.py (+ scripts/draw_mats.py nếu thêm ô khay)'); }
+  if (!/bowl|tray|dia-|mam-dan|chao-ap-ca|serving-plate|basket|mieng-nuoc|^nuoc-|^cot-|^chao-|noodle|^bun$|^bun-to$|^banh-da$|^banh-hoi$|^mi-quang$|^cao-lau$|^hu-tieu$/.test(it) && !has(`art/pan/${it}.webp`)) { miss.push(`khay ${it}: public/art/pan/${it}.webp`); todo.add('gen khay: scripts/pans_to_webp.py (+ scripts/draw_mats.py nếu thêm ô khay)'); }
 }
 for (const t of stocks) if (/^(cot-|nuoc-|chao-)/.test(t) && !has(`art/pot-${t}.webp`)) { miss.push(`nồi ${t}: public/art/pot-${t}.webp`); todo.add('gen nồi: scripts/pots_to_webp.py'); }
 // i18n

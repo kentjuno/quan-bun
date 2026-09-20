@@ -12,15 +12,18 @@ import items from '../src/data/i18n/items.json';
 function play(C, seconds = 600) { let acc = 0; for (let i = 0; i < seconds * 20 && !C.over; i++) { C.update(0.05); acc += 0.05; if (acc >= 0.35) { acc = 0; const m = counterMove(C); if (m) C.drop(m.src, m.zone); } } return C; }
 
 describe('P6 dishes/', () => {
-  it('có đủ 21 món hiện có, id trùng sim-data (giữ art + tiến độ)', () => {
-    expect(DISH_IDS.sort()).toEqual(Object.keys(SIM_DATA.recipes).sort());
+  it('21 món của quán đều có bản chung (giữ id → giữ art + tiến độ); món mới chỉ có ở game chính', () => {
+    const shop = Object.keys(SIM_DATA.recipes);
+    expect(shop.every((d) => DISHES[d])).toBe(true);
     expect(ALL_DISHES.every((d) => DISHES[d])).toBe(true);
+    const onlyGame = DISH_IDS.filter((d) => !shop.includes(d));
+    expect(onlyGame.sort()).toEqual(['bun-cha-ca', 'bun-thang', 'cao-lau', 'hu-tieu-nam-vang', 'mi-quang']);
   });
   it('mọi file hợp lệ theo schema; pron/gloss/region/codex có đủ', () => {
     for (const d of Object.values(DISHES)) {
       expect(validateDish(d), d.id).toEqual([]);
       expect(d.pron, `${d.id} pron`).toBeTruthy(); expect(d.gloss, `${d.id} gloss`).toBeTruthy();
-      expect(['ha-noi', 'hai-phong', 'hue', 'sai-gon']).toContain(d.region);
+      expect(['ha-noi', 'hai-phong', 'hue', 'da-nang', 'nha-trang', 'sai-gon', 'mien-tay']).toContain(d.region);
       expect(d.codex?.story, `${d.id} story`).toBeTruthy();
     }
   });
@@ -53,8 +56,9 @@ describe('P6 dishes/', () => {
     });
     it('bản chung KHÔNG trùng bản quán ở ít nhất một nửa số món (đúng ý Kent: không lấy công thức quán vào game chính)', () => {
       let diff = 0;
-      for (const id of DISH_IDS) { const g = recipeFor(id).assembly.join('>'); setSource('shop'); const s = recipeFor(id).assembly.join('>'); setSource('game'); if (g !== s) diff++; }
-      expect(diff).toBeGreaterThanOrEqual(DISH_IDS.length / 2);
+      const shop = Object.keys(SIM_DATA.recipes);
+      for (const id of shop) { const g = recipeFor(id).assembly.join('>'); setSource('shop'); const s = recipeFor(id).assembly.join('>'); setSource('game'); if (g !== s) diff++; }
+      expect(diff).toBeGreaterThanOrEqual(shop.length / 2);
     });
     it('i18n: gloss/pron của món lấy từ dish.json', async () => {
       const { gloss, pron, setLang } = await import('../src/i18n.js'); setLang('en');

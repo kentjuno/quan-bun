@@ -33,7 +33,7 @@ export function playOwner(worldId, { onDone, sfx } = {}) {
   const root = mount(`<div class="sc-door"></div><div class="sc-sign">${tl(`quan.${worldId}.name`, q.name)}</div>
     <img class="sc-face" src="${face}" alt="" draggable="false" onerror="this.remove()">
     <div class="sc-bubble"><b></b><span></span><small>${T('scene.tap')}</small></div><button class="sc-skip ghost small">${T('trip.skip')}</button>`, 'owner');
-  const who = q.owner ? (REGULARS.find((r) => r.id === q.owner)?.name || q.owner) : T('scene.owner');
+  const who = q.who ? tl(`quan.${worldId}.who`, q.who) : q.owner ? (REGULARS.find((r) => r.id === q.owner)?.name || q.owner) : T('scene.owner');
   root.querySelector('.sc-bubble b').textContent = who + ': ';
   const show = () => { const b = root.querySelector('.sc-bubble'); b.querySelector('span').textContent = lines[i]; b.classList.remove('in'); void b.offsetWidth; b.classList.add('in'); try { sfx?.hum?.('good'); } catch {} };
   cur = { finish: () => end(root, onDone) };

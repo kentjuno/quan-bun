@@ -1,0 +1,177 @@
+{
+  "id": "bun-cha-ca",
+  "name": "Bún Chả Cá",
+  "pron": "boon chah kah",
+  "gloss": "Nha Trang fish cake noodle soup",
+  "region": "nha-trang",
+  "price": 46,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "bun",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "cook": [
+      "nuoc-ca",
+      "mieng-nuoc"
+    ],
+    "out": "fish-broth-ready",
+    "action": "pour-fish-broth"
+  },
+  "prep": [
+    {
+      "action": "cut-fish-cake",
+      "in": [
+        "cha-ca"
+      ],
+      "out": "cha-ca-ready"
+    },
+    {
+      "action": "cut-dill",
+      "in": [
+        "thi-la"
+      ],
+      "out": "thi-la-ready"
+    }
+  ],
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "ca-chua",
+    "cha-ca-ready",
+    "ca-chien",
+    "$broth",
+    "thi-la-ready",
+    "hanh-la"
+  ],
+  "codex": {
+    "story": "Chả cá Nha Trang quết từ cá thu, cá mối tươi, nước dùng nấu từ xương cá và đầu cá — ngọt thanh chứ không béo.",
+    "region_note": "",
+    "how_to_eat": "Ăn với mắm ruốc pha ớt, rau sống và bắp chuối bào.",
+    "review": "cần Kent duyệt"
+  },
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 40 phút · nấu 1 giờ 15 phút",
+      "ingredients": [
+        "600 g bún tươi sợi nhỏ",
+        "500 g thịt phi lê cá thu, cá mối hoặc cá nhồng (làm chả quết)",
+        "600 g xương và đầu cá (cá ngừ, cá thu) để nấu nước dùng",
+        "300 g cá ngừ cắt khoanh để hấp hoặc dầm (tuỳ chọn)",
+        "3 quả cà chua bổ múi cau",
+        "¼ quả thơm (dứa) cắt miếng",
+        "1 bó thì là (khoảng 50 g), 3 cây hành lá",
+        "5 củ hành tím nướng, 1 củ gừng nướng, 4 tép tỏi băm",
+        "1 muỗng cà phê bột nghệ (tạo màu cho chả)",
+        "Gia vị làm chả: 1 muỗng canh nước mắm, 1 muỗng cà phê đường, 1 muỗng cà phê tiêu, nửa muỗng cà phê muối, 1 lòng trắng trứng, 1 muỗng canh bột năng",
+        "Gia vị nước dùng: 3 muỗng canh nước mắm, 2 muỗng cà phê muối, 1 muỗng canh đường, hạt nêm",
+        "Rau ăn kèm: 200 g giá đỗ, xà lách, rau muống bào, bắp chuối bào, húng quế; chanh, ớt, mắm ruốc Nha Trang"
+      ],
+      "broth": [
+        "Rửa xương và đầu cá với muối và gừng cho hết tanh, chần qua nước sôi 2 phút rồi rửa lại.",
+        "Nấu xương đầu cá với 2,5 lít nước cùng hành tím nướng và gừng nướng, lửa nhỏ 30-40 phút, hớt bọt đều tay rồi lọc lấy nước trong.",
+        "Phi thơm tỏi băm, xào cà chua cho mềm ra màu rồi trút vào nồi nước dùng cùng miếng thơm.",
+        "Nêm nước mắm, muối, đường và hạt nêm; giữ nước dùng ở mức sôi lăn tăn, vị ngọt thanh và hơi chua dịu của cà chua - thơm.",
+        "Thả chả cá đã hấp và chiên vào nồi đun thêm 5 phút cho thấm, cuối cùng cho thì là cắt khúc vào rồi tắt bếp ngay."
+      ],
+      "prep": [
+        "Lóc thịt cá, bỏ hết da và xương dăm, thái nhỏ rồi cho vào cối hoặc máy xay cùng nước mắm, đường, tiêu, muối, lòng trắng trứng, bột năng và bột nghệ.",
+        "Quết hoặc xay theo nhịp ngắt quãng khoảng 10-15 phút đến khi khối cá dẻo, dính tay và đàn hồi — đây là bước quyết định độ dai của chả.",
+        "Ướp lạnh khối chả 30 phút, sau đó chia đôi: một nửa ép dẹt dày 1,5 cm đem hấp 25-30 phút, nửa còn lại vo viên rồi chiên vàng.",
+        "Để chả hấp nguội rồi thái miếng vuông 1 cm; chả chiên để ráo dầu.",
+        "Nhặt rửa rau sống, bào rau muống và bắp chuối, ngâm nước chanh loãng cho giòn; trụng bún qua nước sôi."
+      ],
+      "assemble": [
+        "Cho bún vào tô cùng một nhúm giá trụng.",
+        "Xếp lát chả cá hấp và vài viên chả cá chiên lên mặt bún.",
+        "Thêm vài miếng cà chua và cá ngừ dầm nếu dùng.",
+        "Chan 350-400 ml nước dùng nóng ngập mặt bún.",
+        "Rắc thì là, hành lá thái nhỏ và tiêu xay."
+      ],
+      "serve": "Ăn kèm đĩa rau sống (rau muống bào, bắp chuối, húng quế), chanh, ớt xiêm và nhất định phải có chén mắm ruốc Nha Trang pha loãng với ớt.",
+      "tips": [
+        "Chả cá dai là nhờ quết kỹ khi cá còn thật lạnh; cá ấm lên sẽ bở và rời.",
+        "Nước dùng nấu từ xương đầu cá chỉ nên đun 30-40 phút — nấu quá lâu sẽ đục và tanh.",
+        "Thì là cho vào lúc cuối, tắt bếp ngay để giữ mùi thơm đặc trưng của bún chả cá miền biển."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm bún chả cá Nha Trang đậm hương vị miền biển – Bách hoá XANH",
+          "url": "https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-bun-cha-ca-nha-trang-dam-huong-vi-mien-bien-1405824"
+        },
+        {
+          "title": "Bí quyết nấu bún chả cá Nha Trang và Đà Nẵng ngon chuẩn vị – CET",
+          "url": "https://www.cet.edu.vn/cach-nau-bun-cha-ca"
+        },
+        {
+          "title": "Cách Nấu Bún Cá Nha Trang Nồng Nàn Vị Biển – Hướng Nghiệp Á Âu",
+          "url": "https://www.huongnghiepaau.com/bun-ca-nha-trang"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "40 min prep · 1 hr 15 min cooking",
+      "ingredients": [
+        "600 g fresh thin rice vermicelli (bún)",
+        "500 g mackerel, lizardfish or barracuda fillet for the chả cá (pounded fish cake)",
+        "600 g fish bones and heads (tuna or mackerel) for the broth",
+        "300 g tuna steak to steam or flake (optional)",
+        "3 tomatoes, cut into wedges",
+        "¼ pineapple, cut into chunks",
+        "1 bunch of dill (about 50 g) and 3 spring onions",
+        "5 charred shallots, 1 knob of charred ginger, 4 garlic cloves minced",
+        "1 tsp turmeric powder, to colour the fish cake",
+        "For the fish cake: 1 tbsp fish sauce, 1 tsp sugar, 1 tsp pepper, ½ tsp salt, 1 egg white, 1 tbsp tapioca starch",
+        "For the broth: 3 tbsp fish sauce, 2 tsp salt, 1 tbsp sugar, stock powder",
+        "To serve: 200 g bean sprouts, lettuce, shredded water spinach, shredded banana blossom, Thai basil, lime, chilli, mắm ruốc (Nha Trang fermented shrimp sauce)"
+      ],
+      "broth": [
+        "Scrub the fish bones and heads with salt and ginger to remove any muddy smell, blanch 2 minutes and rinse.",
+        "Simmer them in 2.5 litres of water with the charred shallots and ginger for 30-40 minutes over low heat, skimming carefully, then strain clear.",
+        "Fry the minced garlic, soften the tomato wedges in the pan until they release their colour, and tip them into the broth with the pineapple.",
+        "Season with fish sauce, salt, sugar and stock powder; keep the pot at a bare simmer so the flavour stays clean and gently sweet-sour.",
+        "Slide in the steamed and fried fish cakes for a final 5 minutes, then add the cut dill and take the pot straight off the heat."
+      ],
+      "prep": [
+        "Skin and bone the fish fillet, chop it, and put it in a mortar or food processor with the fish sauce, sugar, pepper, salt, egg white, tapioca starch and turmeric.",
+        "Pound or pulse for 10-15 minutes until the paste is sticky, springy and clings to your hand — this is what makes chả cá bouncy rather than crumbly.",
+        "Chill the paste 30 minutes, then halve it: press one half into a 1.5 cm slab and steam 25-30 minutes; roll the rest into balls and fry golden.",
+        "Cool the steamed cake and cut it into 1 cm squares; drain the fried ones on paper.",
+        "Wash the herbs, shred the water spinach and banana blossom and crisp them in acidulated water; dip the noodles in boiling water."
+      ],
+      "assemble": [
+        "Put the noodles in each bowl with a handful of blanched bean sprouts.",
+        "Arrange slices of steamed fish cake and a few fried fish balls on top.",
+        "Add a few tomato wedges and flaked tuna if using.",
+        "Ladle over 350-400 ml of hot broth to cover the noodles.",
+        "Finish with chopped dill, spring onion and ground pepper."
+      ],
+      "serve": "Serve with a plate of raw greens (shredded water spinach, banana blossom, Thai basil), lime, bird's-eye chilli, and — non-negotiably — a dish of thinned mắm ruốc with chilli.",
+      "tips": [
+        "A springy fish cake comes from pounding the fish while it is still very cold; once it warms it goes mealy.",
+        "Fish-bone broth needs only 30-40 minutes — longer and it turns cloudy and fishy.",
+        "Add the dill at the very end and kill the heat immediately, so its aroma stays bright."
+      ],
+      "sources": [
+        {
+          "title": "Nha Trang bún chả cá with the flavour of the coast – Bách hoá XANH",
+          "url": "https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-bun-cha-ca-nha-trang-dam-huong-vi-mien-bien-1405824"
+        },
+        {
+          "title": "Nha Trang and Đà Nẵng style bún chả cá – CET culinary school",
+          "url": "https://www.cet.edu.vn/cach-nau-bun-cha-ca"
+        },
+        {
+          "title": "Bún cá Nha Trang, a bowl of the sea – Hướng Nghiệp Á Âu culinary school",
+          "url": "https://www.huongnghiepaau.com/bun-ca-nha-trang"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
+}

@@ -2,7 +2,7 @@ import { t as T, tl, initLang, setLang, lang, applyDom, onLang } from './i18n.js
 initLang();
 import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
-import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
+import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, GAME_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
 import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner, codexNew, tutSeen, markTut, souvenirs, hasSouvenir, winSouvenir } from './game/progress.js';
 import { PROVINCES, QUAN, MINIS, provinceOf, prevProvince } from './data/regions.js';
@@ -353,7 +353,7 @@ function renderMenu() {
   // trang trí
   $('ptsNow').textContent = pointsAvailable(); $('ptsTotal').textContent = progress().points; $('ptsBadge').textContent = DECOR.some((d) => !hasDecor(d.id) && d.cost <= pointsAvailable()) || UPGRADES.some((u) => upgradeCost(u.id) != null && upgradeCost(u.id) <= pointsAvailable()) ? '!' : '';
   // sổ tay
-  renderCodex($('codexGrid'), (d) => openCodex(d, { sfx })); const cn = codexCount(); $('cxBadge').textContent = cn ? String(cn) : ''; $('cxSub').textContent = cn ? T('n.dishesOf', { a: cn, b: ALL_DISHES.length }) : T('codex.empty');
+  renderCodex($('codexGrid'), (d) => openCodex(d, { sfx })); const cn = codexCount(); $('cxBadge').textContent = cn ? String(cn) : ''; $('cxSub').textContent = cn ? T('n.dishesOf', { a: cn, b: GAME_DISHES.length }) : T('codex.empty');
   // P6b — kệ vật kỷ niệm: mỗi tỉnh một món, thắng mini-game của tỉnh thì được
   const svAll = souvenirs();
   $('cxSouv').replaceChildren(...PROVINCES.filter((p) => MINIS[p.id]).map((p) => { const m = MINIS[p.id]; const got = !!svAll[p.id]; const el = document.createElement('div');

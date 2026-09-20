@@ -1,0 +1,158 @@
+{
+  "id": "bun-thang",
+  "name": "Bún Thang",
+  "pron": "boon tahng",
+  "gloss": "Hanoi chicken vermicelli with silk-cut toppings",
+  "region": "ha-noi",
+  "price": 55,
+  "serve": {
+    "vessel": "soup-bowl",
+    "hot": true
+  },
+  "noodle": {
+    "item": "bun",
+    "flow": "hot-rinse-hot"
+  },
+  "broth": {
+    "cook": [
+      "cot-pho-ga",
+      "mieng-nuoc"
+    ],
+    "out": "chicken-broth-ready",
+    "action": "pour-chicken-broth"
+  },
+  "assembly": [
+    "$vessel",
+    "$noodle",
+    "ga-luoc",
+    "cha-lua",
+    "tom",
+    "$broth",
+    "hanh-la"
+  ],
+  "codex": {
+    "story": "Món cầu kỳ nhất Hà Nội: gà xé, giò lụa, trứng tráng đều thái chỉ mảnh như sợi tơ, xếp thành từng múi trên mặt tô, nước dùng phải trong veo.",
+    "region_note": "",
+    "how_to_eat": "Nhỏ một giọt tinh dầu cà cuống nếu có, thêm mắm tôm loãng và ớt.",
+    "review": "cần Kent duyệt"
+  },
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 45 phút · nấu 2 giờ 30 phút",
+      "ingredients": [
+        "800 g bún rối sợi nhỏ",
+        "1 con gà ta khoảng 1,2 kg (hoặc 700 g đùi và ức gà ta)",
+        "600 g xương ống heo",
+        "50 g tôm he khô (30 g để nấu nước dùng, 20 g làm ruốc tôm)",
+        "2 con sá sùng khô (nếu có — cho vị ngọt thanh đặc trưng)",
+        "150 g giò lụa",
+        "3 quả trứng gà",
+        "6 cái nấm hương khô, 40 g củ cải khô",
+        "4 củ hành tím nướng, 1 củ gừng nướng",
+        "Gia vị: 3 muỗng canh nước mắm ngon, 2 muỗng cà phê muối, 1 muỗng cà phê đường, 1 muỗng cà phê mắm tôm, 1 muỗng canh rượu trắng, tiêu",
+        "Rau răm, hành lá, 1 quả chanh, ớt tươi",
+        "Củ cải dầm mắm đường ăn kèm"
+      ],
+      "broth": [
+        "Chần xương heo 3 phút cho sạch bọt bẩn, rửa lại; luộc gà ta vừa chín tới trong nồi nước có gừng nướng và hành tím nướng, khoảng 25-30 phút rồi vớt ra ngâm nước lạnh.",
+        "Cho xương heo, phần xương gà đã lọc thịt, 30 g tôm he khô và sá sùng vào 3 lít nước luộc gà, hầm lửa liu riu 2 giờ.",
+        "Hớt bọt và hớt hết váng mỡ liên tục, giữ nước sôi lăn tăn — nước dùng bún thang phải trong veo như nước trà.",
+        "Ngâm nấm hương và củ cải khô cho nở, cho nấm vào nồi 15 phút cuối để lấy hương.",
+        "Lọc nước dùng qua rây lót vải màn, nêm nước mắm, muối, đường và đúng 1 muỗng cà phê mắm tôm để dậy mùi mà không bị nồng."
+      ],
+      "prep": [
+        "Xé thịt gà thành sợi nhỏ bằng tay, giữ cả da cho đẹp mắt, ướp chút muối tiêu.",
+        "Đánh tan trứng với chút muối và rượu trắng, lọc qua rây, tráng thật mỏng trên chảo lửa nhỏ; cuốn lại rồi thái chỉ.",
+        "Giã 20 g tôm he khô đã ngâm mềm, sao chảo lửa nhỏ đến khi tơi bông thành ruốc tôm màu hồng cam.",
+        "Thái giò lụa thành sợi mảnh bằng que tăm.",
+        "Thái nhỏ rau răm và hành lá; trụng bún qua nước sôi rồi để ráo."
+      ],
+      "assemble": [
+        "Cho bún vào bát to, dàn phẳng mặt.",
+        "Xếp riêng từng nhúm gà xé, trứng thái chỉ, giò lụa thái chỉ và ruốc tôm thành các phần rẻ quạt xen kẽ trên mặt bún.",
+        "Rắc rau răm và hành lá thái nhỏ ở giữa.",
+        "Chan nhẹ nước dùng thật nóng hai lần quanh thành bát để không làm xô lệch các phần topping, khoảng 350 ml mỗi bát."
+      ],
+      "serve": "Ăn kèm chén mắm tôm nhỏ, chanh, ớt tươi và củ cải dầm mắm đường; ai thích cầu kỳ thì thêm một giọt tinh dầu cà cuống.",
+      "tips": [
+        "Bí quyết nằm ở nước dùng trong: luộc gà và hầm xương đều ở lửa nhỏ, hớt bọt liên tục, tuyệt đối không đun sôi bùng.",
+        "Tráng trứng thật mỏng trên chảo chống dính lửa nhỏ mới thái được sợi chỉ mềm mà không rách.",
+        "Chỉ dùng một lượng mắm tôm rất nhỏ trong nồi — mắm tôm ở đây để dậy hương, phần còn lại để riêng cho người ăn tự nêm."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm bún thang kiểu Hà Nội cổ – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-thang-4566080.html"
+        },
+        {
+          "title": "Cách Nấu Bún Thang Hà Nội Đơn Giản Ngon Chuẩn Vị – Hướng Nghiệp Á Âu",
+          "url": "https://www.huongnghiepaau.com/bun-thang"
+        },
+        {
+          "title": "2 cách nấu bún thang chuẩn vị Hà Nội – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/huong-dan-cach-nau-bun-thang-ngon-chuan-vi-ha-noi-01298"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "45 min prep · 2 hr 30 min cooking",
+      "ingredients": [
+        "800 g fine fresh rice vermicelli (bún rối)",
+        "1 free-range chicken, about 1.2 kg (or 700 g thigh and breast)",
+        "600 g pork leg bones",
+        "50 g dried shrimp (30 g for the broth, 20 g for the shrimp floss)",
+        "2 dried sá sùng (peanut worms), if available — the classic source of clean sweetness",
+        "150 g giò lụa (Vietnamese steamed pork sausage)",
+        "3 eggs",
+        "6 dried shiitake mushrooms and 40 g dried daikon",
+        "4 charred shallots and 1 knob of charred ginger",
+        "Seasoning: 3 tbsp good fish sauce, 2 tsp salt, 1 tsp sugar, 1 tsp mắm tôm (fermented shrimp paste), 1 tbsp rice wine, pepper",
+        "Rau răm (Vietnamese coriander), spring onion, 1 lime, fresh chilli",
+        "Daikon pickled in fish sauce and sugar, to serve"
+      ],
+      "broth": [
+        "Blanch the pork bones for 3 minutes and rinse; poach the chicken gently with the charred ginger and shallots for 25-30 minutes, then plunge it into cold water.",
+        "Return the pork bones, the stripped chicken carcass, 30 g dried shrimp and the sá sùng to 3 litres of the poaching liquid and simmer for 2 hours.",
+        "Skim the foam and every trace of fat continuously and keep the liquid at a bare tremble — bún thang broth should be as clear as tea.",
+        "Soak the shiitake and dried daikon; add the mushrooms for the last 15 minutes for aroma.",
+        "Strain the broth through muslin and season with fish sauce, salt, sugar and exactly 1 tsp of mắm tôm — enough to perfume it, not to dominate."
+      ],
+      "prep": [
+        "Hand-shred the chicken into fine strands, keeping some skin on, and season lightly with salt and pepper.",
+        "Beat the eggs with a pinch of salt and the rice wine, strain, and fry paper-thin crêpes over low heat; roll and cut them into hair-fine threads.",
+        "Pound the remaining 20 g soaked dried shrimp and dry-fry it over low heat until it fluffs into pale orange ruốc tôm (shrimp floss).",
+        "Cut the giò lụa into matchsticks as thin as toothpicks.",
+        "Chop the rau răm and spring onion; dip the noodles in boiling water and drain."
+      ],
+      "assemble": [
+        "Put the noodles in a wide bowl and level the surface.",
+        "Lay the shredded chicken, egg threads, giò lụa strands and shrimp floss in separate wedges over the noodles, alternating the colours.",
+        "Scatter the chopped rau răm and spring onion in the centre.",
+        "Ladle very hot broth gently down the side of the bowl in two passes so the toppings stay in place, about 350 ml per bowl."
+      ],
+      "serve": "Serve with a tiny dish of mắm tôm, lime, fresh chilli and the sweet-salty pickled daikon; purists add a drop of cà cuống essence.",
+      "tips": [
+        "Everything depends on the clarity of the broth: poach and simmer low, skim constantly, and never let it come to a rolling boil.",
+        "Only a very thin omelette, cooked slowly in a non-stick pan, will cut into soft unbroken threads.",
+        "Keep the mắm tôm in the pot to a single teaspoon — it is there for perfume; diners add more themselves."
+      ],
+      "sources": [
+        {
+          "title": "Old-Hanoi style bún thang – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-thang-4566080.html"
+        },
+        {
+          "title": "Authentic Hanoi bún thang – Hướng Nghiệp Á Âu culinary school",
+          "url": "https://www.huongnghiepaau.com/bun-thang"
+        },
+        {
+          "title": "Two ways to cook Hanoi bún thang – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/huong-dan-cach-nau-bun-thang-ngon-chuan-vi-ha-noi-01298"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
+}

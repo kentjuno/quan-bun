@@ -14,8 +14,15 @@
 //   codex:   { story, region_note, how_to_eat, review }   — sổ tay (M3); review = 'cần Kent duyệt' cho tới khi duyệt
 //   real:    null | { servings, ingredients: [{ item, qty }], steps: [], sources: [] }   — công thức nấu thật (M3)
 import { SIM_DATA } from '../data/sim-data.js';
+import { GAME_EXTRAS as EXTRA } from '../data/game-extras.js';
 
-const SIM = SIM_DATA;
+/** Từ điển của GAME CHÍNH = đồ bếp quán (sim-data, KHÔNG sửa) + đồ riêng của món chung (game-extras.json). */
+export const SIM = {
+  ...SIM_DATA,
+  items: { ...SIM_DATA.items, ...EXTRA.items },
+  actions: { ...SIM_DATA.actions, ...EXTRA.actions },
+  labels: { ...SIM_DATA.labels, ...EXTRA.labels },
+};
 export const FLOWS = ['hot-rinse-hot', 'hot-once'];
 const REQ = ['id', 'name', 'region', 'price', 'serve', 'assembly'];
 /** Bước cho từng thứ vào nồi nước (soupRecipeFor dùng action để biết lấy ở đâu: kệ nước / bồn / khay). Có thể ghi đè bằng { item, action } trong broth.cook. */
@@ -100,5 +107,5 @@ export function dishToSim(d) {
 export function buildGameData(dishes) {
   const recipes = {}; const labels = { ...SIM.labels };
   for (const d of Object.values(dishes)) { const errs = validateDish(d); if (errs.length) throw new Error(`dishes/${d.id}.json: ${errs.join('; ')}`); const r = dishToSim(d); Object.assign(labels, r._labels); delete r._labels; recipes[d.id] = r; }
-  return { ...SIM, recipes, labels };
+  return { ...SIM, items: SIM.items, actions: SIM.actions, recipes, labels };
 }

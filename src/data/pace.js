@@ -5,9 +5,10 @@
 // Đo với NGUỒN GAME (dishes/*.json — công thức chung, P6). `tests/counter.test.js` đo lại và báo lỗi nếu lệch quá 40% → sửa bảng này.
 export const POV_SECONDS = {
   'goi-cuon-tom-thit': 4.8,
+  'cao-lau': 7.2,
   'chao-long': 11.8,
   'chao-suon': 11.8,
-  'pho-tai-nam': 12,
+  'pho-tai-nam': 12.0,
   'cha-gio-viet-nam': 12.1,
   'pho-sot-vang': 13.1,
   'pho-xao-lan': 13.1,
@@ -15,16 +16,20 @@ export const POV_SECONDS = {
   'banh-hoi-thit-heo': 13.5,
   'pho-suon-tai': 13.8,
   'bun-ga-nuong': 14.2,
+  'mi-quang': 14.8,
+  'bun-nem-cua-thit-nuong-tom-nuong': 14.9,
   'pho-tai-dap': 15.2,
   'bun-bo-hue': 15.5,
   'pho-dac-biet': 15.9,
-  'bun-dau-mam-tom': 16,
+  'bun-dau-mam-tom': 16.0,
+  'bun-thang': 18.3,
   'bun-rieu-cua': 18.7,
+  'hu-tieu-nam-vang': 18.7,
   'cha-ca-la-vong': 19.8,
   'pho-ga': 20.1,
   'banh-da-cua': 21.1,
-  'bun-ca-hai-phong': 25,
-  'bun-nem-cua-thit-nuong-tom-nuong': 14.9,
+  'bun-cha-ca': 22.5,
+  'bun-ca-hai-phong': 25.0,
 };
 export const POV_DEFAULT = 15;
 /** Giây/tô trung bình của các món trong level. */

@@ -449,7 +449,120 @@ const W_CCLV = {
   ],
 };
 
-export const WORLD_DEFS = [W_PHO, W_RIEU, W_BBH, W_HP, W_KHO, W_CHAO, W_KV, W_CCLV];
+// ============================== M5 — WORLD MỚI cho các tỉnh chưa có quán (món CHUNG, 0 trạm mới) ==============================
+// Bốn quán mới dùng đúng 6 trạm cũ: nồi trụng · bồn · thớt · chảo · lò vi sóng · lò đun nước.
+// Món lấy từ src/data/dishes/*.json (bản chung Việt Nam) — thêm món = thêm file JSON, level ở đây chỉ xếp bậc thang.
+const MQ = ['mi-quang'], MQ2 = ['mi-quang', 'cao-lau'];
+const W_MI_QUANG = {
+  id: 'mi-quang', name: 'Mì Quảng', icon: '🍲', sub: 'Đà Nẵng · Hội An', dishes: MQ2, starsToUnlock: 0,
+  levels: [
+    lv(1, 'Tô mì Quảng đầu tiên', 'Sợi mì vàng nghệ: trụng một lần là xong, nước chan xâm xấp', { dishes: MQ, count: 2, patience: 190, seconds: 130, prep: 12,
+      simplify: { hotBowl: true, soupReady: true, noSpoil: true, maxSteps: 4 },
+      hint: 'Mì Quảng trụng một lần (không xả lạnh). Nước đã nấu sẵn ở kệ — chan xâm xấp thôi, đừng ngập như phở.' }),
+    lv(2, 'Đủ topping', 'Thêm rau cải, đậu phộng, hành — thứ tự phải đúng', { dishes: MQ, count: 3, patience: 185, seconds: 150,
+      simplify: { hotBowl: true, soupReady: true, noSpoil: true },
+      hint: 'Thứ tự: thịt luộc → tôm → rau cải → chan nước → đậu phộng → hành lá.' }),
+    lv(3, 'Tự trụng tô', 'Tô phải tự trụng nóng trong nồi', { dishes: MQ, count: 3, patience: 180, seconds: 165,
+      simplify: { soupReady: true, noSpoil: true },
+      hint: 'Lấy tô ở kệ → bỏ vô nồi trụng → lấy tô nóng ra. Rảnh thì trụng sẵn vài tô.' }),
+    lv(4, 'Tự nấu nước', 'Đủ bước thật: cốt mì Quảng + nước trắng, đun ở lò', { dishes: MQ, count: 4, patience: 175, seconds: 185,
+      hint: 'Chạm lò: cốt mì Quảng → miếng nước → Đun. Mỗi nồi ra một phần, nấu trước khi khách gọi.' }),
+    lv(5, '⭐ Ba tô một lượt', 'Thử thách: 3 tô cùng lúc, mỗi nồi chỉ ra một phần nước', { dishes: MQ, count: 3, patience: 175, seconds: 190,
+      challenge: { kind: 'rush' }, hint: 'Lúc chuẩn bị nấu sẵn 2–3 phần nước, trụng sẵn tô.' }),
+    lv(6, 'Cao lầu Hội An', 'Món mới: cao lầu ăn KHÔ — tô khô, không chan nước', { dishes: MQ2, count: 4, patience: 180, seconds: 195,
+      unlocks: { dish: 'cao-lau' },
+      hint: 'Cao lầu dùng tô khô (không trụng nóng), sợi trụng một lần: thịt luộc → xà lách → rau cải → đậu phộng → hành phi.' }),
+    lv(7, 'Hai món xen nhau', 'Một món nước, một món khô — nhìn bong bóng trước khi lấy tô', { dishes: MQ2, count: 5, patience: 170, seconds: 210, mix: true,
+      hint: 'Mì Quảng lấy tô nước (trụng nóng), cao lầu lấy tô khô. Lấy nhầm tô là phải vứt.' }),
+    lv(8, 'Một rọ thôi', 'Ràng buộc: chỉ còn MỘT rọ trụng cho cả hai loại sợi', { dishes: MQ2, count: 6, patience: 170, seconds: 225,
+      constraints: { potSlots: 1 }, hint: 'Trụng liên tục, tranh thủ lấy topping trong lúc chờ.' }),
+    lv(9, 'Khách sộp ghé', 'Sự kiện: khách sộp tip gấp ba nhưng chờ rất ít', { dishes: MQ2, count: 6, patience: 170, seconds: 230,
+      events: [{ at: 0.4, kind: 'vip' }], hint: 'Muốn kịp khách sộp thì luôn có sẵn nước nóng và tô đã trụng.' }),
+    lv(10, '⭐ Phố cổ đông khách', 'Thử thách cuối: đoàn 4 người, đủ hai món', { dishes: MQ2, count: 6, patience: 180, seconds: 250,
+      challenge: { kind: 'boss', group: 4 }, events: [{ at: 0.3, kind: 'rain' }],
+      hint: 'Mưa xong là khách ào vô — tranh thủ lúc vắng nấu sẵn nước, trụng sẵn tô và sợi.' }),
+  ],
+};
+const BCC = ['bun-cha-ca'];
+const W_BUN_CHA_CA = {
+  id: 'bun-cha-ca', name: 'Bún chả cá', icon: '🐟', sub: 'Nha Trang', dishes: BCC, starsToUnlock: 0,
+  levels: [
+    lv(1, 'Tô bún chả cá đầu tiên', 'Chả cá và thì là đã cắt sẵn — chỉ việc bày', { dishes: BCC, count: 2, patience: 190, seconds: 130, prep: 12,
+      simplify: { hotBowl: true, soupReady: true, skipPrep: true, noSpoil: true, maxSteps: 4 },
+      hint: 'Cà chua → chả cá → cá chiên → chan nước cá. Thì là bỏ sau cùng cho thơm.' }),
+    lv(2, 'Đủ bước bày tô', 'Đủ topping: cà chua, chả cá, cá chiên, thì là, hành', { dishes: BCC, count: 3, patience: 185, seconds: 150,
+      simplify: { hotBowl: true, soupReady: true, skipPrep: true, noSpoil: true },
+      hint: 'Thì là LUÔN sau khi chan nước — bỏ trước là lỗi.' }),
+    lv(3, 'Ra thớt cắt', 'Chả cá và thì là phải tự cắt ở thớt', { dishes: BCC, count: 3, patience: 180, seconds: 170,
+      simplify: { hotBowl: true, soupReady: true, noSpoil: true },
+      hint: 'Chả cá lấy ra thớt cắt; thì là cắt 3 khúc. Lúc chuẩn bị cắt sẵn hết.' }),
+    lv(4, 'Đủ quy trình', 'Đủ bước thật: sợi nóng → xả lạnh → nóng lại, nước tự nấu', { dishes: BCC, count: 4, patience: 175, seconds: 195,
+      hint: 'Bún trụng nóng → xả lạnh → trụng nóng lại. Nước: nước cá + miếng nước → Đun.' }),
+    lv(5, '⭐ Chợ sáng', 'Thử thách: 3 tô cùng lúc lúc chợ sáng', { dishes: BCC, count: 3, patience: 175, seconds: 195,
+      challenge: { kind: 'rush' }, hint: 'Cắt sẵn chả cá, thì là và nấu sẵn nước từ lúc chuẩn bị.' }),
+    lv(6, 'Kệ nước một phần', 'Ràng buộc: kệ nước chỉ để được MỘT phần', { dishes: BCC, count: 5, patience: 170, seconds: 205,
+      constraints: { brothCap: 1 }, hint: 'Chan xong mới nấu phần kế — đừng nấu dồn.' }),
+    lv(7, 'Không vứt gì', 'Mục tiêu mới: đừng để hư sợi nào', { dishes: BCC, count: 5, patience: 170, seconds: 210,
+      goal: { kind: 'no-waste' }, hint: 'Trụng đúng số cần cho khách đang chờ.' }),
+    lv(8, '⭐ Đoàn xe du lịch', 'Thử thách cuối: đoàn 4 người, một tay bưng', { dishes: BCC, count: 5, patience: 180, seconds: 235,
+      challenge: { kind: 'boss', group: 4 }, constraints: { handCapacity: 1 },
+      hint: 'Một tay thì mỗi chuyến một thứ — cắt sẵn, nấu sẵn, trụng sẵn trước khi đoàn tới.' }),
+  ],
+};
+const HT = ['hu-tieu-nam-vang'];
+const W_HU_TIEU = {
+  id: 'hu-tieu', name: 'Hủ tiếu Nam Vang', icon: '🍲', sub: 'Sài Gòn', dishes: HT, starsToUnlock: 0,
+  levels: [
+    lv(1, 'Tô hủ tiếu đầu tiên', 'Nước trong, topping đầy: thịt, tôm, chả lụa', { dishes: HT, count: 2, patience: 190, seconds: 130, prep: 12,
+      simplify: { hotBowl: true, soupReady: true, skipRinse: true, noSpoil: true, maxSteps: 4 },
+      hint: 'Hủ tiếu: thịt luộc → tôm luộc → chả lụa → chan nước → hành lá → tóp mỡ.' }),
+    lv(2, 'Đủ topping', 'Thêm hành lá và tóp mỡ sau khi chan nước', { dishes: HT, count: 3, patience: 185, seconds: 150,
+      simplify: { hotBowl: true, soupReady: true, skipRinse: true, noSpoil: true },
+      hint: 'Tóp mỡ bỏ sau cùng cho còn giòn.' }),
+    lv(3, 'Sợi đúng bếp thật', 'Sợi hủ tiếu: nóng → xả lạnh → nóng lại', { dishes: HT, count: 3, patience: 180, seconds: 170,
+      simplify: { hotBowl: true, soupReady: true, noSpoil: true },
+      hint: 'Trụng nóng → qua bồn xả lạnh → trụng nóng lại rồi mới vô tô.' }),
+    lv(4, 'Tự nấu nước', 'Đủ bước thật: cốt hủ tiếu + nước trắng', { dishes: HT, count: 4, patience: 175, seconds: 190,
+      hint: 'Chạm lò: cốt hủ tiếu → miếng nước → Đun. Nước phải trong, đừng để sôi bùng.' }),
+    lv(5, '⭐ Sáng sớm quận 1', 'Thử thách: 3 tô cùng lúc', { dishes: HT, count: 3, patience: 175, seconds: 190,
+      challenge: { kind: 'rush' }, hint: 'Nấu sẵn 2–3 phần nước và trụng sẵn tô từ lúc chuẩn bị.' }),
+    lv(6, 'Tủ topping đổi bên', 'Bố trí mới: tủ topping và thớt đổi chỗ', { dishes: HT, count: 5, patience: 170, seconds: 205,
+      layout: 'left-topping', hint: 'Đường đi đổi hết — gom topping một chuyến.' }),
+    lv(7, 'Khách đổi ý', 'Sự kiện: một khách đổi món giữa chừng', { dishes: HT, count: 5, patience: 170, seconds: 210,
+      events: [{ at: 0.5, kind: 'change-order' }], hint: 'Phiếu đổi món thì tô đang ráp dở vẫn dùng được cho khách sau.' }),
+    lv(8, '⭐ Đoàn khách Tây', 'Thử thách cuối: đoàn 4 người, quầy ra giữa quán', { dishes: HT, count: 5, patience: 180, seconds: 235,
+      challenge: { kind: 'boss', group: 4 }, layout: 'island',
+      hint: 'Đi vòng quầy — chọn hướng trước khi chạm. Nấu sẵn thật nhiều nước.' }),
+  ],
+};
+const BT = ['bun-thang'];
+const W_BUN_THANG = {
+  id: 'bun-thang', name: 'Bún thang', icon: '🍜', sub: 'Hà Nội · món cầu kỳ nhất', dishes: BT, starsToUnlock: 0,
+  levels: [
+    lv(1, 'Tô bún thang đầu tiên', 'Nước gà trong veo, topping thái chỉ xếp thành múi', { dishes: BT, count: 2, patience: 190, seconds: 130, prep: 12,
+      simplify: { hotBowl: true, soupReady: true, skipRinse: true, noSpoil: true, maxSteps: 4 },
+      hint: 'Gà xé → giò lụa → ruốc tôm → chan nước gà → hành lá. Xếp từng múi cho đẹp.' }),
+    lv(2, 'Đủ ba thứ thái chỉ', 'Đủ topping: gà, giò lụa, ruốc tôm', { dishes: BT, count: 3, patience: 185, seconds: 150,
+      simplify: { hotBowl: true, soupReady: true, skipRinse: true, noSpoil: true },
+      hint: 'Thứ tự cố định: gà → giò → ruốc → nước → hành.' }),
+    lv(3, 'Bún đúng bếp thật', 'Bún: nóng → xả lạnh → nóng lại', { dishes: BT, count: 3, patience: 180, seconds: 170,
+      simplify: { hotBowl: true, soupReady: true, noSpoil: true },
+      hint: 'Bún trụng nóng → xả lạnh → trụng nóng lại. Tô cũng phải trụng.' }),
+    lv(4, 'Tự nấu nước gà', 'Đủ bước thật: cốt phở gà + nước trắng, nước phải TRONG', { dishes: BT, count: 4, patience: 175, seconds: 190,
+      hint: 'Chạm lò: cốt phở gà → miếng nước → Đun. Đun lửa nhỏ cho nước trong.' }),
+    lv(5, '⭐ Ba tô một lượt', 'Thử thách: 3 tô cùng lúc, mỗi nồi một phần nước', { dishes: BT, count: 3, patience: 175, seconds: 190,
+      challenge: { kind: 'rush' }, hint: 'Nấu sẵn nước, trụng sẵn tô — bún thang không làm vội được.' }),
+    lv(6, 'Không sai thứ tự', 'Mục tiêu mới: 5 tô không sai bước nào', { dishes: BT, count: 6, patience: 170, seconds: 210,
+      goal: { kind: 'clean', bowls: 5 }, hint: 'Chậm mà đúng. Xếp đủ ba múi rồi mới chan nước.' }),
+    lv(7, 'Một tay bưng', 'Ràng buộc: mỗi chuyến chỉ cầm một thứ', { dishes: BT, count: 6, patience: 170, seconds: 215,
+      constraints: { handCapacity: 1 }, hint: 'Đi ít lại — trụng sẵn, nấu sẵn, gom việc.' }),
+    lv(8, '⭐ Cỗ Tết', 'Thử thách cuối: đoàn 4 người ăn bún thang ngày Tết', { dishes: BT, count: 5, patience: 185, seconds: 240,
+      challenge: { kind: 'boss', group: 4 }, events: [{ at: 0.35, kind: 'vip' }],
+      hint: 'Ngày Tết nhà nào cũng ăn bún thang — nấu sẵn thật nhiều nước gà.' }),
+  ],
+};
+
+export const WORLD_DEFS = [W_PHO, W_RIEU, W_BBH, W_HP, W_KHO, W_CHAO, W_KV, W_CCLV, W_MI_QUANG, W_BUN_CHA_CA, W_HU_TIEU, W_BUN_THANG];
 
 /**
  * Ráp WORLDS đầy đủ: điền id/name level, món kế thừa, moneyTargets theo giá, ngưỡng sao mở world.
@@ -471,7 +584,7 @@ export function buildWorlds(prices) {
         moneyTargets: PACE.targets.map((f) => Math.max(10, Math.round(total * f / 10) * 10)) };
     });
     levels.forEach((L, i) => applyPace(L, i, levels.length));   // nhịp thật: kiên nhẫn / giờ ca / cao điểm theo tốc độ bot
-    const starsToUnlock = Math.floor(prevMax * 3 * 0.6 / 5) * 5;
+    const starsToUnlock = w.starsToUnlock ?? Math.floor(prevMax * 3 * 0.6 / 5) * 5;   // quán mới (M5) là quán đầu tỉnh → không cần ngưỡng riêng
     prevMax = w.levels.length;
     return { ...w, levels, maxStars: levels.length * 3, starsToUnlock };
   });

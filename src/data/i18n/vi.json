@@ -657,5 +657,15 @@
   "mini.mien-tay.name": "Xuồng ba lá mini",
   "mini.mien-tay.note": "Người bán ở chợ nổi Cái Răng đẽo tặng, bằng gỗ mù u.",
   "menu.prov.mini": "Mini-game của tỉnh — thắng được vật kỷ niệm",
-  "unlock.souvenir": "Vật kỷ niệm: {name}"
+  "unlock.souvenir": "Vật kỷ niệm: {name}",
+  "codex.mi-quang.story": "Món \"quốc hồn\" của xứ Quảng: sợi mì vàng nghệ, chỉ chan xâm xấp nước chứ không ngập như phở, ăn kèm bánh tráng mè nướng bẻ vụn.",
+  "codex.mi-quang.eat": "Trộn đều cho nước thấm sợi, bẻ bánh tráng mè vào, thêm ớt xanh và rau sống.",
+  "codex.cao-lau.story": "Chỉ Hội An mới có: sợi cao lầu nhào bằng nước giếng Bá Lễ và tro củi Cù Lao Chàm, dai sần sật, ăn gần như khô.",
+  "codex.cao-lau.eat": "Trộn đều với chút nước xíu đậm, ăn kèm rau sống Trà Quế và miếng cao lầu chiên giòn.",
+  "codex.hu-tieu-nam-vang.story": "Người Hoa ở Nam Vang mang xuống Sài Gòn: nước trong ngọt xương, tôm thịt đủ đầy, ăn nước hoặc ăn khô đều được.",
+  "codex.hu-tieu-nam-vang.eat": "Thêm giá, hẹ, tỏi phi; ăn khô thì chan nước riêng ra chén.",
+  "codex.bun-thang.story": "Món cầu kỳ nhất Hà Nội: gà xé, giò lụa, trứng tráng đều thái chỉ mảnh như sợi tơ, xếp thành từng múi trên mặt tô, nước dùng phải trong veo.",
+  "codex.bun-thang.eat": "Nhỏ một giọt tinh dầu cà cuống nếu có, thêm mắm tôm loãng và ớt.",
+  "codex.bun-cha-ca.story": "Chả cá Nha Trang quết từ cá thu, cá mối tươi, nước dùng nấu từ xương cá và đầu cá — ngọt thanh chứ không béo.",
+  "codex.bun-cha-ca.eat": "Ăn với mắm ruốc pha ớt, rau sống và bắp chuối bào."
 }

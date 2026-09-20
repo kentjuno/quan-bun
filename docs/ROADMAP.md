@@ -48,8 +48,8 @@ Số 6★ là đề xuất — chỉnh ở một chỗ (`PACE.recipeStars` hoặ
 | **M1** ✅ | Nền tảng nội dung | P1 phần 2 (i18n đủ) · P6: schema `dishes/`, chuyển 21 món sang bản chung, `stations.json`, `add_dish.mjs` | 3 phiên | Duyệt 21 công thức chung |
 | **M2** ✅ (còn 'khen' + bản đồ tổng) | Hành trình | P2: 5 mảnh bản đồ, đường + quán mỗi mảnh, gắn vào game thay lưới world, chủ quán + màn xin vô quán, cảnh mở đầu văn phòng, cơ chế sao mở tỉnh | 3 phiên | Duyệt thoại chủ quán, tên quán |
 | **M3** ✅ | Học & thưởng | P5 học món cho mọi món · P3 sổ tay 3 mốc sao · **công thức nấu thật** 21 món (nghiên cứu mạng, ghi nguồn) · nút in/lưu · chia sẻ ảnh | 3 phiên | Duyệt 21 công thức thật + chuyện |
-| **M4** | Chơi cho ra game | P4: loại khách, thưởng hàng loạt, 2 nâng cấp đổi cách chơi, nối sự kiện vào quầy · P6b mini-game theo tỉnh · vật kỷ niệm | 3 phiên | Chơi thử, chỉnh PACE |
-| **M5** | Mở rộng món đợt 1 | mì Quảng, cao lầu, hủ tiếu Nam Vang, bún thang, bún chả cá (0 trạm mới) qua `add_dish.mjs`; level cho tỉnh Quảng Nam / Nha Trang | 2 phiên | Duyệt 5 món |
+| **M4** ✅ | Chơi cho ra game | P4: loại khách, thưởng hàng loạt, 2 nâng cấp đổi cách chơi, nối sự kiện vào quầy · P6b mini-game theo tỉnh · vật kỷ niệm | 3 phiên | Chơi thử, chỉnh PACE |
+| **M5** ✅ | Mở rộng món đợt 1 | mì Quảng, cao lầu, hủ tiếu Nam Vang, bún thang, bún chả cá (0 trạm mới) qua `add_dish.mjs`; level cho tỉnh Quảng Nam / Nha Trang | 2 phiên | Duyệt 5 món |
 | **M6** | Playtest | P7: 3 người ngoài × 10 phút, log local, sửa theo kết quả | 1 phiên + Kent | Tìm 3 người, ngồi nhìn |
 | **M7** | Phát hành web | P8: PWA hoàn chỉnh, màn cài app, Open Graph tiếng Anh, trang landing một màn, nút chia sẻ | 1 phiên | Kiểm tên/handle, chọn domain |
 | **M8** | Trạm mới + store | `stations.json` thêm nướng / đổ chảo / hấp / khuôn; cơm tấm, bánh xèo, bánh bèo, bánh cuốn, bánh căn; gói Capacitor lên Play / App Store | 3–4 phiên | Tài khoản store |
@@ -85,16 +85,20 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 - *Nghiệm thu:* 21/21 món có codex + recipe vi/en (test); đủ 6★ ở món → trang công thức thật mở đúng; ảnh chia sẻ tải được trên Android.
 
 ### M4 — Chơi cho ra game
-- [ ] Loại khách trên phiếu (du khách / địa phương / sộp) + bot biết ưu tiên (test VIP).
-- [ ] Thưởng hàng loạt ("SẴN SÀNG", "ĐÔI").
-- [ ] Nâng cấp *Bảng gọi món* (thấy trước khách kế) và *Nồi trụng đôi*.
-- [ ] Sự kiện `tour / vip / rain / change-order` chạy ở quầy POV (test mỗi loại).
-- [ ] P6b: 5 mini-game hiện có đổi data theo tỉnh (HN rau thơm, HP bóc cua, Huế nêm cay, ĐN…, SG…), thưởng vật kỷ niệm hiện trên bản đồ.
+- [x] Loại khách trên phiếu (du khách / địa phương / sộp) + bot biết ưu tiên (test VIP) — `TICKET_KINDS` trong `counter.js`.
+- [x] Thưởng hàng loạt ("SẴN SÀNG", "ĐÔI") — `BONUS`, `checkReadyBonus()`.
+- [x] Nâng cấp *Bảng gọi món* (`m.peek`) và *Nồi trụng đôi* (`m.twinPot`) thay cho `fire`/`shoes`.
+- [x] Sự kiện `tour / vip / rain / change-order` chạy ở quầy POV (`runEvents()`, 15 test ở `tests/p4.test.js`).
+- [x] P6b: 5 mini-game đổi data theo tỉnh (`MINIS` trong `regions.js`), thưởng vật kỷ niệm, kệ vật kỷ niệm ở sổ tay.
 - *Nghiệm thu:* bot 129 level vẫn 3★ sau khi thêm loại khách; Kent nói được "tui làm ông kia trước vì…".
 
 ### M5 — Mở rộng món đợt 1
-- [ ] mì Quảng → cao lầu → hủ tiếu Nam Vang → bún thang → bún chả cá Nha Trang, mỗi món: `add_dish.mjs` + công thức game + công thức thật + codex + 4–6 level ở tỉnh tương ứng.
-- *Nghiệm thu:* mỗi món thêm không sửa file code nào; bot 3★ level mới.
+- [x] 5 món: `mi-quang`, `cao-lau`, `hu-tieu-nam-vang`, `bun-thang`, `bun-cha-ca` → `dishes/*.json` (công thức game + công thức thật + codex), **0 trạm mới**.
+- [x] 4 quán mới / 34 level: `mi-quang` (10, Đà Nẵng · Hội An), `bun-cha-ca` (8, Nha Trang), `hu-tieu` (8, Sài Gòn), `bun-thang` (8, Hà Nội) → tổng **163 level**.
+- [x] Đà Nẵng và Nha Trang hết "sắp mở": có quán, chủ quán, bảng hiệu ở chuyến xe.
+- [x] Từ điển riêng cho món game: `src/data/game-extras.js` (KHÔNG đụng `sim-data.js` của quán Kent).
+- [x] 17 ảnh: icon `mi-quang / cao-lau / hu-tieu / cot-mi-quang / cot-hu-tieu`, nồi `pot-cot-mi-quang / pot-cot-hu-tieu`, tô 5 món × dry/wet.
+- *Nghiệm thu:* 130 test xanh, bot 3★ đủ 163 level, 0 khách bỏ đi.
 
 ### M6 — Playtest
 - [ ] `?log=1` ghi sự kiện local, nút xuất JSON.
@@ -118,18 +122,18 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 
 | Loại | Số lượng | Ai | Trạng thái |
 |---|---|---|---|
-| Mảnh bản đồ | 6 (1 xong) | model + Flow | 1/6 |
-| Đường + quán mỗi mảnh | 6 | model | 1/6 (HN→HP tạm) |
-| Chủ quán (tên, 3 câu thoại, tranh) | 8 | model nháp, Kent duyệt | 0/8 |
-| Cảnh mở đầu | 4 tấm | model + Flow | 0 |
-| Công thức game bản chung | 21 (+5 M5, +9 M8) | model nháp, Kent duyệt | 0/21 |
-| Công thức nấu thật (vi + en, có nguồn) | 21 (+14) | model nghiên cứu, Kent duyệt | 0/21 |
-| Chuyện + cách ăn (codex) | 21 (+14) | model nháp, Kent duyệt | 0/21 |
-| Cách đọc + giải nghĩa (items.json) | 21 món + ~90 nguyên liệu | model | 0 |
-| Level title/whatsNew (en) | 129 | model | 129/129 ✅ |
-| Level hint (en) | 129 | model | 0/129 |
-| Mini-game theo tỉnh (data) | 6 tỉnh × 1 | model | 0/6 |
-| Vật kỷ niệm (sprite) | 6 | model + Flow | 0/6 |
+| Mảnh bản đồ | 6 | model + Flow | 6/6 ✅ |
+| Đường + quán mỗi mảnh | 6 | model | 6/6 ✅ (cần soi trên điện thoại) |
+| Chủ quán (tên, 3 câu thoại, tranh) | 12 | model nháp, Kent duyệt | 12/12 viết xong · **0/12 Kent duyệt** |
+| Cảnh mở đầu | 4 tấm | model + Flow | 4/4 ✅ |
+| Công thức game bản chung | 26 (+9 M8) | model nháp, Kent duyệt | 26/26 viết xong · **0/26 Kent duyệt** |
+| Công thức nấu thật (vi + en, có nguồn) | 26 (+9) | model nghiên cứu, Kent duyệt | 26/26 viết xong · **0/26 Kent duyệt** |
+| Chuyện + cách ăn (codex) | 26 (+9) | model nháp, Kent duyệt | 26/26 viết xong · **0/26 Kent duyệt** |
+| Cách đọc + giải nghĩa (items.json) | 26 món + ~95 nguyên liệu | model | xong ✅ |
+| Level title/whatsNew (en) | 163 | model | 163/163 ✅ |
+| Level hint (en) | 163 | model | 163/163 ✅ |
+| Mini-game theo tỉnh (data) | 7 tỉnh × 1 | model | 7/7 ✅ |
+| Vật kỷ niệm (sprite) | 7 | model | 7/7 (emoji, chưa có tranh) |
 
 ---
 

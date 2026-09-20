@@ -332,7 +332,7 @@ export class Counter {
   serve(t, bowl) {
     const sec = this.time - t.born; const q = Math.max(0, 100 - 20 * t.mistakes - (sec > (this.o.par || 1e9) ? 10 : 0));
     this.results.push({ dish: t.dish, mistakes: t.mistakes, sec, taps: t.taps, quality: q });
-    const price = PRICES[t.dish] || 30;
+    const price = this.recs[t.dish]?.price ?? PRICES[t.dish] ?? 30;   // giá của món: dishes/<id>.json (game) hoặc PRICES (quán)
     const tipRate = t.mistakes ? 0 : sec <= t.pat * 0.45 ? 0.2 : sec <= t.pat * 0.7 ? 0.1 : 0;
     const tip = Math.round(price * tipRate * (t.tipMult || 1));
     // Chuỗi tô sạch (combo) nhân tiền — tính TRƯỚC khi cộng tiền để tô này được hưởng. Sai 1 tô là về 0.
