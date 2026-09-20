@@ -42,5 +42,99 @@
     "how_to_eat": "Chan nước thật sôi để thịt vừa chín tới.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · nấu 3–4 giờ",
+      "ingredients": [
+        "Nước dùng và bánh phở như phở tái nạm",
+        "500 g thăn hoặc phi lê bò tươi (không dùng thịt đông lạnh)",
+        "1 củ gừng non (50 g), một nửa băm nhuyễn, một nửa thái sợi",
+        "1 thìa cà phê muối, 1 thìa cà phê đường, 1 thìa cà phê tiêu xay",
+        "1 thìa canh dầu ăn hoặc nước mắm ngon",
+        "Hành lá, ngò rí, giá, chanh, ớt"
+      ],
+      "broth": [
+        "Nước dùng nấu như phở tái nạm, hầm 3–4 giờ, nêm vừa và giữ sôi mạnh trước khi chan."
+      ],
+      "prep": [
+        "Thăn bò rửa nước muối loãng, lau khô, thái lát dày 5 mm ngang thớ (dày hơn tái thường).",
+        "Đặt từng lát lên thớt, rắc gừng băm và vài hạt muối, dùng sống dao hoặc chày đập dẹt cho miếng thịt mỏng, mềm và thấm gừng.",
+        "Ướp thịt đã đập với đường, tiêu, chút dầu ăn 10–15 phút, để ngăn mát.",
+        "Bánh phở trụng nóng; hành ngò thái nhỏ, gừng sợi để riêng."
+      ],
+      "assemble": [
+        "Cho bánh phở vào tô, trải thịt đập rộng lên mặt, rắc gừng sợi, hành ngò.",
+        "Chan nước dùng đang sôi sùng sục từ từ đều lên thịt cho chín tái, mặt thịt chuyển hồng là đạt.",
+        "Rắc tiêu, dọn ngay."
+      ],
+      "serve": "Ăn kèm giá, húng quế, chanh, ớt và tương ớt; hợp thêm chút nước mắm gừng.",
+      "tips": [
+        "Thịt phải thật tươi vì chỉ chín bằng nước dùng; thớ thịt nhìn thấy đường vân là dễ đập.",
+        "Đập vừa tay, quá mạnh thịt nát; đập xong thịt gần trong suốt là mềm nhất.",
+        "Có thể trụng thịt 3–5 giây trong nồi nước dùng nếu không thích quá tái."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu phở bò Hà Nội chuẩn vị (mẹo đập thịt tái) – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-ha-noi-chuan-vi-nuoc-dung-ngot-thanh-don-gian-22475"
+        },
+        {
+          "title": "Hướng dẫn nấu phở bò tại nhà chuẩn vị – VnExpress",
+          "url": "https://vnexpress.net/doi-song-cooking-pho-bo-4298429.html"
+        },
+        {
+          "title": "14 món phở tái nạm – Cookpad",
+          "url": "https://cookpad.com/vn/tim-kiem/ph%E1%BB%9F%20t%C3%A1i%20n%E1%BA%A1m"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "30 min prep · 3–4 hr cooking",
+      "ingredients": [
+        "Broth and noodles as in Phở Tái Nạm",
+        "500 g fresh beef tenderloin or eye round (never frozen)",
+        "1 young ginger knob (50 g), half minced, half julienned",
+        "1 tsp salt, 1 tsp sugar, 1 tsp ground pepper",
+        "1 tbsp cooking oil or good fish sauce",
+        "Scallions, cilantro, bean sprouts, lime, chili"
+      ],
+      "broth": [
+        "Make the broth as for Phở Tái Nạm, simmer 3–4 hours, season and keep at a rolling boil before ladling."
+      ],
+      "prep": [
+        "Rinse the beef in light brine, pat dry and cut 5 mm slices against the grain (thicker than usual rare beef).",
+        "Lay each slice on the board, sprinkle with minced ginger and a pinch of salt, and pound flat with the spine of a cleaver or a mallet until thin, tender and infused with ginger (this pounding is the 'đập').",
+        "Marinate the pounded beef 10–15 min with sugar, pepper and a little oil; keep chilled.",
+        "Blanch the noodles; chop the herbs and set the ginger threads aside."
+      ],
+      "assemble": [
+        "Put noodles in each bowl, spread the pounded beef wide across the top, add ginger threads, scallion and cilantro.",
+        "Slowly ladle furiously boiling broth over the beef so it cooks to rare; it is ready once the surface turns pink.",
+        "Sprinkle pepper and serve at once."
+      ],
+      "serve": "Serve with sprouts, Thai basil, lime, chili and sriracha; a dab of ginger fish sauce goes well.",
+      "tips": [
+        "The beef must be very fresh since only the broth cooks it; slices with a visible grain pound most easily.",
+        "Pound firmly but not hard or the meat shreds; it is tenderest when almost translucent.",
+        "Dip the beef 3–5 seconds in the broth pot if you prefer it less rare."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu phở bò Hà Nội chuẩn vị (mẹo đập thịt tái) – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-ha-noi-chuan-vi-nuoc-dung-ngot-thanh-don-gian-22475"
+        },
+        {
+          "title": "Hướng dẫn nấu phở bò tại nhà chuẩn vị – VnExpress",
+          "url": "https://vnexpress.net/doi-song-cooking-pho-bo-4298429.html"
+        },
+        {
+          "title": "14 món phở tái nạm – Cookpad",
+          "url": "https://cookpad.com/vn/tim-kiem/ph%E1%BB%9F%20t%C3%A1i%20n%E1%BA%A1m"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

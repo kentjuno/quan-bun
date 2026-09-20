@@ -37,5 +37,105 @@
     "how_to_eat": "Chan nước mắm chua ngọt, trộn đều.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút (ướp 1 giờ) · nấu 30 phút",
+      "ingredients": [
+        "Đùi gà phi lê (hoặc ức gà): 800 g",
+        "Bún tươi: 800 g",
+        "Ướp gà: sả 3 cây (2 cây băm nhuyễn, 1 cây đập dập), tỏi băm 1 muỗng canh, hành tím băm 1 củ, nước mắm 2 muỗng canh, dầu hào 1 muỗng canh, mật ong 1,5 muỗng canh, nước màu (hoặc nước tương) 1 muỗng cà phê, cốt chanh 1 muỗng cà phê, dầu ăn 1 muỗng canh, tiêu, ớt bột tuỳ thích",
+        "Đồ chua: cà rốt 1 củ, củ cải trắng 1 củ nhỏ, đường 3 muỗng canh, giấm 4 muỗng canh, muối",
+        "Rau: xà lách 1 cây, húng lủi, rau răm, giá 100 g, dưa leo 1 trái",
+        "Mỡ hành: hành lá 1 bó, dầu ăn 3 muỗng canh; đậu phộng rang giã 4 muỗng canh; hành phi 2 muỗng canh",
+        "Nước mắm chua ngọt: nước mắm 4 muỗng canh, đường 4 muỗng canh, cốt chanh 4 muỗng canh, nước lọc 200 ml, tỏi ớt băm"
+      ],
+      "broth": [
+        "Gà ngâm nước muối loãng với vài lát hành tím 10–15 phút cho sạch mùi, rửa lại, thấm khô, khứa nhẹ mặt da cho thấm.",
+        "Trộn gà với toàn bộ gia vị ướp và sả băm, bóp đều, đậy kín để tủ lạnh ít nhất 1 giờ (ngon nhất qua đêm).",
+        "Trước khi nướng gạt bớt sả tỏi bám ngoài để không cháy đen; nướng lò 200°C 20–25 phút (trở mặt giữa chừng, phết dầu) hoặc áp chảo lửa vừa 6–7 phút mỗi mặt, hoặc nướng than.",
+        "Để gà nghỉ 5 phút rồi cắt lát dày 1 cm.",
+        "Pha nước mắm: hoà tan đường trong nước ấm, thêm nước mắm và chanh theo tỉ lệ 1:1:1:5, cuối cùng cho tỏi ớt băm để nổi lên mặt.",
+        "Mỡ hành: hành lá thái nhỏ, chan dầu nóng vào cùng chút muối."
+      ],
+      "prep": [
+        "Đồ chua: cà rốt, củ cải thái sợi, bóp chút muối, xả sạch, vắt ráo, trộn đường giấm, để lạnh 15–30 phút.",
+        "Rau sống rửa sạch ngâm muối, để ráo, cắt vừa ăn; dưa leo thái sợi hoặc lát mỏng.",
+        "Bún tươi tơi rời, để ráo.",
+        "Đậu phộng rang giã dập."
+      ],
+      "assemble": [
+        "Cho rau sống, giá, dưa leo vào đáy tô, xếp bún lên (khoảng 200 g/tô).",
+        "Đặt gà nướng thái lát lên mặt, thêm đồ chua.",
+        "Rưới mỡ hành, rắc đậu phộng và hành phi.",
+        "Chan 4–5 muỗng canh nước mắm chua ngọt, trộn đều trước khi ăn."
+      ],
+      "serve": "Dọn kèm chén nước mắm tỏi ớt riêng và ớt tươi, ăn ngay khi gà còn nóng.",
+      "tips": [
+        "Chọn đùi gà phi lê để gà mềm mọng; ức gà nên ướp có thêm dầu và không nướng quá lâu.",
+        "Mật ong và nước màu giúp gà có màu vàng nâu bóng đẹp, nhưng dễ cháy — nướng lửa vừa, phết dầu.",
+        "Nước mắm nên pha hơi ngọt hơn nước chấm thông thường vì sẽ chan vào cả tô bún."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress – Bí quyết làm bún gà nướng sả trong 30 phút",
+          "url": "https://vnexpress.net/bi-quyet-lam-bun-ga-nuong-sa-trong-30-phut-4298450.html"
+        },
+        {
+          "title": "FPT Shop – Bí quyết làm bún gà nướng sả siêu ngon",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/bi-quyet-lam-bun-ga-nuong-sa-168789"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 30 min (plus 1 h marinating) · cook 30 min",
+      "ingredients": [
+        "Boneless chicken thighs (or breast): 800 g",
+        "Fresh rice vermicelli (bún): 800 g",
+        "Marinade: 3 lemongrass stalks (2 finely minced, 1 bruised), 1 tbsp minced garlic, 1 minced shallot, 2 tbsp fish sauce, 1 tbsp oyster sauce, 1.5 tbsp honey, 1 tsp caramel color (nước màu) or soy sauce, 1 tsp lime juice, 1 tbsp oil, pepper, chili flakes to taste",
+        "Pickles (đồ chua): 1 carrot, 1 small daikon, 3 tbsp sugar, 4 tbsp vinegar, salt",
+        "Greens: 1 head lettuce, mint, Vietnamese coriander (rau răm), 100 g bean sprouts, 1 cucumber",
+        "Scallion oil (mỡ hành): 1 bunch scallions, 3 tbsp oil; 4 tbsp crushed roasted peanuts; 2 tbsp fried shallots",
+        "Sweet-sour fish sauce: 4 tbsp fish sauce, 4 tbsp sugar, 4 tbsp lime juice, 200 ml water, minced garlic and chili"
+      ],
+      "broth": [
+        "Soak the chicken 10–15 min in lightly salted water with a few shallot slices, rinse, pat dry and score the skin side lightly.",
+        "Mix the chicken with all the marinade ingredients and minced lemongrass, massage in, cover and refrigerate at least 1 h (overnight is best).",
+        "Before cooking, scrape off excess lemongrass and garlic so they don't burn; roast at 200°C for 20–25 min (turn halfway, brush with oil), or pan-sear over medium heat 6–7 min per side, or grill over charcoal.",
+        "Rest the chicken 5 min, then slice 1 cm thick.",
+        "Fish sauce: dissolve sugar in warm water, add fish sauce and lime at a 1:1:1:5 ratio, and stir in garlic and chili last so they float.",
+        "Scallion oil: chop scallions and pour hot oil over with a pinch of salt."
+      ],
+      "prep": [
+        "Pickles: julienne carrot and daikon, rub with a little salt, rinse, squeeze dry, toss with sugar and vinegar and chill 15–30 min.",
+        "Wash the herbs in salted water, drain and cut bite-size; julienne or thinly slice the cucumber.",
+        "Loosen the vermicelli and let it drain.",
+        "Crush the roasted peanuts."
+      ],
+      "assemble": [
+        "Put greens, sprouts and cucumber in the bottom of each bowl and add noodles (about 200 g per bowl).",
+        "Lay the sliced grilled chicken on top and add pickles.",
+        "Spoon over scallion oil, sprinkle peanuts and fried shallots.",
+        "Pour on 4–5 tbsp sweet-sour fish sauce and toss before eating."
+      ],
+      "serve": "Serve with extra garlic-chili fish sauce and fresh chili on the side, while the chicken is hot.",
+      "tips": [
+        "Boneless thighs stay juicy; if using breast, add extra oil to the marinade and don't overcook.",
+        "Honey and caramel color give a glossy golden-brown skin but burn easily; cook over medium heat and brush with oil.",
+        "Make the sauce slightly sweeter than a normal dipping sauce since it gets poured over the whole bowl."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress – Bí quyết làm bún gà nướng sả trong 30 phút",
+          "url": "https://vnexpress.net/bi-quyet-lam-bun-ga-nuong-sa-trong-30-phut-4298450.html"
+        },
+        {
+          "title": "FPT Shop – Bí quyết làm bún gà nướng sả siêu ngon",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/bi-quyet-lam-bun-ga-nuong-sa-168789"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

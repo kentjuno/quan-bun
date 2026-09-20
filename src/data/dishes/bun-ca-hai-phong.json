@@ -61,5 +61,123 @@
     "how_to_eat": "Thì là bỏ sau cùng cho thơm; chấm cá với mắm ớt.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · nấu 1 giờ 15 phút",
+      "ingredients": [
+        "1 con cá (cá rô phi hoặc cá trắm/cá hồng) khoảng 1,2 kg, lọc phi lê; giữ đầu và xương",
+        "300 g chả cá chiên (mua sẵn hoặc làm từ 300 g cá xay + thì là + hành)",
+        "500 g xương ống heo",
+        "3 quả cà chua, bổ múi cau; 1 muỗng canh sốt cà chua (tuỳ chọn cho màu)",
+        "1 bó rau cần nước (300 g), cắt khúc 5 cm",
+        "1 bó thì là, 1 bó hành lá",
+        "200 g dọc mùng, tước vỏ, thái vát, bóp muối (tuỳ chọn)",
+        "1 củ gừng, 1 củ nghệ tươi (hoặc 1 muỗng cà phê bột nghệ), 4 củ hành tím",
+        "2 muỗng canh nước cốt me hoặc 3 muỗng canh giấm",
+        "Bột chiên giòn (50 g) hoặc bột năng để áo cá",
+        "Sa tế / ớt chưng, tương ớt Hải Phòng",
+        "800 g bún rối",
+        "Rau sống: xà lách, rau muống chẻ, giá, kinh giới; chanh, ớt",
+        "Nước mắm, muối, đường, hạt nêm, tiêu, dầu ăn"
+      ],
+      "broth": [
+        "Xương heo chần qua, rửa sạch; đầu và xương cá rửa với muối và gừng cho hết tanh.",
+        "Ninh xương heo với 3 lít nước và hành tím nướng khoảng 45 phút, vớt bọt; cho đầu xương cá vào ninh thêm 20 phút rồi lọc bỏ xương.",
+        "Phi hành tím, xào cà chua với chút muối và nước nghệ (gừng nghệ giã, vắt lấy nước), đổ vào nồi nước dùng.",
+        "Nêm nước mắm, muối, đường, nước me; thêm dọc mùng nếu dùng, đun sôi lại 5 phút.",
+        "Trước khi ăn thả rau cần vào nồi 1 phút cho vừa chín tới, còn xanh và giòn."
+      ],
+      "prep": [
+        "Cá phi lê cắt miếng dày 2 cm, ướp 15 phút với 1 muỗng cà phê muối, tiêu, nước nghệ và 1 muỗng cà phê nước mắm; thấm khô.",
+        "Áo cá qua lớp bột mỏng, chiên ngập dầu lửa vừa đến khi vàng giòn hai mặt; vớt ra để ráo.",
+        "Chả cá: nếu tự làm, trộn cá xay với thì là, hành lá thái nhỏ, tiêu, 1 muỗng cà phê nước mắm; nặn miếng dẹt, chiên vàng, cắt lát.",
+        "Thì là, hành lá thái khúc; rau cần rửa sạch cắt khúc."
+      ],
+      "assemble": [
+        "Bún chần nóng, cho vào tô; xếp rau cần, dọc mùng lên trên.",
+        "Bày miếng cá chiên, chả cá, vài miếng cà chua.",
+        "Chan nước dùng nóng, rắc thì là, hành lá, thêm 1 muỗng cà phê sa tế/ớt chưng."
+      ],
+      "serve": "Ăn nóng với rau sống, chanh, tương ớt Hải Phòng; ai ăn cay thêm sa tế.",
+      "tips": [
+        "Thấm cá thật khô trước khi chiên để không bắn dầu và lớp ngoài giòn lâu.",
+        "Ninh xương cá ngắn (khoảng 20 phút) là đủ ngọt, ninh lâu nước dễ tanh và đục.",
+        "Cho rau cần vào cuối cùng; nấu lâu rau mất màu và mùi thơm đặc trưng."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress — Cách nấu bún cá cay Hải Phòng",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-ca-cay-hai-phong-4663677.html"
+        },
+        {
+          "title": "Điện máy XANH — Cách làm bún cá Hải Phòng thơm ngon lạ miệng chuẩn vị đặc sản",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-bun-ca-hai-phong-thom-ngon-la-mieng-chuan-vi-dac-san-14311"
+        },
+        {
+          "title": "FPT Shop — Cách nấu bún cá cay Hải Phòng đặc biệt thơm ngon chuẩn vị đất cảng",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/bun-ca-cay-hai-phong-180931"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 30 min · cook 1 h 15 min",
+      "ingredients": [
+        "1 whole fish (tilapia, grass carp or snapper) about 1.2 kg, filleted; keep head and bones",
+        "300 g fried chả cá (fish cake), store-bought or made from 300 g fish paste + dill + scallion",
+        "500 g pork leg bones",
+        "3 tomatoes, cut into wedges; 1 tbsp tomato paste (optional, for color)",
+        "1 bunch rau cần (Vietnamese water celery), 300 g, cut into 5 cm lengths",
+        "1 bunch dill, 1 bunch scallions",
+        "200 g dọc mùng (taro stem), peeled, sliced, salted and rinsed (optional)",
+        "1 knob ginger, 1 knob fresh turmeric (or 1 tsp powder), 4 shallots",
+        "2 tbsp tamarind juice or 3 tbsp vinegar",
+        "50 g crispy-fry flour or tapioca starch to coat the fish",
+        "Sa tế / chili-in-oil, Hải Phòng chili sauce",
+        "800 g fresh bún (rice vermicelli)",
+        "Herbs: lettuce, split water spinach, bean sprouts, kinh giới; lime, chili",
+        "Fish sauce, salt, sugar, seasoning powder, pepper, oil"
+      ],
+      "broth": [
+        "Blanch and rinse the pork bones; rub the fish head and bones with salt and ginger to remove any fishiness.",
+        "Simmer the pork bones in 3 liters of water with charred shallots for about 45 minutes, skimming; add the fish head and bones for 20 more minutes, then strain out all bones.",
+        "Fry shallots, sauté the tomatoes with a little salt and turmeric-ginger juice (pound and squeeze), and pour into the stock.",
+        "Season with fish sauce, salt, sugar and tamarind; add taro stem if using and boil 5 minutes.",
+        "Just before serving drop the water celery into the pot for 1 minute so it stays green and crisp."
+      ],
+      "prep": [
+        "Cut the fillets into 2 cm thick pieces, marinate 15 minutes with 1 tsp salt, pepper, turmeric juice and 1 tsp fish sauce; pat dry.",
+        "Dust with a thin layer of flour and deep-fry over medium heat until golden and crisp on both sides; drain.",
+        "Fish cake, if homemade: mix fish paste with chopped dill, scallion, pepper and 1 tsp fish sauce; flatten into patties, fry golden and slice.",
+        "Cut dill and scallions into lengths; wash and cut the water celery."
+      ],
+      "assemble": [
+        "Blanch the noodles and put in bowls; lay water celery and taro stem on top.",
+        "Add pieces of fried fish, fish cake and a few tomato wedges.",
+        "Ladle hot broth over, scatter dill and scallion, and add 1 tsp of chili oil."
+      ],
+      "serve": "Serve hot with the herb plate, lime and Hải Phòng chili sauce; add more sa tế if you like it fiery.",
+      "tips": [
+        "Pat the fish completely dry before frying so the oil doesn't spit and the crust stays crisp longer.",
+        "Simmer the fish bones only briefly (about 20 minutes); longer makes the broth cloudy and fishy.",
+        "Add the water celery last; cooked too long it loses its color and signature fragrance."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress — Cách nấu bún cá cay Hải Phòng",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-ca-cay-hai-phong-4663677.html"
+        },
+        {
+          "title": "Điện máy XANH — Cách làm bún cá Hải Phòng thơm ngon lạ miệng chuẩn vị đặc sản",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-bun-ca-hai-phong-thom-ngon-la-mieng-chuan-vi-dac-san-14311"
+        },
+        {
+          "title": "FPT Shop — Cách nấu bún cá cay Hải Phòng đặc biệt thơm ngon chuẩn vị đất cảng",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/bun-ca-cay-hai-phong-180931"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

@@ -36,5 +36,111 @@
     "how_to_eat": "Cuốn với xà lách, rau thơm, chấm nước mắm chua ngọt.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 40 phút · cuốn 20 phút · chiên 20 phút (khoảng 20 cuốn)",
+      "ingredients": [
+        "400 g thịt nạc vai xay (có chút mỡ)",
+        "200 g tôm tươi bóc vỏ, thái hạt lựu",
+        "50 g miến dong ngâm mềm cắt 2 cm, 10 g mộc nhĩ khô + 5 g nấm hương khô ngâm nở thái nhỏ",
+        "1/2 củ cà rốt, 1/2 củ đậu (hoặc 1 nắm giá), 1/2 củ hành tây thái sợi; 3 nhánh hành lá, 1 nắm rau mùi thái nhỏ, 2 củ hành khô băm",
+        "1 quả trứng gà (chỉ cho lòng đỏ nếu nhân ướt), 1 muỗng cà phê hạt nêm, 1 muỗng cà phê nước mắm, 1/2 muỗng cà phê muối, 1 muỗng cà phê tiêu, 1 muỗng canh dầu ăn",
+        "20–25 lá bánh đa nem (bánh tráng), 1/2 lon bia hoặc nước pha chút đường/giấm để làm mềm bánh",
+        "500 ml dầu ăn để chiên ngập",
+        "Nước chấm: 3 muỗng canh nước mắm, 3 muỗng canh đường, 2 muỗng canh nước cốt chanh hoặc giấm, 150 ml nước ấm, tỏi ớt băm; ăn kèm bún, xà lách, rau thơm, dưa góp"
+      ],
+      "broth": [
+        "Trộn nhân: cho thịt xay vào âu với hạt nêm, nước mắm, muối, tiêu và 1 muỗng canh dầu ăn, trộn đều; thêm tôm, miến, mộc nhĩ, nấm hương, rau củ đã vắt ráo, hành mùi; chỉ đập trứng vào ngay trước khi cuốn để nhân không chảy nước.",
+        "Cuốn nem: thấm khăn vào bia lau lên bánh đa cho mềm, đặt 1 muỗng canh nhân thành thanh dài, gấp hai mép, cuốn vừa tay (không siết chặt); có thể lót 2 lớp bánh cho giòn.",
+        "Chiên lần 1: dầu nóng vừa (đũa nhúng sủi tăm nhỏ), chiên lửa vừa 5–6 phút đến chín 70–80 %, vỏ vàng nhạt; vớt ra giấy thấm dầu.",
+        "Chiên lần 2: trước khi ăn, dầu nóng hơn, chiên 2–3 phút cho vàng ruộm, giòn tan.",
+        "Pha nước chấm: hoà đường với nước ấm, thêm chanh/giấm rồi mới thêm nước mắm nêm vừa; cuối cùng cho tỏi ớt băm."
+      ],
+      "prep": [
+        "Mộc nhĩ, nấm hương ngâm nước ấm 15 phút, bỏ chân, thái sợi nhỏ; miến ngâm 10 phút, cắt ngắn.",
+        "Cà rốt, củ đậu, hành tây thái sợi mảnh, bóp chút muối rồi vắt khô để nhân không ướt.",
+        "Tôm bóc vỏ, rút chỉ đen, thái hạt lựu; hành lá, rau mùi thái nhỏ.",
+        "Trộn bia (hoặc nước đường loãng) trong bát để lau bánh đa; bánh đa để nơi kín gió cho không giòn gãy."
+      ],
+      "assemble": [
+        "Nem chiên xong để nghiêng trên giấy thấm cho ráo dầu, cắt đôi nếu cuốn dài.",
+        "Xếp nem lên dĩa có lót rau xà lách; bún, rau thơm, dưa góp để cạnh.",
+        "Múc nước chấm ra chén nhỏ, thả thêm dưa góp cà rốt cho mỗi chén."
+      ],
+      "serve": "Ăn nóng, cuốn nem với xà lách rau thơm hoặc ăn cùng bún chấm nước mắm chua ngọt tỏi ớt.",
+      "tips": [
+        "Rau củ phải vắt thật khô và trứng cho sau cùng, nếu không nhân ra nước làm vỏ bánh mềm, dễ vỡ khi chiên.",
+        "Chiên hai lần (lần 1 chín, để nguội hoặc cấp đông; lần 2 giòn) là cách nem vàng đều, giòn lâu; nhỏ vài giọt chanh vào dầu cũng giúp vỏ giòn hơn.",
+        "Cuốn vừa tay, để chừa chút khoảng trống vì nhân nở khi chiên; xếp nem không chạm nhau trong chảo."
+      ],
+      "sources": [
+        {
+          "title": "Công thức và cách làm nem rán Hà Nội chuẩn nhất – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-nem-ran-4419689.html"
+        },
+        {
+          "title": "Nem rán – mẹo rán nem giòn – cách pha nước chấm – Savoury Days",
+          "url": "http://www.savourydays.com/nem-ran-meo-ran-nem-gion-cach-pha-nuoc-cham-bun-cha-nem-cua-minh/"
+        },
+        {
+          "title": "Bí kíp để nem rán vàng ruộm, giòn tan – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bi-kip-de-nem-ran-vang-ruom-gion-tan-4862683.html"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 40 min · rolling 20 min · frying 20 min (about 20 rolls)",
+      "ingredients": [
+        "400 g ground pork shoulder with a little fat",
+        "200 g fresh shrimp, peeled and diced",
+        "50 g miến (dried glass noodles) soaked and cut to 2 cm, 10 g dried mộc nhĩ (wood-ear mushroom) + 5 g dried shiitake, soaked and finely sliced",
+        "1/2 carrot, 1/2 jicama (or a handful of bean sprouts), 1/2 onion in fine julienne; 3 scallions, a handful of coriander chopped, 2 shallots minced",
+        "1 egg (yolk only if the filling is wet), 1 tsp seasoning powder, 1 tsp fish sauce, 1/2 tsp salt, 1 tsp pepper, 1 tbsp oil",
+        "20–25 sheets bánh đa nem (thin Vietnamese rice paper), 1/2 can beer or water with a little sugar/vinegar to soften the sheets",
+        "500 ml oil for deep-frying",
+        "Dipping sauce: 3 tbsp fish sauce, 3 tbsp sugar, 2 tbsp lime juice or vinegar, 150 ml warm water, minced garlic and chili; serve with bún, lettuce, herbs and pickled carrot"
+      ],
+      "broth": [
+        "Mix the filling: combine pork with seasoning powder, fish sauce, salt, pepper and 1 tbsp oil; fold in shrimp, glass noodles, mushrooms, squeezed-dry vegetables, scallion and coriander; add the egg only right before rolling so the filling doesn't weep.",
+        "Roll: wipe each rice paper with a cloth dipped in beer to soften, place 1 tbsp of filling in a log, fold in the sides and roll snugly but not tight; double the sheet for extra crunch.",
+        "First fry: in medium-hot oil (small bubbles around a chopstick), fry over medium heat 5–6 minutes until 70–80 % cooked and pale gold; drain on paper.",
+        "Second fry: just before serving, in hotter oil, fry 2–3 minutes until deep golden and shatteringly crisp.",
+        "Sauce: dissolve sugar in warm water, add lime/vinegar, then fish sauce to taste; finish with garlic and chili."
+      ],
+      "prep": [
+        "Soak the mushrooms in warm water 15 minutes, trim the stems and slice thinly; soak the glass noodles 10 minutes and cut short.",
+        "Julienne carrot, jicama and onion finely, toss with a pinch of salt and squeeze out the water so the filling stays dry.",
+        "Peel and devein the shrimp and dice; chop scallions and coriander.",
+        "Pour beer (or lightly sweetened water) into a bowl for wiping the rice paper; keep the sheets covered so they don't dry and crack."
+      ],
+      "assemble": [
+        "Stand the fried rolls on paper towels to drain; halve them if long.",
+        "Arrange on a lettuce-lined platter with vermicelli, herbs and pickles alongside.",
+        "Pour the dipping sauce into small bowls and drop a little pickled carrot into each."
+      ],
+      "serve": "Eat hot, wrapped in lettuce with herbs or over vermicelli, dipped in sweet-sour garlic-chili fish sauce.",
+      "tips": [
+        "Squeeze the vegetables bone-dry and add the egg last; a wet filling softens the wrapper and makes rolls burst in the oil.",
+        "Frying twice (first to cook, cool or freeze; second to crisp) gives even color and long-lasting crunch; a few drops of lime juice in the oil also helps.",
+        "Roll with a little slack since the filling expands, and don't let rolls touch in the pan."
+      ],
+      "sources": [
+        {
+          "title": "Công thức và cách làm nem rán Hà Nội chuẩn nhất – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-nem-ran-4419689.html"
+        },
+        {
+          "title": "Nem rán – mẹo rán nem giòn – cách pha nước chấm – Savoury Days",
+          "url": "http://www.savourydays.com/nem-ran-meo-ran-nem-gion-cach-pha-nuoc-cham-bun-cha-nem-cua-minh/"
+        },
+        {
+          "title": "Bí kíp để nem rán vàng ruộm, giòn tan – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bi-kip-de-nem-ran-vang-ruom-gion-tan-4862683.html"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

@@ -39,5 +39,115 @@
     "how_to_eat": "Trộn đều từ dưới lên trước khi ăn.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 45 phút (ướp 1 giờ) · nấu 45 phút",
+      "ingredients": [
+        "Bún tươi: 800 g",
+        "Thịt nướng: ba chỉ hoặc nạc vai 400 g; hành tím băm 2 củ, tỏi băm 3 tép, sả băm 1 cây, nước mắm 2 muỗng canh, mật ong 2 muỗng canh, dầu hào 1 muỗng canh, dầu mè 1 muỗng canh, tiêu, chút ngũ vị hương, 1 muỗng canh dầu ăn",
+        "Tôm nướng: tôm sú 300 g (8–12 con); tỏi sả băm, 1 muỗng canh dầu, 1 muỗng cà phê nước mắm, chút đường và tiêu",
+        "Nem cua (chả giò cua): thịt heo xay 200 g, thịt cua (hoặc tôm băm) 100 g, miến khô 30 g, nấm mèo 3 tai, cà rốt 1/2 củ, hành tím 1 củ, trứng 1 quả, tiêu, hạt nêm; bánh tráng hoặc bánh đa nem 12 cái; dầu chiên",
+        "Đồ chua: cà rốt 1 củ, củ cải trắng 1 củ, giấm 100 ml, đường 80 g, nước 100 ml, muối",
+        "Mỡ hành: hành lá 1 bó, dầu ăn 3 muỗng canh, muối; hành phi 3 muỗng canh; đậu phộng rang giã 4 muỗng canh",
+        "Rau: xà lách, húng lủi, tía tô, giá, dưa leo thái sợi (khoảng 300 g)",
+        "Nước mắm chua ngọt: nước mắm 5 muỗng canh, đường 5 muỗng canh, cốt chanh (hoặc giấm) 5 muỗng canh, nước lọc 200–250 ml, tỏi ớt băm, ít đồ chua"
+      ],
+      "broth": [
+        "Ướp thịt: thái lát mỏng 3–4 mm, trộn với hành tỏi sả băm, nước mắm, mật ong, dầu hào, dầu mè, tiêu, ngũ vị hương và dầu ăn; ướp tối thiểu 1 giờ, tốt nhất 3–4 giờ trong tủ lạnh.",
+        "Ướp tôm: rút chỉ, có thể để vỏ hoặc bóc vỏ chừa đuôi, trộn với tỏi sả, dầu, nước mắm, đường, tiêu 20 phút.",
+        "Nướng thịt trên bếp than hoặc vỉ/lò 200°C khoảng 12–15 phút, trở mặt, phết thêm nước ướp cho cháy cạnh; tôm nướng 3–4 phút mỗi mặt đến khi đỏ.",
+        "Nem cua: miến, nấm ngâm mềm thái nhỏ, trộn cùng thịt xay, cua, cà rốt bào, hành tím, trứng, tiêu, hạt nêm; cuốn nhỏ bằng ngón tay cái, chiên ngập dầu lửa vừa 6–8 phút đến vàng giòn, để ráo.",
+        "Nước mắm: khuấy tan đường với nước ấm, thêm nước mắm và chanh, nếm cân bằng chua–ngọt–mặn rồi mới cho tỏi ớt băm và ít đồ chua vào.",
+        "Mỡ hành: hành lá thái nhỏ, đổ dầu nóng và chút muối vào, trộn đều."
+      ],
+      "prep": [
+        "Đồ chua: cà rốt, củ cải thái sợi, bóp muối, xả, vắt ráo, ngâm hỗn hợp giấm đường ít nhất 30 phút.",
+        "Rau sống rửa ngâm muối, để ráo, thái rối; dưa leo thái sợi; giá rửa sạch.",
+        "Bún tươi tơi ra, có thể chần nhanh qua nước sôi rồi để ráo nếu bún mua để lâu.",
+        "Đậu phộng rang giã dập; hành phi để sẵn."
+      ],
+      "assemble": [
+        "Lót rau sống và dưa leo dưới đáy tô, cho bún lên trên (khoảng 200 g/tô).",
+        "Xếp thịt nướng, 2–3 con tôm nướng và 2–3 cuốn nem cua cắt đôi lên mặt bún.",
+        "Thêm đồ chua, rưới mỡ hành, rắc hành phi và đậu phộng.",
+        "Chan 4–5 muỗng canh nước mắm chua ngọt, trộn đều khi ăn."
+      ],
+      "serve": "Dọn kèm chén nước mắm tỏi ớt để chan thêm và rau sống, ăn ngay khi thịt còn nóng và nem còn giòn.",
+      "tips": [
+        "Mật ong (hoặc đường + nước màu) trong nước ướp giúp thịt lên màu cánh gián đẹp; phết dầu khi nướng để thịt không khô.",
+        "Chiên nem hai lần (lần đầu lửa vừa cho chín, lần hai lửa lớn 1 phút) sẽ giòn lâu hơn.",
+        "Pha nước mắm theo tỉ lệ 1 mắm : 1 đường : 1 chanh : 4–5 nước rồi chỉnh theo độ mặn của mắm."
+      ],
+      "sources": [
+        {
+          "title": "Bluestone – Cách làm bún thịt nướng chả giò ngon trọn hương vị tại nhà",
+          "url": "https://www.bluestone.com.vn/blogs/vao-bep/bun-thit-nuong-cha-gio"
+        },
+        {
+          "title": "Review Ẩm Thực – Cách làm bún thịt nướng chả giò giòn rụm đậm đà",
+          "url": "https://reviewamthuc.net/bun-thit-nuong-cha-gio.html"
+        },
+        {
+          "title": "Khải Hoàn Phú Quốc – Nước mắm ăn bún chả giò chua ngọt",
+          "url": "https://khaihoanphuquoc.com.vn/nuoc-mam-an-bun-cha-gio/"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 45 min (plus 1 h marinating) · cook 45 min",
+      "ingredients": [
+        "Fresh rice vermicelli (bún): 800 g",
+        "Grilled pork: 400 g pork belly or shoulder; 2 minced shallots, 3 cloves garlic, 1 stalk lemongrass (minced), 2 tbsp fish sauce, 2 tbsp honey, 1 tbsp oyster sauce, 1 tbsp sesame oil, pepper, a pinch of five-spice, 1 tbsp oil",
+        "Grilled shrimp: 300 g tiger shrimp (8–12); minced garlic and lemongrass, 1 tbsp oil, 1 tsp fish sauce, a little sugar and pepper",
+        "Nem cua (crab spring rolls): 200 g ground pork, 100 g crab meat (or minced shrimp), 30 g dried glass noodles, 3 wood ear mushrooms, 1/2 carrot, 1 shallot, 1 egg, pepper, seasoning powder; 12 rice-paper or spring-roll wrappers; oil for frying",
+        "Pickles (đồ chua): 1 carrot, 1 daikon, 100 ml vinegar, 80 g sugar, 100 ml water, salt",
+        "Scallion oil (mỡ hành): 1 bunch scallions, 3 tbsp oil, salt; 3 tbsp fried shallots; 4 tbsp crushed roasted peanuts",
+        "Greens: lettuce, mint, perilla, bean sprouts, julienned cucumber (about 300 g)",
+        "Sweet-sour fish sauce: 5 tbsp fish sauce, 5 tbsp sugar, 5 tbsp lime juice (or vinegar), 200–250 ml water, minced garlic and chili, a little of the pickles"
+      ],
+      "broth": [
+        "Marinate the pork: slice 3–4 mm thin, mix with shallot, garlic, lemongrass, fish sauce, honey, oyster sauce, sesame oil, pepper, five-spice and oil; at least 1 h, ideally 3–4 h in the fridge.",
+        "Marinate the shrimp: devein, leave shell on or peel leaving the tail, toss with garlic-lemongrass, oil, fish sauce, sugar and pepper for 20 min.",
+        "Grill the pork over charcoal or on a rack in a 200°C oven about 12–15 min, turning and brushing with marinade for charred edges; grill shrimp 3–4 min per side until red.",
+        "Nem cua: soak and chop noodles and mushrooms, mix with pork, crab, grated carrot, shallot, egg, pepper and seasoning; roll thumb-sized rolls and deep-fry over medium heat 6–8 min until golden and crisp; drain.",
+        "Fish sauce: dissolve sugar in warm water, add fish sauce and lime, taste for sweet-sour-salty balance, then stir in garlic, chili and a few pickles.",
+        "Scallion oil: chop scallions, pour hot oil and a pinch of salt over them and stir."
+      ],
+      "prep": [
+        "Pickles: julienne carrot and daikon, rub with salt, rinse, squeeze dry and soak in the vinegar-sugar mix at least 30 min.",
+        "Wash the herbs in salted water, drain and roughly chop; julienne cucumber; rinse sprouts.",
+        "Loosen the vermicelli; if it has been sitting, dip briefly in boiling water and drain.",
+        "Crush the peanuts; have the fried shallots ready."
+      ],
+      "assemble": [
+        "Line each bowl with greens and cucumber, then add noodles (about 200 g per bowl).",
+        "Top with grilled pork, 2–3 grilled shrimp and 2–3 halved nem cua.",
+        "Add pickles, spoon over scallion oil, sprinkle fried shallots and peanuts.",
+        "Pour on 4–5 tbsp of the sweet-sour fish sauce and toss when eating."
+      ],
+      "serve": "Serve with extra garlic-chili fish sauce and herbs on the side, while the pork is hot and the rolls are still crisp.",
+      "tips": [
+        "Honey (or sugar plus caramel color) in the marinade gives the pork its amber color; brush with oil while grilling so it doesn't dry out.",
+        "Double-fry the rolls (medium heat to cook through, then 1 min on high) so they stay crisp longer.",
+        "Start the sauce at 1 fish sauce : 1 sugar : 1 lime : 4–5 water and adjust for how salty your fish sauce is."
+      ],
+      "sources": [
+        {
+          "title": "Bluestone – Cách làm bún thịt nướng chả giò ngon trọn hương vị tại nhà",
+          "url": "https://www.bluestone.com.vn/blogs/vao-bep/bun-thit-nuong-cha-gio"
+        },
+        {
+          "title": "Review Ẩm Thực – Cách làm bún thịt nướng chả giò giòn rụm đậm đà",
+          "url": "https://reviewamthuc.net/bun-thit-nuong-cha-gio.html"
+        },
+        {
+          "title": "Khải Hoàn Phú Quốc – Nước mắm ăn bún chả giò chua ngọt",
+          "url": "https://khaihoanphuquoc.com.vn/nuoc-mam-an-bun-cha-gio/"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

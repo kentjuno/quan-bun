@@ -28,5 +28,111 @@
     "how_to_eat": "Nhúng bún và rau vào bát nước chấm có chả, ăn từng gắp.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · ướp 2 giờ · nướng 30 phút",
+      "ingredients": [
+        "500 g thịt nạc vai giắt mỡ xay hoặc băm tay (chả viên)",
+        "500 g thịt ba chỉ hoặc thịt nách thái lát mỏng 3–4 mm (chả miếng)",
+        "Gia vị ướp chung: 5 củ hành tím băm, 3 muỗng canh nước mắm, 2,5 muỗng canh nước hàng (nước màu), 2 muỗng canh đường vàng, 1 muỗng canh mật ong, 1 muỗng cà phê tiêu, 1 muỗng canh dầu ăn hoặc mỡ",
+        "Nước chấm: 250 ml nước, 50 ml nước mắm ngon, 50 g đường, 50 ml giấm (hoặc 30 ml giấm + nước cốt 1 quả chanh), tỏi băm, ớt thái khoanh, tiêu",
+        "Dưa góp: 300 g đu đủ xanh, 1 củ cà rốt, 1 muỗng canh đường, 1 muỗng canh giấm, 1 muỗng cà phê muối",
+        "1 kg bún rối sợi nhỏ",
+        "Rau sống: xà lách/rau diếp, húng Láng, kinh giới, tía tô, rau mùi, giá",
+        "Than hoa (hoặc lò nướng/nồi chiên không dầu)"
+      ],
+      "broth": [
+        "Ướp thịt: trộn đều tất cả gia vị ướp, chia đôi cho hai loại thịt; bóp kỹ, bọc kín, để tủ lạnh tối thiểu 2 giờ (qua đêm càng ngon).",
+        "Ngâm dưa góp: xóc đu đủ, cà rốt với muối 6–8 phút, rửa sạch vắt ráo, trộn đường trước rồi giấm; để 20 phút.",
+        "Pha nước chấm: đun 250 ml nước với đường cho tan, thêm nước mắm và giấm, đun lăn tăn 1–2 phút rồi để ấm; nêm sao cho vị nhạt hơn nước chấm nem, uống được cả thìa.",
+        "Nắn thịt xay thành viên dẹt cỡ 4 cm; xếp chả viên và chả miếng vào vỉ kẹp đã phết dầu.",
+        "Nướng trên than hồng vừa (không ngọn lửa), quạt nhẹ, lật đều 10–15 phút đến khi xém cạnh, mỡ chảy thơm; hoặc lò 220 °C 10 phút mỗi mặt."
+      ],
+      "prep": [
+        "Hành tím băm thật nhỏ để không bị cháy khi nướng; nếu tự nấu nước hàng, thắng đường đến màu cánh gián rồi chế nước.",
+        "Ba chỉ thái lát mỏng, to bản, bỏ phần bì để nướng không quăn.",
+        "Đu đủ, cà rốt gọt vỏ, thái lát mỏng hoặc tỉa hoa; rau sống ngâm nước muối 10 phút, vẩy khô.",
+        "Tỏi băm, ớt thái khoanh để riêng, chỉ cho vào bát khi ăn."
+      ],
+      "assemble": [
+        "Múc nước chấm ấm vào bát tô, thả dưa góp, vài viên chả và chả miếng vừa nướng vào.",
+        "Rắc tỏi băm, ớt, chút tiêu lên mặt bát.",
+        "Bày bún và rổ rau sống riêng; mỗi người gắp bún và rau nhúng vào bát nước chấm mà ăn."
+      ],
+      "serve": "Ăn nóng cùng bún, rau sống Hà Nội (húng Láng, kinh giới, tía tô) và nem rán cua bể nếu thích; nước chấm giữ ấm, thêm tỏi ớt tùy khẩu vị.",
+      "tips": [
+        "Chọn nạc vai giắt mỡ và ba chỉ có mỡ trắng ngà để chả mềm, không khô; thêm mật ong/nước hàng giúp chả lên màu nâu cánh gián đẹp.",
+        "Than phải hồng đều, không cháy bùng; quạt nhẹ để mỡ chảy từ từ, chả thơm mà không bị đen.",
+        "Nước chấm pha tỉ lệ 1 mắm : 1 đường : 1 giấm : 5 nước là điểm khởi đầu, nêm lại theo độ mặn của mắm và mùa (mùa đông ngọt ấm hơn)."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm bún chả Hà Nội hương vị xưa – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-cha-ha-noi-4594150.html"
+        },
+        {
+          "title": "Cách làm bún chả Hà Nội chuẩn vị và thơm lừng – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cach-lam-bun-cha-chuan-vi-ha-noi-4218318.html"
+        },
+        {
+          "title": "Cách pha nước chấm bún chả Hà Nội chuẩn vị – PasGo",
+          "url": "https://pasgo.vn/blog/cach-pha-nuoc-cham-bun-cha-ha-noi-chuan-vi-tuyet-dinh-thom-ngon-giangmkt-723-5282"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 30 min · marinate 2 h · grill 30 min",
+      "ingredients": [
+        "500 g pork shoulder with some fat, ground or hand-minced (for chả viên, the patties)",
+        "500 g pork belly or shoulder cap, sliced 3–4 mm thin (for chả miếng, the grilled slices)",
+        "Marinade for both: 5 shallots minced, 3 tbsp fish sauce, 2.5 tbsp nước hàng (caramel sauce), 2 tbsp raw cane sugar, 1 tbsp honey, 1 tsp pepper, 1 tbsp oil or lard",
+        "Dipping broth: 250 ml water, 50 ml good fish sauce, 50 g sugar, 50 ml rice vinegar (or 30 ml vinegar + juice of 1 lime), minced garlic, sliced chili, pepper",
+        "Dưa góp (quick pickle): 300 g green papaya, 1 carrot, 1 tbsp sugar, 1 tbsp vinegar, 1 tsp salt",
+        "1 kg fresh thin bún (rice vermicelli)",
+        "Herbs: lettuce, Láng basil/Vietnamese mint, kinh giới (Vietnamese balm), perilla, coriander, bean sprouts",
+        "Charcoal (or oven/air fryer)"
+      ],
+      "broth": [
+        "Marinate: mix all marinade ingredients, split between the two meats, massage in, cover and chill at least 2 hours (overnight is best).",
+        "Pickle: toss papaya and carrot with salt 6–8 minutes, rinse and squeeze, mix with sugar first then vinegar, rest 20 minutes.",
+        "Dipping broth: heat 250 ml water with the sugar until dissolved, add fish sauce and vinegar, simmer 1–2 minutes and keep warm; it should be mild enough to sip by the spoonful.",
+        "Shape the ground pork into flat 4 cm patties; load patties and belly slices into oiled grill baskets.",
+        "Grill over evenly glowing coals (no flames), fanning gently and turning often for 10–15 minutes until charred at the edges and the fat renders; or oven at 220 °C, 10 minutes per side."
+      ],
+      "prep": [
+        "Mince the shallots very finely so they don't burn on the grill; if making your own caramel sauce, cook sugar to a deep amber and thin with water.",
+        "Slice the belly thin and wide, trimming the skin so the slices don't curl.",
+        "Peel and thinly slice or flower-cut the papaya and carrot; soak herbs in salted water 10 minutes and shake dry.",
+        "Keep minced garlic and sliced chili aside; they go in the bowl only at serving time."
+      ],
+      "assemble": [
+        "Ladle warm dipping broth into a deep bowl, drop in pickles, a few patties and belly slices straight off the grill.",
+        "Scatter garlic, chili and a pinch of pepper on top.",
+        "Serve noodles and a basket of herbs alongside; everyone dips noodles and herbs into their bowl as they eat."
+      ],
+      "serve": "Eat hot with vermicelli, Hanoi herbs (Láng basil, Vietnamese balm, perilla) and crab spring rolls if you like; keep the broth warm and add garlic and chili to taste.",
+      "tips": [
+        "Use fatty shoulder and belly with creamy-white fat so the meat stays juicy; honey and caramel sauce give the classic mahogany color.",
+        "Coals must glow evenly without flames; fan gently so the fat drips slowly and the meat perfumes rather than blackens.",
+        "Start the broth at 1 fish sauce : 1 sugar : 1 vinegar : 5 water and adjust to your fish sauce's saltiness and the season (sweeter and warmer in winter)."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm bún chả Hà Nội hương vị xưa – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-cha-ha-noi-4594150.html"
+        },
+        {
+          "title": "Cách làm bún chả Hà Nội chuẩn vị và thơm lừng – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cach-lam-bun-cha-chuan-vi-ha-noi-4218318.html"
+        },
+        {
+          "title": "Cách pha nước chấm bún chả Hà Nội chuẩn vị – PasGo",
+          "url": "https://pasgo.vn/blog/cach-pha-nuoc-cham-bun-cha-ha-noi-chuan-vi-tuyet-dinh-thom-ngon-giangmkt-723-5282"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

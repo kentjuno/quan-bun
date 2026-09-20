@@ -39,5 +39,121 @@
     "how_to_eat": "Thường ăn với bánh mì hoặc phở, ít rau thơm.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút (ướp 1 giờ) · nấu 2–2,5 giờ",
+      "ingredients": [
+        "600 g dẻ sườn bò hoặc nạm gân bò",
+        "1 kg xương bò (nấu 2 lít nước dùng như phở tái nạm) hoặc 1,5 lít nước dùng phở có sẵn",
+        "1 kg bánh phở tươi",
+        "150 ml rượu vang đỏ",
+        "3 quả cà chua chín",
+        "1 củ hành tây, 4 tép tỏi, 1 nhánh gừng",
+        "2 hoa hồi, 1 thanh quế, 1 thảo quả, 3 lá nguyệt quế",
+        "1 thìa cà phê ngũ vị hương, 1 thìa cà phê bột nghệ hoặc paprika",
+        "2 thìa canh dầu điều, 20 g bơ lạt",
+        "2 thìa canh nước mắm, 1 thìa cà phê muối, 1 thìa cà phê hạt nêm, 1 thìa cà phê tiêu",
+        "1 thìa canh bột năng (hoà 2 thìa nước)",
+        "Hành lá, ngò rí"
+      ],
+      "broth": [
+        "Nấu 2 lít nước dùng xương như phở tái nạm (có thể hầm 2 giờ là đủ vì thịt sốt vang tự cho vị).",
+        "Thịt bò bóp rượu trắng và gừng đập, rửa sạch, thái miếng bao diêm 3–4 cm; ướp ≥1 giờ với nửa chỗ tỏi gừng giã, dầu điều, nước mắm, muối, ngũ vị hương, bột nghệ, tiêu, 75 ml vang và quế hồi thảo quả đã rang.",
+        "Phi tỏi với bơ, cho thịt vào xào lửa lớn 3–4 phút cho săn, thêm cà chua băm xào 2 phút.",
+        "Đổ nước dùng ngập thịt, thêm 75 ml vang còn lại và lá nguyệt quế, đun sôi, hớt bọt rồi hầm lửa nhỏ 1–1,5 giờ đến khi thịt mềm.",
+        "Vớt bỏ hồi quế, nêm lại, hoà bột năng đổ vào khuấy đến khi nước sánh nhẹ; đun thêm 1–2 phút."
+      ],
+      "prep": [
+        "Cà chua chần lột vỏ băm nhuyễn; hành tây thái múi; tỏi gừng giã.",
+        "Hành ngò thái nhỏ; bánh phở trụng nóng."
+      ],
+      "assemble": [
+        "Cho bánh phở vào tô, múc thịt và nước sốt vang chan ngập (có thể pha thêm nước dùng phở trong nếu thích loãng).",
+        "Rắc hành ngò, tiêu, ăn nóng."
+      ],
+      "serve": "Ăn nóng với quẩy hoặc bánh mì, thêm chanh, ớt và rau thơm.",
+      "tips": [
+        "Chọn dẻ sườn hoặc nạm có gân để thịt mềm mà không khô.",
+        "Sốt vang Hà Nội không cho khoai tây, cà rốt; vị cốt nằm ở vang đỏ, quế hồi, nguyệt quế và bơ.",
+        "Nồi áp suất 25 phút thay cho hầm 1,5 giờ, sau đó mở nắp thu sánh."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm phở bò sốt vang Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-pho-bo-sot-vang-ha-noi-4641011.html"
+        },
+        {
+          "title": "Cách nấu phở bò sốt vang – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-sot-vang-thom-ngon-dam-da-cho-bua-an-them-moi-07983"
+        },
+        {
+          "title": "Cách làm phở bò sốt vang – Savoury Days",
+          "url": "http://www.savourydays.com/cach-lam-pho-sot-vang/"
+        },
+        {
+          "title": "Phở bò sốt vang của Thái Huyền – Cookpad",
+          "url": "https://cookpad.com/vn/cong-thuc/15147124"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "30 min prep (1 hr marinating) · 2–2.5 hr cooking",
+      "ingredients": [
+        "600 g beef short-rib meat or gristly brisket (nạm gân)",
+        "1 kg beef bones for 2 liters of broth as in Phở Tái Nạm, or 1.5 l ready pho broth",
+        "1 kg fresh rice noodles",
+        "150 ml red wine",
+        "3 ripe tomatoes",
+        "1 onion, 4 garlic cloves, 1 knob of ginger",
+        "2 star anise, 1 cinnamon stick, 1 black cardamom, 3 bay leaves",
+        "1 tsp five-spice, 1 tsp turmeric or paprika",
+        "2 tbsp annatto oil (dầu điều), 20 g unsalted butter",
+        "2 tbsp fish sauce, 1 tsp salt, 1 tsp seasoning powder, 1 tsp pepper",
+        "1 tbsp tapioca starch mixed with 2 tbsp water",
+        "Scallions, cilantro"
+      ],
+      "broth": [
+        "Make 2 liters of bone broth as for Phở Tái Nạm (2 hours is enough since the stewed beef adds its own flavor).",
+        "Rub the beef with white liquor and smashed ginger, rinse, cut into 3–4 cm matchbox chunks; marinate at least 1 hour with half the pounded garlic-ginger, annatto oil, fish sauce, salt, five-spice, turmeric, pepper, 75 ml wine and the toasted cinnamon, anise and cardamom.",
+        "Fry the garlic in butter, sear the beef over high heat 3–4 min, add the chopped tomatoes and cook 2 min.",
+        "Cover with broth, add the remaining 75 ml wine and bay leaves, boil, skim, then simmer gently 1–1.5 hours until tender.",
+        "Remove the whole spices, adjust seasoning, stir in the starch slurry until lightly glossy and cook 1–2 more minutes."
+      ],
+      "prep": [
+        "Blanch, peel and chop the tomatoes; wedge the onion; pound garlic and ginger.",
+        "Chop the herbs; blanch the noodles."
+      ],
+      "assemble": [
+        "Noodles in the bowl, ladle beef and wine sauce over generously (thin with clear pho broth if you prefer).",
+        "Top with scallion, cilantro and pepper; eat hot."
+      ],
+      "serve": "Serve piping hot with fried dough sticks (quẩy) or a baguette, plus lime, chili and herbs.",
+      "tips": [
+        "Short rib or sinewy brisket stays tender without drying out.",
+        "Hanoi-style sốt vang has no potato or carrot; its soul is red wine, cinnamon, anise, bay leaf and butter.",
+        "A pressure cooker does the 1.5-hour stew in 25 min; reduce uncovered afterwards."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm phở bò sốt vang Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-pho-bo-sot-vang-ha-noi-4641011.html"
+        },
+        {
+          "title": "Cách nấu phở bò sốt vang – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-sot-vang-thom-ngon-dam-da-cho-bua-an-them-moi-07983"
+        },
+        {
+          "title": "Cách làm phở bò sốt vang – Savoury Days",
+          "url": "http://www.savourydays.com/cach-lam-pho-sot-vang/"
+        },
+        {
+          "title": "Phở bò sốt vang của Thái Huyền – Cookpad",
+          "url": "https://cookpad.com/vn/cong-thuc/15147124"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

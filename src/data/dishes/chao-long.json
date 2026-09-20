@@ -37,5 +37,115 @@
     "how_to_eat": "Rắc tiêu, hành, ăn nóng với quẩy.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 40 phút · nấu 1 giờ 30 phút",
+      "ingredients": [
+        "Gạo tẻ 150 g + gạo nếp 50 g (tỉ lệ 3:1)",
+        "Xương ống heo: 500 g",
+        "Lòng heo hỗn hợp khoảng 800 g: lòng non 200 g, dạ dày 200 g, tim 150 g, gan 150 g, lưỡi hoặc dồi trường 100 g",
+        "Dồi (lòng già dồn): 200 g (mua sẵn hoặc tự làm với lòng già 150 g, mỡ 50 g, tiết 50 ml, đậu xanh hấp 30 g, rau răm, hành, lạc rang, tiêu)",
+        "Huyết heo (tiết luộc): 200 g",
+        "Gừng 1 củ, sả 2 cây, hành tím 3 củ",
+        "Hành lá, ngò rí, rau răm, giá đỗ: mỗi thứ 1 nắm",
+        "Quẩy: 4–6 cái",
+        "Chanh 1 trái, ớt, tiêu xay, nước mắm, muối, hạt nêm, giấm hoặc rượu trắng, bột mì hoặc muối hột để bóp lòng"
+      ],
+      "broth": [
+        "Xương ống chần qua nước sôi, rửa sạch, cho vào nồi với 2,5 lít nước, gừng đập dập và hành tím nướng, ninh lửa nhỏ 45–60 phút, vớt bọt.",
+        "Gạo tẻ và nếp vo sạch, rang trên chảo khô lửa vừa 5 phút đến khi hạt hơi vàng, thơm; có thể giã dập.",
+        "Lòng đã làm sạch luộc trong nồi nước riêng có gừng, sả và 1 muỗng canh muối: lòng non 3–5 phút, dạ dày/lưỡi 25–30 phút, tim gan 10–15 phút; vớt từng thứ ngâm nước đá cho giòn, giữ lại nước luộc.",
+        "Dồi luộc lửa liu riu 20–25 phút, dùng tăm xăm vài chỗ cho khỏi nứt, vớt ra để nguội.",
+        "Cho gạo rang vào nồi nước xương, thêm khoảng 500 ml nước luộc lòng (lọc bỏ cặn), nấu lửa nhỏ 30–40 phút, thỉnh thoảng khuấy đáy nồi để không cháy.",
+        "Khi cháo nở bung, cho huyết cắt quân cờ vào, nêm nước mắm, muối, hạt nêm vừa ăn, nấu thêm 5 phút rồi tắt bếp."
+      ],
+      "prep": [
+        "Lòng non: lộn trái, tuốt bỏ nhớt, bóp với bột mì (hoặc muối hột) và chanh, xả nhiều lần; dạ dày cạo sạch màng nhầy, bóp giấm muối.",
+        "Tim bổ đôi, gan thái lát dày, ngâm sữa tươi hoặc giấm loãng 15 phút cho hết tanh và đắng.",
+        "Sau khi luộc, thái lòng non khúc 3 cm, dạ dày và lưỡi thái lát mỏng, dồi cắt khoanh dày 1 cm.",
+        "Hành lá, ngò, rau răm thái nhỏ; giá rửa sạch; quẩy cắt khúc; pha chén nước mắm gừng hoặc mắm tỏi ớt để chấm lòng."
+      ],
+      "assemble": [
+        "Múc cháo nóng ra tô, xếp lên mặt tim, gan, lòng non, dạ dày và vài khoanh dồi.",
+        "Rắc hành lá, ngò, rau răm và nhiều tiêu xay.",
+        "Đặt quẩy cắt khúc bên trên hoặc dọn riêng để giữ giòn."
+      ],
+      "serve": "Ăn nóng với giá đỗ, chanh ớt, quẩy và chén mắm gừng chấm lòng.",
+      "tips": [
+        "Ngâm lòng vào nước đá ngay sau khi luộc giúp lòng trắng, giòn và không bị dai.",
+        "Rang gạo trước khi nấu làm cháo thơm và hạt gạo nở đều, nước cháo trong hơn.",
+        "Nếu cháo đặc quá, thêm nước luộc lòng nóng chứ không thêm nước lã để giữ vị ngọt."
+      ],
+      "sources": [
+        {
+          "title": "Hướng Nghiệp Á Âu – Cách nấu cháo lòng không bị hôi",
+          "url": "https://www.huongnghiepaau.com/chao-long"
+        },
+        {
+          "title": "Điện Máy Chợ Lớn – Cách nấu cháo lòng ngon đúng vị",
+          "url": "https://dienmaycholon.com/mon-ngon/cach-nau-chao-long"
+        },
+        {
+          "title": "Gia đình & Sức khoẻ đời sống – Bí quyết nấu cháo lòng sánh đặc như ngoài hàng",
+          "url": "https://giadinh.suckhoedoisong.vn/bi-quyet-nau-mon-chao-long-thom-ngon-sanh-dac-nhu-ngoai-hang-172181019144819752.htm"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 40 min · cook 1 h 30 min",
+      "ingredients": [
+        "150 g jasmine rice + 50 g glutinous rice (3:1)",
+        "Pork marrow bones: 500 g",
+        "Mixed pork offal, about 800 g: small intestine 200 g, stomach 200 g, heart 150 g, liver 150 g, tongue or uterus (dồi trường) 100 g",
+        "Dồi (blood-and-herb sausage in large intestine): 200 g, store-bought or homemade from 150 g large intestine, 50 g fat, 50 ml blood, 30 g steamed mung beans, Vietnamese coriander, scallion, roasted peanuts, pepper",
+        "Cooked pork blood cake (huyết): 200 g",
+        "1 knob ginger, 2 lemongrass stalks, 3 shallots",
+        "Scallions, cilantro, Vietnamese coriander (rau răm), bean sprouts: a handful each",
+        "Quẩy (fried dough sticks): 4–6",
+        "1 lime, chili, ground pepper, fish sauce, salt, seasoning powder, vinegar or rice wine, flour or coarse salt for scrubbing offal"
+      ],
+      "broth": [
+        "Blanch the bones, rinse, then simmer in 2.5 L water with smashed ginger and charred shallots for 45–60 min, skimming foam.",
+        "Rinse both rices and toast in a dry pan over medium heat about 5 min until lightly golden and fragrant; crack them lightly if you like.",
+        "Boil the cleaned offal in a separate pot with ginger, lemongrass and 1 tbsp salt: small intestine 3–5 min, stomach/tongue 25–30 min, heart and liver 10–15 min; shock each in ice water for crunch and keep the cooking liquid.",
+        "Simmer the dồi gently 20–25 min, pricking it with a toothpick so it doesn't burst; cool.",
+        "Add the toasted rice to the bone broth with about 500 ml strained offal liquid and cook on low 30–40 min, stirring the bottom occasionally so it doesn't scorch.",
+        "When the grains have burst, add diced blood cake, season with fish sauce, salt and seasoning powder, cook 5 more min and turn off."
+      ],
+      "prep": [
+        "Small intestine: turn inside out, strip the slime, scrub with flour (or coarse salt) and lime, rinse many times; scrape the stomach's membrane and rub with vinegar and salt.",
+        "Halve the heart, slice the liver thickly, soak in milk or diluted vinegar 15 min to remove bitterness and odor.",
+        "After boiling, cut intestine into 3 cm pieces, slice stomach and tongue thinly, cut dồi into 1 cm rounds.",
+        "Chop scallions, cilantro and rau răm; wash sprouts; cut quẩy into pieces; mix a small bowl of ginger fish sauce or garlic-chili fish sauce for dipping the offal."
+      ],
+      "assemble": [
+        "Ladle hot porridge into bowls and arrange heart, liver, intestine, stomach and a few slices of dồi on top.",
+        "Scatter scallions, cilantro, rau răm and plenty of ground pepper.",
+        "Add quẩy pieces on top or serve on the side so they stay crisp."
+      ],
+      "serve": "Eat hot with bean sprouts, lime, chili, quẩy and the ginger fish sauce for the offal.",
+      "tips": [
+        "Plunging offal into ice water right after boiling keeps it white, crunchy and not chewy.",
+        "Toasting the rice first gives a fragrant porridge with evenly burst grains and a cleaner broth.",
+        "If the porridge gets too thick, thin it with hot offal broth rather than plain water to keep the sweetness."
+      ],
+      "sources": [
+        {
+          "title": "Hướng Nghiệp Á Âu – Cách nấu cháo lòng không bị hôi",
+          "url": "https://www.huongnghiepaau.com/chao-long"
+        },
+        {
+          "title": "Điện Máy Chợ Lớn – Cách nấu cháo lòng ngon đúng vị",
+          "url": "https://dienmaycholon.com/mon-ngon/cach-nau-chao-long"
+        },
+        {
+          "title": "Gia đình & Sức khoẻ đời sống – Bí quyết nấu cháo lòng sánh đặc như ngoài hàng",
+          "url": "https://giadinh.suckhoedoisong.vn/bi-quyet-nau-mon-chao-long-thom-ngon-sanh-dac-nhu-ngoai-hang-172181019144819752.htm"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

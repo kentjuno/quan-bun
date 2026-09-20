@@ -31,5 +31,105 @@
     "how_to_eat": "Chấm tương đen pha đậu phộng hoặc nước mắm chua ngọt.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · nấu 30 phút",
+      "ingredients": [
+        "Bánh tráng cuốn loại dẻo: 20 cái (khoảng 1 xấp)",
+        "Tôm sú tươi: 300 g (12–16 con)",
+        "Thịt ba chỉ (hoặc nạc vai): 400 g",
+        "Bún tươi sợi nhỏ: 400 g",
+        "Xà lách: 1 cây; rau thơm (húng lủi, tía tô, ngò): 1 bó; hẹ: 1 bó nhỏ",
+        "Dưa leo: 1 trái; giá đỗ: 100 g (tuỳ thích)",
+        "Gừng 1 củ nhỏ, hành tím 2 củ, muối, tiêu",
+        "Nước chấm tương: tương đen (hoisin) 180 g, bơ đậu phộng 1,5 muỗng canh, tỏi băm 1 muỗng canh, đường 1 muỗng canh, nước 120 ml, dầu ăn 2 muỗng canh, đậu phộng rang giã 3 muỗng canh, ớt băm",
+        "Nước mắm chấm (tuỳ chọn): nước mắm 3 muỗng canh, nước 5 muỗng canh, đường 1 muỗng canh, cốt chanh 1 muỗng canh, tỏi ớt băm"
+      ],
+      "broth": [
+        "Thịt ba chỉ rửa muối, cho vào nồi nước lạnh với hành tím đập dập và 1 muỗng cà phê muối, luộc 15–20 phút đến khi xiên đũa không ra nước hồng; vớt ra ngâm nước đá 5 phút rồi thái lát mỏng.",
+        "Tôm rút chỉ lưng, luộc 3–5 phút với vài lát gừng và chút muối đến khi cong đỏ; ngâm lạnh, bóc vỏ, bỏ đầu, chẻ đôi theo chiều dài.",
+        "Làm tương chấm: phi thơm tỏi trong 2 muỗng canh dầu, cho tương đen, bơ đậu phộng, đường và 120 ml nước vào, khuấy lửa nhỏ 3–4 phút đến khi sánh; múc ra chén, rắc đậu phộng rang và ớt băm.",
+        "Nếu thích nước mắm: khuấy tan đường với nước và nước mắm, thêm chanh, tỏi ớt sau cùng."
+      ],
+      "prep": [
+        "Rau xà lách, rau thơm nhặt sạch, ngâm nước muối loãng 10 phút, vẩy thật ráo (rau ướt làm bánh tráng nhão, dễ rách).",
+        "Dưa leo thái que dài; hẹ cắt khúc dài bằng chiều rộng bánh tráng.",
+        "Bún tươi để ráo, tơi rời thành từng nắm nhỏ khoảng 20 g.",
+        "Chuẩn bị một thau nước ấm và một thớt/khay sạch để cuốn."
+      ],
+      "assemble": [
+        "Nhúng nhanh bánh tráng qua nước ấm (hoặc thoa ướt bằng tay), trải lên thớt.",
+        "Đặt 1 lá xà lách, ít rau thơm, dưa leo và một nắm bún ở 1/3 phía dưới bánh.",
+        "Gấp hai mép bên vào, cuốn một vòng, đặt 3–4 miếng tôm (mặt đỏ úp xuống) và 2 lát thịt cùng 1 cọng hẹ thò ra ngoài rồi cuốn chặt tay đến hết.",
+        "Xếp cuốn ra dĩa, đậy khăn ẩm nếu chưa ăn ngay."
+      ],
+      "serve": "Ăn ngay, chấm tương đen đậu phộng hoặc nước mắm chua ngọt tỏi ớt.",
+      "tips": [
+        "Chọn bánh tráng dẻo mỏng, nhúng nước rất nhanh; bánh sẽ tiếp tục mềm khi cuốn.",
+        "Đặt tôm sát lớp bánh ngoài cùng để cuốn nhìn đẹp, màu đỏ nổi bật.",
+        "Không cất cuốn trong tủ lạnh vì bánh tráng sẽ cứng và khô; cuốn đến đâu ăn đến đó."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress Cooking – Bí quyết làm gỏi cuốn tôm thịt",
+          "url": "https://vnexpress.net/doi-song-cooking-bi-quyet-lam-goi-cuon-tom-thit-4991758.html"
+        },
+        {
+          "title": "BepXua – Gỏi cuốn tôm thịt, cách làm tương và nước mắm chấm",
+          "url": "https://bepxua.vn/goi-cuon-tom-thit-cach-lam-tuong-va-nuoc-mam-cham-goi-cuon/"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 30 min · cook 30 min",
+      "ingredients": [
+        "Soft rice paper (bánh tráng) for rolling: 20 sheets",
+        "Fresh tiger shrimp: 300 g (12–16 pieces)",
+        "Pork belly (or lean shoulder): 400 g",
+        "Fresh thin rice vermicelli (bún): 400 g",
+        "1 head lettuce; 1 bunch mixed herbs (mint, perilla, cilantro); 1 small bunch garlic chives (hẹ)",
+        "1 cucumber; 100 g bean sprouts (optional)",
+        "1 small knob ginger, 2 shallots, salt, pepper",
+        "Peanut-hoisin dip: 180 g hoisin sauce (tương đen), 1.5 tbsp peanut butter, 1 tbsp minced garlic, 1 tbsp sugar, 120 ml water, 2 tbsp oil, 3 tbsp crushed roasted peanuts, minced chili",
+        "Optional fish-sauce dip: 3 tbsp fish sauce, 5 tbsp water, 1 tbsp sugar, 1 tbsp lime juice, minced garlic and chili"
+      ],
+      "broth": [
+        "Rub pork with salt, start it in cold water with smashed shallots and 1 tsp salt, boil 15–20 min until a skewer shows no pink juice; shock in ice water 5 min, then slice thinly.",
+        "Devein the shrimp and boil 3–5 min with ginger slices and a pinch of salt until curled and red; cool, peel, remove heads, split lengthwise.",
+        "Peanut-hoisin dip: fry garlic in 2 tbsp oil until fragrant, add hoisin, peanut butter, sugar and 120 ml water, stir on low 3–4 min until thick; pour into a bowl and top with crushed peanuts and chili.",
+        "For the fish-sauce dip, dissolve sugar in water and fish sauce, then add lime, garlic and chili last."
+      ],
+      "prep": [
+        "Wash lettuce and herbs, soak 10 min in lightly salted water, and spin or shake very dry (wet greens make the rice paper soggy and tear).",
+        "Cut cucumber into long batons; trim chives to roughly the width of a rice paper sheet.",
+        "Drain the vermicelli and loosen into small 20 g portions.",
+        "Set out a bowl of warm water and a clean board for rolling."
+      ],
+      "assemble": [
+        "Dip a rice paper sheet very briefly in warm water (or wet it by hand) and lay it on the board.",
+        "Place a lettuce leaf, some herbs, cucumber and a portion of noodles on the lower third.",
+        "Fold in the sides, roll once, then lay 3–4 shrimp halves (red side down) and 2 pork slices plus one chive sticking out the end, and roll tightly to the top.",
+        "Arrange on a plate and cover with a damp towel if not serving right away."
+      ],
+      "serve": "Serve immediately with the peanut-hoisin dip or garlic-chili fish sauce.",
+      "tips": [
+        "Use thin, pliable rice paper and dip it only for a second; it keeps softening as you roll.",
+        "Put the shrimp against the outermost layer so the red shows through and the rolls look neat.",
+        "Don't refrigerate finished rolls; the rice paper turns hard and dry. Roll as you eat."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress Cooking – Bí quyết làm gỏi cuốn tôm thịt",
+          "url": "https://vnexpress.net/doi-song-cooking-bi-quyet-lam-goi-cuon-tom-thit-4991758.html"
+        },
+        {
+          "title": "BepXua – Gỏi cuốn tôm thịt, cách làm tương và nước mắm chấm",
+          "url": "https://bepxua.vn/goi-cuon-tom-thit-cach-lam-tuong-va-nuoc-mam-cham-goi-cuon/"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

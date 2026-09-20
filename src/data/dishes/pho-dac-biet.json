@@ -43,5 +43,101 @@
     "how_to_eat": "Bò viên chấm tương đen pha tương ớt.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 45 phút · nấu 3–4 giờ",
+      "ingredients": [
+        "Nước dùng và bánh phở như phở tái nạm (1,5 kg xương ống, 4 lít nước, hành gừng nướng, túi gia vị)",
+        "400 g nạm bò",
+        "250 g thăn bò (làm tái)",
+        "300 g lá sách bò",
+        "300 g bò viên (16–20 viên)",
+        "Muối hạt, 1 quả chanh, 1 củ gừng, 2 thìa canh rượu trắng (khử lá sách)",
+        "Hành lá, ngò, giá, húng quế, ngò gai, chanh, ớt"
+      ],
+      "broth": [
+        "Nước dùng nấu như phở tái nạm; luộc nạm trong nồi rồi vớt ra ngâm lạnh, thái mỏng.",
+        "Bò viên thả vào nồi nước dùng 10–15 phút trước khi ăn, viên nổi lên là chín; có thể cắt đôi mỗi viên.",
+        "Lá sách sau khi làm sạch luộc riêng trong nước sôi có gừng đập 5–8 phút, vớt ra ngâm nước đá cho giòn, thái sợi 1 cm."
+      ],
+      "prep": [
+        "Lá sách bóp muối hạt 2 lần rồi rửa, bóp tiếp với rượu gừng 3–5 phút, cuối cùng vắt chanh bóp thêm 3 phút và rửa sạch, cạo hết màng đen.",
+        "Thăn bò thái lát mỏng ngang thớ; nạm luộc thái lát 2–3 mm.",
+        "Hành ngò thái nhỏ; bánh phở trụng nước sôi vài giây."
+      ],
+      "assemble": [
+        "Xếp bánh phở, lần lượt nạm, lá sách, bò viên vào tô, trải bò tái lên trên cùng.",
+        "Chan nước dùng đang sôi ngập mặt thịt, rắc hành ngò, tiêu."
+      ],
+      "serve": "Ăn kèm giá, húng quế, ngò gai, chanh, ớt, tương đen và tương ớt; bò viên chấm tương đen rất hợp.",
+      "tips": [
+        "Mua lá sách buổi sáng, chọn miếng trắng hồng, dày, không mùi nồng.",
+        "Không luộc lá sách quá lâu, sẽ dai; ngâm đá ngay sau luộc để giòn.",
+        "Chần lá sách và bò viên lần cuối trong nước dùng đúng lúc ráp tô để nóng đều."
+      ],
+      "sources": [
+        {
+          "title": "Lá sách bò là gì? Cách sơ chế sách bò trắng, sạch, không hôi – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/la-sach-bo-la-gi-cach-chon-mua-so-che-sach-bo-trang-sach-07934"
+        },
+        {
+          "title": "Cách nấu phở bò viên – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-vien-don-gian-thom-ngon-nuoc-dung-thanh-ngot-09481"
+        },
+        {
+          "title": "Cách nấu phở tái bò viên chuẩn vị Bắc – Tiến Hải",
+          "url": "https://bundaumamtomtienhai.vn/cach-nau-pho-tai-bo-vien/"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "45 min prep · 3–4 hr cooking",
+      "ingredients": [
+        "Broth and noodles as in Phở Tái Nạm (1.5 kg marrow bones, 4 l water, charred onion and ginger, spice bag)",
+        "400 g beef brisket (nạm)",
+        "250 g beef tenderloin for rare slices (tái)",
+        "300 g beef omasum/book tripe (lá sách)",
+        "300 g beef meatballs (bò viên, 16–20 pieces)",
+        "Coarse salt, 1 lime, 1 knob of ginger, 2 tbsp white liquor (to clean the tripe)",
+        "Scallions, cilantro, bean sprouts, Thai basil, sawtooth herb, lime, chili"
+      ],
+      "broth": [
+        "Make the broth as for Phở Tái Nạm; cook the brisket in the pot, shock in cold water and slice thinly.",
+        "Drop the meatballs into the broth 10–15 min before serving; they are done when they float; halve them if you like.",
+        "Boil the cleaned tripe separately in water with smashed ginger for 5–8 min, plunge into ice water to keep it crunchy, then cut into 1 cm strips."
+      ],
+      "prep": [
+        "Rub the tripe twice with coarse salt and rinse, massage 3–5 min with ginger liquor, then squeeze lime over it, rub 3 more min, rinse and scrape off any dark membrane.",
+        "Slice the tenderloin paper-thin against the grain; slice the cooked brisket 2–3 mm.",
+        "Chop the herbs; blanch the noodles a few seconds."
+      ],
+      "assemble": [
+        "Layer noodles, brisket, tripe and meatballs in each bowl and spread the raw beef on top.",
+        "Ladle boiling broth over the meat, add scallion, cilantro and pepper."
+      ],
+      "serve": "Serve with sprouts, Thai basil, sawtooth herb, lime, chili, hoisin and sriracha; the meatballs are great dipped in hoisin.",
+      "tips": [
+        "Buy tripe in the morning; pick thick, pinkish-white pieces with no strong smell.",
+        "Do not overboil the tripe or it turns rubbery; ice it right after boiling for crunch.",
+        "Re-dip tripe and meatballs in the broth just before plating so everything is hot."
+      ],
+      "sources": [
+        {
+          "title": "Lá sách bò là gì? Cách sơ chế sách bò trắng, sạch, không hôi – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/la-sach-bo-la-gi-cach-chon-mua-so-che-sach-bo-trang-sach-07934"
+        },
+        {
+          "title": "Cách nấu phở bò viên – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-vien-don-gian-thom-ngon-nuoc-dung-thanh-ngot-09481"
+        },
+        {
+          "title": "Cách nấu phở tái bò viên chuẩn vị Bắc – Tiến Hải",
+          "url": "https://bundaumamtomtienhai.vn/cach-nau-pho-tai-bo-vien/"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

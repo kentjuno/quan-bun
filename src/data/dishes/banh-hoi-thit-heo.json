@@ -29,5 +29,109 @@
     "how_to_eat": "Cuốn bánh hỏi + thịt + rau trong bánh tráng hoặc ăn thẳng, chấm nước mắm chua ngọt.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 25 phút · nấu 45 phút",
+      "ingredients": [
+        "800 g bánh hỏi tươi (hoặc 300 g bánh hỏi khô, hấp/luộc theo hướng dẫn gói)",
+        "600 g thịt ba chỉ (luộc) hoặc 700 g ba rọi rút sườn để làm heo quay",
+        "Mỡ hành: 100 g hành lá thái nhỏ, 5 muỗng canh dầu ăn, 1/2 muỗng cà phê muối, 1 muỗng cà phê đường, tuỳ thích thêm 2 muỗng canh tóp mỡ",
+        "Nước mắm chua ngọt: 4 muỗng canh nước mắm, 4 muỗng canh đường, 3 muỗng canh nước cốt chanh, 8 muỗng canh nước ấm, 3 tép tỏi băm, 2 quả ớt băm",
+        "Rau ăn kèm: xà lách, rau thơm (húng quế, tía tô), giá đỗ, 2 quả dưa leo",
+        "Đồ chua: 1 củ cà rốt + 1 củ cải trắng bào sợi, 2 muỗng canh giấm, 2 muỗng canh đường, 1/2 muỗng cà phê muối",
+        "Gia vị luộc thịt: 1 củ hành tím, 1 muỗng cà phê muối, vài lát gừng"
+      ],
+      "broth": [
+        "Luộc thịt: cho ba chỉ vào nồi nước lạnh cùng hành tím, gừng, muối; đun sôi rồi hạ lửa liu riu 25–30 phút đến khi xiên đũa không ra nước hồng; vớt ra ngâm nước đá 5 phút cho thịt trắng, săn, rồi thái lát mỏng.",
+        "Cách 2 – heo quay: ướp phần thịt (không ướp da) với 1 muỗng cà phê muối, 1/2 muỗng cà phê tiêu, 1/2 muỗng cà phê ngũ vị hương, hành tỏi băm tối thiểu 2 giờ; da xăm lỗ, thoa giấm, để khô; quay 200 °C 30 phút rồi 230–250 °C thêm 10–15 phút cho da nổ giòn.",
+        "Làm mỡ hành: đun dầu vừa nóng bốc khói nhẹ, tắt bếp, đổ ngay vào bát hành lá đã trộn muối đường, đảo đến khi hết xèo; làm gần lúc ăn để hành còn xanh.",
+        "Pha nước mắm: hoà đường với nước ấm cho tan, thêm nước mắm và cốt chanh, nêm lại cho vị chua – ngọt – mặn cân bằng, cuối cùng mới thả tỏi ớt băm để tỏi nổi đẹp.",
+        "Ngâm đồ chua: xóc cà rốt, củ cải với muối 5 phút, vắt nhẹ, trộn giấm đường, để 20–30 phút."
+      ],
+      "prep": [
+        "Bánh hỏi tươi hấp sơ 3–5 phút cho mềm ấm (không hấp lâu bánh sẽ nhão); bánh khô luộc/hấp theo gói rồi để ráo.",
+        "Rau sống rửa sạch, ngâm nước muối loãng 10 phút, vẩy khô; dưa leo thái lát chéo.",
+        "Thịt rửa với nước muối pha giấm, chần sơ nước sôi 1 phút rồi rửa lại để nước luộc trong.",
+        "Tỏi, ớt băm nhuyễn; chanh vắt bỏ hạt."
+      ],
+      "assemble": [
+        "Xếp từng miếng bánh hỏi lên dĩa lớn, rưới mỡ hành đều khắp mặt bánh khi bánh còn ấm.",
+        "Xếp thịt luộc (hoặc heo quay chặt miếng) thành hàng cạnh bánh, hoặc để dĩa riêng.",
+        "Bày rau sống, dưa leo, đồ chua quanh dĩa; múc nước mắm chua ngọt ra chén nhỏ cho từng người."
+      ],
+      "serve": "Gói bánh hỏi cùng thịt và rau bằng lá xà lách hoặc gắp trực tiếp, chấm nước mắm tỏi ớt; ăn kèm đồ chua cho đỡ ngậy.",
+      "tips": [
+        "Bánh hỏi nguội nhanh và dễ khô: hấp xong rưới mỡ hành ngay và phủ khăn ẩm nếu chưa ăn.",
+        "Nước mắm pha theo tỉ lệ 1 mắm : 1 đường : gần 1 chanh : 2 nước là nền dễ chỉnh; thêm nước nếu muốn nhạt để chấm bánh trắng.",
+        "Ngâm thịt luộc vào nước đá giúp thịt trắng, thái lát mỏng không bị nát."
+      ],
+      "sources": [
+        {
+          "title": "Cách Làm Món Bánh Hỏi Thịt Heo của Khanh Tran – Cookpad",
+          "url": "https://cookpad.com/vn/cong-thuc/25320989"
+        },
+        {
+          "title": "Cách làm món bánh hỏi heo quay tại nhà – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/cach-lam-mon-banh-hoi-heo-quay-171878"
+        },
+        {
+          "title": "Cách làm bánh hỏi heo quay thanh mát, dễ ăn – Eva.vn",
+          "url": "https://eva.vn/bep-eva/cach-lam-banh-hoi-heo-quay-thanh-mat-de-an-cho-ngay-he-cua-me-dam-sai-gon-c162a598599.html"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 25 min · cook 45 min",
+      "ingredients": [
+        "800 g fresh bánh hỏi (fine woven rice-vermicelli sheets), or 300 g dried, cooked per package",
+        "600 g pork belly for boiling, or 700 g boneless belly for heo quay (crackling roast pork)",
+        "Mỡ hành (scallion oil): 100 g finely sliced scallions, 5 tbsp oil, 1/2 tsp salt, 1 tsp sugar, optional 2 tbsp pork cracklings",
+        "Sweet-sour fish sauce: 4 tbsp fish sauce, 4 tbsp sugar, 3 tbsp lime juice, 8 tbsp warm water, 3 garlic cloves minced, 2 chilies minced",
+        "To serve: lettuce, Thai basil, perilla, bean sprouts, 2 cucumbers",
+        "Pickles: 1 carrot + 1 daikon in julienne, 2 tbsp vinegar, 2 tbsp sugar, 1/2 tsp salt",
+        "For boiling: 1 shallot, 1 tsp salt, a few ginger slices"
+      ],
+      "broth": [
+        "Boil the pork: start the belly in cold water with shallot, ginger and salt, bring to a boil, then simmer gently 25–30 minutes until a skewer comes out clear; chill in iced water 5 minutes so it firms and whitens, then slice thinly.",
+        "Option – roast pork: season the meat side (not the skin) with 1 tsp salt, 1/2 tsp pepper, 1/2 tsp five-spice, minced shallot and garlic for at least 2 hours; prick the skin, brush with vinegar and let dry; roast at 200 °C for 30 minutes, then 230–250 °C for 10–15 minutes until the skin blisters.",
+        "Scallion oil: heat the oil until it just shimmers, turn off the heat and pour over scallions tossed with salt and sugar; stir until the sizzling stops. Make it just before serving so it stays green.",
+        "Dipping sauce: dissolve sugar in warm water, add fish sauce and lime juice, adjust so sour, sweet and salty are balanced, then add garlic and chili last so they float.",
+        "Pickles: toss carrot and daikon with salt for 5 minutes, squeeze lightly, mix with vinegar and sugar and rest 20–30 minutes."
+      ],
+      "prep": [
+        "Steam fresh bánh hỏi 3–5 minutes until soft and warm (longer makes it mushy); cook dried sheets per the package and drain.",
+        "Wash the herbs, soak in salted water 10 minutes and shake dry; slice cucumbers diagonally.",
+        "Rinse the pork in salted vinegar water and blanch 1 minute in boiling water before the real boil so the meat stays clean and pale.",
+        "Mince garlic and chili; juice the limes and remove seeds."
+      ],
+      "assemble": [
+        "Lay the bánh hỏi sheets on a large platter and drizzle scallion oil all over while still warm.",
+        "Line up the sliced boiled pork (or chopped roast pork) beside the sheets, or on a separate plate.",
+        "Surround with herbs, cucumber and pickles; pour the dipping sauce into small bowls, one per person."
+      ],
+      "serve": "Wrap a piece of bánh hỏi with pork and herbs in a lettuce leaf, or simply pick and dip in the garlic-chili fish sauce; the pickles cut the richness.",
+      "tips": [
+        "Bánh hỏi cools and dries fast: dress it with scallion oil immediately and cover with a damp cloth if not eating right away.",
+        "A base of 1 fish sauce : 1 sugar : almost 1 lime : 2 water is easy to tune; dilute further if you prefer a lighter sauce for the plain noodles.",
+        "An ice-water bath after boiling keeps the pork white and lets you slice it thin without crumbling."
+      ],
+      "sources": [
+        {
+          "title": "Cách Làm Món Bánh Hỏi Thịt Heo của Khanh Tran – Cookpad",
+          "url": "https://cookpad.com/vn/cong-thuc/25320989"
+        },
+        {
+          "title": "Cách làm món bánh hỏi heo quay tại nhà – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/cach-lam-mon-banh-hoi-heo-quay-171878"
+        },
+        {
+          "title": "Cách làm bánh hỏi heo quay thanh mát, dễ ăn – Eva.vn",
+          "url": "https://eva.vn/bep-eva/cach-lam-banh-hoi-heo-quay-thanh-mat-de-an-cho-ngay-he-cua-me-dam-sai-gon-c162a598599.html"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

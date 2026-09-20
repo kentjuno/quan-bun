@@ -45,5 +45,111 @@
     "how_to_eat": "Thêm lá chanh thái sợi, tiêu, chanh ớt.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 20 phút · nấu 2 giờ",
+      "ingredients": [
+        "1 con gà ta (gà mái tơ hoặc gà đẻ) khoảng 1,6-1,8 kg, làm sạch",
+        "1 kg xương gà (cổ, chân, khung xương) để ninh thêm",
+        "1 củ gừng (50 g), 2 củ hành tây nhỏ, 6 củ hành tím",
+        "1 muỗng canh hạt mùi (ngò) khô, rễ hành lá và rễ rau mùi (rửa sạch, bó lại)",
+        "1 quả thảo quả và 1 hoa hồi nhỏ (tuỳ chọn; phở gà Hà Nội xưa thường không dùng)",
+        "3 muỗng canh nước mắm ngon, 1 muỗng canh muối, 20 g đường phèn",
+        "1 kg bánh phở tươi",
+        "Hành lá, rau mùi, lá chanh non thái chỉ (khoảng 5 lá)",
+        "Ăn kèm: chanh, ớt tươi, tương ớt, giấm tỏi, tiêu; quẩy (tuỳ chọn)"
+      ],
+      "broth": [
+        "Xương gà chần qua nước sôi 3 phút, rửa sạch; gà nguyên con xát muối và gừng, rửa lại, để ráo.",
+        "Nướng gừng, hành tây, hành tím trên bếp cho cháy xém vỏ, cạo sạch; rang hạt mùi thơm; cho tất cả vào túi vải cùng rễ hành, rễ mùi.",
+        "Cho xương gà và 3,5 lít nước vào nồi, đun sôi rồi hạ lửa nhỏ nhất, mở vung, vớt bọt.",
+        "Thả gà vào nồi, giữ nước sôi lăn tăn khoảng 25-30 phút, tắt bếp đậy vung ngâm thêm 10 phút; vớt gà ra ngâm nước lạnh rồi để nguội.",
+        "Cho túi gia vị vào nồi xương, ninh thêm 1-1,5 giờ; cuối cùng nêm muối, đường phèn, nước mắm, vớt túi gia vị."
+      ],
+      "prep": [
+        "Gà nguội thì lọc thịt khỏi xương, thái lát mỏng hoặc xé miếng vừa ăn; da để nguyên cho đẹp; xương gà luộc bỏ lại nồi ninh tiếp.",
+        "Hành lá thái nhỏ, phần đầu hành chẻ chần nhanh trong nước dùng; rau mùi thái rối; lá chanh thái chỉ thật mỏng.",
+        "Pha giấm tỏi: tỏi băm ngâm giấm gạo với ít đường 15 phút."
+      ],
+      "assemble": [
+        "Bánh phở chần nước sôi, xóc ráo, cho vào tô.",
+        "Xếp thịt gà lên trên, rắc hành lá, rau mùi, lá chanh thái chỉ và tiêu.",
+        "Chan nước dùng thật sôi ngập bánh."
+      ],
+      "serve": "Ăn nóng với chanh, ớt, giấm tỏi và tương ớt; thêm quẩy hoặc trứng non nếu thích.",
+      "tips": [
+        "Chần xương, ninh lửa nhỏ và không đậy vung là ba việc giữ nước dùng trong veo.",
+        "Không luộc gà quá lâu: nước sôi lăn tăn rồi tắt bếp ngâm, thịt vừa chín, da vàng không nứt.",
+        "Nêm nước mắm sau cùng khi đã tắt bếp để nước không bị chua và giữ mùi thơm."
+      ],
+      "sources": [
+        {
+          "title": "Điện máy XANH — Cách nấu phở gà Hà Nội thơm ngon chuẩn vị truyền thống",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-ga-ha-noi-thom-ngon-chuan-vi-truyen-thong-cuc-23936"
+        },
+        {
+          "title": "VnExpress — Cách làm phở gà Hà Nội truyền thống",
+          "url": "https://vnexpress.net/doi-song-cooking-pho-ga-ha-noi-truyen-thong-4643362.html"
+        },
+        {
+          "title": "VnExpress — 4 cách nấu Phở gà tại nhà dễ làm mà ngon như ngoài hàng",
+          "url": "https://vnexpress.net/doi-song/cooking/mon-an/pho-ga-27169"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 20 min · cook 2 h",
+      "ingredients": [
+        "1 free-range hen (gà ta), about 1.6-1.8 kg, cleaned",
+        "1 kg chicken bones (necks, feet, carcasses) for extra body",
+        "1 knob ginger (50 g), 2 small onions, 6 shallots",
+        "1 tbsp coriander seeds; roots of scallion and cilantro, washed and tied",
+        "1 black cardamom and 1 small star anise (optional; old-school Hanoi phở gà usually skips them)",
+        "3 tbsp good fish sauce, 1 tbsp salt, 20 g rock sugar",
+        "1 kg fresh bánh phở (flat rice noodles)",
+        "Scallions, cilantro, about 5 young lime leaves sliced hair-thin",
+        "On the side: lime, fresh chili, chili sauce, garlic vinegar, pepper; quẩy (fried dough sticks), optional"
+      ],
+      "broth": [
+        "Blanch the bones 3 minutes in boiling water and rinse; rub the whole chicken with salt and ginger, rinse and drain.",
+        "Char the ginger, onions and shallots over a flame, scrape the skins; toast the coriander seeds; put all in a cloth bag with the scallion and cilantro roots.",
+        "Put the bones and 3.5 liters of water in a pot, bring to a boil, drop to the lowest heat, lid off, and skim.",
+        "Lower the chicken in and keep the water at a bare simmer 25-30 minutes, then turn off the heat, cover and rest 10 minutes; lift the bird into cold water, then let it cool.",
+        "Add the spice bag to the bone stock and simmer another 1-1.5 hours; finish with salt, rock sugar and fish sauce, and remove the bag."
+      ],
+      "prep": [
+        "Once cool, take the meat off the bone and slice thin or tear into bite-size pieces, skin on; return the carcass to the simmering pot.",
+        "Chop the scallions and blanch the split white ends briefly in the broth; roughly chop cilantro; slice lime leaves as thin as possible.",
+        "Garlic vinegar: minced garlic in rice vinegar with a pinch of sugar, 15 minutes."
+      ],
+      "assemble": [
+        "Blanch the noodles in boiling water, shake dry, put in bowls.",
+        "Lay the chicken on top, scatter scallion, cilantro, lime-leaf threads and pepper.",
+        "Ladle boiling broth over to cover the noodles."
+      ],
+      "serve": "Serve hot with lime, chili, garlic vinegar and chili sauce; add fried dough sticks or unlaid eggs if you like.",
+      "tips": [
+        "Blanching the bones, simmering very low and leaving the lid off are the three things that keep the broth crystal clear.",
+        "Don't over-boil the chicken: bare simmer, then rest off the heat, for just-cooked meat and golden, uncracked skin.",
+        "Add the fish sauce last, after the heat is off, so the broth doesn't turn sour and keeps its aroma."
+      ],
+      "sources": [
+        {
+          "title": "Điện máy XANH — Cách nấu phở gà Hà Nội thơm ngon chuẩn vị truyền thống",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-ga-ha-noi-thom-ngon-chuan-vi-truyen-thong-cuc-23936"
+        },
+        {
+          "title": "VnExpress — Cách làm phở gà Hà Nội truyền thống",
+          "url": "https://vnexpress.net/doi-song-cooking-pho-ga-ha-noi-truyen-thong-4643362.html"
+        },
+        {
+          "title": "VnExpress — 4 cách nấu Phở gà tại nhà dễ làm mà ngon như ngoài hàng",
+          "url": "https://vnexpress.net/doi-song/cooking/mon-an/pho-ga-27169"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

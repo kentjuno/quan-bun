@@ -83,5 +83,107 @@
     "how_to_eat": "Gắp cá nóng vào bát bún, thêm rau, đậu phộng, chấm mắm tôm đánh sủi bọt với chanh.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · ướp 2 giờ · nấu 30 phút",
+      "ingredients": [
+        "800 g phi lê cá lăng (thay bằng cá quả/cá nheo nếu không có), cắt miếng 3–4 cm",
+        "2 muỗng canh riềng giã mịn, 1 muỗng canh nghệ tươi giã (hoặc 1 muỗng cà phê bột nghệ), 1 muỗng canh hành tím băm",
+        "2 muỗng canh mẻ ngấu lọc bỏ bã, 1 muỗng canh mắm tôm, 2 muỗng cà phê nước mắm, 1 muỗng cà phê đường, 1/2 muỗng cà phê muối, 1/2 muỗng cà phê tiêu",
+        "3 muỗng canh mỡ lợn (hoặc dầu ăn), thêm 2 muỗng canh để áp chảo",
+        "2 bó thì là, 1 bó hành lá cắt khúc 4 cm, 1 củ hành tây thái múi, rau mùi, húng Láng",
+        "1 kg bún tươi, 100 g lạc rang bỏ vỏ",
+        "Mắm tôm chấm: 3 muỗng canh mắm tôm, 1 muỗng canh đường, 1 quả chanh (hoặc 3 quả quất), 1 muỗng cà phê rượu trắng, ớt tươi, 1 muỗng canh mỡ nóng"
+      ],
+      "broth": [
+        "Ướp cá: trộn cá với riềng, nghệ, hành tím, mẻ, mắm tôm, nước mắm, đường, muối, tiêu và 3 muỗng canh mỡ lợn ấm; bọc kín, để tủ lạnh tối thiểu 2 giờ (qua đêm càng đậm).",
+        "Nướng cá lần 1: xếp cá lên vỉ, nướng than hoa hoặc lò/nồi chiên không dầu 200 °C khoảng 15–20 phút cho xém cạnh, không cần chín hẳn.",
+        "Pha mắm tôm: đánh mắm tôm với đường, nước chanh/quất, rượu trắng cho bông nhẹ, rưới 1 muỗng canh mỡ nóng rồi thêm ớt thái lát.",
+        "Áp chảo tại bàn: đun nóng chảo với 2 muỗng canh mỡ, cho hành tây rồi cá vào, khi cá nóng xèo xèo thì phủ thì là, hành lá lên, đảo nhẹ 1–2 phút là ăn."
+      ],
+      "prep": [
+        "Rửa cá bằng nước muối loãng pha chanh 5 phút để hết tanh, thấm thật khô trước khi ướp.",
+        "Riềng, nghệ gọt vỏ giã hoặc xay nhuyễn; mẻ lọc qua rây lấy phần nước sánh.",
+        "Thì là, hành lá rửa sạch cắt khúc; hành tây thái múi cau; lạc rang giã dập.",
+        "Bún cắt miếng vừa gắp, để ráo; rau thơm ngâm nước muối, vẩy khô."
+      ],
+      "assemble": [
+        "Đặt bếp nhỏ giữa bàn, chảo cá áp chảo cùng thì là hành để sôi lăn tăn suốt bữa.",
+        "Mỗi người gắp bún vào bát, thêm cá và rau xào từ chảo, rắc lạc rang.",
+        "Chan 1–2 muỗng mắm tôm đã pha, thêm rau mùi, húng Láng, ớt tùy khẩu vị."
+      ],
+      "serve": "Ăn nóng ngay tại chảo với bún, mắm tôm pha, lạc rang và rau thơm; ai không ăn được mắm tôm dùng nước mắm chua ngọt.",
+      "tips": [
+        "Chọn cá lăng thịt chắc, cắt miếng dày để khi nướng rồi áp chảo không bị nát.",
+        "Mỡ lợn ấm trộn vào lúc ướp và mỡ khi áp chảo là bí quyết giữ cá không khô.",
+        "Chỉ cho thì là vào khi cá đã nóng, đảo nhanh để rau vừa tái, giữ được mùi thơm."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm chả cá Lã Vọng đúng chuẩn Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cach-lam-cha-ca-la-vong-dung-chuan-ha-noi-4988463.html"
+        },
+        {
+          "title": "Cách làm chả cá Lã Vọng chuẩn vị Hà Nội – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-cha-ca-la-vong-cha-ca-lang-thom-ngon-c-01916"
+        },
+        {
+          "title": "Cách làm chả cá Lã Vọng tại nhà – Bách hoá XANH",
+          "url": "https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-cha-ca-la-vong-chuan-bi-ha-noi-ngay-tai-nha-1248880"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 30 min · marinate 2 h · cook 30 min",
+      "ingredients": [
+        "800 g cá lăng (hemibagrus catfish) fillet, or snakehead/other firm white fish, cut into 3–4 cm pieces",
+        "2 tbsp finely pounded riềng (galangal), 1 tbsp fresh turmeric paste (or 1 tsp turmeric powder), 1 tbsp minced shallot",
+        "2 tbsp strained mẻ (fermented rice sour starter; substitute 1 tbsp plain yogurt + 1 tsp rice vinegar), 1 tbsp mắm tôm (fermented shrimp paste), 2 tsp fish sauce, 1 tsp sugar, 1/2 tsp salt, 1/2 tsp pepper",
+        "3 tbsp lard (or oil) for the marinade, plus 2 tbsp for pan-frying",
+        "2 big bunches dill, 1 bunch scallions cut in 4 cm lengths, 1 onion in wedges, coriander, Vietnamese mint",
+        "1 kg fresh bún (rice vermicelli), 100 g roasted peanuts",
+        "Dipping sauce: 3 tbsp mắm tôm, 1 tbsp sugar, juice of 1 lime (or 3 kumquats), 1 tsp white liquor, fresh chili, 1 tbsp hot lard"
+      ],
+      "broth": [
+        "Marinate: toss the fish with galangal, turmeric, shallot, mẻ, shrimp paste, fish sauce, sugar, salt, pepper and 3 tbsp warm lard; cover and chill at least 2 hours (overnight is better).",
+        "First grill: lay the fish on a rack and grill over charcoal or in an oven/air fryer at 200 °C for 15–20 minutes until the edges char; it need not be fully cooked.",
+        "Make the sauce: whisk shrimp paste with sugar, lime juice and liquor until slightly frothy, pour over 1 tbsp sizzling lard, add sliced chili.",
+        "Tableside pan-fry: heat a pan with 2 tbsp lard, add onion then the fish; once it sizzles, pile on dill and scallions and toss gently 1–2 minutes before eating."
+      ],
+      "prep": [
+        "Rinse the fish in light salted water with lime for 5 minutes to remove any muddy smell, then pat completely dry.",
+        "Peel and pound or blend the galangal and turmeric; strain the mẻ through a sieve to keep only the thick liquid.",
+        "Wash and cut dill and scallions; slice the onion; lightly crush the roasted peanuts.",
+        "Portion the noodles into bite-size bundles; soak herbs in salted water and shake dry."
+      ],
+      "assemble": [
+        "Set a small burner in the middle of the table and keep the pan of fish, dill and scallions gently sizzling through the meal.",
+        "Each person takes noodles into a bowl, adds fish and wilted herbs from the pan, and sprinkles on peanuts.",
+        "Spoon over 1–2 tbsp of the shrimp-paste sauce and top with coriander, mint and chili to taste."
+      ],
+      "serve": "Eat hot straight from the pan with vermicelli, shrimp-paste sauce, peanuts and fresh herbs; offer sweet-sour fish sauce for anyone who dislikes mắm tôm.",
+      "tips": [
+        "Use firm-fleshed catfish cut thick so it survives grilling and then pan-frying without falling apart.",
+        "Warm lard in the marinade and lard in the pan are what keep the fish moist – don't skip them.",
+        "Add the dill only once the fish is hot and toss briefly so it barely wilts and keeps its fragrance."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm chả cá Lã Vọng đúng chuẩn Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cach-lam-cha-ca-la-vong-dung-chuan-ha-noi-4988463.html"
+        },
+        {
+          "title": "Cách làm chả cá Lã Vọng chuẩn vị Hà Nội – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-cha-ca-la-vong-cha-ca-lang-thom-ngon-c-01916"
+        },
+        {
+          "title": "Cách làm chả cá Lã Vọng tại nhà – Bách hoá XANH",
+          "url": "https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-cha-ca-la-vong-chuan-bi-ha-noi-ngay-tai-nha-1248880"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

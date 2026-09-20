@@ -37,5 +37,123 @@
     "how_to_eat": "Thêm mắm tôm, rau muống chẻ, giá, kinh giới.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 40 phút · nấu 1 giờ 15 phút",
+      "ingredients": [
+        "1 kg cua đồng sống (hoặc 500 g cua đồng xay sẵn)",
+        "300 g xương ống heo (tuỳ chọn, cho nước ngọt hơn)",
+        "4 quả cà chua chín, bổ múi cau",
+        "3 bìa đậu hũ, cắt quân cờ, chiên vàng",
+        "300 g huyết heo luộc, cắt miếng",
+        "200 g chả cua (hoặc 100 g thịt xay + 50 g tôm khô giã + 1 trứng, trộn thành chả)",
+        "50 g tôm khô, ngâm mềm",
+        "2 muỗng canh mắm tôm + 2 muỗng canh nước mắm",
+        "3 muỗng canh giấm bỗng (hoặc 2 muỗng canh me chua)",
+        "4 củ hành tím, 1 muỗng cà phê bột nghệ hoặc 2 muỗng canh dầu màu điều",
+        "1 kg bún tươi",
+        "Rau ăn kèm: rau muống chẻ, hoa chuối, kinh giới, tía tô, giá, chanh, ớt",
+        "Muối, đường, hạt nêm, tiêu, dầu ăn"
+      ],
+      "broth": [
+        "Cua rửa sạch, bỏ mai và yếm, khều gạch để riêng; thân cua giã hoặc xay nhuyễn với 1 muỗng cà phê muối.",
+        "Đổ khoảng 3 lít nước vào cua xay, bóp kỹ rồi lọc qua rây 2-3 lần, chỉ giữ phần nước, bỏ bã.",
+        "Đặt nồi nước cua lên bếp lửa vừa, khuấy nhẹ đến khi gần sôi thì ngừng khuấy để riêu kết mảng nổi lên; hạ nhỏ lửa, vớt riêu ra tô riêng.",
+        "Cho xương heo đã chần và tôm khô vào nồi nước cua, ninh liu riu 30-40 phút, vớt bọt.",
+        "Phi hành tím với dầu, cho gạch cua vào xào thơm cùng bột nghệ/dầu điều; múc một nửa gạch vào nồi, nửa còn lại xào cà chua rồi cho vào nồi luôn.",
+        "Nêm mắm tôm, nước mắm, giấm bỗng, muối, đường; thả đậu hũ, huyết, chả cua vào đun thêm 10 phút."
+      ],
+      "prep": [
+        "Đậu hũ chiên vàng, để ráo dầu.",
+        "Huyết luộc trong nước có ít muối 5 phút, cắt miếng vừa ăn.",
+        "Chả cua: trộn thịt xay, tôm khô giã, trứng, hành tím băm, tiêu; viên hoặc thả từng muỗng vào nồi nước dùng đang sôi nhẹ.",
+        "Rau sống rửa sạch, rau muống chẻ ngâm nước đá cho giòn, hoa chuối thái mỏng ngâm nước pha chanh."
+      ],
+      "assemble": [
+        "Bún chần nước sôi, cho vào tô.",
+        "Xếp lên mặt: riêu cua, đậu hũ, huyết, chả cua, vài miếng cà chua.",
+        "Chan nước dùng thật nóng ngập mặt, rắc hành lá và hành phi."
+      ],
+      "serve": "Ăn nóng kèm rau sống, thêm mắm tôm, vắt chanh và ớt tươi theo khẩu vị.",
+      "tips": [
+        "Ngừng khuấy khi nước cua bắt đầu nóng để riêu kết thành mảng lớn, không bị nát.",
+        "Chỉ nên cho mắm tôm khi nước đã sôi và nêm từ ít đến vừa để không bị gắt.",
+        "Giấm bỗng làm vị chua thanh đúng kiểu Bắc; không có thì dùng me hoặc chanh."
+      ],
+      "sources": [
+        {
+          "title": "Điện máy XANH — 3 cách nấu bún riêu cua đồng thơm ngon dễ làm đúng chuẩn tại nhà",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-bun-rieu-cua-dong-ngon-tuyet-de-lam-tai-nha-00980"
+        },
+        {
+          "title": "Bách hoá XANH — 2 cách nấu bún riêu cua đồng thơm ngon, ngọt nước",
+          "url": "https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-bun-rieu-cua-chuan-vi-ngon-het-say-1153440"
+        },
+        {
+          "title": "VietNamNet — Cách nấu bún riêu cua đơn giản, nước dùng ngon ngọt chuẩn vị",
+          "url": "https://vietnamnet.vn/cach-nau-bun-rieu-cua-don-gian-nuoc-dung-ngon-ngot-chuan-vi-2127626.html"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 40 min · cook 1 h 15 min",
+      "ingredients": [
+        "1 kg live cua đồng (paddy crabs), or 500 g pre-ground crab",
+        "300 g pork leg bones (optional, for a sweeter broth)",
+        "4 ripe tomatoes, cut into wedges",
+        "3 blocks firm tofu, cubed and fried golden",
+        "300 g cooked pork blood cake (huyết), sliced",
+        "200 g chả cua (crab cake), or make it: 100 g ground pork + 50 g pounded dried shrimp + 1 egg",
+        "50 g dried shrimp, soaked",
+        "2 tbsp mắm tôm (fermented shrimp paste) + 2 tbsp fish sauce",
+        "3 tbsp giấm bỗng (rice-wine vinegar lees) or 2 tbsp tamarind",
+        "4 shallots, 1 tsp turmeric or 2 tbsp annatto oil",
+        "1 kg fresh bún (rice vermicelli)",
+        "Herbs: split water spinach, shaved banana blossom, kinh giới, tía tô, bean sprouts, lime, chili",
+        "Salt, sugar, seasoning powder, pepper, oil"
+      ],
+      "broth": [
+        "Clean the crabs, remove shells and aprons, scoop out the roe (gạch) and set aside; pound or blend the bodies with 1 tsp salt.",
+        "Add about 3 liters of water to the ground crab, squeeze well and strain through a sieve 2-3 times; keep only the liquid.",
+        "Heat the crab liquid over medium heat, stirring gently until just before boiling, then stop stirring so the crab curds (riêu) clump and float; lower the heat and lift the curds out to a bowl.",
+        "Add blanched pork bones and dried shrimp to the crab stock and simmer gently 30-40 minutes, skimming foam.",
+        "Fry shallots in oil, stir in the crab roe with turmeric/annatto oil; put half in the pot, use the other half to sauté the tomatoes, then add those too.",
+        "Season with mắm tôm, fish sauce, giấm bỗng, salt and sugar; add tofu, blood cake and crab cake and simmer 10 more minutes."
+      ],
+      "prep": [
+        "Fry the tofu golden and drain.",
+        "Boil the blood cake 5 minutes in lightly salted water, cut into bite-size pieces.",
+        "Crab cake: mix ground pork, pounded dried shrimp, egg, minced shallot and pepper; drop spoonfuls into the gently simmering broth.",
+        "Wash the herbs; soak split water spinach in iced water for crunch and banana blossom in lime water so it stays pale."
+      ],
+      "assemble": [
+        "Blanch the noodles in boiling water and put in bowls.",
+        "Top with crab curds, tofu, blood cake, crab cake and a few tomato wedges.",
+        "Ladle very hot broth over, sprinkle with scallions and fried shallots."
+      ],
+      "serve": "Serve hot with the herb plate, extra mắm tôm, lime and fresh chili to taste.",
+      "tips": [
+        "Stop stirring once the crab liquid gets hot so the curds bind into large pieces instead of breaking up.",
+        "Add mắm tôm only after the broth boils and start small; it turns harsh if overdone.",
+        "Giấm bỗng gives the clean northern sourness; tamarind or lime work if you can't find it."
+      ],
+      "sources": [
+        {
+          "title": "Điện máy XANH — 3 cách nấu bún riêu cua đồng thơm ngon dễ làm đúng chuẩn tại nhà",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-bun-rieu-cua-dong-ngon-tuyet-de-lam-tai-nha-00980"
+        },
+        {
+          "title": "Bách hoá XANH — 2 cách nấu bún riêu cua đồng thơm ngon, ngọt nước",
+          "url": "https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-bun-rieu-cua-chuan-vi-ngon-het-say-1153440"
+        },
+        {
+          "title": "VietNamNet — Cách nấu bún riêu cua đơn giản, nước dùng ngon ngọt chuẩn vị",
+          "url": "https://vietnamnet.vn/cach-nau-bun-rieu-cua-don-gian-nuoc-dung-ngon-ngot-chuan-vi-2127626.html"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

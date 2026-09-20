@@ -47,5 +47,123 @@
     "how_to_eat": "Ăn với ớt chưng, rau sống, chút mắm tôm.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 45 phút · nấu 1 giờ 30 phút",
+      "ingredients": [
+        "800 g cua đồng sống",
+        "500 g xương ống heo",
+        "400 g bánh đa đỏ Hải Phòng (khô)",
+        "300 g chả cá chiên, thái miếng",
+        "300 g tôm sú tươi, bóc vỏ, ướp chút muối",
+        "300 g thịt nạc vai xay + 1 bó lá lốt (khoảng 20 lá) làm chả lá lốt",
+        "150 g mỡ heo thái hạt lựu (để làm tóp mỡ)",
+        "6 củ hành tím (phi hành) + 4 củ hành tím nướng cho nước dùng",
+        "3 quả cà chua, bổ múi cau",
+        "1 muỗng canh mắm tôm + 3 muỗng canh nước mắm + 2 muỗng canh nước cốt me",
+        "1 bó rau muống (400 g), 1 bó rau rút hoặc rau cần (tuỳ mùa)",
+        "Hành lá, rau sống: tía tô, kinh giới, xà lách, giá; chanh, ớt, tương ớt",
+        "Muối, đường, hạt nêm, tiêu, dầu ăn"
+      ],
+      "broth": [
+        "Xương heo chần qua nước sôi, rửa sạch, ninh với 2,5 lít nước và 4 củ hành tím nướng khoảng 1 giờ, vớt bọt liên tục.",
+        "Cua tách mai, khều gạch để riêng; thân cua giã tay với chút muối, hoà 1,5 lít nước, bóp và lọc lấy nước 2 lần, bỏ bã.",
+        "Đun nước cua lửa vừa, không khuấy khi bắt đầu nóng, đợi riêu cua kết mảng nổi lên rồi vớt ra để riêng.",
+        "Hoà nước cua vào nồi nước xương; phi hành tím với dầu, xào gạch cua rồi xào cà chua, đổ hết vào nồi.",
+        "Nêm mắm tôm, nước mắm, nước me, muối, đường; giữ lửa nhỏ để nước có màu vàng sánh, vị mặn-ngọt-chua nhẹ."
+      ],
+      "prep": [
+        "Chả lá lốt: thịt xay trộn hành tím băm, tiêu, 1 muỗng cà phê nước mắm; gói vào lá lốt thành cuốn dài 5 cm, chiên vàng hoặc áp chảo.",
+        "Tóp mỡ: rán mỡ hạt lựu với chút muối đến khi vàng giòn, vớt ra; dùng chính mỡ đó phi 6 củ hành tím thái mỏng đến vàng nâu.",
+        "Tôm luộc hoặc xào nhanh với hành, để riêng; chả cá cắt miếng dày 1 cm.",
+        "Rau muống nhặt ngọn, chần nhanh trong nước sôi có muối rồi vớt ra nước lạnh cho xanh.",
+        "Bánh đa đỏ ngâm nước lạnh 15-20 phút cho mềm, chần qua nước sôi 30 giây, vớt ráo."
+      ],
+      "assemble": [
+        "Cho bánh đa vào tô, xếp rau muống chần lên.",
+        "Bày lần lượt riêu cua, chả lá lốt, chả cá, tôm, tóp mỡ và hành phi.",
+        "Chan nước dùng sôi ngập bánh đa, rắc hành lá thái nhỏ."
+      ],
+      "serve": "Ăn nóng với rau sống, vắt chanh, thêm tương ớt hoặc ớt chưng cho đúng kiểu đất Cảng.",
+      "tips": [
+        "Giã cua bằng tay và lọc kỹ nhiều lần cho nhiều thịt và nước trong; xay máy dễ làm riêu vụn.",
+        "Bánh đa đỏ chỉ chần rất nhanh, để lâu sẽ nhũn và mất độ dai.",
+        "Không có rau muống thì thay bằng rau cần hoặc rau rút; mùa hè hay dùng rau muống, mùa đông dùng rau cần."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress — Cách nấu bánh đa cua Hải Phòng chuẩn vị xưa",
+          "url": "https://vnexpress.net/doi-song-cooking-banh-da-cua-hai-phong-4574829.html"
+        },
+        {
+          "title": "Hướng Nghiệp Á Âu — Cách Nấu Bánh Đa Cua Hải Phòng Chuẩn Vị",
+          "url": "https://www.huongnghiepaau.com/banh-da-cua-hai-phong"
+        },
+        {
+          "title": "Eva.vn — Cách nấu bánh đa cua Hải Phòng chuẩn vị ngon nhất",
+          "url": "https://eva.vn/bep-eva/cach-nau-banh-da-cua-hai-phong-chuan-vi-ngon-nhat-c162a502027.html"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 45 min · cook 1 h 30 min",
+      "ingredients": [
+        "800 g live cua đồng (paddy crabs)",
+        "500 g pork leg bones",
+        "400 g dried bánh đa đỏ (Hải Phòng red-brown wide rice noodles)",
+        "300 g fried chả cá (fish cake), sliced",
+        "300 g fresh tiger prawns, peeled, lightly salted",
+        "300 g ground pork shoulder + about 20 lá lốt (wild betel leaves) for chả lá lốt rolls",
+        "150 g pork fat, diced (for crispy tóp mỡ)",
+        "6 shallots for frying + 4 shallots, charred, for the stock",
+        "3 tomatoes, cut into wedges",
+        "1 tbsp mắm tôm (shrimp paste) + 3 tbsp fish sauce + 2 tbsp tamarind juice",
+        "1 bunch water spinach (400 g); water mimosa or Vietnamese celery in season",
+        "Scallions; herbs: tía tô, kinh giới, lettuce, bean sprouts; lime, chili, chili sauce",
+        "Salt, sugar, seasoning powder, pepper, oil"
+      ],
+      "broth": [
+        "Blanch the pork bones, rinse, then simmer in 2.5 liters of water with the charred shallots for about 1 hour, skimming often.",
+        "Open the crabs, scoop out the roe (gạch) and set aside; hand-pound the bodies with a pinch of salt, mix with 1.5 liters of water, squeeze and strain twice, discarding the shell.",
+        "Heat the crab liquid over medium heat without stirring once it gets hot; when the crab curds clump and float, lift them out.",
+        "Combine the crab stock with the bone stock; fry shallots in oil, stir in the roe, then the tomatoes, and tip it all into the pot.",
+        "Season with mắm tôm, fish sauce, tamarind, salt and sugar; keep on low so the broth turns golden and slightly thick, balanced salty-sweet-tart."
+      ],
+      "prep": [
+        "Chả lá lốt: mix ground pork with minced shallot, pepper and 1 tsp fish sauce; roll in betel leaves into 5 cm logs, pan-fry until browned.",
+        "Tóp mỡ: render the diced fat with a little salt until golden and crisp, lift out; fry the 6 sliced shallots in that same fat until brown.",
+        "Boil or quickly sauté the prawns; slice the fish cake 1 cm thick.",
+        "Pick water spinach tips, blanch briefly in salted boiling water and plunge into cold water to keep green.",
+        "Soak the red noodles in cold water 15-20 minutes, blanch 30 seconds in boiling water, drain."
+      ],
+      "assemble": [
+        "Put noodles in each bowl, lay the blanched water spinach on top.",
+        "Arrange crab curds, betel-leaf rolls, fish cake, prawns, crispy fat and fried shallots.",
+        "Pour boiling broth over to cover the noodles, sprinkle with chopped scallion."
+      ],
+      "serve": "Eat hot with the herb plate, a squeeze of lime and chili sauce or chili-in-oil, Hải Phòng style.",
+      "tips": [
+        "Pound the crab by hand and strain several times for more meat and a clearer stock; a blender tends to break the curds up.",
+        "Blanch the red noodles very briefly; left longer they go mushy and lose their chew.",
+        "No water spinach? Use Vietnamese celery or water mimosa; locals switch greens with the season."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress — Cách nấu bánh đa cua Hải Phòng chuẩn vị xưa",
+          "url": "https://vnexpress.net/doi-song-cooking-banh-da-cua-hai-phong-4574829.html"
+        },
+        {
+          "title": "Hướng Nghiệp Á Âu — Cách Nấu Bánh Đa Cua Hải Phòng Chuẩn Vị",
+          "url": "https://www.huongnghiepaau.com/banh-da-cua-hai-phong"
+        },
+        {
+          "title": "Eva.vn — Cách nấu bánh đa cua Hải Phòng chuẩn vị ngon nhất",
+          "url": "https://eva.vn/bep-eva/cach-nau-banh-da-cua-hai-phong-chuan-vi-ngon-nhat-c162a502027.html"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

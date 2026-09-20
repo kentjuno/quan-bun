@@ -40,5 +40,109 @@
     "how_to_eat": "Gặm sườn trước, ăn phở sau.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · nấu 2,5–3 giờ",
+      "ingredients": [
+        "1 kg sườn bò (dẻ sườn hoặc sườn non bò), chặt khúc 4–5 cm",
+        "1 kg xương ống bò (có thể giảm còn 700 g vì sườn đã ngọt)",
+        "250 g thăn bò (làm tái)",
+        "1 kg bánh phở tươi",
+        "2 củ hành tây, 2 củ gừng",
+        "Túi gia vị: 3 hoa hồi, 1 thanh quế, 1 thảo quả, 1 thìa cà phê hạt mùi",
+        "50 g táo đỏ (tuỳ chọn)",
+        "3 thìa canh nước mắm, 2 thìa cà phê muối, 1 thìa canh đường phèn",
+        "Hành lá, ngò, giá, húng quế, ngò gai, chanh, ớt",
+        "4 lít nước"
+      ],
+      "broth": [
+        "Nước dùng, hành gừng nướng, túi gia vị như phở tái nạm.",
+        "Sườn ngâm nước muối loãng 5 phút, xát gừng hoặc bóp rượu trắng 10 phút cho hết hôi, chần sôi 5 phút cùng xương rồi rửa lại.",
+        "Cho xương và sườn vào 4 lít nước lạnh, đun sôi hớt bọt, hạ lửa nhỏ, thêm hành gừng nướng, túi gia vị và táo đỏ.",
+        "Hầm 1,5–2 giờ đến khi thịt sườn mềm nhưng còn bám xương, vớt sườn ra để không bị nát; xương hầm tiếp thêm 1 giờ.",
+        "Lọc nước, nêm mắm, muối, đường phèn; thả sườn lại vào nồi giữ nóng."
+      ],
+      "prep": [
+        "Thăn bò thái lát mỏng, ướp chút gừng, tiêu.",
+        "Hành ngò thái nhỏ; bánh phở trụng nước sôi."
+      ],
+      "assemble": [
+        "Cho bánh phở vào tô, xếp 2–3 khúc sườn, trải bò tái lên trên.",
+        "Chan nước dùng sôi ngập mặt, rắc hành ngò, tiêu."
+      ],
+      "serve": "Ăn kèm giá, húng quế, ngò gai, chanh, ớt; sườn chấm tương ớt hoặc nước mắm gừng.",
+      "tips": [
+        "Dùng nồi áp suất 30–35 phút cho sườn nếu vội, rồi mở nắp hầm thêm 20 phút cho trong.",
+        "Chọn sườn có lớp thịt dày, màu đỏ tươi, mỡ trắng sáng.",
+        "Thay 1 lít nước bằng nước dừa tươi cho nước dùng ngọt dịu (biến tấu miền Nam)."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu phở sườn bò thơm ngon, bổ dưỡng – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-suon-bo-thom-ngon-bo-duong-doi-vi-bua-an-cho-ca-10791"
+        },
+        {
+          "title": "Phở sườn bò – VnExpress Cooking",
+          "url": "https://vnexpress.net/pho-suon-bo-mon-an-boi-bo-suc-khoe-mua-dich-4338342.html"
+        },
+        {
+          "title": "Cách nấu phở sườn bò chuẩn vị – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/pho-suon-bo-181131"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "30 min prep · 2.5–3 hr cooking",
+      "ingredients": [
+        "1 kg beef short ribs (sườn bò), cut into 4–5 cm pieces",
+        "1 kg beef marrow bones (can be reduced to 700 g since ribs add sweetness)",
+        "250 g beef tenderloin for rare slices (tái)",
+        "1 kg fresh rice noodles",
+        "2 onions, 2 knobs of ginger",
+        "Spice bag: 3 star anise, 1 cinnamon stick, 1 black cardamom, 1 tsp coriander seeds",
+        "50 g dried red jujubes (optional)",
+        "3 tbsp fish sauce, 2 tsp salt, 1 tbsp rock sugar",
+        "Scallions, cilantro, sprouts, Thai basil, sawtooth herb, lime, chili",
+        "4 liters water"
+      ],
+      "broth": [
+        "Broth base, charred aromatics and spice bag as for Phở Tái Nạm.",
+        "Soak the ribs 5 min in light brine, rub with ginger or white liquor 10 min to remove any gaminess, parboil 5 min with the bones and rinse.",
+        "Cover bones and ribs with 4 liters cold water, boil, skim, lower to a simmer and add the charred onion and ginger, spice bag and jujubes.",
+        "Simmer 1.5–2 hours until the rib meat is tender but still clings to the bone; lift the ribs out so they do not fall apart and give the bones another hour.",
+        "Strain, season with fish sauce, salt and rock sugar, and return the ribs to the pot to keep warm."
+      ],
+      "prep": [
+        "Slice the tenderloin thinly and toss with a little ginger and pepper.",
+        "Chop the herbs; blanch the noodles."
+      ],
+      "assemble": [
+        "Noodles in the bowl, 2–3 rib pieces on top, then the raw beef.",
+        "Ladle boiling broth over, add scallion, cilantro and pepper."
+      ],
+      "serve": "Serve with sprouts, Thai basil, sawtooth herb, lime and chili; dip the ribs in chili sauce or ginger fish sauce.",
+      "tips": [
+        "In a hurry, pressure-cook the ribs 30–35 min, then simmer uncovered 20 min to clear the broth.",
+        "Choose meaty ribs with bright red flesh and white fat.",
+        "Swap 1 liter of water for fresh coconut water for a gentler sweetness (southern twist)."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu phở sườn bò thơm ngon, bổ dưỡng – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-suon-bo-thom-ngon-bo-duong-doi-vi-bua-an-cho-ca-10791"
+        },
+        {
+          "title": "Phở sườn bò – VnExpress Cooking",
+          "url": "https://vnexpress.net/pho-suon-bo-mon-an-boi-bo-suc-khoe-mua-dich-4338342.html"
+        },
+        {
+          "title": "Cách nấu phở sườn bò chuẩn vị – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/pho-suon-bo-181131"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

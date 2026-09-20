@@ -4,10 +4,11 @@ import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
 import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
-import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner } from './game/progress.js';
+import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner, codexNew } from './game/progress.js';
 import { PROVINCES, QUAN, provinceOf, prevProvince } from './data/regions.js';
 import { playTrip, tripRunning } from './trip.js';
 import { playIntro, playOwner, sceneRunning } from './scene.js';
+import { renderGrid as renderCodex, openPage as openCodex, closePage as closeCodex, pageOpen, realRecipeOpen, codexCount, RECIPE_STARS } from './codex.js';
 import { D, recipeFor, setSource } from './game/recipes.js';
 import { botDecide } from './game/bot.js';
 import { label, labelL, dishLabel } from './game/recipes.js';
@@ -173,10 +174,12 @@ function showResult(r) {
   const regs = r.regulars || []; const rc = $('rRecap');
   if (isDay && regs.length) { const pick = regs[Math.floor(Math.random() * regs.length)]; rc.textContent = recapLine(pick.id, pick.served); rc.classList.toggle('hidden', !rc.textContent); } else rc.classList.add('hidden');
   // thẻ mở khoá: level sau có gì mới (chỉ khi lần đầu qua level này)
-  const nextUnlocks = isDay && r.stars >= 1 && wasNew ? unlocksAfter(sh) : [];
+  const nextUnlocks = [...(isDay && !botMode ? codexNew(sh.dishes, pageOpen, realRecipeOpen) : []), ...(isDay && r.stars >= 1 && wasNew ? unlocksAfter(sh) : [])];   // sổ tay mở TRƯỚC (thưởng thật)
   $('rUnlock').replaceChildren(...nextUnlocks.map((u, i) => { const el = document.createElement('div'); el.className = 'u'; el.style.animationDelay = `${1.4 + i * 0.25}s`;
     if (u.kind === 'dish') { const ic = iconUrl(D.recipes[u.id]?.base?.bowl || 'soup-bowl'); el.innerHTML = `${ic ? `<img src="${ic}" alt="">` : '<span class="ic">🍜</span>'}<div><b>${T('unlock.dish')}</b><small>${dishLabel(u.id, true)}</small></div>`; }
     else if (u.kind === 'upgrade') { const up = UPGRADES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${up.icon}</span><div><b>${T('unlock.upgrade', { name: tl(`upgrade.${up.id}.name`, up.name) })}</b><small>${tl(`upgrade.${up.id}.desc`, up.desc)}</small></div>`; }
+    else if (u.kind === 'codex') { el.innerHTML = `<span class="ic">📖</span><div><b>${T('unlock.codex', { name: dishLabel(u.id) })}</b><small>${T('unlock.codex.sub')}</small></div>`; el.onclick = () => openCodex(u.id, { sfx }); }
+    else if (u.kind === 'recipe') { el.innerHTML = `<span class="ic">🍳</span><div><b>${T('unlock.recipe', { name: dishLabel(u.id) })}</b><small>${T('unlock.recipe.sub', { n: RECIPE_STARS })}</small></div>`; el.onclick = () => openCodex(u.id, { sfx }); }
     else if (u.kind === 'province') { const pv = PROVINCES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${pv.icon}</span><div><b>${T('unlock.province', { name: tl(`prov.${pv.id}.name`, pv.name) })}</b><small>${tl(`prov.${pv.id}.sub`, pv.sub)} · ${T('unlock.province.trip')}</small></div>`; }
     else if (u.kind === 'world') { const wd = worldById(u.id); el.innerHTML = `<span class="ic">${wd.icon}</span><div><b>${T('unlock.world', { name: QUAN[wd.id] ? tl(`quan.${wd.id}.name`, QUAN[wd.id].name) : tl(`world.${wd.id}.name`, wd.name) })}</b><small>${tl(`world.${wd.id}.sub`, wd.sub)} · ${wd.levels.length} level</small></div>`; }
     else { const rg = REGULARS.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">🙋</span><div><b>${T('unlock.regular', { name: rg.name })}</b><small>${tl(`cust.${rg.id}.sketch`, rg.sketch)} · ${T('unlock.regular.fav', { dish: dishLabel(rg.dish) })}</small></div>`; }
@@ -334,6 +337,8 @@ function renderMenu() {
   $('pickCount').textContent = T('n.dishesOf', { a: practice.length, b: ALL_DISHES.length }); $('pzScope').textContent = practice.length ? `${T('n.dishes', { n: practice.length })}: ${practice.slice(0, 4).map(dishName).join(', ')}${practice.length > 4 ? '…' : ''}` : T('more.allDishes', { n: ALL_DISHES.length }); $('btnDrill').disabled = $('btnRush').disabled = practice.length === 0;
   // trang trí
   $('ptsNow').textContent = pointsAvailable(); $('ptsTotal').textContent = progress().points; $('ptsBadge').textContent = DECOR.some((d) => !hasDecor(d.id) && d.cost <= pointsAvailable()) || UPGRADES.some((u) => upgradeCost(u.id) != null && upgradeCost(u.id) <= pointsAvailable()) ? '!' : '';
+  // sổ tay
+  renderCodex($('codexGrid'), (d) => openCodex(d, { sfx })); const cn = codexCount(); $('cxBadge').textContent = cn ? String(cn) : ''; $('cxSub').textContent = cn ? T('n.dishesOf', { a: cn, b: ALL_DISHES.length }) : T('codex.empty');
   $('shop').replaceChildren(...DECOR.map((d) => { const own = hasDecor(d.id); const el = document.createElement('div'); el.className = 'sh' + (own ? ' owned' : ''); el.innerHTML = `<span class="ic">${d.icon}</span><div><b>${tl(`decor.${d.id}.name`, d.name)}</b><small>${tl(`decor.${d.id}.desc`, d.desc)}</small>${own ? `<small style="color:#2f8a3a;font-weight:700">${T('shop.owned')} ✓</small>` : `<button ${d.cost > pointsAvailable() ? 'disabled' : ''}>💰 ${d.cost}k</button>`}</div>`; if (!own) el.querySelector('button').onclick = () => { if (buyDecor(d.id)) { sfx.done(); toast(T('shop.bought', { name: tl(`decor.${d.id}.name`, d.name) })); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
 }
 /** Nhãn ngắn cho phần công thức được rút gọn ở level tập. */
@@ -462,4 +467,4 @@ requestAnimationFrame(frame);
 if (import.meta.env.PROD && 'serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/claude\.ai/.test(location.host)) {
   navigator.serviceWorker.register('./sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const nw = reg.installing; nw?.addEventListener('statechange', () => { if (nw.state === 'installed' && navigator.serviceWorker.controller) toast(T('menu.newVersion'), 3000); }); }); }).catch(() => {});
 }
-window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, counterMove, tick, startPuzzle, D, recipeFor, playTrip, tripRunning, playIntro, playOwner };
+window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, counterMove, tick, startPuzzle, D, recipeFor, playTrip, tripRunning, playIntro, playOwner, openCodex };

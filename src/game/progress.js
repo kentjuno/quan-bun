@@ -72,6 +72,12 @@ export function tripSeen(provId) { return !!(data.trips || {})[provId]; }
 export function markTrip(provId) { data.trips = data.trips || {}; data.trips[provId] = 1; save(); }
 export function ownerMet(worldId) { return !!(data.owners || {})[worldId]; }
 export function markOwner(worldId) { data.owners = data.owners || {}; data.owners[worldId] = 1; save(); }
+/** Sổ tay: trang / công thức thật vừa mở sau một ca (báo một lần, ghi nhớ). `open(d)` / `full(d)` = hàm kiểm của codex.js. */
+export function codexNew(dishes, open, full) {
+  data.codex = data.codex || {}; const out = [];
+  for (const d of dishes) { const k = data.codex[d] || 0; if (k < 1 && open(d)) { data.codex[d] = 1; out.push({ kind: 'codex', id: d }); } if ((data.codex[d] || 0) < 2 && full(d)) { data.codex[d] = 2; out.push({ kind: 'recipe', id: d }); } }
+  if (out.length) save(); return out;
+}
 export function introSeen() { return !!data.intro; }
 export function markIntro() { data.intro = 1; save(); }
 /** Level mở khi level trước trong world đã ≥1★ (level 1 luôn mở nếu world mở). */

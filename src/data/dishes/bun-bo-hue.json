@@ -39,5 +39,121 @@
     "how_to_eat": "Rau chuối bào, giá, rau thơm; vắt chanh, thêm ớt sa tế.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 40 phút · nấu 2 giờ 30 phút",
+      "ingredients": [
+        "600 g bắp bò (hoặc nạm bò)",
+        "800 g giò heo (chân giò), chặt khoanh 3 cm",
+        "1 kg xương ống heo",
+        "300 g chả cua Huế (hoặc chả bò viên)",
+        "200 g huyết heo luộc (tuỳ chọn)",
+        "8 cây sả, đập dập, bó lại; 4 cây sả băm nhỏ để làm sa tế",
+        "2 muỗng canh mắm ruốc Huế, hoà với 100 ml nước, lắng lấy nước trong",
+        "3 muỗng canh dầu màu điều",
+        "1 củ hành tây, 1 củ gừng nướng, 5 củ hành tím, 4 tép tỏi",
+        "3 muỗng canh ớt bột (hoặc ớt sừng băm) cho sa tế",
+        "1 kg bún tươi sợi to",
+        "Rau ăn kèm: hoa chuối bào, rau muống chẻ, giá, húng quế, rau răm, chanh, ớt",
+        "Muối, đường phèn, nước mắm, hạt nêm, tiêu"
+      ],
+      "broth": [
+        "Xương, giò heo và bắp bò chần qua nước sôi có gừng, rửa sạch; bắp bò xát muối, bó lại nếu cần để thịt tròn đẹp khi thái.",
+        "Cho tất cả vào nồi 4 lít nước, thêm bó sả đập dập, hành tây, gừng nướng, hành tím; đun sôi rồi hạ lửa nhỏ, vớt bọt liên tục.",
+        "Sau 45-60 phút vớt giò heo ra khi vừa mềm; sau 1,5 giờ vớt bắp bò, ngâm nước lạnh rồi để nguội, thái lát mỏng; xương tiếp tục ninh đến hết 2 giờ.",
+        "Làm sa tế: phi hành tím, tỏi, sả băm với dầu, cho ớt bột và dầu màu điều vào đảo nhanh 1 phút rồi tắt bếp.",
+        "Cho nước mắm ruốc đã lắng trong vào nồi cùng 2/3 phần sa tế; nêm muối, đường phèn, nước mắm, hạt nêm; thả chả cua vào nấu chín, đun thêm 15 phút."
+      ],
+      "prep": [
+        "Chả cua: nếu tự làm, trộn 200 g thịt cua/tôm xay với 100 g giò sống, hành tím, tiêu; viên hoặc hấp thành bánh rồi cắt miếng.",
+        "Huyết luộc chín với nước muối loãng, cắt miếng vuông.",
+        "Rau sống rửa sạch; hoa chuối bào mỏng ngâm nước pha chanh; rau muống chẻ ngâm nước đá.",
+        "Hành lá thái nhỏ, hành tây thái mỏng ngâm nước đá cho bớt hăng."
+      ],
+      "assemble": [
+        "Bún chần nóng, cho vào tô.",
+        "Xếp vài lát bắp bò, 1 khoanh giò heo, miếng chả cua, huyết lên trên.",
+        "Chan nước dùng sôi, rắc hành lá, hành tây, rưới thêm 1 muỗng cà phê sa tế lên mặt."
+      ],
+      "serve": "Ăn nóng kèm rau sống, chanh, ớt và thêm sa tế cho ai thích cay đúng chất Huế.",
+      "tips": [
+        "Mắm ruốc phải hoà nước, lắng và chỉ lấy phần nước trong thì nước dùng mới không bị đục và hôi.",
+        "Chần thịt rồi ngâm nước lạnh giúp thịt săn, nước dùng trong; ninh nhỏ lửa, không đậy vung.",
+        "Chỉ nêm mắm ruốc vào cuối để giữ mùi thơm và dễ điều chỉnh độ mặn."
+      ],
+      "sources": [
+        {
+          "title": "Điện máy XANH — Cách nấu bún bò Huế chuẩn vị, đơn giản cực thơm ngon tại nhà",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-bun-bo-hue-dam-da-dung-vi-cho-bua-sang-ngay-tet-00541"
+        },
+        {
+          "title": "Hướng Nghiệp Á Âu — Cách Nấu Bún Bò Huế Đậm Đà Ngon Chuẩn Vị Huế",
+          "url": "https://www.huongnghiepaau.com/bun-bo-hue"
+        },
+        {
+          "title": "Eva.vn — 3 cách nấu bún bò Huế tại nhà ngon chuẩn vị",
+          "url": "https://eva.vn/thuc-don-hang-ngay/3-cach-nau-bun-bo-hue-tai-nha-ngon-chuan-vi-ai-cung-lam-duoc-c348a562417.html"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 40 min · cook 2 h 30 min",
+      "ingredients": [
+        "600 g beef shank (bắp bò) or brisket",
+        "800 g pork trotter/hock (giò heo), cut into 3 cm rounds",
+        "1 kg pork leg bones",
+        "300 g chả cua Huế (Huế crab-pork cake) or beef balls",
+        "200 g cooked pork blood cake (optional)",
+        "8 lemongrass stalks, bruised and tied; 4 more, finely minced, for the chili oil",
+        "2 tbsp mắm ruốc Huế (fermented shrimp paste), dissolved in 100 ml water and left to settle",
+        "3 tbsp annatto oil (dầu màu điều)",
+        "1 onion, 1 knob charred ginger, 5 shallots, 4 garlic cloves",
+        "3 tbsp chili flakes or minced red chili for the sa tế",
+        "1 kg fresh thick bún (round rice noodles)",
+        "Herbs: shaved banana blossom, split water spinach, bean sprouts, Thai basil, rau răm, lime, chili",
+        "Salt, rock sugar, fish sauce, seasoning powder, pepper"
+      ],
+      "broth": [
+        "Blanch the bones, trotter and beef in boiling water with ginger, rinse; rub the beef with salt and tie it so it slices neatly.",
+        "Put everything in a pot with 4 liters of water, the tied lemongrass, onion, charred ginger and shallots; bring to a boil, lower the heat and skim constantly.",
+        "Lift out the trotter after 45-60 minutes when just tender; lift out the beef after 1.5 hours, dunk in cold water, cool and slice thin; keep simmering the bones to 2 hours total.",
+        "Sa tế: fry shallot, garlic and minced lemongrass in oil, add chili flakes and annatto oil, stir 1 minute and take off the heat.",
+        "Add the settled clear shrimp-paste liquid and two-thirds of the chili oil to the pot; season with salt, rock sugar, fish sauce and seasoning powder; drop in the crab cake and simmer 15 more minutes."
+      ],
+      "prep": [
+        "Crab cake, if homemade: mix 200 g ground crab/shrimp with 100 g pork paste (giò sống), shallot and pepper; shape into balls or steam as a cake and slice.",
+        "Boil the blood cake in lightly salted water and cut into cubes.",
+        "Wash the herbs; soak shaved banana blossom in lime water and split water spinach in iced water.",
+        "Slice scallions; slice onion thin and soak in iced water to soften its bite."
+      ],
+      "assemble": [
+        "Blanch the noodles and put in bowls.",
+        "Top with a few slices of beef, a round of trotter, crab cake and blood cake.",
+        "Ladle boiling broth over, add scallion and onion, and spoon 1 tsp of chili oil on top."
+      ],
+      "serve": "Serve hot with the herb plate, lime and chili, plus extra sa tế for anyone who wants true Huế heat.",
+      "tips": [
+        "Always dissolve the mắm ruốc, let it settle and use only the clear top liquid, or the broth turns cloudy and pungent.",
+        "Blanching then cold-shocking the meat keeps it firm and the broth clear; simmer low with the lid off.",
+        "Add the shrimp paste near the end to keep its aroma and make salt adjustment easy."
+      ],
+      "sources": [
+        {
+          "title": "Điện máy XANH — Cách nấu bún bò Huế chuẩn vị, đơn giản cực thơm ngon tại nhà",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-bun-bo-hue-dam-da-dung-vi-cho-bua-sang-ngay-tet-00541"
+        },
+        {
+          "title": "Hướng Nghiệp Á Âu — Cách Nấu Bún Bò Huế Đậm Đà Ngon Chuẩn Vị Huế",
+          "url": "https://www.huongnghiepaau.com/bun-bo-hue"
+        },
+        {
+          "title": "Eva.vn — 3 cách nấu bún bò Huế tại nhà ngon chuẩn vị",
+          "url": "https://eva.vn/thuc-don-hang-ngay/3-cach-nau-bun-bo-hue-tai-nha-ngon-chuan-vi-ai-cung-lam-duoc-c348a562417.html"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

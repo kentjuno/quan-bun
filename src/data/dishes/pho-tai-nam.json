@@ -32,5 +32,129 @@
     "how_to_eat": "Vắt chanh, thêm ớt tươi, rau thơm; miền Nam thêm giá và tương đen.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · nấu 3–4 giờ",
+      "ingredients": [
+        "1,5 kg xương ống bò (chặt khúc)",
+        "500 g nạm bò (chọn miếng có gân xen mỡ)",
+        "300 g thăn hoặc phi lê bò (làm tái)",
+        "1 kg bánh phở tươi",
+        "2 củ hành tây",
+        "1 củ gừng to (~80 g)",
+        "4 củ hành tím",
+        "3 hoa hồi, 1 thanh quế 5 cm, 1 quả thảo quả, 1 thìa cà phê hạt mùi",
+        "3–4 thìa canh nước mắm, 1 thìa canh đường phèn, 2 thìa cà phê muối",
+        "1 thìa canh giấm hoặc rượu trắng (chần xương)",
+        "Hành lá, ngò rí, ngò gai, húng quế, giá, chanh, ớt, tiêu xay",
+        "4 lít nước"
+      ],
+      "broth": [
+        "Xương rửa sạch, ngâm nước muối loãng 30 phút, chần trong nước sôi có giấm và gừng đập 5–7 phút rồi rửa lại cho hết bọt bẩn.",
+        "Nướng hành tây, gừng, hành tím trên lửa cho cháy xém vỏ, cạo sạch; rang hồi, quế, thảo quả, hạt mùi 2–3 phút cho thơm rồi cho vào túi vải.",
+        "Cho xương vào 4 lít nước lạnh, đun sôi, hớt sạch bọt, hạ lửa liu riu, thêm hành gừng nướng và túi gia vị, không đậy nắp.",
+        "Sau 1 giờ thả nạm bò vào hầm cùng 1–1,5 giờ đến khi xiên đũa qua dễ; vớt nạm ngâm nước lạnh 10 phút cho săn, để nguội rồi thái lát mỏng.",
+        "Tiếp tục hầm xương thêm 1–2 giờ (tổng 3–4 giờ), vớt bỏ túi gia vị sau 2 giờ để không bị hắc.",
+        "Lọc nước dùng qua rây, nêm nước mắm, muối, đường phèn cho vừa; nước mắm chỉ nêm 30 phút trước khi ăn."
+      ],
+      "prep": [
+        "Thăn bò lóc gân, bọc màng bỏ ngăn đá 20 phút cho dễ thái, thái lát thật mỏng ngang thớ, ướp chút gừng băm và tiêu.",
+        "Nạm luộc thái lát mỏng 2–3 mm.",
+        "Hành lá thái nhỏ, phần đầu hành chẻ sợi; ngò, giá rửa sạch.",
+        "Bánh phở trụng nước sôi 10–15 giây, vẩy ráo."
+      ],
+      "assemble": [
+        "Cho bánh phở vào tô, xếp nạm lên trên, trải bò tái, rắc hành ngò.",
+        "Múc nước dùng đang sôi sùng sục chan ngập tô để thịt tái chín vừa.",
+        "Rắc tiêu, dọn ngay khi còn nóng."
+      ],
+      "serve": "Ăn kèm giá, húng quế, ngò gai, chanh, ớt tươi, tương đen và tương ớt.",
+      "tips": [
+        "Hầm lửa nhỏ, mở nắp và hớt bọt liên tục là bí quyết nước trong.",
+        "Ngâm nạm vừa luộc vào nước đá giúp miếng thịt săn, thái không nát.",
+        "Thêm 20 g sá sùng khô rang hoặc 1 củ cải trắng vào nồi để nước ngọt tự nhiên."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu phở bò Hà Nội chuẩn vị – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-ha-noi-chuan-vi-nuoc-dung-ngot-thanh-don-gian-22475"
+        },
+        {
+          "title": "Cách nấu phở bò truyền thống, chuẩn vị Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cach-nau-pho-bo-truyen-thong-chuan-vi-ha-noi-4965047.html"
+        },
+        {
+          "title": "Phở bò tái nạm – Kingfoodmart",
+          "url": "https://kingfoodmart.com/bai-viet/cong-thuc-nau-an/pho-bo-tai-nam"
+        },
+        {
+          "title": "Cách nấu phở nạm bò – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-nam-bo-thom-lung-dam-vi-cuc-don-gian-tai-nha-14730"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "30 min prep · 3–4 hr cooking",
+      "ingredients": [
+        "1.5 kg beef marrow bones (xương ống), cut into chunks",
+        "500 g beef brisket/flank (nạm), with some fat and sinew",
+        "300 g beef tenderloin or eye round for the rare slices (tái)",
+        "1 kg fresh flat rice noodles (bánh phở)",
+        "2 onions",
+        "1 large knob of ginger (~80 g)",
+        "4 shallots",
+        "3 star anise, one 5 cm cinnamon stick, 1 black cardamom (thảo quả), 1 tsp coriander seeds",
+        "3–4 tbsp fish sauce, 1 tbsp rock sugar, 2 tsp salt",
+        "1 tbsp vinegar or white liquor (for parboiling bones)",
+        "Scallions, cilantro, sawtooth herb (ngò gai), Thai basil, bean sprouts, lime, chili, ground pepper",
+        "4 liters water"
+      ],
+      "broth": [
+        "Rinse the bones, soak 30 min in lightly salted water, then parboil 5–7 min in water with vinegar and smashed ginger; rinse off the scum.",
+        "Char the onions, ginger and shallots over an open flame until the skins blacken, then scrape clean; toast the star anise, cinnamon, cardamom and coriander seeds 2–3 min and tie them in a spice bag.",
+        "Cover the bones with 4 liters of cold water, bring to a boil, skim thoroughly, drop to a bare simmer and add the charred aromatics and spice bag; leave the lid off.",
+        "After 1 hour add the brisket and simmer 1–1.5 hours until a chopstick slides in easily; lift it out, plunge into cold water 10 min to firm up, cool, then slice thinly.",
+        "Keep the bones simmering another 1–2 hours (3–4 hours total); remove the spice bag after 2 hours so the broth does not turn bitter.",
+        "Strain, then season with fish sauce, salt and rock sugar; add the fish sauce only about 30 min before serving."
+      ],
+      "prep": [
+        "Trim the tenderloin, freeze 20 min for easier slicing, cut paper-thin against the grain and toss with a little minced ginger and pepper.",
+        "Slice the cooked brisket 2–3 mm thick.",
+        "Chop the scallions, shred the white parts; wash the herbs and sprouts.",
+        "Blanch the noodles in boiling water 10–15 seconds and shake dry."
+      ],
+      "assemble": [
+        "Put noodles in each bowl, lay the brisket on top, spread the raw beef over it and scatter scallion and cilantro.",
+        "Ladle rapidly boiling broth over everything so the raw beef cooks to medium-rare.",
+        "Add pepper and serve immediately."
+      ],
+      "serve": "Serve with bean sprouts, Thai basil, sawtooth herb, lime, fresh chili, hoisin and sriracha.",
+      "tips": [
+        "A low simmer, lid off, with constant skimming is the secret to a clear broth.",
+        "Shocking the brisket in ice water keeps it firm so it slices cleanly.",
+        "Add 20 g toasted dried sea worm (sá sùng) or a daikon to the pot for natural sweetness."
+      ],
+      "sources": [
+        {
+          "title": "Cách nấu phở bò Hà Nội chuẩn vị – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-bo-ha-noi-chuan-vi-nuoc-dung-ngot-thanh-don-gian-22475"
+        },
+        {
+          "title": "Cách nấu phở bò truyền thống, chuẩn vị Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-cach-nau-pho-bo-truyen-thong-chuan-vi-ha-noi-4965047.html"
+        },
+        {
+          "title": "Phở bò tái nạm – Kingfoodmart",
+          "url": "https://kingfoodmart.com/bai-viet/cong-thuc-nau-an/pho-bo-tai-nam"
+        },
+        {
+          "title": "Cách nấu phở nạm bò – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-nau-pho-nam-bo-thom-lung-dam-vi-cuc-don-gian-tai-nha-14730"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

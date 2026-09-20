@@ -37,5 +37,103 @@
     "how_to_eat": "Rắc tiêu, hành, ăn nóng với quẩy.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút (ngâm bột 1 giờ 30) · nấu 2 giờ",
+      "ingredients": [
+        "Bột gạo tẻ: 200 g; bột gạo nếp: 70 g (hoặc gạo tẻ 200 g + nếp 70 g ngâm rồi xay mịn với nước)",
+        "Sườn non (sườn sụn càng ngon): 500 g",
+        "Xương ống hoặc xương cục heo: 400 g",
+        "Nước: 2,5 lít",
+        "Hành tây 1/2 củ, hành tím 2 củ, gừng 1 lát",
+        "Ruốc (chà bông) heo: 100 g",
+        "Quẩy: 4–6 cái",
+        "Hành lá, tiêu xay, ớt bột, nước mắm, muối, đường phèn, hạt nêm, chút rượu trắng"
+      ],
+      "broth": [
+        "Sườn và xương ngâm nước muối loãng 20–30 phút, chần qua nước sôi có chút rượu trắng 2 phút, rửa sạch.",
+        "Cho sườn, xương vào nồi với 2,5 lít nước, hành tây, hành tím nướng và gừng; ninh lửa nhỏ 1,5–2 giờ (nồi áp suất 45–60 phút) đến khi sườn rục, vớt bọt đều.",
+        "Vớt sườn ra, gỡ thịt và sụn thành miếng nhỏ vừa ăn, bỏ xương; lọc nước dùng, để nguội bớt.",
+        "Hoà bột gạo và bột nếp với khoảng 800 ml nước lạnh, khuấy tan, để lắng 1–1,5 giờ rồi gạn bỏ nước trong bên trên, thay nước 1–2 lần để hết mùi bột khô.",
+        "Đun lại nước dùng (đã bớt nóng), từ từ đổ bột đã hoà vào, khuấy liên tục một chiều trên lửa vừa 15–20 phút đến khi cháo sánh mịn, không vón, nổi bong bóng chậm.",
+        "Cho thịt sườn đã gỡ vào, nêm nước mắm, muối, chút đường phèn, hạt nêm; nấu thêm 5–8 phút rồi tắt bếp."
+      ],
+      "prep": [
+        "Quẩy cắt khúc 2 cm, nếu quẩy mềm thì nướng lại trong lò/nồi chiên không dầu 3 phút cho giòn.",
+        "Hành lá thái nhỏ; chuẩn bị ruốc, tiêu, ớt bột ra chén riêng.",
+        "Nếu dùng gạo hạt: ngâm 4 giờ hoặc qua đêm, xay với nước thật mịn rồi lọc qua rây."
+      ],
+      "assemble": [
+        "Múc cháo nóng ra bát tô rộng, dàn đều.",
+        "Xếp vài miếng sườn sụn lên mặt, rắc ruốc thành một lớp mỏng.",
+        "Thêm hành lá, tiêu xay, ớt bột và xếp quẩy lên trên hoặc dọn đĩa riêng."
+      ],
+      "serve": "Ăn nóng với quẩy giòn, ruốc, tiêu và ớt bột; ngon nhất vào sáng lạnh.",
+      "tips": [
+        "Đổ bột vào nước dùng khi nước chỉ còn âm ấm và khuấy liên tục là chìa khoá để cháo mịn không vón cục.",
+        "Dùng nồi đáy dày, lửa vừa và khuấy một chiều để cháo không khê đáy nồi.",
+        "Cháo sườn để nguội sẽ đặc lại; khi hâm thêm chút nước dùng nóng và khuấy đều."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress Cooking – Cháo sườn Hà Nội",
+          "url": "https://vnexpress.net/doi-song-cooking-chao-suon-ha-noi-4816507.html"
+        },
+        {
+          "title": "FPT Shop – Cách nấu cháo sườn Hà Nội chuẩn vị, sánh mịn",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/cach-nau-chao-suon-ha-noi-158907"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 30 min (plus 1.5 h soaking the flour) · cook 2 h",
+      "ingredients": [
+        "Rice flour: 200 g; glutinous rice flour: 70 g (or 200 g rice + 70 g glutinous rice, soaked and blended fine with water)",
+        "Pork spare ribs, ideally with cartilage (sườn sụn): 500 g",
+        "Pork marrow or knuckle bones: 400 g",
+        "Water: 2.5 L",
+        "1/2 onion, 2 shallots, 1 slice ginger",
+        "Pork floss (ruốc / chà bông): 100 g",
+        "Quẩy (fried dough sticks): 4–6",
+        "Scallions, ground pepper, chili powder, fish sauce, salt, rock sugar, seasoning powder, a splash of rice wine"
+      ],
+      "broth": [
+        "Soak ribs and bones in lightly salted water 20–30 min, blanch 2 min in boiling water with a splash of rice wine, rinse.",
+        "Put ribs and bones in a pot with 2.5 L water, onion, charred shallots and ginger; simmer on low 1.5–2 h (45–60 min in a pressure cooker) until the ribs fall apart, skimming regularly.",
+        "Lift out the ribs, pull the meat and cartilage into bite-size pieces, discard bones; strain the broth and let it cool somewhat.",
+        "Whisk both flours into about 800 ml cold water, let settle 1–1.5 h, pour off the clear water on top and replace it once or twice to remove the raw-flour smell.",
+        "Reheat the broth (no longer boiling hot), pour in the flour slurry slowly while stirring constantly in one direction over medium heat 15–20 min until smooth, thick and slowly bubbling.",
+        "Add the pulled rib meat, season with fish sauce, salt, a little rock sugar and seasoning powder; cook 5–8 more min and turn off."
+      ],
+      "prep": [
+        "Cut quẩy into 2 cm pieces; if soft, re-crisp 3 min in an oven or air fryer.",
+        "Chop scallions; set out floss, pepper and chili powder in small bowls.",
+        "If using whole rice grains, soak 4 h or overnight, blend very fine with water and pass through a sieve."
+      ],
+      "assemble": [
+        "Ladle the hot porridge into wide bowls and level it.",
+        "Lay a few pieces of rib and cartilage on top and cover with a thin layer of pork floss.",
+        "Add scallions, pepper, chili powder and stack quẩy on top, or serve them on a side plate."
+      ],
+      "serve": "Eat hot with crispy quẩy, pork floss, pepper and chili powder; best on a cold morning.",
+      "tips": [
+        "Adding the flour when the broth is only warm and stirring nonstop is the key to a silky, lump-free porridge.",
+        "Use a heavy-bottomed pot, medium heat and stir in one direction so it doesn't catch on the bottom.",
+        "It thickens as it cools; when reheating, loosen with a little hot broth and stir well."
+      ],
+      "sources": [
+        {
+          "title": "VnExpress Cooking – Cháo sườn Hà Nội",
+          "url": "https://vnexpress.net/doi-song-cooking-chao-suon-ha-noi-4816507.html"
+        },
+        {
+          "title": "FPT Shop – Cách nấu cháo sườn Hà Nội chuẩn vị, sánh mịn",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/cach-nau-chao-suon-ha-noi-158907"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

@@ -39,5 +39,101 @@
     "how_to_eat": "Ăn ngay khi rau còn giòn.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 25 phút · nấu 3 giờ (nước dùng) + 10 phút xào",
+      "ingredients": [
+        "Nước dùng và bánh phở như phở tái nạm (1,5 kg xương, 4 lít nước) — hoặc 2 lít nước dùng nấu sẵn",
+        "500 g thăn bò (hoặc 300 g thăn + 200 g gầu)",
+        "400 g cải ngọt hoặc cải thìa",
+        "1 củ hành tây thái múi",
+        "4 tép tỏi băm, 1 thìa canh gừng băm",
+        "1 thìa canh nước mắm, 1 thìa cà phê hạt nêm, 1 thìa cà phê đường, 1 thìa cà phê tiêu, 1 thìa canh dầu hào (tuỳ chọn)",
+        "3 thìa canh dầu ăn",
+        "Hành lá, ngò, ớt lát, chanh"
+      ],
+      "broth": [
+        "Nước dùng nấu như phở tái nạm, nêm vừa, giữ sôi trước khi chan."
+      ],
+      "prep": [
+        "Thăn bò thái lát mỏng ngược thớ, ướp tỏi gừng băm, nước mắm, hạt nêm, đường, tiêu, dầu hào 15–20 phút.",
+        "Cải rửa sạch cắt khúc 5 cm, tách riêng cọng và lá; hành tây thái múi.",
+        "Bánh phở trụng nước sôi, chia sẵn vào 4 tô, rắc hành ngò."
+      ],
+      "assemble": [
+        "Đun chảo với dầu thật nóng già, cho tỏi phi thơm rồi trút bò vào, lăn nhanh trên lửa lớn 1–2 phút cho thịt vừa tái xém cạnh.",
+        "Thêm hành tây và cọng cải xào 1 phút, cho lá cải vào đảo 30 giây, nêm lại rồi tắt bếp ngay để rau còn giòn.",
+        "Trút bò và rau xào lên mặt bánh phở, chan nước dùng đang sôi vào, rắc tiêu, ớt lát."
+      ],
+      "serve": "Ăn nóng với giá, húng quế, chanh, ớt và tương ớt; có thể chan nước dùng ít để giữ mùi xào.",
+      "tips": [
+        "Chảo phải bốc khói trước khi cho thịt; xào ít một, chia 2 mẻ để thịt không ra nước và dai.",
+        "Không xào rau quá lâu, chín tái vẫn xanh giòn là đạt.",
+        "Bánh phở trụng qua và rưới nước dùng ngay khi rau vừa xào xong để tô phở nóng đều."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm phở bò tái lăn – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-pho-tai-lan-thom-ngon-bo-duong-don-gian-ngay-tai-nha-22517"
+        },
+        {
+          "title": "Cách làm phở xào bò – Hướng Nghiệp Á Âu",
+          "url": "https://www.huongnghiepaau.com/pho-xao-bo"
+        },
+        {
+          "title": "Phở tái lăn – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/pho-tai-lan-170794"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "25 min prep · 3 hr (broth) + 10 min stir-fry",
+      "ingredients": [
+        "Broth and noodles as in Phở Tái Nạm (1.5 kg bones, 4 l water), or 2 l ready broth",
+        "500 g beef tenderloin (or 300 g tenderloin + 200 g brisket point/gầu)",
+        "400 g choy sum or bok choy (cải ngọt / cải thìa)",
+        "1 onion, cut into wedges",
+        "4 minced garlic cloves, 1 tbsp minced ginger",
+        "1 tbsp fish sauce, 1 tsp seasoning powder, 1 tsp sugar, 1 tsp pepper, 1 tbsp oyster sauce (optional)",
+        "3 tbsp cooking oil",
+        "Scallions, cilantro, sliced chili, lime"
+      ],
+      "broth": [
+        "Make the broth as for Phở Tái Nạm, season and keep boiling before serving."
+      ],
+      "prep": [
+        "Slice the beef thinly against the grain and marinate 15–20 min with garlic, ginger, fish sauce, seasoning, sugar, pepper and oyster sauce.",
+        "Wash the greens, cut into 5 cm lengths and separate stems from leaves; wedge the onion.",
+        "Blanch the noodles, divide among 4 bowls and top with scallion and cilantro."
+      ],
+      "assemble": [
+        "Heat the oil until smoking, fry the garlic, then add the beef and toss (lăn) over high heat 1–2 min until just seared at the edges.",
+        "Add the onion and green stems for 1 min, then the leaves for 30 seconds, adjust seasoning and turn off the heat so the greens stay crisp.",
+        "Pile the beef and greens on the noodles, ladle boiling broth over, finish with pepper and chili."
+      ],
+      "serve": "Eat hot with sprouts, Thai basil, lime, chili and sriracha; use a little less broth to keep the wok aroma.",
+      "tips": [
+        "The pan must smoke before the beef goes in; cook in two batches so it sears instead of stewing.",
+        "Do not overcook the greens; bright and crunchy is the goal.",
+        "Ladle the broth the moment the stir-fry is done so the bowl is uniformly hot."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm phở bò tái lăn – Điện máy XANH",
+          "url": "https://www.dienmayxanh.com/vao-bep/cach-lam-pho-tai-lan-thom-ngon-bo-duong-don-gian-ngay-tai-nha-22517"
+        },
+        {
+          "title": "Cách làm phở xào bò – Hướng Nghiệp Á Âu",
+          "url": "https://www.huongnghiepaau.com/pho-xao-bo"
+        },
+        {
+          "title": "Phở tái lăn – FPT Shop",
+          "url": "https://fptshop.com.vn/tin-tuc/dien-may/pho-tai-lan-170794"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }

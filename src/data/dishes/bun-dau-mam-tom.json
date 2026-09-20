@@ -39,5 +39,107 @@
     "how_to_eat": "Đánh mắm tôm với đường, chanh, ớt, mỡ nóng cho sủi bọt rồi chấm từng thứ.",
     "review": "Kent duyệt 20/09"
   },
-  "real": null
+  "real": {
+    "vi": {
+      "servings": 4,
+      "time": "chuẩn bị 30 phút · nấu 45 phút",
+      "ingredients": [
+        "800 g bún lá (bún đồng xu/bún vẩy ốc), cắt miếng vừa ăn",
+        "6 bìa đậu phụ (khoảng 600 g), cắt khối 3 cm",
+        "300 g chả cốm (mua sẵn hoặc tự làm) và 200 g chả lụa",
+        "400 g thịt chân giò lọc xương (hoặc ba chỉ) để luộc; tuỳ thích thêm lòng lợn, nem rán",
+        "2 quả dưa chuột, 1 bó kinh giới, 1 bó tía tô, rau mùi, xà lách",
+        "Mắm tôm pha: 4 muỗng canh mắm tôm loại tím mịn, 1,5 muỗng canh đường, 3–4 quả quất (hoặc 1 quả chanh), 2 muỗng cà phê rượu trắng, 2 quả ớt, 2 muỗng canh mỡ/dầu nóng phi hành khô",
+        "Mỡ lợn hoặc dầu ăn để chiên (khoảng 300 ml)"
+      ],
+      "broth": [
+        "Luộc thịt: cuộn chân giò, buộc chặt, luộc với chút muối, hành khô 30–35 phút; vớt ra ngâm nước lạnh cho da giòn rồi thái mỏng.",
+        "Chiên đậu: đun mỡ nóng đến khi đầu đũa nhúng vào sủi tăm, thả đậu vào, để yên cho định hình rồi mới lật, chiên lửa vừa đến vàng giòn 4 mặt.",
+        "Rán chả cốm: chảo nhiều dầu lửa vừa nhỏ, rán mỗi mặt 3–4 phút đến vàng, cốm dẻo mà không cháy; cắt miếng vừa ăn.",
+        "Pha mắm tôm: cho mắm tôm, đường, rượu, nước cốt quất vào bát, đánh mạnh cho bông; phi 1 củ hành khô trong 2 muỗng canh mỡ rồi đổ mỡ nóng vào bát mắm, thêm ớt thái lát."
+      ],
+      "prep": [
+        "Đậu phụ rửa nhẹ, thấm khô để chiên không bắn và giòn hơn.",
+        "Rau sống nhặt, ngâm nước muối loãng 10 phút, vẩy khô; dưa chuột gọt vỏ sọc, cắt miếng dài.",
+        "Bún lá cắt miếng cỡ 3 ngón tay, để ráo; chả lụa cắt lát dày.",
+        "Quất vắt lấy nước, bỏ hạt; ớt thái lát; hành khô thái mỏng để phi."
+      ],
+      "assemble": [
+        "Lót lá chuối hoặc mẹt tre, xếp bún lá một góc, đậu chiên vàng còn nóng cạnh bên.",
+        "Xếp chả cốm, chả lụa, thịt luộc thái mỏng, dưa chuột thành các cụm, rau sống rải giữa.",
+        "Đặt bát mắm tôm đã pha vào giữa mẹt, thêm quất và ớt để mỗi người tự chỉnh."
+      ],
+      "serve": "Ăn ngay khi đậu và chả cốm còn nóng, chấm từng miếng vào mắm tôm bông, cuốn thêm kinh giới tía tô; có thể thay bằng nước mắm chua ngọt cho người không ăn mắm tôm.",
+      "tips": [
+        "Chọn mắm tôm màu tím hồng, mịn, thơm; đánh với đường và quất cho bông rồi mới rưới mỡ nóng thì mùi dịu và an toàn hơn.",
+        "Đậu chiên ngập mỡ lửa vừa, không lật sớm để vỏ giòn mà ruột vẫn mềm.",
+        "Chả cốm rán lửa nhỏ và lâu hơn đậu để hạt cốm nở dẻo, bên trong không sống."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm món bún đậu mắm tôm Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-dau-mam-tom-ha-noi-4886948.html"
+        },
+        {
+          "title": "Cách làm bún đậu mắm tôm và pha nước chấm ngon tại nhà – CET",
+          "url": "https://www.cet.edu.vn/cach-lam-bun-dau-mam-tom"
+        },
+        {
+          "title": "Cách làm bún đậu mắm tôm chuẩn vị, đơn giản tại nhà – VietNamNet",
+          "url": "https://vietnamnet.vn/cach-lam-bun-dau-mam-tom-chuan-vi-don-gian-tai-nha-2266902.html"
+        }
+      ]
+    },
+    "en": {
+      "servings": 4,
+      "time": "prep 30 min · cook 45 min",
+      "ingredients": [
+        "800 g bún lá (pressed rice-vermicelli sheets), cut into bite-size pieces",
+        "6 blocks firm tofu (about 600 g), cut into 3 cm cubes",
+        "300 g chả cốm (pork patty studded with young green rice) and 200 g chả lụa (Vietnamese pork roll)",
+        "400 g boneless pork hock or pork belly for boiling; optional boiled offal and fried spring rolls",
+        "2 cucumbers, 1 bunch kinh giới (Vietnamese balm), 1 bunch tía tô (perilla), coriander, lettuce",
+        "Sauce: 4 tbsp mắm tôm (purple fermented shrimp paste), 1.5 tbsp sugar, 3–4 kumquats (or 1 lime), 2 tsp white liquor, 2 chilies, 2 tbsp hot lard/oil with fried shallot",
+        "About 300 ml lard or oil for frying"
+      ],
+      "broth": [
+        "Boil the pork: roll and tie the hock, simmer with a pinch of salt and a shallot for 30–35 minutes, plunge into cold water so the skin stays firm, then slice thinly.",
+        "Fry the tofu: heat lard until a chopstick tip bubbles, add tofu and leave it untouched until a crust forms before turning; fry on medium until golden on all sides.",
+        "Fry the chả cốm: in generous oil over medium-low heat, 3–4 minutes per side until golden and the green rice turns chewy, not burnt; cut into pieces.",
+        "Make the sauce: whisk shrimp paste with sugar, liquor and kumquat juice vigorously until frothy; fry a sliced shallot in 2 tbsp lard and pour the hot fat into the bowl, then add sliced chili."
+      ],
+      "prep": [
+        "Rinse the tofu gently and pat dry so it fries crisp without spitting.",
+        "Soak the herbs in light salted water for 10 minutes and shake dry; peel the cucumbers in stripes and cut into batons.",
+        "Cut the noodle sheets into three-finger-wide pieces and let drain; slice the pork roll thickly.",
+        "Juice the kumquats and remove seeds; slice the chili; slice the shallot for frying."
+      ],
+      "assemble": [
+        "Line a bamboo tray (mẹt) with banana leaf, arrange the noodles in one corner and the hot fried tofu beside them.",
+        "Cluster the chả cốm, pork roll, sliced boiled pork and cucumber, with herbs scattered in between.",
+        "Set the bowl of whipped shrimp-paste sauce in the middle with extra kumquat and chili for each person to adjust."
+      ],
+      "serve": "Eat right away while the tofu and patties are hot, dipping each bite into the frothy mắm tôm and wrapping with perilla and Vietnamese balm; offer sweet-sour fish sauce for anyone who skips shrimp paste.",
+      "tips": [
+        "Choose smooth, pinkish-purple shrimp paste; whipping it with sugar and citrus before adding hot fat tames the smell and makes it safer to eat.",
+        "Deep-fry the tofu over medium heat and don't turn it early – crisp shell, soft inside.",
+        "Fry the chả cốm slower and longer than the tofu so the green rice puffs and the centre cooks through."
+      ],
+      "sources": [
+        {
+          "title": "Cách làm món bún đậu mắm tôm Hà Nội – VnExpress Cooking",
+          "url": "https://vnexpress.net/doi-song-cooking-bun-dau-mam-tom-ha-noi-4886948.html"
+        },
+        {
+          "title": "Cách làm bún đậu mắm tôm và pha nước chấm ngon tại nhà – CET",
+          "url": "https://www.cet.edu.vn/cach-lam-bun-dau-mam-tom"
+        },
+        {
+          "title": "Cách làm bún đậu mắm tôm chuẩn vị, đơn giản tại nhà – VietNamNet",
+          "url": "https://vietnamnet.vn/cach-lam-bun-dau-mam-tom-chuan-vi-don-gian-tai-nha-2266902.html"
+        }
+      ]
+    },
+    "review": "cần Kent duyệt"
+  }
 }
