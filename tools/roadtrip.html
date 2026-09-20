@@ -134,10 +134,10 @@
     const p = at(t), q = at(t + 0.004);
     const dx = q.x - p.x, dy = q.y - p.y;
     const bw = bike.clientWidth, bh = bike.clientHeight;
-    // xe nhìn nghiêng phải; đi sang trái thì lật gương. Nghiêng nhẹ theo dốc (30 % góc, kẹp ±18°) cho có đà, không lật.
+    // xe nhìn nghiêng phải; đi sang trái thì lật gương. Nghiêng nhẹ theo dốc (Kent 20/09: kẹp ±10°) — góc nhìn từ trên xuống, nghiêng nhiều là lật.
     const flip = dx < -0.01;
     const ang = Math.atan2(dy, Math.abs(dx)) * 180 / Math.PI;
-    const tilt = Math.max(-18, Math.min(18, ang * 0.3));
+    const tilt = Math.max(-10, Math.min(10, ang * 0.2));
     bike.style.transform = `translate(${p.x - bw / 2}px, ${p.y - bh * 0.85}px) scaleX(${flip ? -1 : 1}) rotate(${tilt}deg)`;
     return p;
   }
