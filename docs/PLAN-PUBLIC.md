@@ -95,6 +95,14 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
 **Mục tiêu.** Mở game thấy bản đồ Việt Nam ký hoạ màu nước, các vùng sáng dần; mỗi vùng vài món của vùng đó.
 
+**KHUÔN ĐÃ CHỐT (Kent 20/09: "đc đó, chốt phương án này"): `tools/roadtrip.html`** — demo Hà Nội → Hải Phòng. Mọi tỉnh làm y khuôn này, không sáng tác lại:
+- Cắt giấy thuần web, **không engine**: 1 tấm bản đồ/mảnh (768×1376, Flow, prompt ghi rõ vị trí tỉnh đầu/cuối + "ONE clear winding road"), phóng 1.45× màn, camera bám xe (`translate` mượt, kẹp mép).
+- Đường = SVG `<path>` Catmull-Rom từ ~14 điểm; `?edit=1` chạm lấy điểm; xe chạy `getPointAtLength`, nghiêng ≤ 18° theo dốc (Kent chưa nhận xét — nếu "hơi nhiều" thì hạ hệ số 0.3 → 0.2), lật gương khi đi trái, bánh quay (vòng dashed), nhún 2 px, bụi 140 ms/hạt, mây parallax.
+- Qua ranh vùng: bản sao bản đồ xám (`grayscale + sepia`, `clip-path` theo ranh) với `mask` tròn loang `--r` 0 → 1800 px trong 1,6 s (JS gán từng khung) + tên tỉnh viết tay 12 vw viền mực + chuông.
+- Tới quán: xe dừng, bảng hiệu pop (`cubic-bezier(.3,1.6,.4,1)`), bong bóng chủ quán trượt lên.
+- Vòng lặp bằng `setTimeout(16)` (khung xem trước của Claude bóp rAF; điện thoại như nhau).
+- Art: `art/raw/map/*.png` → `scripts/_map_prep.py` → `public/art/map/*.webp` (cắt magenta cho xe/mây).
+
 **Hiện trạng.** 8 world theo món: `pho`, `bun-rieu`, `bun-bo`, `hai-phong`, `mon-kho`, `chao`, `khai-vi`, `cha-ca` (`src/data/worlds.js`, `buildWorlds`). Màn chọn level là lưới số. Không có bản đồ.
 
 **Spec.**
@@ -120,9 +128,9 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
    | Miền Tây | — | **bún cá Châu Đốc**, **bánh khọt** | bánh khọt: khuôn (dùng chung trạm bánh căn) |
 
    Thứ tự thêm: mì Quảng → cao lầu → hủ tiếu → bún thang → bún chả cá (đều 0 trạm mới), rồi mới tới nhóm cần trạm: cơm tấm, bánh xèo, bánh bèo, bánh cuốn, bánh căn/khọt. Mỗi món `[cần Kent duyệt]` công thức + vùng + chuyện.
-2. Màn bản đồ thay lưới world: ảnh `art/map-vn.webp` (gen Flow, kiểu C, bản đồ Việt Nam cách điệu, các vùng là "ghim" tranh nhỏ). Vùng khoá = xám mờ + ổ khoá; mở = màu + số sao. Chạm vùng → danh sách level của vùng (lưới cũ giữ, chỉ đổi khung).
+2. Màn bản đồ thay lưới world: **bản đồ = chuỗi mảnh** (mỗi mảnh 768×1376 nối dọc: HN→HP, HP→Huế, Huế→Đà Nẵng, ĐN→Nha Trang, NT→Sài Gòn, SG→Miền Tây), cùng phong cách và cùng tông (kiểm `contrast_report.py` giữa các mảnh). Tỉnh chưa mở = xám như demo; mở = màu + sao. Chạm quán → lưới level của world đó (giữ lưới cũ, chỉ đổi khung). Xe đậu ở quán hiện tại; chọn quán khác = xe chạy tới (rút ngắn 3 s nếu đã đi qua).
 3. Mở vùng theo **tổng sao** (đang có `starsToUnlock`) — giữ.
-4. Chuyển vùng có một màn "đi đường" 2 giây: đường vẽ nét mực chạy từ vùng cũ tới vùng mới trên bản đồ + tên vùng + 1 dòng `[cần Kent duyệt]` ("Huế — cố đô, ăn cay, nước lèo có sả và mắm ruốc").
+4. Chuyển vùng = chuyến xe như demo (≈ 9 s, bỏ qua được sau lần đầu) + màn "xin vô quán" 2–3 câu thoại chủ quán `[cần Kent duyệt]`.
 
 **Nghiệm thu.** Bản đồ hiện đúng 4 vùng, tổng level = 129 không đổi (test đếm). Chạm mỗi vùng ra đúng world. Ảnh bản đồ đọc được ở 368 px (tên vùng ≥ 14 px).
 
