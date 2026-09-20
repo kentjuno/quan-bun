@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KJ Phở Real — demo đường đi</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  /* Demo P2: xe máy chạy trên bản đồ màu nước, qua ranh vùng thì màu loang + tên tỉnh, dừng trước quán.
+     Toàn bộ là CẮT GIẤY: tấm tĩnh + dời/xoay/hiện dần. Không engine. Không khung hình vẽ tay. */
+  :root { --ink: #26190f; --paper: #fffdf5; }
+  html, body { margin: 0; height: 100%; background: #2b2118; overflow: hidden; font-family: "Patrick Hand", cursive; -webkit-user-select: none; user-select: none; touch-action: none; }
+  #view { position: fixed; inset: 0; overflow: hidden; }
+  #world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+  #map { display: block; width: 100%; height: 100%; }
+  /* vùng chưa mở: bản sao bản đồ xám, cắt theo ranh; mở = mask tròn loang ra từ điểm qua ranh */
+  #fog { position: absolute; inset: 0; background: url(../art/map/map-hn-hp.webp) 0 0 / 100% 100% no-repeat;
+    filter: grayscale(1) brightness(.78) sepia(.25); clip-path: inset(var(--border) 0 0 0);
+    -webkit-mask-image: radial-gradient(circle at var(--cx) var(--cy), transparent var(--r), black calc(var(--r) + 140px));
+    mask-image: radial-gradient(circle at var(--cx) var(--cy), transparent var(--r), black calc(var(--r) + 140px)); }
+  #fog::after { content: ''; position: absolute; inset: 0; background: rgba(60,50,40,.18); }
+  #route { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  #route path { fill: none; stroke: #d64a2c; stroke-width: 3; stroke-dasharray: 8 6; opacity: 0; }
+  body.edit #route path { opacity: .9; }
+  #bike { position: absolute; left: 0; top: 0; width: var(--bw); transform-origin: 50% 85%; will-change: transform; filter: drop-shadow(2px 6px 4px rgba(30,20,10,.35)); }
+  #bike img { display: block; width: 100%; height: auto; }
+  #bike .wheel { position: absolute; width: var(--wd); height: var(--wd); border-radius: 50%; border: 2px dashed rgba(38,25,15,.55);
+    animation: spin .35s linear infinite; animation-play-state: paused; box-sizing: border-box; }
+  body.moving #bike .wheel { animation-play-state: running; }
+  body.moving #bike img { animation: bob .28s ease-in-out infinite alternate; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes bob { from { transform: translateY(0); } to { transform: translateY(-2px); } }
+  .dust { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, rgba(230,215,180,.9), rgba(230,215,180,0) 70%); pointer-events: none; }
+  /* mây parallax (không gian màn hình) */
+  #clouds { position: absolute; inset: 0; pointer-events: none; }
+  #clouds img { position: absolute; width: 38%; opacity: .85; filter: drop-shadow(0 6px 8px rgba(30,20,10,.15)); }
+  /* tên tỉnh viết tay */
+  #title { position: absolute; left: 50%; top: 22%; transform: translate(-50%, -50%) scale(.6); opacity: 0; color: var(--paper); font-size: 12vw; letter-spacing: .04em;
+    paint-order: stroke fill; -webkit-text-stroke: 8px var(--ink); text-shadow: 0 6px 0 rgba(38,25,15,.35); white-space: nowrap; pointer-events: none; }
+  #title small { display: block; font-size: 4.5vw; -webkit-text-stroke: 4px var(--ink); margin-top: -1vw; }
+  #title.on { animation: titleIn 2.4s cubic-bezier(.2,1.2,.3,1) forwards; }
+  @keyframes titleIn { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.6) rotate(-4deg); } 18% { opacity: 1; transform: translate(-50%,-50%) scale(1.08) rotate(1deg); }
+    30% { transform: translate(-50%,-50%) scale(1) rotate(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-62%) scale(1); } }
+  /* quán: bảng hiệu + bong bóng chủ quán */
+  #quan { position: absolute; width: 34%; transform: translate(-50%, -100%) scale(0); transform-origin: 50% 100%; }
+  #quan.on { animation: pop .5s cubic-bezier(.3,1.6,.4,1) forwards; }
+  @keyframes pop { to { transform: translate(-50%, -100%) scale(1); } }
+  #quan .sign { background: var(--paper); border: 3px solid var(--ink); border-radius: 6px; padding: 2% 4%; text-align: center; font-size: 5vw; color: var(--ink); box-shadow: 4px 5px 0 rgba(38,25,15,.35); transform: rotate(-2deg); }
+  #quan .sign small { display: block; font-size: 3.2vw; opacity: .8; }
+  #bubble { position: absolute; left: 50%; bottom: 14%; width: 84%; transform: translateX(-50%) translateY(30px); opacity: 0; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px;
+    padding: 10px 14px; font-size: 5vw; color: var(--ink); box-shadow: 4px 6px 0 rgba(38,25,15,.35); transition: transform .35s cubic-bezier(.2,1.3,.3,1), opacity .25s; }
+  #bubble.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #bubble b { color: #b5521f; }
+  #ui { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); display: flex; gap: 10px; }
+  #ui button { font: 700 5.5vw "Patrick Hand", cursive; background: #d64a2c; color: #fff; border: 3px solid var(--ink); border-radius: 12px; padding: 8px 26px; box-shadow: 0 5px 0 var(--ink); }
+  #ui button:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+  #vignette { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 90px rgba(30,20,10,.55); }
+  #edit { position: fixed; left: 8px; top: 8px; z-index: 9; display: none; background: #fffc; font: 12px monospace; padding: 6px; max-width: 90vw; word-break: break-all; }
+  body.edit #edit { display: block; }
+</style>
+</head>
+<body>
+<div id="view">
+  <div id="world" style="--border:0%;--cx:50%;--cy:50%;--r:0px">
+    <img id="map" src="../art/map/map-hn-hp.webp" alt="" draggable="false">
+    <div id="fog"></div>
+    <svg id="route" viewBox="0 0 768 1376" preserveAspectRatio="none"><path id="path" d=""></path></svg>
+    <div id="quan"><div class="sign">Quán Bà Tư<small>bánh đa cua · Hải Phòng</small></div></div>
+    <div id="bike" style="--bw:110px;--wd:24px"><img src="../art/map/bike.webp" alt="" draggable="false"><i class="wheel w1"></i><i class="wheel w2"></i></div>
+  </div>
+  <div id="clouds"></div>
+  <div id="vignette"></div>
+  <div id="title">HẢI PHÒNG<small>đất cảng · bánh đa cua</small></div>
+  <div id="bubble"><b>Bà Tư:</b> Ủa, khách phương xa hả? Vô đây, muốn học nấu bánh đa cua thì phụ bà một buổi.</div>
+  <div id="ui"><button id="go">Chạy ▶</button></div>
+</div>
+<div id="edit">edit: chạm để thêm điểm · <span id="pathOut"></span></div>
+<script type="module">
+  // ---------- cấu hình (điền sau khi xem bản đồ; ?edit=1 để chạm lấy toạ độ) ----------
+  const MAP_W = 768, MAP_H = 1376;
+  // đường đi theo toạ độ ảnh 768×1376 (M x y C ... hoặc L ...). Điểm đầu = Hà Nội, cuối = trước cửa quán.
+  // Điểm trên con đường (đo bằng mắt 20/09 trên map-hn-hp) — được làm mượt Catmull-Rom → Bézier bên dưới.
+  let PTS = [[453, 330], [470, 403], [430, 461], [457, 530], [492, 591], [461, 661], [399, 730], [369, 791], [253, 768], [257, 860], [284, 945], [361, 1006], [461, 1064], [568, 1114]];
+  const smooth = (P) => { if (P.length < 2) return ''; let d = `M ${P[0][0]} ${P[0][1]}`;
+    for (let i = 0; i < P.length - 1; i++) { const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += ` C ${c1[0].toFixed(1)} ${c1[1].toFixed(1)}, ${c2[0].toFixed(1)} ${c2[1].toFixed(1)}, ${p2[0]} ${p2[1]}`; } return d; };
+  let PATH = smooth(PTS);
+  const BORDER_FRAC = 0.62;      // ranh vùng Hải Phòng (phần dưới) theo % chiều cao ảnh
+  const DURATION = 9000;         // ms cho cả chuyến
+  const WHEELS = [[24, 74], [80, 74]];   // tâm 2 bánh, % rộng / % cao của ảnh xe
+
+  const $ = (s) => document.querySelector(s);
+  const view = $('#view'), world = $('#world'), path = $('#path'), bike = $('#bike'), fog = $('#fog'), quan = $('#quan');
+  const urlp = new URLSearchParams(location.search);
+  if (urlp.get('path')) PATH = urlp.get('path');
+  if (urlp.get('pts')) { PTS = JSON.parse(urlp.get('pts')); PATH = smooth(PTS); }
+  path.setAttribute('d', PATH);
+  world.style.setProperty('--border', `${BORDER_FRAC * 100}%`);
+  document.body.classList.toggle('edit', urlp.get('edit') === '1');
+
+  // ---------- layout: bản đồ rộng bằng màn hình, camera bám xe ----------
+  let scale = 1;
+  function layout() {
+    // bản đồ rộng hơn màn 1.45× để camera có chỗ bám xe (bản đồ cả nước sau này còn cao hơn nhiều)
+    scale = (view.clientWidth || innerWidth || MAP_W) / MAP_W * 1.45;
+    world.style.width = `${MAP_W}px`; world.style.height = `${MAP_H}px`;
+    // xe ~ 1/4 bề ngang màn hình
+    bike.style.setProperty('--bw', `${Math.round(MAP_W * 0.17)}px`);
+  }
+  layout(); addEventListener('resize', layout); new ResizeObserver(() => { layout(); if (!running) { placeWheels(); placeBike(0); camera(at(0), 1); } }).observe(view);
+  const L = path.getTotalLength();
+  const at = (t) => path.getPointAtLength(Math.max(0, Math.min(1, t)) * L);
+  // mốc qua ranh = chỗ đường cắt ngang ranh vùng (tính từ đường, không đặt tay)
+  let CROSS_T = 0.6; for (let k = 0; k <= 200; k++) { if (at(k / 200).y >= MAP_H * BORDER_FRAC) { CROSS_T = k / 200; break; } }
+  let camX = 0, camY = 0;
+  function camera(p, dt) {
+    // xe ở giữa ngang, ~55 % chiều cao màn; cuộn mượt theo thời gian, kẹp trong mép bản đồ
+    const vw = view.clientWidth, vh = view.clientHeight;
+    const tx = Math.max(0, Math.min(MAP_W * scale - vw, p.x * scale - vw * 0.5));
+    const ty = Math.max(0, Math.min(MAP_H * scale - vh, p.y * scale - vh * 0.55));
+    const k = Math.min(1, dt * 4); camX += (tx - camX) * k; camY += (ty - camY) * k;
+    world.style.transform = `translate(${-camX}px, ${-camY}px) scale(${scale})`;
+    return camY;
+  }
+  // ---------- xe ----------
+  const [w1, w2] = bike.querySelectorAll('.wheel');
+  function placeWheels() {
+    const bw = bike.clientWidth, bh = bike.querySelector('img').clientHeight || bw * 0.75;
+    const wd = bw * 0.22; bike.style.setProperty('--wd', `${wd}px`);
+    [[w1, WHEELS[0]], [w2, WHEELS[1]]].forEach(([el, [px, py]]) => { el.style.left = `${bw * px / 100 - wd / 2}px`; el.style.top = `${bh * py / 100 - wd / 2}px`; });
+  }
+  function placeBike(t) {
+    const p = at(t), q = at(t + 0.004);
+    const dx = q.x - p.x, dy = q.y - p.y;
+    const bw = bike.clientWidth, bh = bike.clientHeight;
+    // xe nhìn nghiêng phải; đi sang trái thì lật gương. Nghiêng nhẹ theo dốc (30 % góc, kẹp ±18°) cho có đà, không lật.
+    const flip = dx < -0.01;
+    const ang = Math.atan2(dy, Math.abs(dx)) * 180 / Math.PI;
+    const tilt = Math.max(-18, Math.min(18, ang * 0.3));
+    bike.style.transform = `translate(${p.x - bw / 2}px, ${p.y - bh * 0.85}px) scaleX(${flip ? -1 : 1}) rotate(${tilt}deg)`;
+    return p;
+  }
+  // ---------- bụi ----------
+  let lastDust = 0;
+  function dust(p, now) {
+    if (now - lastDust < 140) return; lastDust = now;
+    const d = document.createElement('i'); d.className = 'dust';
+    d.style.left = `${p.x - 30 + Math.random() * 10}px`; d.style.top = `${p.y - 8}px`;
+    world.appendChild(d);
+    d.animate([{ transform: 'translate(0,0) scale(.5)', opacity: .8 }, { transform: `translate(${-30 - Math.random() * 20}px,-${18 + Math.random() * 10}px) scale(1.4)`, opacity: 0 }], { duration: 600, easing: 'ease-out' });
+    setTimeout(() => d.remove(), 650);
+  }
+  // ---------- mây parallax ----------
+  const clouds = $('#clouds');
+  const CL = [[8, 4, .12], [62, 30, .08], [30, 70, .1]].map(([x, y, sp]) => { const im = document.createElement('img'); im.src = '../art/map/cloud.webp'; im.style.left = `${x}%`; im.style.top = `${y}%`; im.dataset.sp = sp; im.onerror = () => im.remove(); clouds.appendChild(im); return im; });
+  function moveClouds(cy) { for (const im of CL) im.style.transform = `translateY(${-cy * +im.dataset.sp}px)`; }
+
+  // ---------- âm thanh: dùng luôn sfx của game ----------
+  let sfx = null;
+  import('../src/audio.js').then((m) => { sfx = m; }).catch(() => {});
+
+  // ---------- chuyến đi ----------
+  let running = false, crossed = false, arrived = false;
+  const ease = (x) => x < .08 ? (x / .08) * (x / .08) * .08 : x > .9 ? 1 - Math.pow((1 - x) / .1, 2) * .1 : x;   // vào ga chậm, cuối hãm lại
+  function run() {
+    if (running) return; running = true; crossed = false; arrived = false;
+    try { sfx?.ensureAudio?.(); } catch {}
+    $('#ui').style.display = 'none'; $('#bubble').classList.remove('on'); quan.classList.remove('on'); $('#title').classList.remove('on');
+    world.style.setProperty('--r', '0px');
+    document.body.classList.add('moving');
+    const t0 = performance.now(); let last = t0;
+    const tick = (now) => {
+      const dt = (now - last) / 1000; last = now;
+      const t = ease(Math.min(1, (now - t0) / DURATION));
+      const p = placeBike(t);
+      const cy = camera(p, dt); moveClouds(cy);
+      dust(p, now);
+      if (!crossed && t >= CROSS_T) { crossed = true; reveal(p); }
+      if (t < 1) setTimeout(() => tick(performance.now()), 16); else arrive(p);   // setTimeout thay rAF: khung xem trước của Claude bóp rAF về ~1 Hz
+    };
+    tick(performance.now());
+  }
+  function reveal(p) {
+    // màu loang từ điểm qua ranh: --r từ 0 → 1800px trong 1.6 s (JS gán từng khung vì mask var không animate bằng CSS)
+    world.style.setProperty('--cx', `${p.x}px`); world.style.setProperty('--cy', `${p.y}px`);
+    const t0 = performance.now(); const go = () => { const now = performance.now(); const k = Math.min(1, (now - t0) / 1600); const e = 1 - Math.pow(1 - k, 3);
+      world.style.setProperty('--r', `${e * 1800}px`); if (k < 1) setTimeout(go, 16); }; go();
+    $('#title').classList.add('on');
+    try { sfx?.sfx?.bell?.(); } catch {}
+  }
+  function arrive(p) {
+    running = false; arrived = true; document.body.classList.remove('moving');
+    quan.style.left = `${p.x + 40}px`; quan.style.top = `${p.y - 30}px`; quan.classList.add('on');
+    try { sfx?.sfx?.arrive?.(); } catch {}
+    setTimeout(() => { $('#bubble').classList.add('on'); try { sfx?.sfx?.hum?.('good'); } catch {} }, 500);
+    setTimeout(() => { $('#ui').style.display = ''; $('#go').textContent = 'Chạy lại ↻'; }, 1200);
+  }
+  $('#go').onclick = run;
+  window.__rt = { run, at, placeBike, camera, reveal, arrive, get CROSS_T() { return CROSS_T; } };
+
+  // vị trí ban đầu
+  bike.querySelector('img').onload = () => { placeWheels(); placeBike(0); camera(at(0), 1); };
+  placeWheels(); placeBike(0); camera(at(0), 1);
+
+  // ---------- edit: chạm để lấy toạ độ ảnh, in path ----------
+  if (document.body.classList.contains('edit')) {
+    const pts = [];
+    view.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('#ui')) return;
+      const r = world.getBoundingClientRect();
+      const x = Math.round((e.clientX - r.left) / scale), y = Math.round((e.clientY - r.top) / scale);
+      pts.push([x, y]);
+      const d = smooth(pts); path.setAttribute('d', d); $('#pathOut').textContent = JSON.stringify(pts);
+    });
+    // cuộn bằng bánh xe / kéo để xem cả bản đồ
+    let drag = null;
+    view.addEventListener('pointermove', (e) => { if (e.buttons && drag != null) { camY = Math.max(0, Math.min(MAP_H * scale - view.clientHeight, camY - e.movementY)); camX = Math.max(0, Math.min(MAP_W * scale - view.clientWidth, camX - e.movementX)); world.style.transform = `translate(${-camX}px, ${-camY}px) scale(${scale})`; } });
+    view.addEventListener('pointerup', () => { drag = null; }); view.addEventListener('pointerdown', () => { drag = 1; }, true);
+    addEventListener('wheel', (e) => { camY = Math.max(0, Math.min(MAP_H * scale - view.clientHeight, camY + e.deltaY)); world.style.transform = `translate(${-camX}px, ${-camY}px) scale(${scale})`; });
+  }
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@ export default defineConfig({
   build: {
     target: 'es2022', sourcemap: false,
     // Hai trang: game, và tools/zones.html (chỉnh toạ độ ô bằng mắt).
-    rollupOptions: { input: { main: resolve(__dirname, 'index.html'), zones: resolve(__dirname, 'tools/zones.html') } },
+    rollupOptions: { input: { main: resolve(__dirname, 'index.html'), zones: resolve(__dirname, 'tools/zones.html'), roadtrip: resolve(__dirname, 'tools/roadtrip.html') } },
   },
   test: { include: ['tests/**/*.test.js'] },
 });
