@@ -31,8 +31,7 @@ Kế hoạch này viết để **bất kỳ model nào** cũng làm đúng ý. �
 | **Cảm giác / art** | ✅ kiểu C, đã "loud" | P5 onboarding, P8 nền tảng |
 | **Nói với thế giới** | ❌ chỉ tiếng Việt | P1 i18n, tên món giữ Việt + cách đọc |
 
-**Cốt truyện (Kent, 20/09):** *Bạn là một nhân viên văn phòng chán việc, bỏ hết đi khắp Việt Nam để học và tìm hiểu ẩm thực Việt. Đi dọc các tỉnh trên bản đồ, tới đâu xin vô quán đó: chủ quán dạy món rồi thử thách đứng ca. Mỗi màn chơi tích ★; đủ ★ mới mở **công thức full** của món để nấu thật ngoài đời. Mỗi tỉnh để lại một món trong sổ tay và một vật kỷ niệm.*
-**Cơ chế sao mở khoá:** trang món hiện khi học xong; công thức game ≥1★ ở món đó; công thức nấu thật ≥6★ (tổng ★ từ các level của món đó, số đang chờ Kent chốt); tỉnh kế mở theo `starsToUnlock`. Chi tiết: `docs/ROADMAP.md`.
+**Cốt truyện (Kent, 19/09):** *Bạn là kẻ lang bạt mê ăn, đi dọc các tỉnh thành trên bản đồ Việt Nam. Tới đâu xin vô quán đó làm, chủ quán thử thách: học món của họ, rồi đứng ca làm cho ra hồn. Mỗi tỉnh để lại một món trong sổ tay và một vật kỷ niệm.*
 
 **Vòng chơi:**
 ```
@@ -89,6 +88,9 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 **Nghiệm thu.** Lint = 0. Bật EN: chơi hết level 1 không thấy chữ Việt nào ngoài tên món/nguyên liệu (chụp 3 màn: menu, quầy, kết quả). `t('x.missing')` không hiện `x.missing`.
 
 **Bẫy.** `label()` được gọi trong `counter.js` để ghép **thông báo lỗi** (`"Chưa cần ${label(tok)}"`) — chuyển thành `t('pov.err.notYet', { item })` với item đã ghép gloss. Chữ trên khay (`.pv-pan small`) chỉ 2.6 cqw — gloss tiếng Anh dài sẽ tràn: **khay chỉ hiện tên Việt**, gloss để ở tooltip chạm giữ (J8 đã có).
+
+
+**ĐÃ LÀM (20/09, commit 4ae5d18):** P1 đủ. Mọi chuỗi qua `t()` (counter/pov/puzzle/main/index); data (worlds/customers/config) giữ tiếng Việt làm nguồn, UI ghép `tl('level|world|upgrade|decor|cust.<id>.*')`. `items.json`: ~76 nguyên liệu (pron + en), 50 hành động, 60 nhãn trạng thái; món: pron/gloss trong `dishes/<id>.json`. `labelL()` = "Nạm (brisket)"; hành động/trạng thái dịch hẳn. Thoại 6 khách quen + khách lạ, hint 129 level EN. `scripts/i18n_lint.mjs` (bỏ comment, hiểu `${}` lồng, `// vi-src`) chạy trong `tests/i18n.test.js` (8 test). Bếp 3D bản cũ không dịch — thẻ ghi "Vietnamese only".
 
 ---
 
@@ -196,6 +198,8 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 **Spec.** Một món = `src/data/dishes/<id>.json` (công thức chung: bước ráp, trạm, thời gian, định lượng gia đình, giá, vùng, `pron`, `gloss`, codex). **Trạm cũng là data** — `src/data/stations.json` (tên, sprite, thời gian mặc định, ô thả): món dùng 6 trạm sẵn có (nồi trụng, bồn, thớt, chảo chiên, lò vi sóng, mặt bếp) là thuần data; món cần động tác mới (đổ bánh xèo, hấp bánh bèo, nướng than) thì thêm MỘT trạm vào `stations.json` + sprite, engine chỉ cần code mới khi cơ chế thật sự lạ. Script: validate schema → gen icon nguyên liệu thiếu → gen khay → gen 4 bậc tô → thêm key i18n → chạy test "mọi món có đủ asset". Các bảng trong `config.js` (PRICES, SHELF_TOPPING, BURNER_DISHES…) suy từ `dishes/*.json` thay vì hard-code. **P6 phải làm trước khi thêm món mới nào** — và bước đầu tiên của P6 là chuyển 21 món hiện có sang `dishes/` (bản chung, không phải bản quán), giữ id/art.
 
 **Nghiệm thu.** Thêm một món giả `test-dish` bằng lệnh → test xanh → xoá. Không sửa file code nào.
+
+**ĐÃ LÀM (20/09, commit c074719):** `src/data/dishes/<id>.json` ×21 (schema v1 ghi ở đầu `src/game/dishlib.js`: serve / noodle / broth / prep / assembly / codex / real + pron, gloss, region, price) → `dishToSim()` dựng bản ghi kiểu sim-data nên engine chạy y cũ. `recipes.js`: `D` là object sống, `setSource('game')` cho level trên bản đồ (`startLevelPov`), `'shop'` cho Luyện / mini / 3D. `stations.json` 7 trạm → `stationForAction`. `art-manifest.json` sinh bởi `scripts/_art_manifest.mjs` (art.js hết hard-code). `node scripts/add_dish.mjs <id> [--scaffold|--json]` = validate + checklist asset/i18n + in lệnh gen; gen ảnh vẫn chạy tay (Flow trên PC). Test: `tests/dishes.test.js` (10). PACE đo lại với nguồn game (`POV_SECONDS`). Bảng bản chung 21 món + khác gì bản quán: `docs/ROADMAP.md` §5b `[cần Kent duyệt]`. **Phát sinh P6.5:** ảnh bước `step/*-kN` vẽ theo thứ tự quán → gen lại cho ~8 món sau khi duyệt.
 
 ---
 

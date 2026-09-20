@@ -61,11 +61,12 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 ## 4. Chi tiết từng mốc (việc + nghiệm thu)
 
 ### M1 — Nền tảng nội dung
-- [ ] P1.2: `counter.js` thông báo lỗi → `t()`; màn kết quả; tab Thêm/Luyện; thoại khách; `hint` 129 level (en); `items.json` cách đọc + giải nghĩa cho 21 món + ~90 nguyên liệu; `scripts/i18n_lint.mjs` chạy trong test. *Nghiệm thu:* lint = 0; chơi hết Phở 1 bằng EN không thấy chữ Việt ngoài tên món.
-- [ ] P6.1: schema `dishes/<id>.json` (id, tên, pron, gloss, vùng, giá, bước ráp + trạm + thời gian, định lượng gia đình, codex, recipeStars). Test schema.
-- [ ] P6.2: chuyển 21 món sang bản chung `[cần Kent duyệt]`; `recipes.js` đọc từ `dishes/` cho game chính, `sim-data` cho tab Luyện. *Nghiệm thu:* 94 test xanh; không chuỗi nào từ sim-data lọt vào sổ tay.
-- [ ] P6.3: `stations.json` (6 trạm sẵn có thành data); `config.js` PRICES / SHELF_TOPPING / BURNER_DISHES suy từ `dishes/`.
-- [ ] P6.4: `node scripts/add_dish.mjs <id>` — validate → gen icon/khay/4 bậc tô → i18n key → test "đủ asset". *Nghiệm thu:* thêm `test-dish` bằng lệnh, test xanh, xoá.
+- [x] **(20/09, commit 4ae5d18)** P1.2: `counter.js` thông báo lỗi → `t()`; màn kết quả; tab Thêm/Luyện; thoại khách; `hint` 129 level (en); `items.json` cách đọc + giải nghĩa cho 21 món + ~90 nguyên liệu; `scripts/i18n_lint.mjs` chạy trong test. *Nghiệm thu:* lint = 0; chơi hết Phở 1 bằng EN không thấy chữ Việt ngoài tên món.
+- [x] **(20/09, c074719)** P6.1: schema `dishes/<id>.json` (id, tên, pron, gloss, vùng, giá, bước ráp + trạm + thời gian, định lượng gia đình, codex, recipeStars). Test schema.
+- [x] **(20/09)** P6.2: chuyển 21 món sang bản chung `[cần Kent duyệt — xem bảng §5b]`; `recipes.js` đọc từ `dishes/` cho game chính, `sim-data` cho tab Luyện. *Nghiệm thu:* 94 test xanh; không chuỗi nào từ sim-data lọt vào sổ tay.
+- [x] **(20/09)** P6.3: `stations.json` (7 trạm: 6 POV + lò nước) → `stationForAction` + `STATIONS`; giá lấy từ `dish.price` (PRICES giữ cho bản quán/3D). SHELF_TOPPING / BURNER_DISHES chỉ bếp 3D bản cũ → không đụng.
+- [x] **(20/09)** P6.4: `node scripts/add_dish.mjs <id> [--scaffold|--json]` — validate → checklist asset/i18n (in lệnh gen cần chạy) → cập nhật `art-manifest.json`. Gen ảnh vẫn chạy tay trên PC (Flow) — script chỉ báo thiếu gì. *Nghiệm thu:* test `zz-test-dish` qua CLI + `test-dish` in-memory bot chơi được.
+- [ ] **P6.5 (mới, phát sinh):** ảnh từng bước `public/art/step/<dish>-kN.webp` được vẽ theo THỨ TỰ BẢN QUÁN → với bản chung, bậc `k` lệch ở món đổi thứ tự (bún riêu, bánh đa cua, bún đậu, bánh hỏi, bún nem…). Tô 4 bậc (s0/dry/top/wet) vẫn đúng. Gen lại step cho ~8 món sau khi Kent duyệt bảng §5b (1 phiên art).
 
 ### M2 — Hành trình
 - [ ] Gen 5 mảnh (HP→Huế, Huế→ĐN, ĐN→Nha Trang, NT→Sài Gòn, SG→Miền Tây) cùng prompt khuôn; kiểm tông giữa các mảnh (`contrast_report.py`).
@@ -131,6 +132,33 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 | Vật kỷ niệm (sprite) | 6 | model + Flow | 0/6 |
 
 ---
+
+## 5b. Bản CHUNG 21 món (P6.2, 20/09) — `[cần Kent duyệt]`
+
+Nguồn: `src/data/dishes/<id>.json`. Bản quán (sim-data) vẫn dùng ở Luyện / mini-game / 3D. Khác bản quán ở 13/21 món.
+
+| Món | Vùng | Bản chung (thứ tự bỏ vào) | Khác bản quán |
+|---|---|---|---|
+| Phở tái nạm | Hà Nội | tô nóng, phở, nạm, bò tái, hành tây, hành lá, ngò, nước | ngò/hành đổi chỗ |
+| Phở đặc biệt | Hà Nội | + lá sách, bò viên (trụng) | thứ tự tái/lá sách |
+| Phở tái đập / sốt vang / xào lăn | Hà Nội | như quán, bớt ngò ở sốt vang & xào lăn | nhỏ |
+| Phở sườn tái | Hà Nội | sườn ủ ấm trong nồi (bỏ vi sóng + cắt + tô phụ) | đơn giản hơn |
+| Phở gà | Hà Nội | gà chặt, nước: cốt gà + nước phở đun | giống |
+| Bún riêu cua | miền Trung (Kent) | đậu hũ, chả cua, cà chua, nước (cốt cua + huyết + nước), hành lá | **bỏ bò tái, tôm; thêm chả cua** |
+| Bánh đa cua | Hải Phòng | rau muống trụng, chả cá, **chả lá lốt**, tôm, cà chua, hành phi, nước | bỏ hành tây/tóp mỡ/hành lá |
+| Bún bò Huế | Huế | bắp bò, thịt luộc (giò), chả cua, hành tây, rau răm, hành lá, nước | bỏ nạm/chả lụa/chả rế |
+| Bún cá Hải Phòng | Hải Phòng | cà chua, cá chiên, chả cá cắt, cần trụng, hành, nước, thì là | thứ tự |
+| Chả cá Lã Vọng | Hà Nội | 7 phần như quán | giống |
+| Bún đậu mắm tôm | Hà Nội | mẹt, bún, **đậu hũ, chả lụa**, dưa leo, kinh giới, tía tô, **chén mắm tôm** | quán không có đậu/mắm tôm trong chuỗi |
+| Bánh hỏi thịt heo | miền Trung (Kent) | mẹt, bánh hỏi, mỡ hành, **thịt luộc**, dưa leo, xà lách, tía tô, đồ chua | bỏ bún + xoài + thịt nướng |
+| Bún nem cua thịt nướng | Sài Gòn | tô khô, bún, salad cắt, nem (chiên sẵn), thịt nướng, tôm, đậu phộng, hành phi | quán chỉ có bún + salad |
+| Bún gà nướng | Sài Gòn | bún, salad, gà (tạm gà luộc — thiếu sprite), đậu phộng, hành phi | thêm topping |
+| Bún chả Hà Nội | Hà Nội | mẹt, bún, rau ×3, **thịt nướng, đồ chua** | thêm thịt + đồ chua |
+| Chả giò | Sài Gòn | chiên → cắt, xà lách, đồ chua | + xà lách |
+| Gỏi cuốn | Sài Gòn | như quán | giống |
+| Cháo lòng / cháo sườn | SG / HN | như quán + hành lá | + hành |
+
+Sprite còn thiếu cho bản chung: gà nướng, tôm nướng, giò heo (đang mượn gà luộc / tôm luộc / thịt luộc).
 
 ## 6. Quy trình mỗi phiên (cho model)
 
