@@ -3,6 +3,7 @@
 // tới quán bảng hiệu pop + bong bóng chủ quán. Bỏ qua được. Vòng lặp setTimeout (rAF bị bóp ở khung xem trước).
 import { PIECES } from './data/regions.js';
 import { t as T, tl } from './i18n.js';
+import { speak } from './data/player.js';
 
 const MAP_W = 768, MAP_H = 1376, DURATION = 9000, WHEELS = [[24, 74], [80, 74]];
 const smooth = (P) => { if (P.length < 2) return ''; let d = `M ${P[0][0]} ${P[0][1]}`;
@@ -29,7 +30,7 @@ export function playTrip(pieceId, { onDone, sfx } = {}) {
     </div>
     <div class="tr-clouds"></div><div class="tr-vignette"></div>
     <div class="tr-title">${tl(`trip.${pieceId}.title`, P.title)}<small>${tl(`trip.${pieceId}.sub`, P.sub)}</small></div>
-    <div class="tr-bubble"><b>${tl(`trip.${pieceId}.who`, P.who)}:</b> ${tl(`trip.${pieceId}.bubble`, P.bubble)}</div>
+    <div class="tr-bubble"><b>${tl(`trip.${pieceId}.who`, P.who)}:</b> ${speak(tl(`trip.${pieceId}.bubble`, P.bubble), tl(`trip.${pieceId}.call`, P.call || ''))}</div>
     <div class="tr-ui"><button class="tr-skip ghost small">${T('trip.skip')}</button><button class="tr-go hidden">${T('trip.go')}</button></div></div>`;
   document.body.appendChild(root);
   const $ = (s) => root.querySelector(s);

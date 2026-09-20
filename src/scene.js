@@ -4,6 +4,7 @@ import { QUAN } from './data/regions.js';
 import { REGULARS } from './data/customers.js';
 import { faceArt } from './game/art.js';
 import { t as T, tl } from './i18n.js';
+import { speak } from './data/player.js';
 
 let cur = null;
 export const sceneRunning = () => !!cur;
@@ -29,7 +30,8 @@ export function playIntro({ onDone, sfx } = {}) {
 export function playOwner(worldId, { onDone, sfx } = {}) {
   const q = QUAN[worldId]; if (!q || cur) { onDone?.(); return; }
   const face = faceArt(q.owner, worldId.length);
-  const lines = [tl(`quan.${worldId}.greet`, q.greet), tl(`quan.${worldId}.dare`, q.dare)]; let i = 0;
+  const call = tl(`quan.${worldId}.call`, q.call || '');   // chủ quán gọi gì khi chưa biết tên
+  const lines = [tl(`quan.${worldId}.greet`, q.greet), tl(`quan.${worldId}.dare`, q.dare)].map((x) => speak(x, call)); let i = 0;
   const root = mount(`<div class="sc-door"></div><div class="sc-sign">${tl(`quan.${worldId}.name`, q.name)}</div>
     <img class="sc-face" src="${face}" alt="" draggable="false" onerror="this.remove()">
     <div class="sc-bubble"><b></b><span></span><small>${T('scene.tap')}</small></div><button class="sc-skip ghost small">${T('trip.skip')}</button>`, 'owner');

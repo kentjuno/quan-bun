@@ -21,6 +21,8 @@ import { counterMove } from './game/counter.js';
 import { Pov, povOk } from './pov.js';
 import { recordResult, masteryOf, isMastered, weightsFor, allMastery, resetMastery } from './game/mastery.js';
 import { ev as logEv, logOn, exportLog, summary as logSummary, readLog, clearLog } from './playlog.js';
+import { playSetup } from './setup.js';
+import { player, playerName, setupDone } from './data/player.js';
 
 const $ = (id) => document.getElementById(id);
 const lib = await loadModels((p, n) => { $('loading').textContent = T('menu.loading3d', { p: Math.round(p * 100) }); });
@@ -170,7 +172,8 @@ function showResult(r) {
   if (isDay) { starsEl.innerHTML = [0, 1, 2].map((i) => `<span class="s">${i < r.stars ? '★' : '☆'}</span>`).join(''); [...starsEl.children].forEach((el, i) => setTimeout(() => { el.classList.add('in'); if (i < r.stars) sfx.done(); }, 350 + i * 380)); }
   else starsEl.textContent = playMode === 'survival' ? T('n.customers', { n: r.served }) : isPz ? T('result.cleanOf', { a: clean, b: st.bowls.length }) : (r.mistakes === 0 ? `✓ ${T('result.clean')}` : T('pz.nErr', { n: r.mistakes }));
   countUp($('rMoney'), r.money, isDay ? 1400 : 0);
-  $('rTitle').textContent = playMode === 'drill' ? T('result.drillEnd') : playMode === 'rush' ? T('result.rushEnd') : playMode === 'survival' ? (pts?.record ? T('result.newRecord') : T('result.survivalEnd')) : isPz ? T('result.miniEnd', { name: sh.name }) : `${sh.name} — ${tl(`level.${sh.id}.title`, sh.title)}${r.stars ? '' : ` · ${T('result.failed')}`}`;
+  const me = playerName();
+  $('rTitle').textContent = (isDay && me ? `${me} · ` : '') + (playMode === 'drill' ? T('result.drillEnd') : playMode === 'rush' ? T('result.rushEnd') : playMode === 'survival' ? (pts?.record ? T('result.newRecord') : T('result.survivalEnd')) : isPz ? T('result.miniEnd', { name: sh.name }) : `${sh.name} — ${tl(`level.${sh.id}.title`, sh.title)}${r.stars ? '' : ` · ${T('result.failed')}`}`);
   $('rDishes').textContent = isDay ? `${goalText(sh)} · ${tl(`level.${sh.id}.new`, sh.whatsNew)}` : playMode === 'survival' ? `${T('hud.survived')} ${Math.floor((st.time || 0) / 60)}:${String(Math.floor((st.time || 0) % 60)).padStart(2, '0')} · ${T('n.dishes', { n: sh.dishes.length })}` : sh.dishes.map((d) => D.recipes[d].name).join(' · ');
   $('rPoints').textContent = pts ? `+${pts.earned}k${pts.starBonus ? ` ${T('result.starBonus', { k: pts.starBonus, n: pts.newStars })}` : ''} → ${T('result.bank', { k: pointsAvailable() })}` : '';
   // khách quen nhận xét cuối ngày
@@ -398,7 +401,7 @@ renderMenu();
 function enterLevel(L) {
   const go = () => (levelOnPov(L) ? startLevelPov(L) : start(false, 'level'));
   const owner = () => { if (QUAN[L.world] && !ownerMet(L.world)) { markOwner(L.world); playOwner(L.world, { sfx, onDone: go }); } else go(); };
-  if (!introSeen()) { markIntro(); ensureAudio(); playIntro({ sfx, onDone: owner }); } else owner();
+  owner();   // mở đầu đã chạy lúc mở app (setup → intro), không chen vào giữa nữa
 }
 $('btnStart').onclick = () => { if (!levelUnlocked(level)) return; enterLevel(level); };
 $('btnIntro').onclick = () => playIntro({ sfx }); $('btnRetry').onclick = () => playMode === 'puzzle' ? (lastPuzzle.kinds[0] === 'pov' ? startPov(lastPuzzle.rounds) : startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds)) : playMode === 'level' && levelOnPov(level) ? startLevelPov(level) : start(botMode, playMode);
@@ -427,7 +430,15 @@ $('btnLogExport')?.addEventListener('click', () => { const n = exportLog(); toas
 $('btnLogClear')?.addEventListener('click', () => { clearLog(); paintLog(); });
 if (logOn()) { logEv('boot', { lang: lang(), w: innerWidth, h: innerHeight, stars: totalStars() }); setInterval(paintLog, 5000); }
 paintLog(); onLang(paintLog);
+$('btnProfile')?.addEventListener('click', () => playSetup({ sfx, edit: true, onDone: renderMenu }));
+/** Mở app lần đầu: setup (ngôn ngữ → tên + xưng hô) → mở đầu 4 tấm → menu. Lần sau vô thẳng menu. */
+function firstRun() {
+  const intro = () => { if (!introSeen()) { markIntro(); playIntro({ sfx, onDone: () => { renderMenu(); logEv('intro.done'); } }); } else renderMenu(); };
+  if (!setupDone()) playSetup({ sfx, onDone: () => { const p = player(); logEv('setup', { named: !!p.name, gender: p.gender, lang: p.lang }); renderMenu(); intro(); } });
+  else intro();
+}
 $('loading').classList.add('hidden'); $('btnStart').classList.remove('hidden');
+firstRun();
 
 // ---- chặn nút/cử chỉ Back của trình duyệt khi đang chơi (Kent: quẹt trái/phải trên điện thoại bị back ra khỏi game) ----
 // Vào màn chơi → đẩy một history state; bấm/quẹt Back → popstate → đẩy lại ngay và coi như không có gì (menu thoát bằng nút ‹ trong game).

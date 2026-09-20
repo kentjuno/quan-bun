@@ -179,6 +179,26 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
 ---
 
+## P5b — Mở app: setup → intro → vô quán (Kent 20/09: "nó bị ngược á")
+
+**Trước đây sai:** mở app ra thẳng menu, cốt truyện chỉ chạy khi bấm Bắt đầu level đầu — người chơi thấy lưới level trước khi biết mình là ai.
+
+**Giờ:** lần đầu mở app chạy `src/setup.js` → `playIntro()` → menu. Lần sau vô thẳng menu.
+1. **Chọn ngôn ngữ** (song ngữ, 2 nút lớn — chuỗi nằm thẳng trong `setup.js` vì lúc đó chưa có ngôn ngữ; đánh dấu `// vi-src`).
+2. **Tên + xưng hô** (Nam / Nữ / Không nói) + nút Bỏ qua. Lưu ở `localStorage['qb.player']`, không gửi đi đâu.
+3. **Mở đầu 4 tấm** rồi vô menu. Màn "xin vô quán" (`playOwner`) vẫn ở chỗ cũ — lần đầu vô mỗi quán.
+Đổi lại sau bằng nút *Đổi tên · xưng hô* trong Cách chơi · tuỳ chọn.
+
+**Xưng hô (Kent chốt: chỉ đổi thoại, KHÔNG gen bộ nhân vật nữ).** `src/data/player.js` có `speak(text, fallback)`:
+`{you}` → tên người chơi, chưa nhập thì lấy `call` của quán ("con", "cháu", "{cậu|cô}"); `{a|b}` → a nếu nam, b nếu nữ, không nói thì lấy a. Lồng được: `call: '{cậu|cô}'` + `{you}` → "cô".
+Mọi thoại 12 quán + 6 bong bóng chuyến xe đã viết lại có `{you}`; bản EN có `quan.<id>.call` / `trip.<id>.call` riêng ("friend", "kid", "child"). `scripts/_sync_vi.mjs` đồng bộ `vi.json` từ `regions.js` (nguồn) để khỏi lệch.
+
+**Tên hiện ở:** thoại chủ quán · thẻ kết quả cuối ca (`Kent · Phở 1 — …`) · ảnh chia sẻ sổ tay ("Kent nấu"). *Để dành:* bảng hiệu quán riêng ở M7/M8.
+
+**Nghiệm thu.** `tests/player.test.js` (6): mọi quán/mảnh bản đồ có `call`, mọi thoại `{…}` giải hết, tên bị dọn sạch (cắt 16 ký tự, bỏ thẻ HTML). Đã soi Chromium: setup → intro → menu → "Bỏ việc đi học nấu ăn hả Kent?".
+
+---
+
 ## P5 — Onboarding 60 giây
 
 **Mục tiêu.** Người chưa biết phở là gì bưng được tô đầu trong 60 giây mà không đọc đoạn văn nào.

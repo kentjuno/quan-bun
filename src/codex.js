@@ -12,6 +12,7 @@ import { dishArtAt } from './game/art.js';
 import { PROVINCES } from './data/regions.js';
 import { t as T, tl, lang } from './i18n.js';
 import { labelL, setSource, source } from './game/recipes.js';
+import { playerName } from './data/player.js';
 import { ev as logEv } from './playlog.js';
 
 export const RECIPE_STARS = 6;   // Kent duyệt 20/09
@@ -97,6 +98,8 @@ export async function shareImage(dish) {
   c.font = '400 40px "Patrick Hand", cursive'; c.fillStyle = '#7a5a3a'; c.fillText(`/${D.pron || ''}/ · ${D.gloss || ''}`, W / 2, 900);
   c.fillStyle = '#26190f'; c.font = '400 40px "Patrick Hand", cursive'; c.textAlign = 'left';
   const story = tl(`codex.${dish}.story`, D.codex?.story || ''); const first = story.split(/(?<=[.!?])\s/)[0] || story; wrap(c, first, 90, 980, W - 180, 52);
+  const me = playerName();
+  if (me) { c.textAlign = 'center'; c.fillStyle = '#7a5a3a'; c.font = '400 42px "Patrick Hand", cursive'; c.fillText(T('codex.cookedBy', { name: me }), W / 2, 1200); }
   c.textAlign = 'center'; c.fillStyle = '#d64a2c'; c.font = '700 44px "Patrick Hand", cursive'; c.fillText(`${T('app.name')} · kentjuno.github.io/quan-bun`, W / 2, 1260);
   const blob = await new Promise((r) => cv.toBlob(r, 'image/png')); const file = new File([blob], `${dish}.png`, { type: 'image/png' });
   if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: D.name }); return; } catch {} }

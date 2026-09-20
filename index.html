@@ -758,6 +758,32 @@
       .provs .pv .trip { position: absolute; right: -6px; top: -8px; font-size: 14px; background: #fff; border: 2px solid var(--ink); border-radius: 50%; width: 24px; height: 24px; line-height: 20px; }
       .provs .pv.new::after { content: '!'; position: absolute; left: -4px; top: -8px; background: var(--red); color: #fff; font-weight: 900; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; line-height: 18px; }
       /* ===== M2 — màn kể chuyện (src/scene.js): mở đầu văn phòng + xin vô quán ===== */
+      /* MÀN SETUP đầu game (src/setup.js): ngôn ngữ → tên + xưng hô */
+      #setup { position: fixed; inset: 0; z-index: 70; box-sizing: border-box; background: #2b2118 url(art/scene.webp) center / cover; display: grid; place-items: center; font-family: "Patrick Hand", cursive; padding: 5vw; animation: scIn .35s ease-out; }
+      #setup.out { animation: scOut .3s ease-in forwards; }
+      #setup::before { content: ''; position: absolute; inset: 0; background: rgba(43,33,24,.62); }
+      #setup .su-card { position: relative; box-sizing: border-box; width: min(100%, 460px); max-width: 100%; background: #fffdf5; border: 4px solid #26190f; border-radius: 18px; box-shadow: 6px 8px 0 rgba(38,25,15,.45); padding: 20px 18px 16px; color: #26190f; text-align: center; }
+      #setup h1 { margin: 0 0 2px; font-size: 8vw; max-font-size: 40px; letter-spacing: .5px; }
+      @media (min-width: 520px) { #setup h1 { font-size: 40px; } }
+      #setup .su-sub { margin: 0 0 16px; font-size: 4.2vw; opacity: .7; }
+      @media (min-width: 520px) { #setup .su-sub, #setup .su-field > span { font-size: 17px; } }
+      #setup .su-langs { display: grid; gap: 12px; }
+      #setup .su-langs button { display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 6vw "Patrick Hand", cursive; padding: 14px; background: #fff7e2; color: #26190f; border: 3px solid #26190f; border-radius: 14px; box-shadow: 0 4px 0 #26190f; }
+      @media (min-width: 520px) { #setup .su-langs button { font-size: 26px; } }
+      #setup .su-langs button:active { transform: translateY(3px); box-shadow: none; }
+      #setup .su-langs span { font-size: 1.3em; }
+      #setup .su-field { display: block; text-align: left; margin: 0 0 14px; }
+      #setup .su-field > span { display: block; font-size: 4.2vw; opacity: .75; margin-bottom: 4px; }
+      #setup input { width: 100%; box-sizing: border-box; font: 700 6vw "Patrick Hand", cursive; padding: 10px 12px; border: 3px solid #26190f; border-radius: 12px; background: #fff; color: #26190f; }
+      @media (min-width: 520px) { #setup input { font-size: 26px; } }
+      #setup .su-gender { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      #setup .su-gender button { font: 700 4.4vw "Patrick Hand", cursive; padding: 10px 4px; background: #fff7e2; color: #26190f; border: 3px solid #26190f; border-radius: 12px; }
+      @media (min-width: 520px) { #setup .su-gender button { font-size: 18px; } }
+      #setup .su-gender button.on { background: #d64a2c; color: #fffdf5; }
+      #setup .su-go { width: 100%; font: 700 5.6vw "Patrick Hand", cursive; padding: 12px; margin-top: 4px; background: #d64a2c; color: #fffdf5; border: 3px solid #26190f; border-radius: 14px; box-shadow: 0 4px 0 #26190f; }
+      @media (min-width: 520px) { #setup .su-go { font-size: 24px; } }
+      #setup .su-go:active { transform: translateY(3px); box-shadow: none; }
+      #setup .ghost.small { margin-top: 8px; opacity: .7; }
       #scene { position: fixed; inset: 0; z-index: 61; background: #2b2118; font-family: "Patrick Hand", cursive; -webkit-user-select: none; user-select: none; overflow: hidden; animation: scIn .35s ease-out; }
       #scene.out { animation: scOut .35s ease-in forwards; } @keyframes scIn { from { opacity: 0; } } @keyframes scOut { to { opacity: 0; } }
       #scene .sc-slides { position: absolute; inset: 0; } #scene .sc-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s; transform: scale(1.04); }
@@ -891,7 +917,7 @@
         <details class="more"><summary data-i18n="how.title">Cách chơi · tuỳ chọn</summary>
           <div class="how" data-i18n-html="how.body"><b>Chạm là đi.</b> Tủ topping → lấy đồ · nồi trụng → thả sợi (3 rọ, để lâu hư) · sợi <b>nóng → xả lạnh → nóng</b> · quầy ráp → bỏ đúng thứ tự · múc nước · bưng ra bàn khách. <b>≥1★ mở ngày kế</b>; tiền + tip → mua nâng cấp bếp, trang trí.</div>
           <div class="opt"><label><input type="checkbox" id="optCard" /> <span data-i18n="opt.card">Kệ kiểu card</span></label><label><input type="checkbox" id="optHideName" /> <span data-i18n="opt.hideName">Ẩn tên trên card</span></label></div>
-          <button id="btnIntro" class="ghost small" data-i18n="menu.intro">Xem lại mở đầu</button> <button id="btnResetMastery" class="ghost small" data-i18n="menu.reset">Xoá toàn bộ tiến độ</button>
+          <button id="btnIntro" class="ghost small" data-i18n="menu.intro">Xem lại mở đầu</button> <button id="btnProfile" class="ghost small" data-i18n="menu.profile">Đổi tên · xưng hô</button> <button id="btnResetMastery" class="ghost small" data-i18n="menu.reset">Xoá toàn bộ tiến độ</button>
           <div id="logBox" class="opt hidden"><span id="logSum" class="sub"></span> <button id="btnLogExport" class="ghost small" data-i18n="log.export">Xuất log</button> <button id="btnLogClear" class="ghost small" data-i18n="log.clear">Xoá log</button></div>
         </details>
       </div>

@@ -21,18 +21,18 @@ export const PROVINCES = [
 
 /** Quán = world: tên quán + chủ quán (khách quen cũ lên làm chủ — M2 "chủ quán"). `[cần Kent duyệt]` tên quán. */
 export const QUAN = {
-  pho: { name: 'Phở Cậu Hai', owner: 'cau-hai', greet: 'Bỏ việc đi học nấu ăn hả? Gan đó. Phở là môn đầu — làm được tô phở tử tế rồi hẵng nói chuyện đi xa.', dare: 'Đứng ca cho ra hồn, đủ sao cậu đưa công thức thật cho mà mang về nấu.' },
-  'mon-kho': { name: 'Mẹt Út Mười', owner: 'ut-muoi', greet: 'Anh là người bỏ văn phòng đi học nấu đó hả? Em theo dõi anh trên mạng nè!', dare: 'Mẹt bún chả, bún đậu phải đẹp mới lên hình được. Rau trước bún sau, nhớ nghe.' },
-  'cha-ca': { name: 'Chả Cá Lã Vọng', owner: 'chu-tu', greet: 'Quán này trăm năm rồi con. Chả cá không có thứ tự bắt buộc, nhưng bảy phần phải đủ.', dare: 'Làm cho khéo, cho nhanh. Chú không vội nhưng khách thì vội.' },
-  'hai-phong': { name: 'Quán Ông Năm', owner: 'ong-nam', greet: 'Tới Hải Phòng rồi hả. Bánh đa đỏ, chả cá, nước cua — đất cảng ăn phải đậm.', dare: 'Ông chạy xe cả ngày, sáng chỉ có mười phút. Làm lẹ mà đúng nghe.' },
-  'bun-rieu': { name: 'Riêu Dì Ba', owner: 'di-ba', greet: 'Con đi từ ngoài Bắc vô tới đây học riêu hả? Ngồi xuống, dì kể cho nghe nồi riêu này nấu sao.', dare: 'Cốt cua, huyết, nước — đúng thứ tự thì nước mới trong. Sai một lần là đục cả nồi.' },
-  'bun-bo': { name: 'Bún Bò Thím Bảy', owner: 'thim-bay', greet: 'Bún bò Huế phải cay, phải thơm sả, phải đỏ dầu điều. Con ăn cay được không?', dare: 'Nhiều topping nhất đường này đó. Nhớ được hết là thím phục.' },
-  chao: { name: 'Cháo Sáng Bến Thành', owner: null, greet: 'Sài Gòn dậy sớm lắm con. Bốn giờ sáng nồi cháo phải sôi rồi.', dare: 'Cháo đun lâu — chưa có khách đã phải đun. Ai chờ cháo là mất khách.' },
-  'bun-thang': { name: 'Bún Thang Bà Cụ', owner: null, who: 'Bà Cụ', greet: 'Bún thang là món cầu kỳ nhất Hà Nội đó cháu. Hai mươi thứ mới ra một tô.', dare: 'Thái chỉ cho đều, xếp thành múi cho đẹp. Bà không nhận ai làm ẩu.' },
-  'mi-quang': { name: 'Mì Quảng Bà Mua', owner: null, who: 'Bà Mua', greet: 'Mì Quảng không phải món nước đâu con. Chan xâm xấp thôi, ăn trộn mới đúng.', dare: 'Trong quán này có cả cao lầu Hội An — một món nước một món khô, đừng lấy nhầm tô.' },
-  'bun-cha-ca': { name: 'Chả Cá Cô Hai', owner: null, who: 'Cô Hai', greet: 'Chả cá Nha Trang quết tay từ cá thu, sáng nào cũng bán hết trước chín giờ.', dare: 'Thì là bỏ sau khi chan nước nghe con. Bỏ trước là hỏng nồi.' },
-  'hu-tieu': { name: 'Hủ Tiếu Nam Vang Chú Chín', owner: null, who: 'Chú Chín', greet: 'Hủ tiếu Nam Vang gốc Campuchia, qua Sài Gòn thành món của Sài Gòn luôn.', dare: 'Nước phải trong. Đun bùng một cái là đục, chú nhìn là biết.' },
-  'khai-vi': { name: 'Cuốn & Chả Giò Cô Sáu', owner: null, greet: 'Gỏi cuốn với chả giò, món nào khách Tây cũng mê. Con học xong là đi khắp thế giới được.', dare: 'Cuốn phải chắc tay, chiên phải lửa nhỏ. Hai việc hai nhịp, làm song song mới kịp.' },
+  pho: { name: 'Phở Cậu Hai', owner: 'cau-hai', call: '{cậu|cô}', greet: 'Bỏ việc đi học nấu ăn hả {you}? Gan đó. Phở là môn đầu — làm được tô phở tử tế rồi hẵng nói chuyện đi xa.', dare: 'Đứng ca cho ra hồn, đủ sao cậu đưa công thức thật cho {you} mang về nấu.' },
+  'mon-kho': { name: 'Mẹt Út Mười', owner: 'ut-muoi', call: '{anh|chị}', greet: '{you} là người bỏ văn phòng đi học nấu đó hả? Em theo dõi {anh|chị} trên mạng nè!', dare: 'Mẹt bún chả, bún đậu phải đẹp mới lên hình được. Rau trước bún sau, {you} nhớ nghe.' },
+  'cha-ca': { name: 'Chả Cá Lã Vọng', owner: 'chu-tu', call: 'con', greet: 'Quán này trăm năm rồi {you}. Chả cá không có thứ tự bắt buộc, nhưng bảy phần phải đủ.', dare: 'Làm cho khéo, cho nhanh nghe {you}. Chú không vội nhưng khách thì vội.' },
+  'hai-phong': { name: 'Quán Ông Năm', owner: 'ong-nam', call: 'cháu', greet: 'Tới Hải Phòng rồi hả {you}. Bánh đa đỏ, chả cá, nước cua — đất cảng ăn phải đậm.', dare: 'Ông chạy xe cả ngày, sáng chỉ có mười phút. Làm lẹ mà đúng nghe {you}.' },
+  'bun-rieu': { name: 'Riêu Dì Ba', owner: 'di-ba', call: 'con', greet: '{you} đi từ ngoài Bắc vô tới đây học riêu hả? Ngồi xuống, dì kể cho nghe nồi riêu này nấu sao.', dare: 'Cốt cua, huyết, nước — đúng thứ tự thì nước mới trong. Sai một lần là đục cả nồi.' },
+  'bun-bo': { name: 'Bún Bò Thím Bảy', owner: 'thim-bay', call: 'con', greet: 'Bún bò Huế phải cay, phải thơm sả, phải đỏ dầu điều. {you} ăn cay được không?', dare: 'Nhiều topping nhất đường này đó. {you} nhớ được hết là thím phục.' },
+  chao: { name: 'Cháo Sáng Bến Thành', owner: null, call: 'con', greet: 'Sài Gòn dậy sớm lắm {you}. Bốn giờ sáng nồi cháo phải sôi rồi.', dare: 'Cháo đun lâu — chưa có khách đã phải đun. Ai chờ cháo là mất khách.' },
+  'bun-thang': { name: 'Bún Thang Bà Cụ', owner: null, who: 'Bà Cụ', call: 'cháu', greet: 'Bún thang là món cầu kỳ nhất Hà Nội đó {you}. Hai mươi thứ mới ra một tô.', dare: 'Thái chỉ cho đều, xếp thành múi cho đẹp. Bà không nhận ai làm ẩu.' },
+  'mi-quang': { name: 'Mì Quảng Bà Mua', owner: null, who: 'Bà Mua', call: 'con', greet: 'Mì Quảng không phải món nước đâu {you}. Chan xâm xấp thôi, ăn trộn mới đúng.', dare: 'Trong quán này có cả cao lầu Hội An — một món nước một món khô, {you} đừng lấy nhầm tô.' },
+  'bun-cha-ca': { name: 'Chả Cá Cô Hai', owner: null, who: 'Cô Hai', call: 'con', greet: 'Chả cá Nha Trang quết tay từ cá thu {you} ơi, sáng nào cũng bán hết trước chín giờ.', dare: 'Thì là bỏ sau khi chan nước nghe {you}. Bỏ trước là hỏng nồi.' },
+  'hu-tieu': { name: 'Hủ Tiếu Nam Vang Chú Chín', owner: null, who: 'Chú Chín', call: 'con', greet: 'Hủ tiếu Nam Vang gốc Campuchia {you} à, qua Sài Gòn thành món của Sài Gòn luôn.', dare: 'Nước phải trong. Đun bùng một cái là đục, chú nhìn là biết.' },
+  'khai-vi': { name: 'Cuốn & Chả Giò Cô Sáu', owner: null, call: 'con', greet: 'Gỏi cuốn với chả giò, món nào khách Tây cũng mê. {you} học xong là đi khắp thế giới được.', dare: 'Cuốn phải chắc tay, chiên phải lửa nhỏ. Hai việc hai nhịp, làm song song mới kịp.' },
 };
 
 /** P6b — MINI-GAME theo tỉnh: dùng 5 engine sẵn có trong puzzle.js, món lấy từ các quán của tỉnh.
@@ -52,19 +52,19 @@ export const MINIS = {
  * `border`: ranh vùng mới theo % chiều cao (0..1) — phần dưới ranh xám cho tới khi xe qua. `sign`: bảng hiệu ở cuối đường.
  */
 export const PIECES = {
-  'hn-hp': { img: 'map-hn-hp', from: 'ha-noi', to: 'hai-phong', border: 0.62,
+  'hn-hp': { img: 'map-hn-hp', call: 'cháu', from: 'ha-noi', to: 'hai-phong', border: 0.62,
     pts: [[453, 330], [470, 403], [430, 461], [457, 530], [492, 591], [461, 661], [399, 730], [369, 791], [253, 768], [257, 860], [284, 945], [361, 1006], [461, 1064], [568, 1114]],
-    title: 'HẢI PHÒNG', sub: 'đất cảng · bánh đa cua', sign: 'Quán Ông Năm', signSub: 'bánh đa cua · bún cá', who: 'Ông Năm', bubble: 'Ủa, khách phương xa hả? Vô đây, muốn học nấu bánh đa cua thì phụ ông một buổi.' },
-  'hp-hue': { img: 'map-hp-hue', from: 'hai-phong', to: 'hue', border: 0.72, pts: [[400, 100], [385, 180], [330, 260], [300, 340], [330, 430], [380, 510], [350, 600], [300, 690], [265, 770], [285, 860], [250, 940], [235, 1020], [300, 1090]],
-    title: 'HUẾ', sub: 'cố đô · bún bò', sign: 'Riêu Dì Ba', signSub: 'bún riêu · bún bò', who: 'Dì Ba', bubble: 'Đi xa dữ hen con. Vô đây, dì chỉ cho cách nấu nồi riêu cho đúng.' },
-  'hue-dn': { img: 'map-hue-dn', from: 'hue', to: 'da-nang', border: 0.55, pts: [[330, 190], [290, 290], [310, 380], [350, 450], [300, 540], [265, 620], [300, 700], [330, 790], [320, 860], [380, 930], [420, 1000], [400, 1060]],
-    title: 'ĐÀ NẴNG', sub: 'mì Quảng · cao lầu', sign: 'Mì Quảng Bà Mua', signSub: 'mì Quảng · cao lầu', who: 'Bà Mua', bubble: 'Tới Quảng Nam rồi hả con. Vô đây, bà chỉ cho tô mì Quảng chan xâm xấp cho đúng.' },
-  'dn-nt': { img: 'map-dn-nt', from: 'da-nang', to: 'nha-trang', border: 0.70, pts: [[430, 230], [380, 300], [320, 380], [290, 470], [265, 560], [280, 650], [350, 720], [380, 780], [340, 860], [300, 940], [260, 1020], [230, 1080]],
-    title: 'NHA TRANG', sub: 'bún chả cá', sign: 'Chả Cá Cô Hai', signSub: 'bún chả cá · chả cá quết tay', who: 'Cô Hai', bubble: 'Biển Nha Trang đây con. Sáng mai bốn giờ dậy phụ cô quết chả cá nghe.' },
-  'nt-sg': { img: 'map-nt-sg', from: 'nha-trang', to: 'sai-gon', border: 0.72, pts: [[350, 70], [300, 160], [300, 260], [350, 350], [320, 440], [240, 520], [190, 600], [220, 690], [300, 770], [400, 850], [420, 940], [380, 1020], [320, 1100]],
-    title: 'SÀI GÒN', sub: 'gỏi cuốn · chả giò · cháo', sign: 'Cháo Sáng Bến Thành', signSub: 'cháo lòng · cháo sườn', who: 'Chủ quán', bubble: 'Sài Gòn đây con! Sáng sớm là phải có tô cháo nóng, vô phụ chị nấu nghe.' },
-  'sg-mientay': { img: 'map-sg-mientay', from: 'sai-gon', to: 'mien-tay', border: 0.70, pts: [[330, 230], [320, 320], [400, 410], [350, 500], [250, 590], [300, 680], [430, 770], [490, 860], [420, 940], [310, 1020], [270, 1100]],
-    title: 'MIỀN TÂY', sub: 'bún cá Châu Đốc', sign: 'Quán Bún Cá Châu Đốc', signSub: 'sắp mở', who: 'Chủ quán', bubble: 'Quán còn đang sửa, mai mốt con ghé lại nghe.' },
+    title: 'HẢI PHÒNG', sub: 'đất cảng · bánh đa cua', sign: 'Quán Ông Năm', signSub: 'bánh đa cua · bún cá', who: 'Ông Năm', bubble: 'Ủa, {you} là khách phương xa hả? Vô đây, muốn học nấu bánh đa cua thì phụ ông một buổi.' },
+  'hp-hue': { img: 'map-hp-hue', call: 'con', from: 'hai-phong', to: 'hue', border: 0.72, pts: [[400, 100], [385, 180], [330, 260], [300, 340], [330, 430], [380, 510], [350, 600], [300, 690], [265, 770], [285, 860], [250, 940], [235, 1020], [300, 1090]],
+    title: 'HUẾ', sub: 'cố đô · bún bò', sign: 'Riêu Dì Ba', signSub: 'bún riêu · bún bò', who: 'Dì Ba', bubble: 'Đi xa dữ hen {you}. Vô đây, dì chỉ cho cách nấu nồi riêu cho đúng.' },
+  'hue-dn': { img: 'map-hue-dn', call: 'con', from: 'hue', to: 'da-nang', border: 0.55, pts: [[330, 190], [290, 290], [310, 380], [350, 450], [300, 540], [265, 620], [300, 700], [330, 790], [320, 860], [380, 930], [420, 1000], [400, 1060]],
+    title: 'ĐÀ NẴNG', sub: 'mì Quảng · cao lầu', sign: 'Mì Quảng Bà Mua', signSub: 'mì Quảng · cao lầu', who: 'Bà Mua', bubble: 'Tới Quảng Nam rồi hả {you}. Vô đây, bà chỉ cho tô mì Quảng chan xâm xấp cho đúng.' },
+  'dn-nt': { img: 'map-dn-nt', call: 'con', from: 'da-nang', to: 'nha-trang', border: 0.70, pts: [[430, 230], [380, 300], [320, 380], [290, 470], [265, 560], [280, 650], [350, 720], [380, 780], [340, 860], [300, 940], [260, 1020], [230, 1080]],
+    title: 'NHA TRANG', sub: 'bún chả cá', sign: 'Chả Cá Cô Hai', signSub: 'bún chả cá · chả cá quết tay', who: 'Cô Hai', bubble: 'Biển Nha Trang đây {you}. Sáng mai bốn giờ dậy phụ cô quết chả cá nghe.' },
+  'nt-sg': { img: 'map-nt-sg', call: 'con', from: 'nha-trang', to: 'sai-gon', border: 0.72, pts: [[350, 70], [300, 160], [300, 260], [350, 350], [320, 440], [240, 520], [190, 600], [220, 690], [300, 770], [400, 850], [420, 940], [380, 1020], [320, 1100]],
+    title: 'SÀI GÒN', sub: 'gỏi cuốn · chả giò · cháo', sign: 'Cháo Sáng Bến Thành', signSub: 'cháo lòng · cháo sườn', who: 'Chủ quán', bubble: 'Sài Gòn đây {you}! Sáng sớm là phải có tô cháo nóng, vô phụ chị nấu nghe.' },
+  'sg-mientay': { img: 'map-sg-mientay', call: 'con', from: 'sai-gon', to: 'mien-tay', border: 0.70, pts: [[330, 230], [320, 320], [400, 410], [350, 500], [250, 590], [300, 680], [430, 770], [490, 860], [420, 940], [310, 1020], [270, 1100]],
+    title: 'MIỀN TÂY', sub: 'bún cá Châu Đốc', sign: 'Quán Bún Cá Châu Đốc', signSub: 'sắp mở', who: 'Chủ quán', bubble: 'Quán còn đang sửa, mai mốt {you} ghé lại nghe.' },
 };
 
 export const provinceOf = (worldId) => PROVINCES.find((p) => p.worlds.includes(worldId)) || null;
