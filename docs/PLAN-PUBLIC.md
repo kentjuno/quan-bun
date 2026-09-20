@@ -31,7 +31,8 @@ Kế hoạch này viết để **bất kỳ model nào** cũng làm đúng ý. �
 | **Cảm giác / art** | ✅ kiểu C, đã "loud" | P5 onboarding, P8 nền tảng |
 | **Nói với thế giới** | ❌ chỉ tiếng Việt | P1 i18n, tên món giữ Việt + cách đọc |
 
-**Cốt truyện (Kent, 19/09):** *Bạn là kẻ lang bạt mê ăn, đi dọc các tỉnh thành trên bản đồ Việt Nam. Tới đâu xin vô quán đó làm, chủ quán thử thách: học món của họ, rồi đứng ca làm cho ra hồn. Mỗi tỉnh để lại một món trong sổ tay và một vật kỷ niệm.*
+**Cốt truyện (Kent, 20/09):** *Bạn là một nhân viên văn phòng chán việc, bỏ hết đi khắp Việt Nam để học và tìm hiểu ẩm thực Việt. Đi dọc các tỉnh trên bản đồ, tới đâu xin vô quán đó: chủ quán dạy món rồi thử thách đứng ca. Mỗi màn chơi tích ★; đủ ★ mới mở **công thức full** của món để nấu thật ngoài đời. Mỗi tỉnh để lại một món trong sổ tay và một vật kỷ niệm.*
+**Cơ chế sao mở khoá:** trang món hiện khi học xong; công thức game ≥1★ ở món đó; công thức nấu thật ≥6★ (tổng ★ từ các level của món đó, số đang chờ Kent chốt); tỉnh kế mở theo `starsToUnlock`. Chi tiết: `docs/ROADMAP.md`.
 
 **Vòng chơi:**
 ```
