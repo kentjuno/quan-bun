@@ -78,6 +78,10 @@ export function codexNew(dishes, open, full) {
   for (const d of dishes) { const k = data.codex[d] || 0; if (k < 1 && open(d)) { data.codex[d] = 1; out.push({ kind: 'codex', id: d }); } if ((data.codex[d] || 0) < 2 && full(d)) { data.codex[d] = 2; out.push({ kind: 'recipe', id: d }); } }
   if (out.length) save(); return out;
 }
+/** P6b — vật kỷ niệm của tỉnh (mini-game đạt `pass`). */
+export function souvenirs() { return { ...(data.souvenirs || {}) }; }
+export const hasSouvenir = (provId) => !!(data.souvenirs || {})[provId];
+export function winSouvenir(provId) { if (hasSouvenir(provId)) return false; data.souvenirs = { ...(data.souvenirs || {}), [provId]: Date.now() }; save(); return true; }
 export function tutSeen() { return !!data.tut; }
 export function markTut() { data.tut = 1; save(); }
 export function introSeen() { return !!data.intro; }

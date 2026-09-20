@@ -1028,5 +1028,21 @@
   "upgrade.menu-board.name": "Order board",
   "upgrade.menu-board.desc": "See the next customer (ghost ticket) and plan ahead",
   "upgrade.twin-pot.name": "Twin blanching pot",
-  "upgrade.twin-pot.desc": "One drop fills two baskets — build two bowls at once"
+  "upgrade.twin-pot.desc": "One drop fills two baskets — build two bowls at once",
+  "mini.ha-noi.name": "Ebony chopsticks",
+  "mini.ha-noi.note": "A gift from the phở owner after you got the order right six times running.",
+  "mini.hai-phong.name": "Port-city seashell",
+  "mini.hai-phong.note": "Picked up at the fish pier at 5 a.m., still smelling of sea wind.",
+  "mini.hue.name": "Imperial wind chime",
+  "mini.hue.note": "Bought at Đông Ba market; hang it up and you hear the Perfume River.",
+  "mini.da-nang.name": "Hội An lantern",
+  "mini.da-nang.note": "Red silk lantern that folds flat into the bike's trunk.",
+  "mini.nha-trang.name": "Dried coral",
+  "mini.nha-trang.note": "Found on the beach after a storm, chalk white.",
+  "mini.sai-gon.name": "Aluminium coffee phin",
+  "mini.sai-gon.note": "From a sidewalk stall in District 1 — drips slower than any other phin.",
+  "mini.mien-tay.name": "Mini sampan",
+  "mini.mien-tay.note": "Carved as a gift by a Cái Răng floating-market vendor, from mù u wood.",
+  "menu.prov.mini": "Province mini-game — win a souvenir",
+  "unlock.souvenir": "Souvenir: {name}"
 }

@@ -31,6 +31,18 @@ export const QUAN = {
   'khai-vi': { name: 'Cuốn & Chả Giò Cô Sáu', owner: null, greet: 'Gỏi cuốn với chả giò, món nào khách Tây cũng mê. Con học xong là đi khắp thế giới được.', dare: 'Cuốn phải chắc tay, chiên phải lửa nhỏ. Hai việc hai nhịp, làm song song mới kịp.' },
 };
 
+/** P6b — MINI-GAME theo tỉnh: dùng 5 engine sẵn có trong puzzle.js, món lấy từ các quán của tỉnh.
+ *  `pass` = số câu sạch tối thiểu để được VẬT KỶ NIỆM. Vật kỷ niệm chỉ để kể chuyện + khoe (sổ tay), không ảnh hưởng độ khó. */
+export const MINIS = {
+  'ha-noi': { kind: 'order', rounds: 6, pass: 4, icon: '🥢', name: 'Đôi đũa gỗ mun', note: 'Ông chủ quán phở tặng khi thấy bạn xếp đúng thứ tự sáu lần liền.' },
+  'hai-phong': { kind: 'reflex', rounds: 6, pass: 4, icon: '🐚', name: 'Vỏ sò đất Cảng', note: 'Nhặt ở bến cá lúc năm giờ sáng, còn mùi gió biển.' },
+  hue: { kind: 'intruder', rounds: 6, pass: 4, icon: '🎐', name: 'Chuông gió cung đình', note: 'Mua ở chợ Đông Ba, treo lên là nghe tiếng sông Hương.' },
+  'da-nang': { kind: 'ninja', rounds: 6, pass: 4, icon: '🏮', name: 'Đèn lồng Hội An', note: 'Lồng đèn lụa đỏ, gấp lại bỏ vừa cốp xe.' },
+  'nha-trang': { kind: 'reflex', rounds: 6, pass: 4, icon: '🐠', name: 'San hô khô', note: 'Nhặt trên bãi sau cơn bão, trắng như vôi.' },
+  'sai-gon': { kind: 'missing', rounds: 6, pass: 4, icon: '☕', name: 'Phin cà phê nhôm', note: 'Mua ở quán cóc quận 1, nhỏ giọt chậm hơn bất cứ cái phin nào.' },
+  'mien-tay': { kind: 'ninja', rounds: 6, pass: 4, icon: '🛶', name: 'Xuồng ba lá mini', note: 'Người bán ở chợ nổi Cái Răng đẽo tặng, bằng gỗ mù u.' },
+};
+
 /**
  * Mảnh bản đồ 768×1376 (public/art/map/map-<id>.webp). `pts`: điểm trên đường (toạ độ ảnh) — lấy bằng tools/roadtrip.html?edit=1.
  * `border`: ranh vùng mới theo % chiều cao (0..1) — phần dưới ranh xám cho tới khi xe qua. `sign`: bảng hiệu ở cuối đường.

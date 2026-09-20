@@ -641,5 +641,21 @@
   "upgrade.menu-board.name": "Bảng gọi món",
   "upgrade.menu-board.desc": "Thấy trước khách kế tiếp (phiếu mờ) để lên kế hoạch",
   "upgrade.twin-pot.name": "Nồi trụng đôi",
-  "upgrade.twin-pot.desc": "Thả sợi một lần ra hai rọ — làm hai tô song song"
+  "upgrade.twin-pot.desc": "Thả sợi một lần ra hai rọ — làm hai tô song song",
+  "mini.ha-noi.name": "Đôi đũa gỗ mun",
+  "mini.ha-noi.note": "Ông chủ quán phở tặng khi thấy bạn xếp đúng thứ tự sáu lần liền.",
+  "mini.hai-phong.name": "Vỏ sò đất Cảng",
+  "mini.hai-phong.note": "Nhặt ở bến cá lúc năm giờ sáng, còn mùi gió biển.",
+  "mini.hue.name": "Chuông gió cung đình",
+  "mini.hue.note": "Mua ở chợ Đông Ba, treo lên là nghe tiếng sông Hương.",
+  "mini.da-nang.name": "Đèn lồng Hội An",
+  "mini.da-nang.note": "Lồng đèn lụa đỏ, gấp lại bỏ vừa cốp xe.",
+  "mini.nha-trang.name": "San hô khô",
+  "mini.nha-trang.note": "Nhặt trên bãi sau cơn bão, trắng như vôi.",
+  "mini.sai-gon.name": "Phin cà phê nhôm",
+  "mini.sai-gon.note": "Mua ở quán cóc quận 1, nhỏ giọt chậm hơn bất cứ cái phin nào.",
+  "mini.mien-tay.name": "Xuồng ba lá mini",
+  "mini.mien-tay.note": "Người bán ở chợ nổi Cái Răng đẽo tặng, bằng gỗ mù u.",
+  "menu.prov.mini": "Mini-game của tỉnh — thắng được vật kỷ niệm",
+  "unlock.souvenir": "Vật kỷ niệm: {name}"
 }

@@ -812,6 +812,12 @@
       #pov .tk.peek { opacity: .45; filter: grayscale(.4); border-style: dashed; pointer-events: none; }
       #pov .tk.peek small { font-size: 2.6cqw; opacity: .8; }
       #pov .pv-banner.bonus { color: #2f8a3a; } #pov .pv-banner.ev { color: #2a7a9a; }
+      /* ===== P6b — mini-game theo tỉnh + kệ vật kỷ niệm ===== */
+      .provs .pv .mini { position: absolute; right: -6px; bottom: -8px; font-size: 14px; background: #fff; border: 2px solid var(--ink); border-radius: 50%; width: 24px; height: 24px; line-height: 20px; }
+      .souv { display: flex; gap: 6px; overflow-x: auto; padding: 0 2px 8px; margin: 0 0 8px; border-bottom: 2px dashed #eadfcd; scrollbar-width: none; } .souv::-webkit-scrollbar { display: none; }
+      .souv .sv { flex: 0 0 auto; min-width: 62px; text-align: center; background: #fffdf5; border: 2px solid #eadfcd; border-radius: 12px; padding: 4px 6px; cursor: pointer; }
+      .souv .sv .ic { font-size: 20px; display: block; line-height: 1.1; } .souv .sv small { display: block; font-size: 9.5px; line-height: 1.1; color: var(--broth); font-weight: 700; }
+      .souv .sv.locked { opacity: .45; background: #f3ede0; } .souv .sv.locked .ic { color: #b9ab95; }
       .hidden { display: none !important; }
       @media (prefers-reduced-motion: reduce) { .timer.done, .ripple { animation: none; } }
     </style>
@@ -858,6 +864,7 @@
         </section>
         <section id="tab-codex" class="tab main hidden">
           <div class="sub" id="cxSub" style="font-size:12px;margin:0 0 8px"></div>
+          <div class="souv" id="cxSouv"></div>
           <div class="cx-grid" id="codexGrid"></div>
         </section>
         <section id="tab-more" class="tab main hidden">

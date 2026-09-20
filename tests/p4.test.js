@@ -121,3 +121,38 @@ describe('P4 sự kiện chạy ở quầy', () => {
     expect(C.result().stars).toBeGreaterThanOrEqual(1);
   }, 30000);
 });
+
+// ---- P6b: mini-game theo tỉnh + vật kỷ niệm ----
+import { MINIS, PROVINCES } from '../src/data/regions.js';
+import { WORLDS as W2 } from '../src/config.js';
+import { DISHES } from '../src/data/dishes/index.js';
+
+describe('P6b mini-game theo tỉnh', () => {
+  it('mỗi tỉnh có một mini-game dùng engine có sẵn + vật kỷ niệm có tên và chuyện', () => {
+    const KINDS = ['order', 'intruder', 'missing', 'ninja', 'reflex'];
+    for (const p of PROVINCES) {
+      const m = MINIS[p.id];
+      expect(m, p.id).toBeTruthy();
+      expect(KINDS).toContain(m.kind);
+      expect(m.pass).toBeLessThanOrEqual(m.rounds);
+      expect(m.icon && m.name && m.note, p.id).toBeTruthy();
+    }
+    expect(new Set(Object.values(MINIS).map((m) => m.name)).size).toBe(PROVINCES.length);   // không trùng vật kỷ niệm
+  });
+  it('tỉnh có quán thì lấy được danh sách món cho mini-game', () => {
+    for (const p of PROVINCES.filter((x) => x.worlds.length)) {
+      const dishes = [...new Set(p.worlds.flatMap((w) => W2.find((x) => x.id === w).levels.flatMap((L) => L.dishes)))];
+      expect(dishes.length, p.id).toBeGreaterThan(0);
+      expect(dishes.every((d) => DISHES[d]), p.id).toBe(true);
+    }
+  });
+  it('vật kỷ niệm chỉ nhận một lần', async () => {
+    const store = {}; globalThis.localStorage = { getItem: (k) => store[k] ?? null, setItem: (k, v) => { store[k] = v; }, removeItem: (k) => { delete store[k]; } };
+    const P = await import('../src/game/progress.js?p6b=' + Math.random());
+    expect(P.hasSouvenir('hue')).toBe(false);
+    expect(P.winSouvenir('hue')).toBe(true);
+    expect(P.hasSouvenir('hue')).toBe(true);
+    expect(P.winSouvenir('hue')).toBe(false);
+    delete globalThis.localStorage;
+  });
+});

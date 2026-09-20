@@ -4,8 +4,8 @@ import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
 import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
-import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner, codexNew, tutSeen, markTut } from './game/progress.js';
-import { PROVINCES, QUAN, provinceOf, prevProvince } from './data/regions.js';
+import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner, codexNew, tutSeen, markTut, souvenirs, hasSouvenir, winSouvenir } from './game/progress.js';
+import { PROVINCES, QUAN, MINIS, provinceOf, prevProvince } from './data/regions.js';
 import { playTrip, tripRunning } from './trip.js';
 import { playIntro, playOwner, sceneRunning } from './scene.js';
 import { renderGrid as renderCodex, openPage as openCodex, closePage as closeCodex, pageOpen, realRecipeOpen, codexCount, RECIPE_STARS } from './codex.js';
@@ -174,10 +174,14 @@ function showResult(r) {
   const regs = r.regulars || []; const rc = $('rRecap');
   if (isDay && regs.length) { const pick = regs[Math.floor(Math.random() * regs.length)]; rc.textContent = recapLine(pick.id, pick.served); rc.classList.toggle('hidden', !rc.textContent); } else rc.classList.add('hidden');
   // thẻ mở khoá: level sau có gì mới (chỉ khi lần đầu qua level này)
-  const nextUnlocks = [...(isDay && !botMode ? codexNew(sh.dishes, pageOpen, realRecipeOpen) : []), ...(isDay && r.stars >= 1 && wasNew ? unlocksAfter(sh) : [])];   // sổ tay mở TRƯỚC (thưởng thật)
+  // P6b — mini-game của tỉnh: đủ câu sạch thì được vật kỷ niệm (một lần)
+  const miniProv = isPz && lastPuzzle.prov ? PROVINCES.find((p) => p.id === lastPuzzle.prov) : null;
+  const souvenir = miniProv && clean >= (MINIS[miniProv.id]?.pass ?? 99) && winSouvenir(miniProv.id) ? [{ kind: 'souvenir', id: miniProv.id }] : [];
+  const nextUnlocks = [...souvenir, ...(isDay && !botMode ? codexNew(sh.dishes, pageOpen, realRecipeOpen) : []), ...(isDay && r.stars >= 1 && wasNew ? unlocksAfter(sh) : [])];   // sổ tay mở TRƯỚC (thưởng thật)
   $('rUnlock').replaceChildren(...nextUnlocks.map((u, i) => { const el = document.createElement('div'); el.className = 'u'; el.style.animationDelay = `${1.4 + i * 0.25}s`;
     if (u.kind === 'dish') { const ic = iconUrl(D.recipes[u.id]?.base?.bowl || 'soup-bowl'); el.innerHTML = `${ic ? `<img src="${ic}" alt="">` : '<span class="ic">🍜</span>'}<div><b>${T('unlock.dish')}</b><small>${dishLabel(u.id, true)}</small></div>`; }
     else if (u.kind === 'upgrade') { const up = UPGRADES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${up.icon}</span><div><b>${T('unlock.upgrade', { name: tl(`upgrade.${up.id}.name`, up.name) })}</b><small>${tl(`upgrade.${up.id}.desc`, up.desc)}</small></div>`; }
+    else if (u.kind === 'souvenir') { const m = MINIS[u.id]; const pv = PROVINCES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${m.icon}</span><div><b>${T('unlock.souvenir', { name: tl(`mini.${u.id}.name`, m.name) })}</b><small>${tl(`prov.${pv.id}.name`, pv.name)} · ${tl(`mini.${u.id}.note`, m.note)}</small></div>`; }
     else if (u.kind === 'codex') { el.innerHTML = `<span class="ic">📖</span><div><b>${T('unlock.codex', { name: dishLabel(u.id) })}</b><small>${T('unlock.codex.sub')}</small></div>`; el.onclick = () => openCodex(u.id, { sfx }); }
     else if (u.kind === 'recipe') { el.innerHTML = `<span class="ic">🍳</span><div><b>${T('unlock.recipe', { name: dishLabel(u.id) })}</b><small>${T('unlock.recipe.sub', { n: RECIPE_STARS })}</small></div>`; el.onclick = () => openCodex(u.id, { sfx }); }
     else if (u.kind === 'province') { const pv = PROVINCES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${pv.icon}</span><div><b>${T('unlock.province', { name: tl(`prov.${pv.id}.name`, pv.name) })}</b><small>${tl(`prov.${pv.id}.sub`, pv.sub)} · ${T('unlock.province.trip')}</small></div>`; }
@@ -210,13 +214,19 @@ function countUp(el, to, ms) {
   requestAnimationFrame(step);
 }
 let puzzle = null;
-function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9) {
-  setSource('shop'); ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
-  let dishes = practice.length ? practice : ALL_DISHES; if (kinds[0] === 'assemble') { dishes = dishes.filter(assembleOk); if (!dishes.length) dishes = ALL_DISHES.filter(assembleOk); } const weights = weightsFor(dishes);
+function startPuzzle(kinds = ['order', 'intruder', 'missing'], rounds = 9, prov = null) {
+  // P6b: mini-game của TỈNH dùng công thức chung + món của các quán trong tỉnh; mini ở tab Thêm vẫn dùng bản quán.
+  setSource(prov ? 'game' : 'shop'); ensureAudio(); startMusic(); playMode = 'puzzle'; running = false; botMode = false;
+  let dishes = prov ? [...new Set(prov.worlds.flatMap((w) => worldById(w)?.levels.flatMap((L) => L.dishes) || []))] : (practice.length ? practice : ALL_DISHES);
+  if (kinds[0] === 'assemble') { dishes = dishes.filter(assembleOk); if (!dishes.length) dishes = ALL_DISHES.filter(assembleOk); }
+  if (!dishes.length) dishes = ALL_DISHES;
+  const weights = weightsFor(dishes);
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden');
-  lastPuzzle = { kinds, rounds }; armBackGuard();
+  lastPuzzle = { kinds, rounds, prov: prov?.id || null }; armBackGuard();
   puzzle = new Puzzle({ dishes, weights, rounds, kinds, sfx, onDone: (r) => showResult(r) }); puzzle.start();
 }
+/** Mini-game của một tỉnh (data/regions.js MINIS) — đạt `pass` câu sạch thì được vật kỷ niệm. */
+function startProvinceMini(p) { const m = MINIS[p.id]; if (!m) return; startPuzzle([m.kind], m.rounds, p); }
 let lastPuzzle = { kinds: ['order', 'intruder', 'missing'], rounds: 9 };
 let pov = null;
 function startPov(rounds = 8) {
@@ -281,9 +291,11 @@ function renderMenu() {
     el.className = 'pv' + (p.id === curProv.id ? ' on' : '') + (un ? '' : ' locked') + (p.soon ? ' soon' : '') + (isNew ? ' new' : '');
     const pw = prevProvince(p.id);
     const max = p.worlds.reduce((n, w) => n + (worldById(w)?.maxStars || 0), 0);
-    el.innerHTML = `<div class="ic">${un ? p.icon : '🔒'}</div><b>${tl(`prov.${p.id}.name`, p.name)}</b><small>${p.soon ? T('menu.prov.soon') : un ? `${provinceStars(p.id)}/${max} ★` : T('menu.locked', { n: p.unlockStars })}</small>${un && p.piece && !p.soon ? `<span class="trip" title="${T('menu.prov.replay')}">🛵</span>` : ''}`;
+    const sv = hasSouvenir(p.id) ? MINIS[p.id]?.icon : '';
+    el.innerHTML = `<div class="ic">${un ? p.icon : '🔒'}</div><b>${tl(`prov.${p.id}.name`, p.name)}</b><small>${p.soon ? T('menu.prov.soon') : un ? `${provinceStars(p.id)}/${max} ★` : T('menu.locked', { n: p.unlockStars })}</small>${un && p.piece && !p.soon ? `<span class="trip" title="${T('menu.prov.replay')}">🛵</span>` : ''}${un && !p.soon && MINIS[p.id] ? `<span class="mini" title="${T('menu.prov.mini')}">${sv || '🎪'}</span>` : ''}`;
     el.onclick = (e) => {
       if (!un) { toast(T('menu.lockProv', { n: p.unlockStars, prev: pw ? tl(`prov.${pw.id}.name`, pw.name) : '' }), 1600); return; }
+      if (e.target.closest('.mini')) { startProvinceMini(p); return; }
       if (e.target.closest('.trip') || (p.piece && !tripSeen(p.id))) { markTrip(p.id); playTrip(p.piece, { sfx, onDone: () => { renderMenu(); } }); if (p.soon) return; }
       if (p.soon) { toast(T('menu.prov.soonTip'), 1600); return; }
       const w = worldById(p.worlds.find((id) => worldUnlocked(id) && worldStars(id) < worldById(id).maxStars) || p.worlds[0]); worldIdx = WORLDS.indexOf(w);
@@ -342,6 +354,13 @@ function renderMenu() {
   $('ptsNow').textContent = pointsAvailable(); $('ptsTotal').textContent = progress().points; $('ptsBadge').textContent = DECOR.some((d) => !hasDecor(d.id) && d.cost <= pointsAvailable()) || UPGRADES.some((u) => upgradeCost(u.id) != null && upgradeCost(u.id) <= pointsAvailable()) ? '!' : '';
   // sổ tay
   renderCodex($('codexGrid'), (d) => openCodex(d, { sfx })); const cn = codexCount(); $('cxBadge').textContent = cn ? String(cn) : ''; $('cxSub').textContent = cn ? T('n.dishesOf', { a: cn, b: ALL_DISHES.length }) : T('codex.empty');
+  // P6b — kệ vật kỷ niệm: mỗi tỉnh một món, thắng mini-game của tỉnh thì được
+  const svAll = souvenirs();
+  $('cxSouv').replaceChildren(...PROVINCES.filter((p) => MINIS[p.id]).map((p) => { const m = MINIS[p.id]; const got = !!svAll[p.id]; const el = document.createElement('div');
+    el.className = 'sv' + (got ? '' : ' locked'); el.title = got ? `${tl(`mini.${p.id}.name`, m.name)} — ${tl(`mini.${p.id}.note`, m.note)}` : T('menu.prov.mini');
+    el.innerHTML = `<span class="ic">${got ? m.icon : '·'}</span><small>${got ? tl(`mini.${p.id}.name`, m.name) : tl(`prov.${p.id}.name`, p.name)}</small>`;
+    el.onclick = () => { if (provinceUnlocked(p.id)) startProvinceMini(p); else toast(T('menu.lockProv', { n: p.unlockStars, prev: prevProvince(p.id) ? tl(`prov.${prevProvince(p.id).id}.name`, prevProvince(p.id).name) : '' }), 1600); };
+    return el; }));
   $('shop').replaceChildren(...DECOR.map((d) => { const own = hasDecor(d.id); const el = document.createElement('div'); el.className = 'sh' + (own ? ' owned' : ''); el.innerHTML = `<span class="ic">${d.icon}</span><div><b>${tl(`decor.${d.id}.name`, d.name)}</b><small>${tl(`decor.${d.id}.desc`, d.desc)}</small>${own ? `<small style="color:#2f8a3a;font-weight:700">${T('shop.owned')} ✓</small>` : `<button ${d.cost > pointsAvailable() ? 'disabled' : ''}>💰 ${d.cost}k</button>`}</div>`; if (!own) el.querySelector('button').onclick = () => { if (buyDecor(d.id)) { sfx.done(); toast(T('shop.bought', { name: tl(`decor.${d.id}.name`, d.name) })); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
 }
 /** Nhãn ngắn cho phần công thức được rút gọn ở level tập. */
