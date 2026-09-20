@@ -6,6 +6,7 @@
 // Tên món / nguyên liệu KHÔNG dịch (label() giữ tiếng Việt) — chỉ thêm cách đọc + giải nghĩa qua items.json (P1.2).
 import vi from './data/i18n/vi.json';
 import en from './data/i18n/en.json';
+import items from './data/i18n/items.json';
 
 const TABLES = { vi, en };
 export const LANGS = Object.keys(TABLES);
@@ -41,7 +42,7 @@ const fill = (s, vars) => (vars ? s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] != 
 export function t(key, vars) {
   let s = TABLES[cur][key];
   if (s == null) s = TABLES.vi[key];
-  if (s == null) { if (typeof console !== 'undefined') console.warn('[i18n] thiếu key', key); s = String(key).split('.').pop(); }
+  if (s == null) { if (typeof console !== 'undefined') console.warn('[i18n] thiếu key', key); s = String(key).split('.').pop(); }   // vi-src
   return fill(s, vars);
 }
 
@@ -58,3 +59,16 @@ export function applyDom(root = (typeof document !== 'undefined' ? document : nu
   root.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
   root.querySelectorAll('[data-i18n-title]').forEach((el) => { el.title = t(el.dataset.i18nTitle); });
 }
+
+// ---- tên món / nguyên liệu: giữ tiếng Việt, thêm giải nghĩa + cách đọc (P1 §2) ----
+/** Giải nghĩa tiếng Anh của món (`dishes`) hoặc nguyên liệu (`items`); '' nếu không có hoặc đang chơi tiếng Việt. */
+export function gloss(tok) { if (cur === 'vi') return ''; return items.dishes[tok]?.en || items.items[tok]?.en || ''; }
+/** Cách đọc kiểu Anh gần đúng ("fuh tie nahm"); '' nếu không có. */
+export const pron = (tok) => items.dishes[tok]?.pron || items.items[tok]?.pron || '';
+/** Tên Việt + giải nghĩa: "Nạm (brisket)". Tiếng Việt → chỉ tên. */
+export function withGloss(viName, tok) { const g = gloss(tok); return g ? `${viName} (${g})` : viName; }
+/** Tên hành động ở trạm (không phải tên riêng → dịch hẳn). */
+export const actionName = (id, viName) => (cur === 'vi' ? viName : (items.actions[id] || viName));
+/** Nhãn trạng thái từ sim-data.labels (dịch hẳn). */
+export const stateLabel = (id, viName) => (cur === 'vi' ? viName : (items.labels[id] || viName));
+export const ITEM_GLOSS = items;

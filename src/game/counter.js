@@ -1,9 +1,10 @@
 // LÕI "QUẦY POV" — trạng thái thuần, KHÔNG đụng DOM (docs/PLAN-CORE.md §3). pov.js chỉ vẽ + bắt kéo thả rồi gọi các hàm ở đây.
 // Mọi thao tác là "đem VẬT A tới CHỖ B" (kéo hoặc chạm đôi) — đúng như đứng trước quầy prep thật.
 // Công thức lấy từ recipeFor(dish, simplify): KHÔNG bịa bước; mọi `transform` của món đều phải có một chỗ thả tương ứng.
-import { D, recipeFor, soupRecipeFor, label, tokenMatches, actionTime } from './recipes.js';
+import { D, recipeFor, soupRecipeFor, label, labelL as L, actName, soupName, dishLabel, tokenMatches, actionTime } from './recipes.js';
+import { t as T } from '../i18n.js';
 import { POT, SOUP, SHELF_TOPPING, PRICES } from '../config.js';
-import { REGULARS, STRANGER_LINES, lineFor } from '../data/customers.js';
+import { REGULARS, lineFor } from '../data/customers.js';
 import { comboMult } from '../data/pace.js';
 
 const isBroth = (t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t);
@@ -94,7 +95,7 @@ export class Counter {
     const used = new Set(this.tickets.map((t) => t.name));
     const rs = REGULARS.filter((x) => x.dish === dish && !used.has(x.name));
     if (rs.length && this.rnd() < 0.5) { const g = rs[Math.floor(this.rnd() * rs.length)]; return { name: g.name, regular: g.id }; }
-    const ns = ['Khách', 'Cô áo xanh', 'Anh áo đỏ', 'Bác nón lá', 'Bé học sinh', 'Chị công sở'];
+    const ns = [1, 2, 3, 4, 5, 6].map((k) => T(`cust.walkin.${k}`));
     const free = ns.filter((n) => !used.has(n));
     const pool = free.length ? free : ns;
     return { name: pool[Math.floor(this.rnd() * pool.length)], regular: null };
@@ -166,7 +167,7 @@ export class Counter {
     const t0 = this.tickets[0]; if (t0) t0.taps++;
     const tok = this.token(src);
     if (zone.kind === 'trash') return this.toTrash(src, tok);                  // vứt được cả đồ hư / đang dở
-    if (tok === null) return this.err('Chưa xong — chờ chút');
+    if (tok === null) return this.err(T('pov.wait'));
     switch (zone.kind) {
       case 'pot': return this.toPot(src, tok);
       case 'sink': return this.toSink(src, tok);
@@ -178,131 +179,130 @@ export class Counter {
         ? this.toStovetop(src, tok) : this.toBurner(src, tok, zone.i);
       case 'slot': return this.toSlot(src, tok, zone.i);
       case 'ticket': return this.toTicket(src, zone.id);
-      default: return this.err('Chỗ này không thả được');
+      default: return this.err(T('err.noDrop'));
     }
   }
   toPot(src, tok) {
     // rọ đã xả lạnh → trụng nóng lại
-    if (src.kind === 'basket') { const b = this.baskets[src.i]; const t = this.transformAt('pot', b.output); if (!t) return this.err(b.state === 'hot' ? 'Sợi đang nóng — qua bồn xả lạnh hoặc trút vô tô' : 'Rọ này xong rồi'); b.output = t.output; b.left = t.time; b.total = t.time; b.hold = 0; b.state = 'reblanching'; this.ev.onSfx?.('splash'); return this.ok(`${label(t.input)}: ${D.actions[t.action]?.name || 'trụng lại'}`); }
+    if (src.kind === 'basket') { const b = this.baskets[src.i]; const t = this.transformAt('pot', b.output); if (!t) return this.err(b.state === 'hot' ? T('err.basketHot') : T('err.basketDone')); b.output = t.output; b.left = t.time; b.total = t.time; b.hold = 0; b.state = 'reblanching'; this.ev.onSfx?.('splash'); return this.ok(`${L(t.input)}: ${actName(t.action, 'trụng lại')}`); }   // vi-src
     const t = this.transformAt('pot', tok);
-    if (!t) { if (this.recs[Object.keys(this.recs)[0]]?.shelfSubs?.[tok]) return this.err('Hôm nay tô đã nóng sẵn — để thẳng xuống chỗ tô'); return this.err(`${label(tok)} không trụng ở nồi`); }
+    if (!t) { if (this.recs[Object.keys(this.recs)[0]]?.shelfSubs?.[tok]) return this.err(T('err.bowlPreHot')); return this.err(T('err.notAt', { item: L(tok), where: T('st.pot') })); }
     if (t.action === 'blanch-bowl') {
-      if (this.hot.length >= POT.bowlSlots) return this.err(`Nồi đã đầy tô (${POT.bowlSlots})`);
-      this.hot.push({ input: tok, output: t.output, left: t.time, total: t.time }); this.ev.onSfx?.('splash'); return this.ok(`${label(tok)}: đang trụng`);
+      if (this.hot.length >= POT.bowlSlots) return this.err(T('err.potFullBowls', { n: POT.bowlSlots }));
+      this.hot.push({ input: tok, output: t.output, left: t.time, total: t.time }); this.ev.onSfx?.('splash'); return this.ok(`${L(tok)}: ${T('st.blanching')}`);
     }
-    const i = this.baskets.findIndex((b) => !b); if (i < 0) return this.err('Hết rọ trống trong nồi');
+    const i = this.baskets.findIndex((b) => !b); if (i < 0) return this.err(T('err.noBasket'));
     this.baskets[i] = { input: tok, output: t.output, left: t.time, total: t.time, hold: 0, state: 'blanching', action: t.action };
-    this.ev.onSfx?.('splash'); return this.ok(`${label(tok)}: ${D.actions[t.action]?.name || 'trụng'}`);
+    this.ev.onSfx?.('splash'); return this.ok(`${L(tok)}: ${actName(t.action, 'trụng')}`);   // vi-src
   }
   toSink(src, tok) {
-    if (src.kind === 'basket') { const b = this.baskets[src.i]; const t = this.transformAt('sink', b.output); if (!t) return this.err(b.state === 'rinsed' ? 'Đã xả rồi — đem trụng nóng lại' : 'Sợi này không xả lạnh'); b.output = t.output; b.left = t.time; b.total = t.time; b.state = 'rinsing'; this.ev.onSfx?.('splash'); return this.ok('Đang xả lạnh'); }
-    const t = this.transformAt('sink', tok); if (!t) return this.err(`${label(tok)} không dùng ở bồn`);
-    if (this.sinkJob) return this.err('Bồn đang bận');
-    this.sinkJob = { input: tok, output: t.output, left: t.time, total: t.time, name: D.actions[t.action]?.name || 'Nhúng' };
-    this.take(src); this.ev.onSfx?.('splash'); return this.ok(`${label(tok)}: ${this.sinkJob.name}`);
+    if (src.kind === 'basket') { const b = this.baskets[src.i]; const t = this.transformAt('sink', b.output); if (!t) return this.err(b.state === 'rinsed' ? T('err.rinsedAlready') : T('err.noRinse')); b.output = t.output; b.left = t.time; b.total = t.time; b.state = 'rinsing'; this.ev.onSfx?.('splash'); return this.ok(T('st.rinsing')); }
+    const t = this.transformAt('sink', tok); if (!t) return this.err(T('err.notAt', { item: L(tok), where: T('st.sink') }));
+    if (this.sinkJob) return this.err(T('err.sinkBusy'));
+    this.sinkJob = { input: tok, output: t.output, left: t.time, total: t.time, name: actName(t.action, 'Nhúng') };   // vi-src
+    this.take(src); this.ev.onSfx?.('splash'); return this.ok(`${L(tok)}: ${this.sinkJob.name}`);
   }
   toJobStation(kind, src, tok) {
-    const where = { fryer: 'chảo chiên', microwave: 'lò vi sóng', stovetop: 'mặt bếp' }[kind];
-    const busyMsg = { fryer: 'Chảo đang chiên', microwave: 'Lò đang chạy', stovetop: 'Mặt bếp đang bận' }[kind];
-    const t = this.transformAt(kind, tok); if (!t) return this.err(`${label(tok)} không làm ở ${where}`);
-    if (this[kind]) return this.err(busyMsg);
-    this[kind] = { input: tok, output: t.output, left: t.time, total: t.time, name: D.actions[t.action]?.name || t.action };
-    this.take(src); this.ev.onSfx?.(kind === 'microwave' ? 'drop' : 'sizzle'); return this.ok(`${label(tok)}: ${this[kind].name}`);
+    const where = T(`st.${kind}`);
+    const tf = this.transformAt(kind, tok); if (!tf) return this.err(T('err.notAt', { item: L(tok), where }));
+    if (this[kind]) return this.err(T('err.stationBusy', { where }));
+    this[kind] = { input: tok, output: tf.output, left: tf.time, total: tf.time, name: actName(tf.action) };
+    this.take(src); this.ev.onSfx?.(kind === 'microwave' ? 'drop' : 'sizzle'); return this.ok(`${L(tok)}: ${this[kind].name}`);
   }
   /** Mặt bếp: một nồi/chảo nhỏ, gom đủ đồ rồi mới chạy (xào lăn cần thịt tái + rau cải). */
   toStovetop(src, tok) {
     let s = this.stovetop;
-    if (s && s.left !== null) return this.err(s.left > 0 ? `${s.name}: còn ${s.left.toFixed(0)}s` : `${s.name} xong rồi — lấy ra`);
+    if (s && s.left !== null) return this.err(s.left > 0 ? T('err.secsLeft', { name: s.name, s: s.left.toFixed(0) }) : T('err.doneTakeOut', { name: s.name }));
     if (!s) {
-      const t = this.transformsAt('stovetop').find((x) => x.inputs.some((req) => tokenMatches(req, tok)));
-      if (!t) return this.err(`${label(tok)} không làm ở mặt bếp`);
-      s = this.stovetop = { tf: t, have: t.inputs.map(() => null), left: null, total: t.time, input: tok, output: t.output, name: D.actions[t.action]?.name || t.action };
+      const tf = this.transformsAt('stovetop').find((x) => x.inputs.some((req) => tokenMatches(req, tok)));
+      if (!tf) return this.err(T('err.notAt', { item: L(tok), where: T('st.stovetop') }));
+      s = this.stovetop = { tf, have: tf.inputs.map(() => null), left: null, total: tf.time, input: tok, output: tf.output, name: actName(tf.action) };
     }
     const k = s.tf.inputs.findIndex((req, i) => !s.have[i] && tokenMatches(req, tok));
-    if (k < 0) return this.err(`Mặt bếp đang làm ${s.name} — chưa cần ${label(tok)}`);
+    if (k < 0) return this.err(T('err.stoveDoing', { name: s.name, item: L(tok) }));
     s.have[k] = tok; this.take(src); this.ev.onSfx?.('place');
     if (s.have.every(Boolean)) { s.left = s.tf.time; this.ev.onSfx?.('sizzle'); return this.ok(`${s.name}…`); }
-    return this.ok(`${s.name}: còn thiếu ${s.tf.inputs.filter((_, i) => !s.have[i]).map(label).join(', ')}`);
+    return this.ok(T('st.missing', { name: s.name, list: s.tf.inputs.filter((_, i) => !s.have[i]).map(L).join(', ') }));
   }
   toPrep(src, tok, idx) {
     const tfs = this.transformsAt('prep');
     // thớt đang thiếu đúng thứ này?
     let bi = this.boards.findIndex((b) => b && b.left === null && b.tf.inputs.some((req, k) => !b.have[k] && tokenMatches(req, tok)));
     if (bi < 0) {
-      const t = tfs.find((x) => x.inputs.some((req) => tokenMatches(req, tok))); if (!t) return this.err(`${label(tok)} không làm ở thớt`);
+      const tf = tfs.find((x) => x.inputs.some((req) => tokenMatches(req, tok))); if (!tf) return this.err(T('err.notAt', { item: L(tok), where: T('st.prep') }));
       bi = idx != null && !this.boards[idx] ? idx : this.boards.findIndex((b) => !b);
-      if (bi < 0) return this.err('Thớt đầy — lấy đồ đã làm xong ra trước');
-      this.boards[bi] = { tf: t, have: t.inputs.map(() => null), left: null, total: t.time, output: t.output, name: D.actions[t.action]?.name || t.action };
+      if (bi < 0) return this.err(T('err.boardsFull'));
+      this.boards[bi] = { tf, have: tf.inputs.map(() => null), left: null, total: tf.time, output: tf.output, name: actName(tf.action) };
     }
     const b = this.boards[bi]; const k = b.tf.inputs.findIndex((req, i) => !b.have[i] && tokenMatches(req, tok));
     b.have[k] = tok; this.take(src); this.ev.onSfx?.('place');
     if (b.have.every(Boolean)) { b.left = b.tf.time; this.ev.onSfx?.('drop'); return this.ok(`${b.name}…`); }
-    const missing = b.tf.inputs.filter((_, i) => !b.have[i]).map(label);
-    return this.ok(`${b.name}: còn thiếu ${missing.join(', ')}`);
+    const missing = b.tf.inputs.filter((_, i) => !b.have[i]).map(L);
+    return this.ok(T('st.missing', { name: b.name, list: missing.join(', ') }));
   }
   toBurner(src, tok, idx) {
-    if (this.sim?.soupReady) return this.err('Hôm nay nước đã nấu sẵn — lấy ở kệ nước');
+    if (this.sim?.soupReady) return this.err(T('err.soupReady'));
     let i = idx != null && (!this.burner.pots[idx] || this.burner.pots[idx].left === null) ? idx : this.burner.pots.findIndex((p) => p && p.left === null);
     if (i < 0 || i == null) i = this.burner.pots.findIndex((p) => !p);
-    if (i < 0) return this.err('Hết lò trống');
+    if (i < 0) return this.err(T('err.noBurner'));
     let p = this.burner.pots[i];
-    if (p && p.left !== null) return this.err(p.left > 0 ? `${p.name}: còn ${p.left.toFixed(0)}s` : `${p.name} xong rồi — múc ra`);
-    if (!p) p = this.burner.pots[i] = { items: [], left: null, total: null, name: 'Nồi nước' };
+    if (p && p.left !== null) return this.err(p.left > 0 ? T('err.secsLeft', { name: soupName(p), s: p.left.toFixed(0) }) : T('err.doneLadle', { name: soupName(p) }));
+    if (!p) p = this.burner.pots[i] = { items: [], left: null, total: null, name: T('st.soupPot') };
     const seq = [...p.items, tok];
     const pre = Object.values(this.soups).filter((r) => seq.every((it, k) => r.items[k] === it));
     if (!pre.length) {
       const want = [...new Set(Object.values(this.soups).filter((r) => p.items.every((it, k) => r.items[k] === it)).map((r) => r.items[p.items.length]).filter(Boolean))];
       this.burner.pots[i] = p.items.length ? p : null;
-      return this.err(want.length ? `Chưa tới lượt "${label(tok)}" — cho ${want.map(label).join(' / ')} vô trước` : `${label(tok)} không nấu nước được`);
+      return this.err(want.length ? T('err.soupOrder', { item: L(tok), list: want.map(L).join(' / ') }) : T('err.notSoup', { item: L(tok) }));
     }
     p.items = seq; this.take(src); this.ev.onSfx?.('drop');
     const full = pre.find((r) => r.items.length === seq.length);
-    if (full) { p.name = full.name; p.output = full.output; p.left = actionTime(full.heatAction); p.total = p.left; this.ev.onSfx?.('sizzle'); return this.ok(`${full.name}: đang đun (${full.items.map(label).join(' → ')})`); }
-    return this.ok(`Nồi: ${seq.map(label).join(' → ')} — còn nữa`);
+    if (full) { p.name = full.name; p.output = full.output; p.left = actionTime(full.heatAction); p.total = p.left; this.ev.onSfx?.('sizzle'); return this.ok(T('st.soupHeating', { name: soupName(full), list: full.items.map(L).join(' → ') })); }
+    return this.ok(T('st.soupMore', { list: seq.map(L).join(' → ') }));
   }
   toSlot(src, tok, i) {
     const b = this.slots[i];
     // tô nóng / mẹt / dĩa: mở một tô mới ở chỗ trống
     if (!b) {
       const first = this.fits([tok]);
-      if (!first.length) return this.err(`Không phiếu nào bắt đầu bằng ${label(tok)}`);
-      this.take(src); this.slots[i] = { placed: [tok], mistakes: 0, bornAt: this.time }; this.ev.onSfx?.('clink'); return this.ok(`${label(tok)} ✓`);
+      if (!first.length) return this.err(T('err.noTicketStarts', { item: L(tok) }));
+      this.take(src); this.slots[i] = { placed: [tok], mistakes: 0, bornAt: this.time }; this.ev.onSfx?.('clink'); return this.ok(`${L(tok)} ✓`);
     }
     // rọ sợi: kiểm tra đã đúng trạng thái chưa (nóng→lạnh→nóng vs trụng một lần)
     if (src.kind === 'basket') {
       const bk = this.baskets[src.i];
-      if (bk.spoiled) return this.err('Sợi đã hư — đem vứt', i);
+      if (bk.spoiled) return this.err(T('err.spoiled'), i);
       const cands = this.fits(b.placed);
       const wantsThis = cands.some((t) => t.steps[b.placed.length] === bk.output);
       if (!wantsThis) {
         const more = this.transformAt('pot', bk.output) || this.transformAt('sink', bk.output);
-        if (more) return this.err(more.station === 'sink' ? `${label(bk.input)} phải xả lạnh rồi trụng nóng lại trước khi vô tô` : `${label(bk.input)} còn phải trụng lại`, i);
+        if (more) return this.err(more.station === 'sink' ? T('err.needRinseReblanch', { item: L(bk.input) }) : T('err.needReblanch', { item: L(bk.input) }), i);
       }
     }
     const next = [...b.placed, tok]; const ok = this.fits(next);
     if (!ok.length) {
       const cands = this.fits(b.placed); const want = [...new Set(cands.map((t) => t.steps[b.placed.length]).filter(Boolean))];
-      return this.err(want.length ? `Chưa tới lượt "${label(tok)}" — kế tiếp: ${want.map(label).join(' / ')}` : 'Tô này đã đủ — đem lên phiếu để giao', i);
+      return this.err(want.length ? T('pov.notYet', { item: L(tok), next: want.map(L).join(' / ') }) : T('err.bowlComplete'), i);
     }
     this.take(src); b.placed = next; this.ev.onSfx?.('place');
-    return this.ok(`${label(tok)} ✓`);
+    return this.ok(`${L(tok)} ✓`);
   }
   toTicket(src, id) {
-    if (src.kind !== 'madebowl') return this.err('Chỉ đem TÔ ĐÃ XONG lên phiếu');
-    const b = this.slots[src.i]; if (!b) return this.err('Chỗ này chưa có tô');
-    const t = this.tickets.find((x) => x.id === id); if (!t) return this.err('Phiếu không còn');
-    const match = t.steps.length === b.placed.length && t.steps.every((s, k) => s === b.placed[k]);
+    if (src.kind !== 'madebowl') return this.err(T('err.onlyDoneBowl'));
+    const b = this.slots[src.i]; if (!b) return this.err(T('err.noBowlHere'));
+    const tk = this.tickets.find((x) => x.id === id); if (!tk) return this.err(T('err.ticketGone'));
+    const match = tk.steps.length === b.placed.length && tk.steps.every((s, k) => s === b.placed[k]);
     if (!match) {
-      const other = this.tickets.find((x) => x !== t && x.steps.length === b.placed.length && x.steps.every((s, k) => s === b.placed[k]));
+      const other = this.tickets.find((x) => x !== tk && x.steps.length === b.placed.length && x.steps.every((s, k) => s === b.placed[k]));
       // đưa nhầm phiếu là lỗi CỦA TÔ ĐÓ → trừ chất lượng đúng tô, không đổ cho phiếu khác
-      return this.err(other ? `Tô này là ${D.recipes[other.dish].name} của ${other.name}, không phải ${t.name}` : 'Tô chưa xong — còn thiếu bước', src.i);
+      return this.err(other ? T('err.wrongTicket', { dish: dishLabel(other.dish), who: other.name, name: tk.name }) : T('err.bowlIncomplete'), src.i);
     }
-    t.mistakes += b.mistakes || 0; this.slots[src.i] = null; return this.serve(t, b);
+    tk.mistakes += b.mistakes || 0; this.slots[src.i] = null; return this.serve(tk, b);
   }
   toTrash(src, tok) {
-    if (src.kind === 'item') return this.err('Đồ trên kệ khỏi vứt');
-    if (src.kind === 'madebowl') { this.slots[src.i] = null; this.waste('đổ tô đang ráp'); this.ev.onSfx?.('trash'); return this.ok('Đã đổ tô đi'); }
-    this.take(src); this.waste(`vứt ${tok ? label(tok) : 'đồ'}`); this.ev.onSfx?.('trash'); return this.ok(`Đã vứt ${tok ? label(tok) : 'đồ'}`);
+    if (src.kind === 'item') return this.err(T('err.noTrashShelf'));
+    if (src.kind === 'madebowl') { this.slots[src.i] = null; this.waste(T('st.wasteBowl')); this.ev.onSfx?.('trash'); return this.ok(T('st.bowlDumped')); }
+    this.take(src); this.waste(T('st.wasteItem', { item: tok ? L(tok) : T('st.thing') })); this.ev.onSfx?.('trash'); return this.ok(T('st.trashed', { item: tok ? L(tok) : T('st.thing') }));
   }
 
   // ---------- giao / hết giờ ----------
@@ -323,7 +323,7 @@ export class Counter {
     if (t.regular) this.regulars[t.regular] = { id: t.regular, name: t.name, served: true };
     this.tickets.splice(this.tickets.indexOf(t), 1); this.done++; this.ev.onSfx?.('serve');
     if (this.done >= this.rounds && this.clearedAt == null) this.clearedAt = +this.time.toFixed(1);
-    const say = t.mistakes ? (t.regular ? lineFor({ regular: t.regular }, 'wrong') : 'Ừ… cũng được.') : (t.regular ? lineFor({ regular: t.regular }, 'good') : STRANGER_LINES.good[Math.floor(this.rnd() * STRANGER_LINES.good.length)]);
+    const say = t.mistakes ? (t.regular ? lineFor({ regular: t.regular }, 'wrong') : T('cust.meh')) : (t.regular ? lineFor({ regular: t.regular }, 'good') : lineFor({}, 'good'));
     this.ev.onServe?.(t, { sec, quality: q, say, gain, mult });
     this.checkEnd(); return { ok: true, msg: `${t.name}: “${say}”`, served: t };
   }
@@ -358,7 +358,7 @@ export class Counter {
       if (b.left === 0 && b.state !== 'rinsed') { b.state = b.state === 'blanching' ? 'hot' : b.state === 'reblanching' ? 'hot2' : b.state; }
       if (b.left === 0 && b.state === 'rinsing') b.state = 'rinsed';
       // sợi chín để lâu trong nồi thì hư (như bếp thật); tô thì để bao lâu cũng được
-      if (b.left === 0 && /noodle/.test(b.output) && !this.sim?.noSpoil && !b.spoiled) { b.hold += dt; if (b.hold >= POT.noodleSpoilAfter) { b.spoiled = true; b.output = 'noodle-spoiled'; this.waste('sợi để lâu bị hư'); this.ev.onSpoil?.(b); } }
+      if (b.left === 0 && /noodle/.test(b.output) && !this.sim?.noSpoil && !b.spoiled) { b.hold += dt; if (b.hold >= POT.noodleSpoilAfter) { b.spoiled = true; b.output = 'noodle-spoiled'; this.waste(T('st.wasteSpoil')); this.ev.onSpoil?.(b); } }
     }
     for (const h of this.hot) tickJob(h);
     for (const b of this.boards) tickJob(b);

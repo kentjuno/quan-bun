@@ -730,18 +730,18 @@
 
     <div id="hud" class="hidden">
       <div class="top">
-        <button id="btnBack" class="pill backbtn" title="Về menu">‹</button>
-        <div class="pill"><small>Tiền</small><span id="money">0</span>k</div>
-        <div class="pill"><small id="clockLbl">Còn</small><span id="clock">2:30</span></div>
-        <div class="pill"><small>Khách</small><span id="served">0</span> · bỏ đi <span id="left">0</span></div>
+        <button id="btnBack" class="pill backbtn" data-i18n-title="menu.back">‹</button>
+        <div class="pill"><small data-i18n="hud.money3d">Tiền</small><span id="money">0</span>k</div>
+        <div class="pill"><small id="clockLbl" data-i18n="hud.timeLeft">Còn</small><span id="clock">2:30</span></div>
+        <div class="pill"><small data-i18n="hud.customers">Khách</small><span id="served">0</span> · <span data-i18n="hud.leftShort">bỏ đi</span> <span id="left">0</span></div>
       </div>
       <div id="toast"></div>
-      <div id="prep" class="hidden"><div class="big" id="prepNum">10</div><div>Chuẩn bị — trụng tô, trụng sợi sẵn trước khi mở cửa</div></div>
-      <button id="btnTakeover" class="takeover hidden">Tự chơi ▶</button>
+      <div id="prep" class="hidden"><div class="big" id="prepNum">10</div><div data-i18n="m3d.prep">Chuẩn bị — trụng tô, trụng sợi sẵn trước khi mở cửa</div></div>
+      <button id="btnTakeover" class="takeover hidden" data-i18n="m3d.takeoverBtn">Tự chơi ▶</button>
       <button id="btnMute" class="mute">🔊</button>
       <div id="hands"><div class="slot" data-i="0"></div><div class="slot" data-i="1"></div></div>
       <div id="banner"></div>
-      <div id="hint">Kệ → lấy · nồi/bồn → làm · quầy ráp → bỏ đúng thứ tự · quầy giao</div>
+      <div id="hint" data-i18n="m3d.hint">Kệ → lấy · nồi/bồn → làm · quầy ráp → bỏ đúng thứ tự · quầy giao</div>
     </div>
 
     <div id="menu" class="overlay">
@@ -753,47 +753,47 @@
           <div class="worlds" id="worldRow"></div>
           <div class="lvgrid" id="lvGrid"></div>
           <div class="lvcard daycard" id="lvCard"></div>
-          <button id="btnStart" class="hidden">Mở quán</button>
+          <button id="btnStart" class="hidden"></button>
           <button id="btnBot" class="ghost small" data-i18n="menu.bot">Xem bot làm mẫu</button>
         </section>
         <section id="tab-shop" class="tab main hidden">
           <div class="shop upg" id="upgrades"></div>
           <div class="sub" style="font-size:12px;margin:10px 0 4px;font-weight:700" data-i18n="menu.decor.head">Trang trí — mỗi món khách kiên nhẫn thêm 6 %</div>
           <div class="shop" id="shop"></div>
-          <div class="sub" style="font-size:11px;margin:8px 0 0">Tiền quán = tiền + tip mỗi ngày (+60 mỗi sao mới) · đã kiếm <span id="ptsTotal">0</span>k</div>
+          <div class="sub" style="font-size:11px;margin:8px 0 0"><span data-i18n="menu.money.note">Tiền quán = tiền + tip mỗi ngày (+60 mỗi sao mới) · đã kiếm</span> <span id="ptsTotal">0</span>k</div>
         </section>
         <section id="tab-more" class="tab main hidden">
           <div class="tabs sub"><button data-sub="survival" class="on" data-i18n="more.survival">🔥 Survival</button><button data-sub="practice" data-i18n="more.practice">🎯 Luyện</button><button data-sub="puzzle" data-i18n="more.mini">🧩 Mini</button></div>
           <section id="tab-survival" class="tab sub">
-            <div class="lvcard solo"><b>Đủ menu · khách tới mãi</b><small>Càng lâu khách càng dày · 3 khách bỏ đi là hết · tiền ×1.5</small><small id="survRecord"></small></div>
-            <button id="btnSurvival">Bắt đầu Survival</button>
+            <div class="lvcard solo"><b data-i18n="surv.title">Đủ menu · khách tới mãi</b><small data-i18n="surv.desc">Càng lâu khách càng dày · 3 khách bỏ đi là hết · tiền ×1.5</small><small id="survRecord"></small></div>
+            <button id="btnSurvival" data-i18n="surv.start">Bắt đầu Survival</button>
           </section>
           <section id="tab-practice" class="tab sub hidden">
-            <div class="pickbar"><span id="pickCount"></span><button id="pickAll" class="ghost small">Hết</button><button id="pickWeak" class="ghost small">Chưa thuộc</button><button id="pickBun" class="ghost small">Chỉ món bún</button><button id="pickNone" class="ghost small">Bỏ</button></div>
+            <div class="pickbar"><span id="pickCount"></span><button id="pickAll" class="ghost small" data-i18n="pick.all">Hết</button><button id="pickWeak" class="ghost small" data-i18n="pick.weak">Chưa thuộc</button><button id="pickBun" class="ghost small" data-i18n="pick.bun">Chỉ món bún</button><button id="pickNone" class="ghost small" data-i18n="pick.none">Bỏ</button></div>
             <div class="dishpick" id="dishPick"></div>
-            <div class="row"><button id="btnDrill" class="secondary">Luyện 8 đơn</button><button id="btnRush" class="secondary">Rush 3 đơn</button></div>
-            <div class="lvcard solo" style="grid-column:1/-1;margin-top:10px"><b>🏃 Bếp thật (3D)</b><small>Bản cũ: đi lại trong bếp như Overcooked. Giữ lại để tập <b>đường đi</b> và thứ tự trạm cho giống lúc đứng bếp thật. Level chính giờ chơi ở quầy POV.</small><button id="btnKitchen3d" class="secondary">Chơi level này ở bếp 3D</button></div>
+            <div class="row"><button id="btnDrill" class="secondary" data-i18n="more.drill8">Luyện 8 đơn</button><button id="btnRush" class="secondary" data-i18n="more.rush">Rush 3 đơn</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;margin-top:10px"><b data-i18n="k3d.title">🏃 Bếp thật (3D)</b><small data-i18n-html="k3d.desc">Bản cũ: đi lại trong bếp như Overcooked. Giữ lại để tập <b>đường đi</b> và thứ tự trạm cho giống lúc đứng bếp thật. Level chính giờ chơi ở quầy POV.</small><button id="btnKitchen3d" class="secondary" data-i18n="k3d.btn">Chơi level này ở bếp 3D</button></div>
           </section>
           <section id="tab-puzzle" class="tab sub hidden">
-            <div class="mini"><div class="lvcard solo"><b>🧩 Đố nhanh</b><small>9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary">Chơi</button></div>
-            <div class="lvcard solo"><b>🔪 Chém</b><small>6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary">Chơi</button></div>
-            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🧑‍🍳 Quầy POV — kéo thả <small style="display:inline;color:var(--red)">· lõi mới</small></b><small>Đứng trước quầy prep như ở tiệm, <b>đủ 18 món</b>: nồi trụng · bồn xả · thớt · chảo chiên · lò vi sóng · lò đun nước. Kéo hoặc <b>chạm đôi</b> để vật tự bay tới đích. Tô xong kéo lên đúng phiếu.</small><button id="btnPov">Chơi</button></div>
-            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b>🥣 Ráp tô <small style="display:inline;color:var(--red)">· bản thử lõi mới</small></b><small>Phiếu khách treo dần, ráp ngay trên kệ không cần đi lại: tô → sợi (nóng · xả lạnh · nóng lại) → topping đúng thứ tự → nước. 10 phiếu, chấm từng bước.</small><button id="btnAssemble">Chơi</button></div>
-            <div class="lvcard solo" style="grid-column:1/-1"><b>⚡ Phản xạ</b><small>Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục.</small><button id="btnReflex">Chơi</button></div></div>
-            <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — chọn món ở Luyện. Kết quả ghi vào Tiến độ nhớ món, +10k/câu sạch.</div>
+            <div class="mini"><div class="lvcard solo"><b data-i18n="mini.quiz.title">🧩 Đố nhanh</b><small data-i18n="mini.quiz.desc">9 câu: xếp thứ tự ráp · bắt kẻ lạ · bước bị giấu</small><button id="btnPuzzle" class="secondary" data-i18n="mini.play">Chơi</button></div>
+            <div class="lvcard solo"><b data-i18n="mini.ninja.title">🔪 Chém</b><small data-i18n="mini.ninja.desc">6 món: nguyên liệu tung lên, vuốt chém đúng thành phần, chừa đồ lạ</small><button id="btnNinja" class="secondary" data-i18n="mini.play">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b data-i18n-html="mini.pov.title">🧑‍🍳 Quầy POV — kéo thả <small style="display:inline;color:var(--red)">· lõi mới</small></b><small data-i18n-html="mini.pov.desc">Đứng trước quầy prep như ở tiệm, <b>đủ 18 món</b>: nồi trụng · bồn xả · thớt · chảo chiên · lò vi sóng · lò đun nước. Kéo hoặc <b>chạm đôi</b> để vật tự bay tới đích. Tô xong kéo lên đúng phiếu.</small><button id="btnPov" data-i18n="mini.play">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1;border-color:var(--red)"><b data-i18n-html="mini.assemble.title">🥣 Ráp tô <small style="display:inline;color:var(--red)">· bản thử lõi mới</small></b><small data-i18n="mini.assemble.desc">Phiếu khách treo dần, ráp ngay trên kệ không cần đi lại: tô → sợi (nóng · xả lạnh · nóng lại) → topping đúng thứ tự → nước. 10 phiếu, chấm từng bước.</small><button id="btnAssemble" data-i18n="mini.play">Chơi</button></div>
+            <div class="lvcard solo" style="grid-column:1/-1"><b data-i18n="mini.reflex.title">⚡ Phản xạ</b><small data-i18n="mini.reflex.desc">Lưới topping CỐ ĐỊNH như kệ thật · tên món hiện ra → bấm đủ topping trước khi hết giờ · 10 món liên tục.</small><button id="btnReflex" data-i18n="mini.play">Chơi</button></div></div>
+            <div class="sub" style="font-size:12px;margin:8px 0 0"><span id="pzScope"></span> — <span data-i18n="mini.scopeNote">chọn món ở Luyện. Kết quả ghi vào Tiến độ nhớ món, +10k/câu sạch.</span></div>
           </section>
         </section>
-        <details class="more"><summary>Cách chơi · tuỳ chọn</summary>
-          <div class="how"><b>Chạm là đi.</b> Tủ topping → lấy đồ · nồi trụng → thả sợi (3 rọ, để lâu hư) · sợi <b>nóng → xả lạnh → nóng</b> · quầy ráp → bỏ đúng thứ tự · múc nước · bưng ra bàn khách. <b>≥1★ mở ngày kế</b>; tiền + tip → mua nâng cấp bếp, trang trí.</div>
-          <div class="opt"><label><input type="checkbox" id="optCard" /> Kệ kiểu card</label><label><input type="checkbox" id="optHideName" /> Ẩn tên trên card</label></div>
-          <button id="btnResetMastery" class="ghost small">Xoá toàn bộ tiến độ</button>
+        <details class="more"><summary data-i18n="how.title">Cách chơi · tuỳ chọn</summary>
+          <div class="how" data-i18n-html="how.body"><b>Chạm là đi.</b> Tủ topping → lấy đồ · nồi trụng → thả sợi (3 rọ, để lâu hư) · sợi <b>nóng → xả lạnh → nóng</b> · quầy ráp → bỏ đúng thứ tự · múc nước · bưng ra bàn khách. <b>≥1★ mở ngày kế</b>; tiền + tip → mua nâng cấp bếp, trang trí.</div>
+          <div class="opt"><label><input type="checkbox" id="optCard" /> <span data-i18n="opt.card">Kệ kiểu card</span></label><label><input type="checkbox" id="optHideName" /> <span data-i18n="opt.hideName">Ẩn tên trên card</span></label></div>
+          <button id="btnResetMastery" class="ghost small" data-i18n="menu.reset">Xoá toàn bộ tiến độ</button>
         </details>
       </div>
     </div>
 
     <div id="puzzle" class="overlay hidden">
       <div class="panel pz-panel">
-        <div class="pz-head"><span id="pzProgress" class="pill-dark">1/9</span><b id="pzDish">Món</b><button id="pzQuit" class="ghost small">Thoát</button></div>
+        <div class="pz-head"><span id="pzProgress" class="pill-dark">1/9</span><b id="pzDish"></b><button id="pzQuit" class="ghost small" data-i18n="hud.quit">Thoát</button></div>
         <div class="pz-sticky" id="pzSticky">
           <div class="pz-tickets hidden" id="pzTickets"></div>
           <div class="pz-title" id="pzTitle"></div>
@@ -807,20 +807,20 @@
 
     <div id="pov" class="hidden"></div>
 
-    <div id="card"><div class="head"><span id="cardTitle">Kệ</span><div class="close" id="cardClose">×</div></div><div class="grid" id="cardGrid"></div><div class="foot"><span class="n" id="cardNote"></span><button id="cardTake">Lấy</button></div></div>
+    <div id="card"><div class="head"><span id="cardTitle"></span><div class="close" id="cardClose">×</div></div><div class="grid" id="cardGrid"></div><div class="foot"><span class="n" id="cardNote"></span><button id="cardTake"></button></div></div>
 
     <div id="result" class="overlay hidden">
       <div class="panel wide">
-        <h1 style="font-size:26px;margin:0" id="rTitle">Đóng cửa</h1>
+        <h1 style="font-size:26px;margin:0" id="rTitle" data-i18n="shift.close">Đóng cửa</h1>
         <div class="stat" id="rDishes" style="font-size:13px;opacity:.8"></div>
         <div class="stars" id="stars">☆☆☆</div>
         <div class="money"><span id="rMoney">0</span>k</div>
-        <div class="stat">Tip <b id="rTips">0</b>k · Phục vụ <b id="rServed">0</b> · Bỏ đi <b id="rLeft">0</b> · Sai thứ tự <b id="rMistakes">0</b></div>
+        <div class="stat"><span data-i18n="result.tips">Tip</span> <b id="rTips">0</b>k · <span data-i18n="result.served">Phục vụ</span> <b id="rServed">0</b> · <span data-i18n="result.left">Bỏ đi</span> <b id="rLeft">0</b> · <span data-i18n="result.mistakes">Sai thứ tự</span> <b id="rMistakes">0</b></div>
         <div class="recap hidden" id="rRecap"></div>
         <div class="unlock" id="rUnlock"></div>
         <div class="stat" id="rPoints" style="font-size:14px;color:#b07a20"></div>
-        <div style="margin-top:10px"><button id="btnNext">Sang ngày sau →</button><button id="btnRetry" class="secondary">Chơi lại</button><button id="btnMenu" class="secondary">Menu</button></div>
-        <details class="rep"><summary>Báo cáo bếp — để làm nhanh hơn</summary><div id="report"></div></details>
+        <div style="margin-top:10px"><button id="btnNext" data-i18n="result.nextDay">Sang ngày sau →</button><button id="btnRetry" class="secondary" data-i18n="result.replay">Chơi lại</button><button id="btnMenu" class="secondary">Menu</button></div>
+        <details class="rep"><summary data-i18n="rep.title">Báo cáo bếp — để làm nhanh hơn</summary><div id="report"></div></details>
       </div>
     </div>
 

@@ -67,10 +67,12 @@ export const STRANGER_LINES = {
   leave: ['Tính tiền.', 'Cảm ơn nghe.'],
 };
 
-const pick = (arr) => arr && arr.length ? arr[Math.floor(Math.random() * arr.length)] : '';
+import { tl } from '../i18n.js';
+/** Thoại theo ngôn ngữ: tiếng Việt ở đây là nguồn, bản dịch ở i18n/<lang>.json theo key `cust.<id|stranger>.<kind>.<n>` (P1 §3). */
+export function lineAt(regularId, kind, n) { const r = regularId ? REGULARS.find((x) => x.id === regularId) : null; const arr = (r ? r.lines : STRANGER_LINES)[kind] || []; const s = arr[n]; return s == null ? '' : tl(`cust.${r ? r.id : 'stranger'}.${kind}.${n}`, s); }
 /** Một câu thoại cho khách `cu` ở tình huống `kind` (sit/wait/good/wrong/leave). */
-export function lineFor(cu, kind) { const r = cu.regular ? REGULARS.find((x) => x.id === cu.regular) : null; return pick((r ? r.lines : STRANGER_LINES)[kind]); }
+export function lineFor(cu, kind) { const r = cu.regular ? REGULARS.find((x) => x.id === cu.regular) : null; const arr = (r ? r.lines : STRANGER_LINES)[kind]; if (!arr || !arr.length) return ''; return lineAt(r?.id, kind, Math.floor(Math.random() * arr.length)); }
 /** Khách quen có mặt ở ngày `day` với menu `dishes` (món ruột phải có trong menu). */
 export function regularsFor(day, dishes) { return REGULARS.filter((r) => r.unlockDay <= day && dishes.includes(r.dish)); }
 /** Câu nhận xét cuối ngày của một khách quen đã ghé: `served` = có được phục vụ không. */
-export function recapLine(regularId, served) { const r = REGULARS.find((x) => x.id === regularId); if (!r) return ''; return r.lines.recap[served ? 0 : 1] || ''; }
+export function recapLine(regularId, served) { const r = REGULARS.find((x) => x.id === regularId); if (!r) return ''; return lineAt(r.id, 'recap', served ? 0 : 1); }

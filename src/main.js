@@ -7,7 +7,7 @@ import { REGULARS, recapLine } from './data/customers.js';
 import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter } from './game/progress.js';
 import { D, recipeFor } from './game/recipes.js';
 import { botDecide } from './game/bot.js';
-import { label } from './game/recipes.js';
+import { label, labelL, dishLabel } from './game/recipes.js';
 import { iconUrl } from './game/icons.js';
 import { ensureAudio, startMusic, setMuted, isMuted, sfx, setMood, setBoil } from './audio.js';
 import { parFor } from './game/par.js';
@@ -18,7 +18,7 @@ import { Pov, povOk } from './pov.js';
 import { recordResult, masteryOf, isMastered, weightsFor, allMastery, resetMastery } from './game/mastery.js';
 
 const $ = (id) => document.getElementById(id);
-const lib = await loadModels((p, n) => { $('loading').textContent = `Đang dọn bếp… ${Math.round(p * 100)}%`; });
+const lib = await loadModels((p, n) => { $('loading').textContent = T('menu.loading3d', { p: Math.round(p * 100) }); });
 const view = new View($('app'), lib);
 let world = null; let running = false; let toastTimer = null;
 let botMode = new URLSearchParams(location.search).has('bot'); let botTimer = 0;
@@ -30,7 +30,7 @@ function buzz(p) { try { navigator.vibrate?.(p); } catch {} }
 let bannerTimer = null;
 /** Chữ lớn giữa màn hình khi đổi pha (Mở cửa · Giờ cao điểm · Xế chiều · Sắp đóng cửa). */
 function banner(big, small = '', ms = 2200) { const el = $('banner'); el.innerHTML = `<b>${big}</b>${small ? `<small>${small}</small>` : ''}`; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); clearTimeout(bannerTimer); bannerTimer = setTimeout(() => el.classList.remove('show'), ms); }
-const PHASES = [[0.42, 'lunch', 'busy', 'Giờ cao điểm', 'Khách vô dồn — làm song song, trụng sẵn tô'], [0.62, 'lull', 'calm', 'Xế chiều', 'Thở một chút — nấu bù nước lèo, trụng tô sẵn'], [0.92, 'afternoon', 'busy', 'Đợt chiều', 'Đông lần hai — khách quen ghé'], [9, 'closing', 'close', 'Sắp đóng cửa', 'Hết khách mới — giao nốt mấy tô còn lại']];
+const PHASES = [[0.42, 'lunch', 'busy'], [0.62, 'lull', 'calm'], [0.92, 'afternoon', 'busy'], [9, 'closing', 'close']].map(([at, id, mood]) => [at, id, mood, T(`phase.${id}`), T(`phase.${id}.sub`)]);
 let phase = '';
 function syncPhase() {
   if (!world?.shift.world || world.prep > 0) { if (phase) { phase = ''; setMood('calm'); } return; }
@@ -57,19 +57,19 @@ function shiftFor(mode) {
   if (mode === 'survival') return { ...SURVIVAL, weights: weightsFor(SURVIVAL.dishes) };
   const base = level;
   if (mode === 'drill' || mode === 'rush') {
-    const dishes = practice.length ? practice : base.dishes; const weights = weightsFor(dishes); const nm = dishes.length > 3 ? `${dishes.length} món` : dishes.map((d) => D.recipes[d].name).join(' · ');
-    if (mode === 'drill') return { id: 'drill', name: `Luyện đơn lẻ — ${nm}`, dishes, drill: true, drillCount: 8, seconds: 900, prep: 5, arrivals: [], weights, moneyTargets: [1e9, 1e9, 1e9] };
-    return { id: 'rush', name: `Rush 3 đơn — ${nm}`, dishes, seconds: 300, prep: 10, arrivals: [0, 1, 2].map((i) => ({ t: 0.5 + i, type: 'tourist', patience: 300 })), weights, rush: true, moneyTargets: [1e9, 1e9, 1e9] };
+    const dishes = practice.length ? practice : base.dishes; const weights = weightsFor(dishes); const nm = dishes.length > 3 ? T('n.dishes', { n: dishes.length }) : dishes.map((d) => D.recipes[d].name).join(' · ');
+    if (mode === 'drill') return { id: 'drill', name: `${T('more.drill')} — ${nm}`, dishes, drill: true, drillCount: 8, seconds: 900, prep: 5, arrivals: [], weights, moneyTargets: [1e9, 1e9, 1e9] };
+    return { id: 'rush', name: `${T('more.rush')} — ${nm}`, dishes, seconds: 300, prep: 10, arrivals: [0, 1, 2].map((i) => ({ t: 0.5 + i, type: 'tourist', patience: 300 })), weights, rush: true, moneyTargets: [1e9, 1e9, 1e9] };
   }
   return { ...base, weights: weightsFor(base.dishes) };
 }
 function newWorld() {
   const w = new World(shiftFor(playMode), {
     onToast: (m) => toast(m),
-    onMistake: (hint) => { lastMistake = hint; toast(`${/^(Nước lèo|Không có nước lèo)/.test(hint) ? 'Nấu sai!' : 'Sai thứ tự!'} ${hint}`, 2200); sfx.mistake(); },
+    onMistake: (hint) => { lastMistake = hint; toast(`${/^(Nước lèo|Không có nước lèo)/.test(hint) ? T('m3d.cookWrong') : T('m3d.orderWrong')} ${hint}`, 2200); sfx.mistake(); },   // vi-src
     onServe: (cu, price, tip) => { view.float(cu, tip ? `+${price}k +${tip}k tip` : `+${price}k`, tip ? 'tip' : ''); sfx.serve(); setTimeout(() => sfx.coin(), 260); buzz(18); },
-    onCustomer: (cu, e) => { if (e === 'leave') { toast(`${cu.name} bỏ đi…`, 1400); view.float(cu, '✖ bỏ đi', 'bad'); buzz([30, 40, 30]); } else if (e === 'arrive') { sfx.arrive(); if (cu.group) sfx.chatter(); } },
-    onOpen: () => { sfx.bell(); banner('Mở cửa!', 'Khách tới rồi — bưng ra bàn cho đúng người'); },
+    onCustomer: (cu, e) => { if (e === 'leave') { toast(T('pov.left', { name: cu.name }), 1400); view.float(cu, `✖ ${T('result.left').toLowerCase()}`, 'bad'); buzz([30, 40, 30]); } else if (e === 'arrive') { sfx.arrive(); if (cu.group) sfx.chatter(); } },
+    onOpen: () => { sfx.bell(); banner(T('m3d.open'), T('m3d.open.sub')); },
     onFinish: (r) => showResult(r),
     onShelfOpen: (s) => openCard(s),
     onBurnerOpen: (s, slot) => openSoupCard(s, slot),
@@ -103,15 +103,15 @@ function openCard(s) {
 function iconFor(it) { const u = iconUrl(it); return u ? `<img src="${u}" alt="" draggable="false">` : (D.items[it]?.icon || '🍲'); }
 function renderCardSel(free) {
   for (const el of $('cardGrid').children) { const n = cardSel.filter((x) => x === el.dataset.it).length; el.classList.toggle('sel', n > 0); el.querySelector('.cnt').textContent = n > 1 ? `×${n}` : ''; }
-  $('cardNote').textContent = free <= 0 ? 'Tay đầy — bấm × ở ô tay để vứt' : `Chọn ${free} thứ (chạm 2 lần = 2 cái giống nhau) · còn ${free - cardSel.length} chỗ`;
-  $('cardTake').textContent = cardSel.length ? `Lấy ${cardSel.length}` : 'Không lấy';
+  $('cardNote').textContent = free <= 0 ? T('m3d.handFull') : T('m3d.pick', { n: free, left: free - cardSel.length });
+  $('cardTake').textContent = cardSel.length ? T('m3d.take', { n: cardSel.length }) : T('m3d.noTake');
 }
 let cardMode = 'shelf';
 function closeCard(items) {
   const wt = world?.chef.waiting; if (!wt) { $('card').classList.remove('show'); return; }
   if (String(wt).startsWith('burner')) {
     const ok = world.cookSoup(items);
-    if (!ok) { cardSel = []; renderSoupSel(); $('cardNote').innerHTML = `<b style="color:var(--red)">${lastMistake}</b> — chọn lại theo đúng thứ tự`; sfx.mistake(); return; }   // sai → card mở tiếp
+    if (!ok) { cardSel = []; renderSoupSel(); $('cardNote').innerHTML = `<b style="color:var(--red)">${lastMistake}</b> — ${T('m3d.reorder')}`; sfx.mistake(); return; }   // sai → card mở tiếp
   } else world.pickFromShelf(items);
   $('card').classList.remove('show');
 }
@@ -121,7 +121,7 @@ $('cardClose').onclick = () => closeCard([]); $('cardTake').onclick = () => clos
 function openSoupCard(s, slot) {
   if (botMode) return;   // bot tự nấu trong botDecide
   cardMode = 'soup'; cardSel = [];
-  $('cardTitle').textContent = `Lò ${slot + 1} — nấu nước lèo gì?`; $('card').classList.toggle('hidename', opts.hideName);
+  $('cardTitle').textContent = T('m3d.burnerWhat', { n: slot + 1 }); $('card').classList.toggle('hidename', opts.hideName);
   $('cardGrid').replaceChildren(...world.soupIngredients().map((it) => {
     const el = document.createElement('div'); el.className = 'it'; el.dataset.it = it;
     el.innerHTML = `<span class="ic">${iconFor(it)}</span><span class="nm">${label(it)}</span><span class="cnt"></span><span class="minus">−</span>`;
@@ -132,8 +132,8 @@ function openSoupCard(s, slot) {
 }
 function renderSoupSel() {
   for (const el of $('cardGrid').children) { const i = cardSel.indexOf(el.dataset.it); el.classList.toggle('sel', i >= 0); el.querySelector('.cnt').textContent = i >= 0 ? `${i + 1}` : ''; }
-  $('cardNote').textContent = cardSel.length ? `Thứ tự cho vào nồi: ${cardSel.map(label).join(' → ')}` : 'Bấm nguyên liệu theo thứ tự cho vào nồi, rồi Đun';
-  $('cardTake').textContent = cardSel.length ? 'Đun ♨️' : 'Không nấu';
+  $('cardNote').textContent = cardSel.length ? T('m3d.potOrder', { list: cardSel.map(labelL).join(' → ') }) : T('m3d.potHint');
+  $('cardTake').textContent = cardSel.length ? T('m3d.heat') : T('m3d.noHeat');
 }
 function start(bot = false, mode = playMode) {
   ensureAudio(); startMusic(); playMode = mode; povLevel = null; set3D(true);
@@ -141,16 +141,16 @@ function start(bot = false, mode = playMode) {
   rebuild();   // mỗi level có thể khác trạm (bếp lớn dần) → dựng lại
   $('card').classList.remove('show');
   running = true; $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.remove('hidden'); armBackGuard();
-  showHint(botMode ? 'Bot làm mẫu — bấm "Tự chơi" để cầm lái' : playMode === 'drill' ? 'Luyện 8 đơn nối tiếp, không giới hạn giờ — đúng rồi mới nhanh' : playMode === 'rush' ? 'Rush 3 đơn — dùng đủ 3 rọ + chồng tô, làm song song' : playMode === 'survival' ? 'Survival — 3 khách bỏ đi là hết; rảnh thì trụng tô, sợi sẵn' : (level.hint || level.whatsNew), playMode === 'level' ? 9000 : 6000);
+  showHint(botMode ? T('m3d.hint.bot') : playMode === 'drill' ? T('m3d.hint.drill') : playMode === 'rush' ? T('m3d.hint.rush') : playMode === 'survival' ? T('m3d.hint.survival') : (tl(`level.${level.id}.hint`, level.hint) || tl(`level.${level.id}.new`, level.whatsNew)), playMode === 'level' ? 9000 : 6000);
   // ẩn tên trên card khi mọi món trong ca đã thuộc (≥3 tô sạch liên tiếp), trừ khi Kent tự tick
   opts.hideNameAuto = world.shift.dishes.every(isMastered);
   $('btnTakeover').classList.toggle('hidden', !botMode);
-  $('clockLbl').textContent = world.shift.survival ? 'Đã trụ' : 'Còn';
+  $('clockLbl').textContent = world.shift.survival ? T('hud.survived') : T('hud.timeLeft');
 }
 function showResult(r) {
   running = false; setBoil(false); setMood(playMode === 'day' ? 'close' : 'calm'); if (r.stars >= 1 || (r.puzzle)) setTimeout(() => sfx.cheer(), 300); $('hud').classList.add('hidden'); $('result').classList.remove('hidden'); $('card').classList.remove('show');
   const isPz = !!r.puzzle; const st = r.stats || { bowls: [], idle: 0, taps: 0, trips: 0 }; const isDay = playMode === 'level';
-  const sh = isPz ? { id: 'puzzle', name: lastPuzzle.kinds[0] === 'ninja' ? 'Chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Phản xạ' : lastPuzzle.kinds[0] === 'assemble' ? 'Ráp tô' : lastPuzzle.kinds[0] === 'pov' ? 'Quầy POV' : 'Đố nhanh', dishes: [...new Set(st.bowls.map((b) => b.dish))] } : (povLevel || world.shift);
+  const sh = isPz ? { id: 'puzzle', name: T(`mini.${['ninja', 'reflex', 'assemble', 'pov'].includes(lastPuzzle.kinds[0]) ? lastPuzzle.kinds[0] : 'quiz'}`), dishes: [...new Set(st.bowls.map((b) => b.dish))] } : (povLevel || world.shift);
   const kitchen = world.kitchen;
   // quầy POV không đi lại nên không so được với lộ trình bot của bếp 3D
   const par = (dish) => (isPz || r.pov) ? { seconds: null, taps: 0, route: [] } : parFor(sh, kitchen, dish);
@@ -160,21 +160,21 @@ function showResult(r) {
   // sao rơi từng cái · tiền chạy số
   const starsEl = $('stars');
   if (isDay) { starsEl.innerHTML = [0, 1, 2].map((i) => `<span class="s">${i < r.stars ? '★' : '☆'}</span>`).join(''); [...starsEl.children].forEach((el, i) => setTimeout(() => { el.classList.add('in'); if (i < r.stars) sfx.done(); }, 350 + i * 380)); }
-  else starsEl.textContent = playMode === 'survival' ? `${r.served} khách` : isPz ? `${clean}/${st.bowls.length} sạch` : (r.mistakes === 0 ? '✓ Sạch' : `${r.mistakes} lỗi`);
+  else starsEl.textContent = playMode === 'survival' ? T('n.customers', { n: r.served }) : isPz ? T('result.cleanOf', { a: clean, b: st.bowls.length }) : (r.mistakes === 0 ? `✓ ${T('result.clean')}` : T('pz.nErr', { n: r.mistakes }));
   countUp($('rMoney'), r.money, isDay ? 1400 : 0);
-  $('rTitle').textContent = playMode === 'drill' ? 'Hết 8 đơn' : playMode === 'rush' ? 'Hết rush' : playMode === 'survival' ? (pts?.record ? '🏆 Kỷ lục mới!' : 'Hết Survival') : isPz ? (lastPuzzle.kinds[0] === 'ninja' ? 'Hết chém' : lastPuzzle.kinds[0] === 'reflex' ? 'Hết phản xạ' : lastPuzzle.kinds[0] === 'assemble' ? 'Đóng quầy — Ráp tô' : lastPuzzle.kinds[0] === 'pov' ? 'Đóng quầy — POV' : 'Hết đố') : `${sh.name} — ${sh.title}${r.stars ? '' : ' · chưa đạt, chơi lại'}`;
-  $('rDishes').textContent = isDay ? `${goalText(sh)} · ${sh.whatsNew}` : playMode === 'survival' ? `Trụ ${Math.floor((st.time || 0) / 60)}:${String(Math.floor((st.time || 0) % 60)).padStart(2, '0')} · ${sh.dishes.length} món` : sh.dishes.map((d) => D.recipes[d].name).join(' · ');
-  $('rPoints').textContent = pts ? `+${pts.earned}k${pts.starBonus ? ` +${pts.starBonus}k thưởng ${pts.newStars}★ mới` : ''} → quán có ${pointsAvailable()}k` : '';
+  $('rTitle').textContent = playMode === 'drill' ? T('result.drillEnd') : playMode === 'rush' ? T('result.rushEnd') : playMode === 'survival' ? (pts?.record ? T('result.newRecord') : T('result.survivalEnd')) : isPz ? T('result.miniEnd', { name: sh.name }) : `${sh.name} — ${tl(`level.${sh.id}.title`, sh.title)}${r.stars ? '' : ` · ${T('result.failed')}`}`;
+  $('rDishes').textContent = isDay ? `${goalText(sh)} · ${tl(`level.${sh.id}.new`, sh.whatsNew)}` : playMode === 'survival' ? `${T('hud.survived')} ${Math.floor((st.time || 0) / 60)}:${String(Math.floor((st.time || 0) % 60)).padStart(2, '0')} · ${T('n.dishes', { n: sh.dishes.length })}` : sh.dishes.map((d) => D.recipes[d].name).join(' · ');
+  $('rPoints').textContent = pts ? `+${pts.earned}k${pts.starBonus ? ` ${T('result.starBonus', { k: pts.starBonus, n: pts.newStars })}` : ''} → ${T('result.bank', { k: pointsAvailable() })}` : '';
   // khách quen nhận xét cuối ngày
   const regs = r.regulars || []; const rc = $('rRecap');
   if (isDay && regs.length) { const pick = regs[Math.floor(Math.random() * regs.length)]; rc.textContent = recapLine(pick.id, pick.served); rc.classList.toggle('hidden', !rc.textContent); } else rc.classList.add('hidden');
   // thẻ mở khoá: level sau có gì mới (chỉ khi lần đầu qua level này)
   const nextUnlocks = isDay && r.stars >= 1 && wasNew ? unlocksAfter(sh) : [];
   $('rUnlock').replaceChildren(...nextUnlocks.map((u, i) => { const el = document.createElement('div'); el.className = 'u'; el.style.animationDelay = `${1.4 + i * 0.25}s`;
-    if (u.kind === 'dish') { const ic = iconUrl(D.recipes[u.id]?.base?.bowl || 'soup-bowl'); el.innerHTML = `${ic ? `<img src="${ic}" alt="">` : '<span class="ic">🍜</span>'}<div><b>Món mới ngày mai</b><small>${D.recipes[u.id].name}</small></div>`; }
-    else if (u.kind === 'upgrade') { const up = UPGRADES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${up.icon}</span><div><b>Mở bán: ${up.name}</b><small>${up.desc}</small></div>`; }
-    else if (u.kind === 'world') { const wd = worldById(u.id); el.innerHTML = `<span class="ic">${wd.icon}</span><div><b>Mở world mới: ${wd.name}</b><small>${wd.sub} · ${wd.levels.length} level</small></div>`; }
-    else { const rg = REGULARS.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">🙋</span><div><b>Khách quen mới: ${rg.name}</b><small>${rg.sketch} · ruột ${D.recipes[rg.dish].name}</small></div>`; }
+    if (u.kind === 'dish') { const ic = iconUrl(D.recipes[u.id]?.base?.bowl || 'soup-bowl'); el.innerHTML = `${ic ? `<img src="${ic}" alt="">` : '<span class="ic">🍜</span>'}<div><b>${T('unlock.dish')}</b><small>${dishLabel(u.id, true)}</small></div>`; }
+    else if (u.kind === 'upgrade') { const up = UPGRADES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${up.icon}</span><div><b>${T('unlock.upgrade', { name: tl(`upgrade.${up.id}.name`, up.name) })}</b><small>${tl(`upgrade.${up.id}.desc`, up.desc)}</small></div>`; }
+    else if (u.kind === 'world') { const wd = worldById(u.id); el.innerHTML = `<span class="ic">${wd.icon}</span><div><b>${T('unlock.world', { name: tl(`world.${wd.id}.name`, wd.name) })}</b><small>${tl(`world.${wd.id}.sub`, wd.sub)} · ${wd.levels.length} level</small></div>`; }
+    else { const rg = REGULARS.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">🙋</span><div><b>${T('unlock.regular', { name: rg.name })}</b><small>${tl(`cust.${rg.id}.sketch`, rg.sketch)} · ${T('unlock.regular.fav', { dish: dishLabel(rg.dish) })}</small></div>`; }
     return el; }));
   const nxt = isDay ? nextLevel(sh) : null; const nw = isDay && !nxt ? WORLDS[WORLDS.indexOf(worldById(sh.world)) + 1] : null;
   const nb = $('btnNext'); nb.classList.toggle('hidden', !isDay || r.stars < 1 || (!nxt && !(nw && worldStars(sh.world) >= nw.starsToUnlock)));
@@ -186,12 +186,12 @@ function showResult(r) {
   const orderErrs = r.errors.filter((e) => !e.waste); const wasteErrs = r.errors.filter((e) => e.waste);
   const slowest = st.bowls.slice().sort((a, b) => (b.wait - (par(b.dish).seconds || 0)) - (a.wait - (par(a.dish).seconds || 0)))[0];
   const route = slowest ? par(slowest.dish) : null;
-  const mast = sh.dishes.map((d) => { const m = masteryOf(d); return `<span class="chip ${m.streak >= 3 ? 'good' : ''}">${D.recipes[d].name}: ${m.clean}/${m.plays} sạch${m.streak >= 3 ? ' · thuộc' : ''}${m.best ? ` · nhanh nhất ${m.best.toFixed(0)}s` : ''}</span>`; }).join('');
+  const mast = sh.dishes.map((d) => { const m = masteryOf(d); return `<span class="chip ${m.streak >= 3 ? 'good' : ''}">${D.recipes[d].name}: ${T('result.cleanOf', { a: m.clean, b: m.plays })}${m.streak >= 3 ? ` · ${T('rep.mastered')}` : ''}${m.best ? ` · ${T('rep.fastest', { s: m.best.toFixed(0) })}` : ''}</span>`; }).join('');
   $('report').innerHTML = `
-    <div class="kpis"><div><b>${st.idle.toFixed(0)}s</b><small>đứng nghĩ</small></div><div><b>${st.taps}</b><small>lần chạm</small></div><div><b>${st.bowls.length ? (st.bowls.reduce((n, b) => n + b.wait, 0) / st.bowls.length).toFixed(0) + 's' : '—'}</b><small>tb / tô</small></div><div><b>${wasteErrs.length}</b><small>vứt/hư</small></div></div>
-    ${rows ? `<table class="rep"><thead><tr><th>${isPz ? 'Câu' : 'Tô'}</th><th>Thời gian</th><th>${isPz ? '' : 'so với bot'}</th><th>Lỗi</th><th>Chạm</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="sub">Chưa giao được tô nào.</div>'}
-    ${orderErrs.length ? `<details><summary>${orderErrs.length} lỗi thứ tự — bấm xem</summary><ul class="errs">${orderErrs.map((e) => `<li><span class="t">${e.t.toFixed(0)}s</span> ${e.tag}</li>`).join('')}</ul></details>` : ''}
-    ${route && route.seconds ? `<details><summary>Lộ trình nhanh nhất cho <b>${slowest.name}</b> (bot ${route.seconds}s, ${route.taps} chạm)</summary><ol class="route">${route.route.map((x) => `<li>${x}</li>`).join('')}</ol></details>` : ''}
+    <div class="kpis"><div><b>${st.idle.toFixed(0)}s</b><small>${T('rep.idle')}</small></div><div><b>${st.taps}</b><small>${T('rep.taps')}</small></div><div><b>${st.bowls.length ? (st.bowls.reduce((n, b) => n + b.wait, 0) / st.bowls.length).toFixed(0) + 's' : '—'}</b><small>${T('rep.avgBowl')}</small></div><div><b>${wasteErrs.length}</b><small>${T('rep.waste')}</small></div></div>
+    ${rows ? `<table class="rep"><thead><tr><th>${isPz ? T('rep.q') : T('rep.bowl')}</th><th>${T('rep.time')}</th><th>${isPz ? '' : T('rep.vsBot')}</th><th>${T('rep.err')}</th><th>${T('rep.tap')}</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="sub">${T('rep.none')}</div>`}
+    ${orderErrs.length ? `<details><summary>${T('rep.orderErrs', { n: orderErrs.length })}</summary><ul class="errs">${orderErrs.map((e) => `<li><span class="t">${e.t.toFixed(0)}s</span> ${e.tag}</li>`).join('')}</ul></details>` : ''}
+    ${route && route.seconds ? `<details><summary>${T('rep.route', { name: slowest.name, s: route.seconds, taps: route.taps })}</summary><ol class="route">${route.route.map((x) => `<li>${x}</li>`).join('')}</ol></details>` : ''}
     <div class="mast">${mast}</div>`;
 }
 /** Số chạy lên tới `to` trong `ms` (kèm tiếng leng keng thưa). */
@@ -245,13 +245,13 @@ function startLevelPov(L) {
     onDone: (r) => showResult(r), onQuit: () => { $('menu').classList.remove('hidden'); },
   });
   pov.start();
-  showHint(L.hint || L.whatsNew, 9000);
+  showHint(L.hint ? tl(`level.${L.id}.hint`, L.hint) : tl(`level.${L.id}.new`, L.whatsNew), 9000);
 }
 $('btnPov').onclick = () => startPov(8);
 $('btnKitchen3d').onclick = () => { if (levelUnlocked(level)) start(false, 'level'); };
 $('btnPuzzle').onclick = () => startPuzzle(['order', 'intruder', 'missing'], 9); $('btnAssemble').onclick = () => startPuzzle(['assemble'], 10); $('btnNinja').onclick = () => startPuzzle(['ninja'], 6); $('btnReflex').onclick = () => startPuzzle(['reflex'], 10); $('pzQuit').onclick = () => { puzzle?.stop(); $('menu').classList.remove('hidden'); };
 $('btnDrill').onclick = () => start(false, 'drill'); $('btnRush').onclick = () => start(false, 'rush'); $('btnSurvival').onclick = () => start(false, 'survival');
-$('btnResetMastery').onclick = () => { if (confirm('Xoá toàn bộ tiến độ (nhớ món, level, điểm, trang trí)?')) { resetMastery(); resetProgress(); renderMenu(); world = newWorld(); rebuild(); } };
+$('btnResetMastery').onclick = () => { if (confirm(T('menu.resetConfirm'))) { resetMastery(); resetProgress(); renderMenu(); world = newWorld(); rebuild(); } };
 // ---- menu: tab ----
 for (const b of document.querySelectorAll('.tabs.three button')) b.onclick = () => { for (const x of document.querySelectorAll('.tabs.three button')) x.classList.toggle('on', x === b); for (const t of document.querySelectorAll('.tab.main')) t.classList.toggle('hidden', t.id !== `tab-${b.dataset.tab}`); safeSet('qb.tab', b.dataset.tab); };
 for (const b of document.querySelectorAll('.tabs.sub button')) b.onclick = () => { for (const x of document.querySelectorAll('.tabs.sub button')) x.classList.toggle('on', x === b); for (const t of document.querySelectorAll('.tab.sub')) t.classList.toggle('hidden', t.id !== `tab-${b.dataset.sub}`); safeSet('qb.sub', b.dataset.sub); };
@@ -280,55 +280,55 @@ function renderMenu() {
   const learned = level.dishes.filter((d) => (M[d]?.streak || 0) >= 3).length;
   const card = $('lvCard'); card.className = 'lvcard daycard' + (un ? '' : ' locked');
   const tags = [
-    level.training ? `<span class="tag train">Bản tập — ${simplifyLabel(level.simplify)}</span>` : '',
-    level.challenge ? `<span class="tag new">⭐ Thử thách</span>` : '',
+    level.training ? `<span class="tag train">${T('tag.training')} — ${simplifyLabel(level.simplify)}</span>` : '',
+    level.challenge ? `<span class="tag new">⭐ ${T('tag.challenge')}</span>` : '',
     level.goal ? `<span class="tag goal">${goalText(level)}</span>` : '',
     ...conTags(level.constraints),
-    level.layout !== 'default' ? `<span class="tag">🍳 ${KITCHEN_VARIANTS[level.layout].name}</span>` : '',
-    ...(level.events || []).map((e) => `<span class="tag">${e.kind === 'rain' ? '🌧️ Mưa' : e.kind === 'vip' ? '💰 Khách sộp' : e.kind === 'tour' ? '👥 Đoàn khách' : '🔄 Khách đổi ý'}</span>`),
+    level.layout !== 'default' ? `<span class="tag">🍳 ${tl(`kitchen.${level.layout}.name`, KITCHEN_VARIANTS[level.layout].name)}</span>` : '',
+    ...(level.events || []).map((e) => `<span class="tag">${T(`tag.ev.${['rain', 'vip', 'tour'].includes(e.kind) ? e.kind : 'change'}`)}</span>`),
     level.regulars.length ? `<span class="tag">🙋 ${level.regulars.map((id) => REGULARS.find((r) => r.id === id)?.name).join(', ')}</span>` : '',
   ].filter(Boolean).join('');
   card.innerHTML = un
     ? `<b>${tl(`world.${level.world}.name`, worldById(level.world).name)} ${level.n} — ${tl(`level.${level.id}.title`, level.title)}</b><span class="st">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span>
        <small class="whatsnew">${tl(`level.${level.id}.new`, level.whatsNew)}</small>
-       <small class="dish">${level.dishes.length > 4 ? `${level.dishes.length} món` : level.dishes.map(dishName).join(' · ')}</small>
+       <small class="dish">${level.dishes.length > 4 ? T('n.dishes', { n: level.dishes.length }) : level.dishes.map(dishName).join(' · ')}</small>
        <div class="tags">${tags}</div>
-       <small>${T('menu.card.meta', { sec: level.seconds, n: level.count, money: level.moneyTargets[0] })}${learned && lang() === 'vi' ? ` · thuộc ${learned}/${level.dishes.length} món` : ''}</small>`
-    : `<b>🔒 ${level.name}</b><small>${worldUnlocked(level.world) ? `Đạt ≥1★ ở ${W.name} ${level.n - 1} để mở` : `Cần ${W.starsToUnlock}★ ở ${WORLDS[worldIdx - 1].name} để mở world này`}</small>`;
+       <small>${T('menu.card.meta', { sec: level.seconds, n: level.count, money: level.moneyTargets[0] })}${learned ? ` · ${T('menu.card.learned', { a: learned, b: level.dishes.length })}` : ''}</small>`
+    : `<b>🔒 ${level.name}</b><small>${worldUnlocked(level.world) ? T('menu.lockLevel', { world: tl(`world.${W.id}.name`, W.name), n: level.n - 1 }) : T('menu.lockWorld', { n: W.starsToUnlock, world: tl(`world.${WORLDS[worldIdx - 1].id}.name`, WORLDS[worldIdx - 1].name) })}</small>`;
   const lvName = `${tl(`world.${level.world}.name`, worldById(level.world).name)} ${level.n}`;
   $('btnStart').disabled = !un; $('btnStart').textContent = un ? (st ? T('menu.replay', { name: lvName }) : T('menu.enter', { name: lvName })) : '🔒 ' + T('menu.notOpen');
   // nâng cấp bếp
   const total = totalStars();
   $('upgrades').replaceChildren(...UPGRADES.map((u) => { const lv2 = upgradeLevel(u.id); const cost = upgradeCost(u.id); const locked = !upgradeUnlocked(u.id); const el = document.createElement('div'); el.className = 'sh' + (!locked && cost == null ? ' max' : '') + (locked ? ' locked' : '');
-    el.innerHTML = `<span class="ic">${u.icon}</span><div><b>${u.name} <span class="lv">${'●'.repeat(lv2)}${'○'.repeat(u.levels.length - lv2)}</span></b><small>${u.desc}</small>${locked ? `<small>Mở bán khi đủ ${u.unlockStars}★ (đang có ${total}★)</small>` : cost == null ? '<small style="color:#2f8a3a;font-weight:700">Tối đa ✓</small>' : `<button ${cost > pointsAvailable() ? 'disabled' : ''}>💰 ${cost}k</button>`}</div>`;
-    const b = el.querySelector('button'); if (b) b.onclick = () => { if (buyUpgrade(u.id)) { sfx.done(); toast(`${u.name} lên cấp ${upgradeLevel(u.id)}!`); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
+    el.innerHTML = `<span class="ic">${u.icon}</span><div><b>${tl(`upgrade.${u.id}.name`, u.name)} <span class="lv">${'●'.repeat(lv2)}${'○'.repeat(u.levels.length - lv2)}</span></b><small>${tl(`upgrade.${u.id}.desc`, u.desc)}</small>${locked ? `<small>${T('shop.unlockAt', { n: u.unlockStars, have: total })}</small>` : cost == null ? `<small style="color:#2f8a3a;font-weight:700">${T('shop.max')} ✓</small>` : `<button ${cost > pointsAvailable() ? 'disabled' : ''}>💰 ${cost}k</button>`}</div>`;
+    const b = el.querySelector('button'); if (b) b.onclick = () => { if (buyUpgrade(u.id)) { sfx.done(); toast(T('shop.upgraded', { name: tl(`upgrade.${u.id}.name`, u.name), lv: upgradeLevel(u.id) })); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
   // survival
-  const sv = progress().survival; $('survRecord').textContent = sv ? `Kỷ lục: ${sv.served} khách · ${Math.floor(sv.time / 60)}:${String(Math.floor(sv.time % 60)).padStart(2, '0')} · ${sv.money}k` : 'Chưa có kỷ lục';
+  const sv = progress().survival; $('survRecord').textContent = sv ? `${T('more.record')}: ${T('n.customers', { n: sv.served })} · ${Math.floor(sv.time / 60)}:${String(Math.floor(sv.time % 60)).padStart(2, '0')} · ${sv.money}k` : T('more.noRecord');
   // luyện tập: chọn món
   $('dishPick').replaceChildren(...ALL_DISHES.map((d) => { const el = document.createElement('div'); const m = masteryOf(d); el.className = 'dp' + (practice.includes(d) ? ' on' : ''); el.innerHTML = `<span>${dishName(d)}</span><small>${m.plays ? `${m.clean}/${m.plays}${m.streak >= 3 ? ' ✓' : ''}` : '—'}</small>`; el.onclick = () => { practice = practice.includes(d) ? practice.filter((x) => x !== d) : [...practice, d]; setPractice(practice); renderMenu(); }; return el; }));
-  $('pickCount').textContent = `${practice.length}/${ALL_DISHES.length} món`; $('pzScope').textContent = practice.length ? `${practice.length} món: ${practice.slice(0, 4).map(dishName).join(', ')}${practice.length > 4 ? '…' : ''}` : 'Đủ 16 món'; $('btnDrill').disabled = $('btnRush').disabled = practice.length === 0;
+  $('pickCount').textContent = T('n.dishesOf', { a: practice.length, b: ALL_DISHES.length }); $('pzScope').textContent = practice.length ? `${T('n.dishes', { n: practice.length })}: ${practice.slice(0, 4).map(dishName).join(', ')}${practice.length > 4 ? '…' : ''}` : T('more.allDishes', { n: ALL_DISHES.length }); $('btnDrill').disabled = $('btnRush').disabled = practice.length === 0;
   // trang trí
   $('ptsNow').textContent = pointsAvailable(); $('ptsTotal').textContent = progress().points; $('ptsBadge').textContent = DECOR.some((d) => !hasDecor(d.id) && d.cost <= pointsAvailable()) || UPGRADES.some((u) => upgradeCost(u.id) != null && upgradeCost(u.id) <= pointsAvailable()) ? '!' : '';
-  $('shop').replaceChildren(...DECOR.map((d) => { const own = hasDecor(d.id); const el = document.createElement('div'); el.className = 'sh' + (own ? ' owned' : ''); el.innerHTML = `<span class="ic">${d.icon}</span><div><b>${d.name}</b><small>${d.desc}</small>${own ? '<small style="color:#2f8a3a;font-weight:700">Đã mua ✓</small>' : `<button ${d.cost > pointsAvailable() ? 'disabled' : ''}>💰 ${d.cost}k</button>`}</div>`; if (!own) el.querySelector('button').onclick = () => { if (buyDecor(d.id)) { sfx.done(); toast(`Đã mua ${d.name}!`); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
+  $('shop').replaceChildren(...DECOR.map((d) => { const own = hasDecor(d.id); const el = document.createElement('div'); el.className = 'sh' + (own ? ' owned' : ''); el.innerHTML = `<span class="ic">${d.icon}</span><div><b>${tl(`decor.${d.id}.name`, d.name)}</b><small>${tl(`decor.${d.id}.desc`, d.desc)}</small>${own ? `<small style="color:#2f8a3a;font-weight:700">${T('shop.owned')} ✓</small>` : `<button ${d.cost > pointsAvailable() ? 'disabled' : ''}>💰 ${d.cost}k</button>`}</div>`; if (!own) el.querySelector('button').onclick = () => { if (buyDecor(d.id)) { sfx.done(); toast(T('shop.bought', { name: tl(`decor.${d.id}.name`, d.name) })); renderMenu(); world = newWorld(); rebuild(); } }; return el; }));
 }
 /** Nhãn ngắn cho phần công thức được rút gọn ở level tập. */
 function simplifyLabel(sim) {
   if (!sim) return '';
-  const miss = []; if (sim.skipRinse) miss.push('xả lạnh'); if (sim.hotBowl) miss.push('trụng tô'); if (sim.skipPrep) miss.push('thớt'); if (sim.skipFry) miss.push('chiên'); if (sim.soupReady) miss.push('nấu nước'); if (sim.toppings || sim.maxSteps) miss.push('bớt topping');
-  return miss.length ? `chưa có ${miss.join(', ')}` : 'rút gọn';
+  const miss = []; if (sim.skipRinse) miss.push(T('simp.rinse')); if (sim.hotBowl) miss.push(T('simp.bowl')); if (sim.skipPrep) miss.push(T('simp.prep')); if (sim.skipFry) miss.push(T('simp.fry')); if (sim.soupReady) miss.push(T('simp.soup')); if (sim.toppings || sim.maxSteps) miss.push(T('simp.toppings'));
+  return miss.length ? T('simp.without', { list: miss.join(', ') }) : T('simp.short');
 }
 function goalText(L) {
-  const g = L.goal; if (!g) return `Mục tiêu ${L.moneyTargets.join(' / ')}k`;
-  if (g.kind === 'clean') return `🎯 ${g.bowls} tô không sai thứ tự`;
-  if (g.kind === 'no-waste') return '🎯 Không vứt/hư thứ gì';
-  if (g.kind === 'streak') return `🎯 ${g.n} tô đúng liên tiếp`;
-  if (g.kind === 'before') return `🎯 Xong hết khách trước ${g.seconds}s`;
+  const g = L.goal; if (!g) return T('goal.money', { list: L.moneyTargets.join(' / ') });
+  if (g.kind === 'clean') return `🎯 ${T('goal.clean', { n: g.bowls })}`;
+  if (g.kind === 'no-waste') return `🎯 ${T('goal.noWaste')}`;
+  if (g.kind === 'streak') return `🎯 ${T('goal.streak', { n: g.n })}`;
+  if (g.kind === 'before') return `🎯 ${T('goal.before', { s: g.seconds })}`;
   return '';
 }
 function conTags(c) {
   if (!c) return [];
-  const out = []; if (c.potSlots) out.push(`<span class="tag">🧺 ${c.potSlots} rọ trụng`); if (c.handCapacity === 1) out.push('<span class="tag">✋ Một tay');
-  if (c.brothCap) out.push(`<span class="tag">🥘 Kệ nước ${c.brothCap} phần`); if (c.noStack) out.push('<span class="tag">🔥 Lò xong phải lấy liền');
+  const out = []; if (c.potSlots) out.push(`<span class="tag">🧺 ${T('tag.baskets', { n: c.potSlots })}`); if (c.handCapacity === 1) out.push(`<span class="tag">✋ ${T('tag.oneHand')}`);
+  if (c.brothCap) out.push(`<span class="tag">🥘 ${T('tag.brothCap', { n: c.brothCap })}`); if (c.noStack) out.push(`<span class="tag">🔥 ${T('tag.noStack')}`);
   return out.map((x) => x + '</span>');
 }
 $('pickAll').onclick = () => { practice = [...ALL_DISHES]; setPractice(practice); renderMenu(); };
@@ -343,10 +343,10 @@ $('btnNext').onclick = () => {
   levelOnPov(level) ? startLevelPov(level) : start(false, 'level');
 };
 $('btnBot').onclick = () => start(true);
-function takeover() { if (!botMode) return; botMode = false; $('btnTakeover').classList.add('hidden'); showHint('Bạn cầm lái. Kệ → lấy · nồi/bồn → làm · quầy ráp → quầy giao', 4000); }
+function takeover() { if (!botMode) return; botMode = false; $('btnTakeover').classList.add('hidden'); showHint(T('m3d.takeover'), 4000); }
 $('btnTakeover').onclick = takeover;
 // nút loa
-const btnMute = $('btnMute'); const paintMute = () => { btnMute.textContent = isMuted() ? '🔇' : '🔊'; btnMute.title = isMuted() ? 'Mở tiếng' : 'Tắt tiếng'; }; paintMute();
+const btnMute = $('btnMute'); const paintMute = () => { btnMute.textContent = isMuted() ? '🔇' : '🔊'; btnMute.title = isMuted() ? T('menu.unmute') : T('menu.mute'); }; paintMute();
 btnMute.onclick = () => { ensureAudio(); setMuted(!isMuted()); paintMute(); };
 $('btnBack').onclick = () => { if (!running) return; running = false; setBoil(false); setMood('calm'); botMode = false; $('hud').classList.add('hidden'); $('card').classList.remove('show'); $('menu').classList.remove('hidden'); playMode = 'level'; world = newWorld(); rebuild(); renderMenu(); };   // thoát giữa ca: không ghi kết quả
 $('btnMenu').onclick = () => { running = false; set3D(false); $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); playMode = 'level'; if (bestStars(level.id) >= 1) level = currentLevel(); selectLevel(level); };
@@ -357,9 +357,9 @@ $('loading').classList.add('hidden'); $('btnStart').classList.remove('hidden');
 let guardOn = false;
 function armBackGuard() { if (guardOn) return; guardOn = true; try { history.pushState({ qb: 'play' }, ''); } catch {} }
 function disarmBackGuard() { guardOn = false; }
-addEventListener('popstate', () => { const playing = running || !$('puzzle').classList.contains('hidden') || !$('pov').classList.contains('hidden') || !$('result').classList.contains('hidden'); if (playing) { try { history.pushState({ qb: 'play' }, ''); } catch {} toast('Đang chơi — dùng nút ‹ để về menu', 1400); } else disarmBackGuard(); });
+addEventListener('popstate', () => { const playing = running || !$('puzzle').classList.contains('hidden') || !$('pov').classList.contains('hidden') || !$('result').classList.contains('hidden'); if (playing) { try { history.pushState({ qb: 'play' }, ''); } catch {} toast(T('menu.backGuard'), 1400); } else disarmBackGuard(); });
 // iOS Safari: quẹt từ mép trái = Back của trình duyệt, không chặn được bằng JS → chỉ tránh được khi cài PWA (standalone). Nhắc một lần.
-if (/iPhone|iPad/.test(navigator.userAgent) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone) setTimeout(() => toast('Trên iPhone: thêm vào Màn hình chính để quẹt không bị back', 3500), 2500);
+if (/iPhone|iPad/.test(navigator.userAgent) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone) setTimeout(() => toast(T('menu.iosTip'), 3500), 2500);
 
 // chạm là đi
 view.renderer.domElement.addEventListener('pointerdown', (e) => {
@@ -384,9 +384,9 @@ function syncHands() {
     const t = h[i]; const wasFull = el.classList.contains('full');
     el.className = 'slot' + (t !== undefined ? ' full' : '') + (typeof t === 'object' ? ' bowl' : '');
     if (t === undefined) { el.textContent = ''; return; }
-    const name = typeof t === 'object' ? (t.done ? `Tô ${t.recipe.name} ✓` : `Tô ${t.recipe.name} (${t.placed.length}/${t.recipe.assembly.length})`) : label(t);
+    const name = typeof t === 'object' ? (t.done ? `${T('rep.bowl')} ${t.recipe.name} ✓` : `${T('rep.bowl')} ${t.recipe.name} (${t.placed.length}/${t.recipe.assembly.length})`) : labelL(t);
     const u = typeof t === 'string' ? iconUrl(t) : null;
-    el.innerHTML = `${u ? `<img src="${u}" alt="">` : ''}<span class="${u ? 'under' : ''}">${name}</span><div class="x${q.includes(`trash:${i}`) ? ' queued' : ''}" title="Vứt">×</div>`;
+    el.innerHTML = `${u ? `<img src="${u}" alt="">` : ''}<span class="${u ? 'under' : ''}">${name}</span><div class="x${q.includes(`trash:${i}`) ? ' queued' : ''}" title="${T('m3d.trash')}">×</div>`;
     if (!wasFull) { el.classList.add('pop'); setTimeout(() => el.classList.remove('pop'), 150); }
   });
 }
@@ -407,7 +407,7 @@ function tick(dt) {
         world.update(dt); syncPhase(); setBoil(true, world.stations.some((s) => s.type === 'pot' && s.jobs.length) ? 1 : 0.45);
         // chốt an toàn: đứng chờ card mà card không mở → thả cho đi tiếp
         if (world.chef.waiting && !$('card').classList.contains('show')) { waitNoCard += dt; if (waitNoCard > 1.5) { world.chef.waiting = null; waitNoCard = 0; } } else waitNoCard = 0;
-      } catch (e) { console.error(e); if (performance.now() - lastErr > 3000) { lastErr = performance.now(); toast(`Lỗi: ${e.message}`, 4000); } window.__qb.lastError = String(e.stack || e); const c = world.chef; c.target = null; c.busy = 0; c.waiting = null; c.queue.length = 0; }
+      } catch (e) { console.error(e); if (performance.now() - lastErr > 3000) { lastErr = performance.now(); toast(`${T('err.generic')}: ${e.message}`, 4000); } window.__qb.lastError = String(e.stack || e); const c = world.chef; c.target = null; c.busy = 0; c.waiting = null; c.queue.length = 0; }
     }
     $('money').textContent = world.money; $('served').textContent = world.served; $('left').textContent = world.left;
     const rem = world.shift.survival ? world.time : Math.max(0, world.shift.seconds - world.time); $('clock').textContent = `${Math.floor(rem / 60)}:${String(Math.floor(rem % 60)).padStart(2, '0')}`;
@@ -426,6 +426,6 @@ requestAnimationFrame(frame);
 
 // PWA: đăng ký service worker ở bản build (không ở dev/artifact); có bản mới → toast nhắc reload
 if (import.meta.env.PROD && 'serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/claude\.ai/.test(location.host)) {
-  navigator.serviceWorker.register('./sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const nw = reg.installing; nw?.addEventListener('statechange', () => { if (nw.state === 'installed' && navigator.serviceWorker.controller) toast('Có bản mới — tải lại để cập nhật', 3000); }); }); }).catch(() => {});
+  navigator.serviceWorker.register('./sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const nw = reg.installing; nw?.addEventListener('statechange', () => { if (nw.state === 'installed' && navigator.serviceWorker.controller) toast(T('menu.newVersion'), 3000); }); }); }).catch(() => {});
 }
 window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, counterMove, tick, startPuzzle, D, recipeFor };

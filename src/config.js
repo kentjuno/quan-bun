@@ -1,3 +1,5 @@
+// i18n: tiếng Việt ở đây là NGUỒN (P1 §0). UPGRADES/DECOR/KITCHEN_VARIANTS hiện lên UI qua tl('upgrade.<id>.name', …) — bản dịch ở data/i18n/en.json.
+// LEVELS/STATIONS/CUSTOMERS chỉ dùng cho bếp 3D bản cũ (không dịch).
 import { buildWorlds } from './data/worlds.js';
 
 // ============================================================

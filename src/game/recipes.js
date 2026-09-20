@@ -2,25 +2,46 @@
 // Quy tắc: được GỘP bước cho nhanh, KHÔNG được đổi thứ tự bếp thật.
 import { SIM_DATA } from '../data/sim-data.js';
 import { ACTION_TIME, PRICES } from '../config.js';
+import { t, lang, withGloss, actionName, stateLabel } from '../i18n.js';
 
 export const D = SIM_DATA;
 
 export function actionTime(actionId) { return ACTION_TIME[actionId] ?? ACTION_TIME.default; }
 
-/** Nhãn tiếng Việt cho mọi token/item có thể lên UI. Không bao giờ trả về id nội bộ trần. */
+/** Nhãn tiếng Việt cho mọi token/item có thể lên UI. Không bao giờ trả về id nội bộ trần. Dùng cho khay + test; UI thông báo dùng labelL(). */
 export function label(token) {
-  if (token === 'bowl-hot') return D.labels['bowl-ready'] || 'Tô đã trụng';
-  if (token === 'bowl-hot:*') return 'Tô đã trụng';
-  if (token.startsWith('bowl-hot:')) return `${D.items[token.slice(9)]?.name || 'Tô'} đã trụng`;   // tô nóng theo LOẠI tô (tô phở ≠ tô món nước)
+  if (token === 'bowl-hot') return D.labels['bowl-ready'] || 'Tô đã trụng';   // vi-src
+  if (token === 'bowl-hot:*') return 'Tô đã trụng';   // vi-src
+  if (token.startsWith('bowl-hot:')) return `${D.items[token.slice(9)]?.name || 'Tô'} đã trụng`;   // tô nóng theo LOẠI tô (tô phở ≠ tô món nước)   // vi-src
   // sợi theo LOẠI: 'noodle-blanched:bun' → "Bún đã trụng nóng lần 1" (bếp thật: bún ≠ sợi phở ≠ bánh đa)
-  if (/^noodle-(blanched|rinsed|drained):/.test(token)) { const [st, n] = token.split(':'); const nm = D.items[n]?.name || 'Sợi'; return `${nm} ${st === 'noodle-blanched' ? 'đã trụng nóng lần 1' : st === 'noodle-rinsed' ? 'đã xả lạnh' : 'đã trụng + ráo'}`; }
-  if (token === 'noodle-blanched') return D.labels['first-blanch-done'] || 'Sợi đã trụng lần 1';
-  if (token === 'broth') return 'Nước lèo';
-  if (token.startsWith('broth:')) { const n = D.actions[token.slice(6)]?.name || 'Chan nước lèo'; return n.replace(/^(Chan|Đổ)\s+/, '').replace(/^\w/, (c) => c.toUpperCase()); }   // 'broth:pour-pho-broth' → "Nước phở"
-  if (token === 'noodle-spoiled') return 'Sợi hư (vứt)';
-  if (token.startsWith('@')) return D.actions[token.slice(1)]?.name || 'Chan nước';
+  if (/^noodle-(blanched|rinsed|drained):/.test(token)) { const [st, n] = token.split(':'); const nm = D.items[n]?.name || 'Sợi'; return `${nm} ${st === 'noodle-blanched' ? 'đã trụng nóng lần 1' : st === 'noodle-rinsed' ? 'đã xả lạnh' : 'đã trụng + ráo'}`; }   // vi-src
+  if (token === 'noodle-blanched') return D.labels['first-blanch-done'] || 'Sợi đã trụng lần 1';   // vi-src
+  if (token === 'broth') return 'Nước lèo';   // vi-src
+  if (token.startsWith('broth:')) { const n = D.actions[token.slice(6)]?.name || 'Chan nước lèo'; return n.replace(/^(Chan|Đổ)\s+/, '').replace(/^\w/, (c) => c.toUpperCase()); }   // 'broth:pour-pho-broth' → "Nước phở"   // vi-src
+  if (token === 'noodle-spoiled') return 'Sợi hư (vứt)';   // vi-src
+  if (token.startsWith('@')) return D.actions[token.slice(1)]?.name || 'Chan nước';   // vi-src
   return D.items[token]?.name || D.labels[token] || D.actions[token]?.name || `(${token})`;
 }
+/** Nhãn THEO NGÔN NGỮ cho thông báo/tooltip: tên Việt giữ nguyên + giải nghĩa "(brisket)"; trạng thái/hành động dịch hẳn. vi → y như label(). */
+export function labelL(token) {
+  if (lang() === 'vi') return label(token);
+  if (token === 'bowl-hot' || token === 'bowl-hot:*') return stateLabel('bowl-ready', label(token));
+  if (token.startsWith('bowl-hot:')) return t('lbl.bowlHot', { name: labelL(token.slice(9)) });
+  if (/^noodle-(blanched|rinsed|drained):/.test(token)) { const [st, n] = token.split(':'); return t(`lbl.${st}`, { name: labelL(n) }); }
+  if (token === 'noodle-blanched') return stateLabel('first-blanch-done', label(token));
+  if (token === 'broth') return t('lbl.broth');
+  if (token.startsWith('broth:')) return actionName(token.slice(6), label(token)).replace(/^Ladle\s+/, '').replace(/^\w/, (c) => c.toUpperCase());
+  if (token === 'noodle-spoiled') return t('lbl.spoiled');
+  if (token.startsWith('@')) return actionName(token.slice(1), label(token));
+  if (D.items[token]) return withGloss(D.items[token].name, token);
+  if (D.labels[token]) return stateLabel(token, D.labels[token]);
+  if (D.actions[token]) return actionName(token, D.actions[token].name);
+  return label(token);
+}
+/** Tên hành động theo ngôn ngữ (fallback = viText hoặc id). */
+export const actName = (id, fallback) => actionName(id, D.actions[id]?.name || fallback || id);
+/** Tên món giữ tiếng Việt; EN thêm giải nghĩa sau dấu chấm giữa khi `full`. */
+export function dishLabel(id, full = false) { const n = D.recipes[id]?.name || id; return full ? withGloss(n, id) : n; }
 
 /** Token khớp yêu cầu? 'bowl-hot:*' = tô nóng bất kỳ loại; 'bowl-ready' (sim-data) cũng nghĩa là tô nóng. */
 export function tokenMatches(req, tok) {
@@ -69,7 +90,7 @@ export function transformsFor(dishId, sim = null) { return buildTransforms(dishI
 /** Dựng chuỗi chế biến + bảng thay thế token của các bước bị bỏ (bản tập). */
 function buildTransforms(dishId, sim) {
   const r = D.recipes[dishId];
-  if (!r) throw new Error(`Không có món ${dishId} trong sim-data`);
+  if (!r) throw new Error(`Không có món ${dishId} trong sim-data`);   // vi-src
   const out = []; const subs = {};                       // subs: token của bước bị bỏ → token kết quả
   const push = (t) => { t.inputs = t.inputs.map(canon); t.output = canon(t.output); t.input = t.inputs[0]; t.time = actionTime(t.action); out.push(t); };
   if (r.base) {
@@ -84,7 +105,7 @@ function buildTransforms(dishId, sim) {
       push({ station: 'pot', inputs: [`noodle-rinsed:${noodle}`], output: `noodle-drained:${noodle}`, action: 'reblanch', passive: false });
     } else if (wf === 'noodle-hot-only') {
       push({ station: 'pot', inputs: [noodle], output: `noodle-drained:${noodle}`, action: 'blanch-noodle-once', passive: true });
-    } else throw new Error(`workflow lạ: ${wf}`);
+    } else throw new Error(`workflow lạ: ${wf}`);   // vi-src
     if (sim?.hotBowl) subs[bowl] = `bowl-hot:${bowl}`;   // tô ở kệ đã nóng sẵn
     else push({ station: 'pot', inputs: [bowl], output: `bowl-hot:${bowl}`, action: 'blanch-bowl', passive: true });   // tô nằm trong nồi nóng, trữ được
   }
@@ -194,8 +215,10 @@ export function soupRecipeFor(dishId) {
   const byAction = {};
   for (const s of chain) for (const t of (s.requires || []).filter((x) => D.items[x])) byAction[t] = s.action;
   const brothAction = (r.assembly.find((t) => t.startsWith('@') && t !== '@finish') || '').slice(1) || null;
-  return { items, byAction, heatAction: heat.action, brothAction, name: label(heat.creates).replace(/ đã nóng$/, ''), output: heat.creates };
+  return { items, byAction, heatAction: heat.action, brothAction, name: label(heat.creates).replace(/ đã nóng$/, ''), output: heat.creates };   // vi-src
 }
 
 /** Token nào cần đưa vào tô tiếp theo. */
 export function nextStep(recipe, placed) { return recipe.assembly[placed.length] ?? null; }
+/** Tên nồi nước lèo theo ngôn ngữ (soupRecipeFor().name là tiếng Việt lúc build). */
+export const soupName = (r) => (lang() === 'vi' || !r?.output ? r?.name : stateLabel(r.output, r.name).replace(/, hot$/, ''));

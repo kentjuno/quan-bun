@@ -1,6 +1,6 @@
 // QUẦY POV — lớp vẽ + kéo thả. Mọi luật bếp nằm ở game/counter.js (Counter), file này chỉ hiển thị và chuyển thao tác thành `C.drop(src, zone)`.
 // Điều khiển: KÉO vật tới chỗ, hoặc CHẠM ĐÔI để nó tự bay tới đích hợp lý nhất (Kent: kéo chính xác trên điện thoại khó).
-import { D, label, tokenMatches, recipeFor } from './game/recipes.js';
+import { D, label, labelL, soupName, tokenMatches, recipeFor } from './game/recipes.js';
 import { t as T } from './i18n.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk } from './game/counter.js';
@@ -101,10 +101,11 @@ export class Pov {
           <span id="pvServed">0/${C.rounds}</span><i>${T('hud.bowls')}</i>
           <button class="pv-x" id="pvQuit" aria-label="${T('hud.quit')}" title="${T('hud.quit')}">✕</button>
         </div>
+        ${''/* J9: khói nồi trụng (s1,s2) + giọt nước vòi (.pv-drip) nằm trong dropz bên dưới */}
         <div class="pv-rail" id="pvTickets" style="${z('rail')}"></div>
-        ${this.has.pot ? dropz('pot', 'pot', '<div class="pv-baskets" id="pvBaskets"></div>' + `<img class="pv-steam s1" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()"><img class="pv-steam s2" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()">`, 'st-pot') : ''}   // J9: khói nồi trụng
+        ${this.has.pot ? dropz('pot', 'pot', '<div class="pv-baskets" id="pvBaskets"></div>' + `<img class="pv-steam s1" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()"><img class="pv-steam s2" src="${fx('steam')}" alt="" draggable="false" onerror="this.remove()">`, 'st-pot') : ''}
         ${this.has.pot ? zone('hot', '<div class="pv-hot" id="pvHot"></div>') : ''}
-        ${this.has.sink || C.waterItems.length ? dropz('sink', 'sink', '<div class="pv-sinkin" id="pvSink"></div><i class="pv-drip"></i>', 'st-sink') : ''}   // J9: giọt nước vòi
+        ${this.has.sink || C.waterItems.length ? dropz('sink', 'sink', '<div class="pv-sinkin" id="pvSink"></div><i class="pv-drip"></i>', 'st-sink') : ''}
         ${this.has.burner || this.has.ready ? zone('burner', `<div class="pv-pots" id="pvPots"></div><div class="pv-ready" id="pvReady"></div>`
             + (this.has.stovetop ? `<div class="pv-stove drop" data-zone="burner" id="pvStove"></div>` : ''), 'st-burner') : ''}
         ${C.brothSrc.length + C.stockItems.length ? zone('broth',
@@ -147,10 +148,10 @@ export class Pov {
       // Rổ là object riêng (docs/ART-PIPELINE.md §9): rỗng vẫn vẽ cái rổ, có sợi thì đổi ảnh.
       const rk = (full) => `<img class="pv-objimg" src="${basketArt(full)}" alt="" draggable="false" onerror="this.closest('.pv-basket')?.classList.add('noart');this.remove()">`;
       if (!b) return `<div class="pv-basket ${atSink(b0) ? 'away' : 'drop'}" data-zone="pot" data-i="${i}">${rk(false)}</div>`;
-      const busy = b.left > 0; const st = b.spoiled ? 'hư — vứt đi' : busy ? '…' : b.state === 'hot' ? 'nóng' : b.state === 'rinsed' ? 'đã xả lạnh' : b.state === 'hot2' ? 'nóng lại' : 'xong';
+      const busy = b.left > 0; const st = b.spoiled ? T('pv.spoiled') : busy ? '…' : b.state === 'hot' ? T('pv.hot') : b.state === 'rinsed' ? T('pv.rinsed') : b.state === 'hot2' ? T('pv.hotAgain') : T('pv.done');
       return `<div class="pv-basket drop ${b.spoiled ? 'bad' : b.state}" data-zone="pot" data-i="${i}"><div class="pv-rk ${busy ? '' : 'dragsrc'}" ${src1('basket', null, i)}>${rk(true)}<i class="pv-ghosticon">${img(b.input)}</i><small>${st}</small>${bar(b.left, b.total)}</div></div>`;
     }).join('');
-    if (this.has.pot) H('pvHot').innerHTML = C.hot.length ? C.hot.map((h, i) => `<div class="pv-hb ${h.left > 0 ? '' : 'dragsrc'}" ${src1('hotbowl', null, i)}>${img(h.input)}<small>${h.left > 0 ? '…' : 'nóng'}</small>${bar(h.left, h.total)}</div>`).join('') : '<small class="hint">tô nóng trữ ở đây</small>';
+    if (this.has.pot) H('pvHot').innerHTML = C.hot.length ? C.hot.map((h, i) => `<div class="pv-hb ${h.left > 0 ? '' : 'dragsrc'}" ${src1('hotbowl', null, i)}>${img(h.input)}<small>${h.left > 0 ? '…' : T('pv.hot')}</small>${bar(h.left, h.total)}</div>`).join('') : `<small class="hint">${T('pv.hint.hotBowls')}</small>`;
     if (this.has.sink || C.waterItems.length) {
       const jobHtml = C.sinkJob ? `<div class="pv-job ${C.sinkJob.left > 0 ? '' : 'dragsrc'}" ${src1('sink')}>${img(C.sinkJob.input)}<small>${C.sinkJob.left > 0 ? C.sinkJob.name : 'xong'}</small>${bar(C.sinkJob.left, C.sinkJob.total)}</div>` : '';
       // Rổ xả lạnh hiện ở đây, kèm vòi nước đang chảy khi còn xả.
@@ -160,7 +161,7 @@ export class Pov {
         return `<div class="pv-rinse ${busy ? 'wet' : 'done'}">
           <img class="pv-objimg" src="${basketArt(true)}" alt="" draggable="false" onerror="this.remove()">
           ${busy ? `<img class="pv-water" src="${fx('splash-water')}" alt="" draggable="false" onerror="this.remove()">` : ''}
-          <div class="pv-rk ${busy ? '' : 'dragsrc'}" ${src1('basket', null, i)}><i class="pv-ghosticon">${img(b.input)}</i><small>${busy ? 'đang xả lạnh' : 'đã xả lạnh'}</small>${bar(b.left, b.total)}</div>
+          <div class="pv-rk ${busy ? '' : 'dragsrc'}" ${src1('basket', null, i)}><i class="pv-ghosticon">${img(b.input)}</i><small>${busy ? T('pv.rinsing') : T('pv.rinsed')}</small>${bar(b.left, b.total)}</div>
         </div>`;
       }).join('');
       // Vòi nước: miếng nước trắng hứng ở đây rồi đem vô nồi, không phải lấy trên khay.
@@ -172,22 +173,22 @@ export class Pov {
       const gathering = j && j.left === null;
       H('pvStove').innerHTML = j
         ? `<div class="pv-job ${j.left != null && j.left <= 0 ? 'dragsrc' : ''}" ${src1('stovetop')}>${img(j.input)}<small>${
-            gathering ? 'thiếu ' + j.tf.inputs.filter((_, i) => !j.have[i]).map(label).join(', ') : j.left > 0 ? j.name : 'xong'
+            gathering ? T('pv.need', { list: j.tf.inputs.filter((_, i) => !j.have[i]).map(labelL).join(', ') }) : j.left > 0 ? j.name : T('pv.done')
           }</small>${gathering ? '' : bar(j.left, j.total)}</div>`
-        : '<small class="hint">nồi/chảo nhỏ</small>';
+        : `<small class="hint">${T('pv.hint.smallPan')}</small>`;
     }
     for (const [k, id] of [['fryer', 'pvFryer'], ['microwave', 'pvMw']]) { if (!this.has[k]) continue; const j = C[k];
-      H(id).innerHTML = j ? `<div class="pv-job ${j.left > 0 ? '' : 'dragsrc'}" ${src1(k)}>${img(j.input)}<small>${j.left > 0 ? j.name : 'xong'}</small>${bar(j.left, j.total)}</div>` : '<small class="hint">trống</small>'; }
+      H(id).innerHTML = j ? `<div class="pv-job ${j.left > 0 ? '' : 'dragsrc'}" ${src1(k)}>${img(j.input)}<small>${j.left > 0 ? j.name : T('pv.done')}</small>${bar(j.left, j.total)}</div>` : `<small class="hint">${T('pv.empty')}</small>`; }
     if (this.has.ready) {
       H('pvPots').innerHTML = C.burner.pots.map((p, i) => {
-        if (!p) return `<div class="pv-pt drop" data-zone="burner" data-i="${i}">${objImg('soup-pot')}<small class="hint">nồi trống</small></div>`;
-        const done = p.left === 0; return `<div class="pv-pt drop ${done ? 'done' : ''}" data-zone="burner" data-i="${i}">${objImg('soup-pot')}<div class="${done ? 'dragsrc' : ''}" ${src1('burnerpot', null, i)}><b>${p.name}</b><small>${p.left === null ? p.items.map(label).join(' → ') : done ? 'xong — múc ra' : 'đang đun…'}</small>${bar(p.left, p.total)}</div></div>`;
+        if (!p) return `<div class="pv-pt drop" data-zone="burner" data-i="${i}">${objImg('soup-pot')}<small class="hint">${T('pv.hint.emptyPot')}</small></div>`;
+        const done = p.left === 0; return `<div class="pv-pt drop ${done ? 'done' : ''}" data-zone="burner" data-i="${i}">${objImg('soup-pot')}<div class="${done ? 'dragsrc' : ''}" ${src1('burnerpot', null, i)}><b>${soupName(p)}</b><small>${p.left === null ? p.items.map(labelL).join(' → ') : done ? T('pv.doneLadle') : T('pv.heating')}</small>${bar(p.left, p.total)}</div></div>`;
       }).join('');
-      H('pvReady').innerHTML = C.burner.ready.length ? C.burner.ready.map((r, i) => `<div class="pv-rd dragsrc" ${src1('ready', null, i)}>${img(r.output)}<small>${r.name}</small></div>`).join('') : '<small class="hint">kệ nước</small>';
+      H('pvReady').innerHTML = C.burner.ready.length ? C.burner.ready.map((r, i) => `<div class="pv-rd dragsrc" ${src1('ready', null, i)}>${img(r.output)}<small>${soupName(r)}</small></div>`).join('') : `<small class="hint">${T('pv.hint.brothShelf')}</small>`;
     }
     if (this.has.prep) H('pvBoards').innerHTML = C.boards.map((b, i) => {
-      if (!b) return `<div class="pv-board drop" data-zone="prep" data-i="${i}"><small class="hint">thớt ${i + 1}</small></div>`;
-      const done = b.left === 0; return `<div class="pv-board drop ${done ? 'done' : ''}" data-zone="prep" data-i="${i}"><div class="${done ? 'dragsrc' : ''}" ${src1('board', null, i)}>${done ? img(b.output) : b.have.filter(Boolean).map(img).join('')}<small>${b.left === null ? `thiếu ${b.tf.inputs.filter((_, k) => !b.have[k]).map(label).join(', ')}` : done ? label(b.output) : b.name + '…'}</small>${bar(b.left, b.total)}</div></div>`;
+      if (!b) return `<div class="pv-board drop" data-zone="prep" data-i="${i}"><small class="hint">${T('pv.board', { n: i + 1 })}</small></div>`;
+      const done = b.left === 0; return `<div class="pv-board drop ${done ? 'done' : ''}" data-zone="prep" data-i="${i}"><div class="${done ? 'dragsrc' : ''}" ${src1('board', null, i)}>${done ? img(b.output) : b.have.filter(Boolean).map(img).join('')}<small>${b.left === null ? T('pv.need', { list: b.tf.inputs.filter((_, k) => !b.have[k]).map(labelL).join(', ') }) : done ? labelL(b.output) : b.name + '…'}</small>${bar(b.left, b.total)}</div></div>`;
     }).join('');
     H('pvSlots').innerHTML = C.slots.map((b, i) => {
       if (!b) return `<div class="pv-slot drop" data-zone="slot" data-i="${i}"></div>`;   // ô trống: để tranh sạch, tấm lót đã vẽ trong nền (J2)
