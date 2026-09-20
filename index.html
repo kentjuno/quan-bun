@@ -719,6 +719,44 @@
       .mast { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; } .chip { font-size: 11px; background: #f3e9d8; border-radius: 10px; padding: 3px 8px; } .chip.good { background: #dff2df; }
       .stars { font-size: 42px; letter-spacing: 6px; color: var(--broth); margin: 6px 0; text-shadow: 0 1px 0 #b07a20; }
       .stat { font-size: 15px; margin: 3px 0; }
+      /* ===== M2 — CHUYẾN XE sang tỉnh (src/trip.js; khuôn tools/roadtrip.html) ===== */
+      #trip { position: fixed; inset: 0; z-index: 60; background: #2b2118; font-family: "Patrick Hand", cursive; -webkit-user-select: none; user-select: none; touch-action: none; overflow: hidden; }
+      #trip .tr-view { position: absolute; inset: 0; overflow: hidden; }
+      #trip .tr-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+      #trip .tr-map { display: block; width: 100%; height: 100%; }
+      #trip .tr-fog { position: absolute; inset: 0; background-size: 100% 100%; background-repeat: no-repeat; filter: grayscale(1) brightness(.78) sepia(.25); clip-path: inset(var(--border) 0 0 0);
+        -webkit-mask-image: radial-gradient(circle at var(--cx) var(--cy), transparent var(--r), black calc(var(--r) + 140px)); mask-image: radial-gradient(circle at var(--cx) var(--cy), transparent var(--r), black calc(var(--r) + 140px)); }
+      #trip .tr-fog::after { content: ''; position: absolute; inset: 0; background: rgba(60,50,40,.18); }
+      #trip .tr-route { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; } #trip .tr-route path { fill: none; stroke: none; }
+      #trip .tr-bike { position: absolute; left: 0; top: 0; width: var(--bw, 110px); transform-origin: 50% 85%; will-change: transform; filter: drop-shadow(2px 6px 4px rgba(30,20,10,.35)); }
+      #trip .tr-bike img { display: block; width: 100%; height: auto; }
+      #trip .tr-bike .wheel { position: absolute; width: var(--wd, 24px); height: var(--wd, 24px); border-radius: 50%; border: 2px dashed rgba(38,25,15,.55); animation: trSpin .35s linear infinite; animation-play-state: paused; box-sizing: border-box; }
+      #trip.moving .tr-bike .wheel { animation-play-state: running; } #trip.moving .tr-bike img { animation: trBob .28s ease-in-out infinite alternate; }
+      @keyframes trSpin { to { transform: rotate(360deg); } } @keyframes trBob { from { transform: translateY(0); } to { transform: translateY(-2px); } }
+      #trip .dust { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, rgba(230,215,180,.9), rgba(230,215,180,0) 70%); pointer-events: none; }
+      #trip .tr-clouds { position: absolute; inset: 0; pointer-events: none; } #trip .tr-clouds img { position: absolute; width: 38%; opacity: .85; filter: drop-shadow(0 6px 8px rgba(30,20,10,.15)); }
+      #trip .tr-vignette { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 90px rgba(30,20,10,.55); }
+      #trip .tr-title { position: absolute; left: 50%; top: 22%; transform: translate(-50%, -50%) scale(.6); opacity: 0; color: #fffdf5; font-size: 12vw; letter-spacing: .04em; paint-order: stroke fill; -webkit-text-stroke: 8px #26190f; text-shadow: 0 6px 0 rgba(38,25,15,.35); white-space: nowrap; pointer-events: none; }
+      #trip .tr-title small { display: block; font-size: 4.5vw; -webkit-text-stroke: 4px #26190f; margin-top: -1vw; }
+      #trip .tr-title.on { animation: trTitle 2.4s cubic-bezier(.2,1.2,.3,1) forwards; }
+      @keyframes trTitle { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.6) rotate(-4deg); } 18% { opacity: 1; transform: translate(-50%,-50%) scale(1.08) rotate(1deg); } 30% { transform: translate(-50%,-50%) scale(1) rotate(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-62%) scale(1); } }
+      #trip .tr-quan { position: absolute; width: 34%; transform: translate(-50%, -100%) scale(0); transform-origin: 50% 100%; }
+      #trip .tr-quan.on { animation: trPop .5s cubic-bezier(.3,1.6,.4,1) forwards; } @keyframes trPop { to { transform: translate(-50%, -100%) scale(1); } }
+      #trip .tr-quan .sign { background: #fffdf5; border: 3px solid #26190f; border-radius: 6px; padding: 2% 4%; text-align: center; font-size: 5vw; color: #26190f; box-shadow: 4px 5px 0 rgba(38,25,15,.35); transform: rotate(-2deg); }
+      #trip .tr-quan .sign small { display: block; font-size: 3.2vw; opacity: .8; }
+      #trip .tr-bubble { position: absolute; left: 50%; bottom: 16%; width: 84%; transform: translateX(-50%) translateY(30px); opacity: 0; background: #fffdf5; border: 3px solid #26190f; border-radius: 14px; padding: 10px 14px; font-size: 5vw; color: #26190f; box-shadow: 4px 6px 0 rgba(38,25,15,.35); transition: transform .35s cubic-bezier(.2,1.3,.3,1), opacity .25s; }
+      #trip .tr-bubble.on { opacity: 1; transform: translateX(-50%) translateY(0); } #trip .tr-bubble b { color: #b5521f; }
+      #trip .tr-ui { position: absolute; left: 50%; bottom: 5%; transform: translateX(-50%); display: flex; gap: 10px; }
+      #trip .tr-ui button { font: 700 5.5vw "Patrick Hand", cursive; background: #d64a2c; color: #fff; border: 3px solid #26190f; border-radius: 12px; padding: 8px 26px; box-shadow: 0 5px 0 #26190f; }
+      #trip .tr-ui button.ghost { background: rgba(255,253,245,.85); color: #26190f; font-size: 4vw; padding: 4px 14px; box-shadow: 0 3px 0 #26190f; }
+      #trip .tr-ui button:active { transform: translateY(3px); box-shadow: 0 2px 0 #26190f; }
+      /* hàng tỉnh trên menu (hành trình) */
+      .provs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: none; } .provs::-webkit-scrollbar { display: none; }
+      .provs .pv { flex: 0 0 auto; min-width: 92px; background: #fffdf5; border: 3px solid #eadfcd; border-radius: 14px; padding: 6px 9px; text-align: center; cursor: pointer; position: relative; }
+      .provs .pv .ic { font-size: 20px; line-height: 1.1; } .provs .pv b { display: block; font-size: 11.5px; line-height: 1.2; } .provs .pv small { display: block; font-size: 10px; color: var(--broth); font-weight: 700; }
+      .provs .pv.on { border-color: var(--red); background: #fff3f1; } .provs .pv.locked { opacity: .55; background: #f7f1e6; } .provs .pv.locked small { color: #9a8b76; } .provs .pv.soon { opacity: .5; border-style: dashed; }
+      .provs .pv .trip { position: absolute; right: -6px; top: -8px; font-size: 14px; background: #fff; border: 2px solid var(--ink); border-radius: 50%; width: 24px; height: 24px; line-height: 20px; }
+      .provs .pv.new::after { content: '!'; position: absolute; left: -4px; top: -8px; background: var(--red); color: #fff; font-weight: 900; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; line-height: 18px; }
       .hidden { display: none !important; }
       @media (prefers-reduced-motion: reduce) { .timer.done, .ripple { animation: none; } }
     </style>
@@ -750,6 +788,7 @@
         <div class="tabs three"><button data-tab="day" class="on" data-i18n="menu.tab.play">🍜 Quán</button><button data-tab="shop"><span data-i18n="menu.tab.shop">🔧 Nâng cấp</span> <span id="ptsBadge" class="badge"></span></button><button data-tab="more" data-i18n="menu.tab.more">🎮 Thêm</button></div>
         <div id="loading" data-i18n="menu.loading">Đang tải…</div>
         <section id="tab-day" class="tab main">
+          <div class="provs" id="provRow"></div>
           <div class="worlds" id="worldRow"></div>
           <div class="lvgrid" id="lvGrid"></div>
           <div class="lvcard daycard" id="lvCard"></div>

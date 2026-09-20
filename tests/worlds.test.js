@@ -221,9 +221,17 @@ describe('tiến trình: sao mở level/world, nâng cấp theo sao', () => {
 
     for (const L of WORLDS[0].levels) P.recordLevel(L.id, { stars: 3, money: 0, tips: 0 });
     expect(P.worldStars('pho')).toBe(75);
-    expect(P.worldUnlocked('bun-rieu')).toBe(true);
-    expect(P.currentLevel().world).toBe('bun-rieu');
-    expect(P.unlocksAfter(levelById('pho-25')).some((u) => u.kind === 'world' && u.id === 'bun-rieu')).toBe(true);
+    // hành trình (data/regions.js): Hà Nội = phở → món khô → chả cá; Hải Phòng mở khi Hà Nội ≥ 40★; Huế (bún riêu) mở khi Hải Phòng ≥ 20★
+    expect(P.worldUnlocked('mon-kho')).toBe(true);
+    expect(P.worldUnlocked('cha-ca')).toBe(false);
+    expect(P.provinceUnlocked('hai-phong')).toBe(true); expect(P.worldUnlocked('hai-phong')).toBe(true);
+    expect(P.provinceUnlocked('hue')).toBe(false); expect(P.worldUnlocked('bun-rieu')).toBe(false);
+    expect(P.currentLevel().world).toBe('mon-kho');
+    expect(P.unlocksAfter(levelById('pho-25')).some((u) => u.kind === 'world' && u.id === 'mon-kho')).toBe(true);
+    for (const L of WORLDS.find((w) => w.id === 'hai-phong').levels.slice(0, 7)) P.recordLevel(L.id, { stars: 3, money: 0, tips: 0 });
+    expect(P.provinceUnlocked('hue')).toBe(true); expect(P.worldUnlocked('bun-rieu')).toBe(true); expect(P.worldUnlocked('bun-bo')).toBe(false);
+    expect(P.provinceUnlocked('sai-gon')).toBe(false);
+    expect(P.unlocksAfter(levelById('hai-phong-7')).some((u) => u.kind === 'province' && u.id === 'hue')).toBe(true);
     expect(P.unlocksAfter(levelById('pho-10')).some((u) => u.kind === 'dish' && u.id === 'pho-dac-biet')).toBe(true);
     expect(P.unlocksAfter(levelById('pho-9')).some((u) => u.kind === 'regular' && u.id === 'cau-hai')).toBe(true);
     delete globalThis.localStorage;

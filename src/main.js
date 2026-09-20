@@ -4,7 +4,9 @@ import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
 import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
-import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter } from './game/progress.js';
+import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds } from './game/progress.js';
+import { PROVINCES, QUAN, provinceOf, prevProvince } from './data/regions.js';
+import { playTrip, tripRunning } from './trip.js';
 import { D, recipeFor, setSource } from './game/recipes.js';
 import { botDecide } from './game/bot.js';
 import { label, labelL, dishLabel } from './game/recipes.js';
@@ -174,12 +176,13 @@ function showResult(r) {
   $('rUnlock').replaceChildren(...nextUnlocks.map((u, i) => { const el = document.createElement('div'); el.className = 'u'; el.style.animationDelay = `${1.4 + i * 0.25}s`;
     if (u.kind === 'dish') { const ic = iconUrl(D.recipes[u.id]?.base?.bowl || 'soup-bowl'); el.innerHTML = `${ic ? `<img src="${ic}" alt="">` : '<span class="ic">🍜</span>'}<div><b>${T('unlock.dish')}</b><small>${dishLabel(u.id, true)}</small></div>`; }
     else if (u.kind === 'upgrade') { const up = UPGRADES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${up.icon}</span><div><b>${T('unlock.upgrade', { name: tl(`upgrade.${up.id}.name`, up.name) })}</b><small>${tl(`upgrade.${up.id}.desc`, up.desc)}</small></div>`; }
-    else if (u.kind === 'world') { const wd = worldById(u.id); el.innerHTML = `<span class="ic">${wd.icon}</span><div><b>${T('unlock.world', { name: tl(`world.${wd.id}.name`, wd.name) })}</b><small>${tl(`world.${wd.id}.sub`, wd.sub)} · ${wd.levels.length} level</small></div>`; }
+    else if (u.kind === 'province') { const pv = PROVINCES.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">${pv.icon}</span><div><b>${T('unlock.province', { name: tl(`prov.${pv.id}.name`, pv.name) })}</b><small>${tl(`prov.${pv.id}.sub`, pv.sub)} · ${T('unlock.province.trip')}</small></div>`; }
+    else if (u.kind === 'world') { const wd = worldById(u.id); el.innerHTML = `<span class="ic">${wd.icon}</span><div><b>${T('unlock.world', { name: QUAN[wd.id] ? tl(`quan.${wd.id}.name`, QUAN[wd.id].name) : tl(`world.${wd.id}.name`, wd.name) })}</b><small>${tl(`world.${wd.id}.sub`, wd.sub)} · ${wd.levels.length} level</small></div>`; }
     else { const rg = REGULARS.find((x) => x.id === u.id); el.innerHTML = `<span class="ic">🙋</span><div><b>${T('unlock.regular', { name: rg.name })}</b><small>${tl(`cust.${rg.id}.sketch`, rg.sketch)} · ${T('unlock.regular.fav', { dish: dishLabel(rg.dish) })}</small></div>`; }
     return el; }));
-  const nxt = isDay ? nextLevel(sh) : null; const nw = isDay && !nxt ? WORLDS[WORLDS.indexOf(worldById(sh.world)) + 1] : null;
-  const nb = $('btnNext'); nb.classList.toggle('hidden', !isDay || r.stars < 1 || (!nxt && !(nw && worldStars(sh.world) >= nw.starsToUnlock)));
-  nb.textContent = nxt ? `Level ${nxt.n} →` : nw ? `Sang ${nw.name} →` : '';
+  const nxt = isDay ? nextLevel(sh) : null; const J = journeyWorlds(); const nw = isDay && !nxt ? J[J.indexOf(worldById(sh.world)) + 1] : null;
+  const nb = $('btnNext'); nb.classList.toggle('hidden', !isDay || r.stars < 1 || (!nxt && !(nw && worldUnlocked(nw.id))));
+  nb.textContent = nxt ? `Level ${nxt.n} →` : nw ? T('result.nextWorld', { name: QUAN[nw.id] ? tl(`quan.${nw.id}.name`, QUAN[nw.id].name) : tl(`world.${nw.id}.name`, nw.name) }) : '';
   $('rTips').textContent = r.tips; $('rServed').textContent = r.served; $('rLeft').textContent = r.left; $('rMistakes').textContent = r.mistakes;
   // --- báo cáo để tối ưu cách làm thật (gấp trong <details>) ---
   const rows = st.bowls.map((b) => { const pr = par(b.dish); const d = pr.seconds ? b.wait - pr.seconds : null;
@@ -263,10 +266,29 @@ const dishName = (d) => D.recipes[d].name;
 function renderMenu() {
   // --- bản đồ: hàng world + lưới level + thẻ chi tiết (docs/PLAN-WORLDS.md §6) ---
   const cur = currentLevel(); const M = allMastery();
-  $('worldRow').replaceChildren(...WORLDS.map((w, i) => {
-    const un = worldUnlocked(w.id); const el = document.createElement('div');
+  // --- hành trình: hàng tỉnh (Bắc → Nam) rồi hàng quán trong tỉnh đang chọn (data/regions.js) ---
+  const curProv = provinceOf(WORLDS[worldIdx].id) || PROVINCES[0];
+  $('provRow').replaceChildren(...PROVINCES.map((p) => {
+    const un = provinceUnlocked(p.id); const el = document.createElement('div');
+    const isNew = un && p.piece && !tripSeen(p.id) && !p.soon;
+    el.className = 'pv' + (p.id === curProv.id ? ' on' : '') + (un ? '' : ' locked') + (p.soon ? ' soon' : '') + (isNew ? ' new' : '');
+    const pw = prevProvince(p.id);
+    const max = p.worlds.reduce((n, w) => n + (worldById(w)?.maxStars || 0), 0);
+    el.innerHTML = `<div class="ic">${un ? p.icon : '🔒'}</div><b>${tl(`prov.${p.id}.name`, p.name)}</b><small>${p.soon ? T('menu.prov.soon') : un ? `${provinceStars(p.id)}/${max} ★` : T('menu.locked', { n: p.unlockStars })}</small>${un && p.piece && !p.soon ? `<span class="trip" title="${T('menu.prov.replay')}">🛵</span>` : ''}`;
+    el.onclick = (e) => {
+      if (!un) { toast(T('menu.lockProv', { n: p.unlockStars, prev: pw ? tl(`prov.${pw.id}.name`, pw.name) : '' }), 1600); return; }
+      if (e.target.closest('.trip') || (p.piece && !tripSeen(p.id))) { markTrip(p.id); playTrip(p.piece, { sfx, onDone: () => { renderMenu(); } }); if (p.soon) return; }
+      if (p.soon) { toast(T('menu.prov.soonTip'), 1600); return; }
+      const w = worldById(p.worlds.find((id) => worldUnlocked(id) && worldStars(id) < worldById(id).maxStars) || p.worlds[0]); worldIdx = WORLDS.indexOf(w);
+      const first = w.levels.find((L) => !levelUnlocked(L)) || w.levels[0]; selectLevel(w.levels.find((L) => L.id === cur.id) ? cur : (levelUnlocked(first) ? first : w.levels[0]));
+    };
+    return el;
+  }));
+  $('worldRow').replaceChildren(...curProv.worlds.map((id) => worldById(id)).filter(Boolean).map((w) => {
+    const i = WORLDS.indexOf(w); const un = worldUnlocked(w.id); const el = document.createElement('div');
     el.className = 'wd' + (i === worldIdx ? ' on' : '') + (un ? '' : ' locked');
-    el.innerHTML = `<div class="ic">${un ? w.icon : '🔒'}</div><b>${tl(`world.${w.id}.name`, w.name)}</b><small>${un ? `${worldStars(w.id)}/${w.maxStars} ★` : T('menu.locked', { n: w.starsToUnlock })}</small>`;
+    const q = QUAN[w.id];
+    el.innerHTML = `<div class="ic">${un ? w.icon : '🔒'}</div><b>${q ? tl(`quan.${w.id}.name`, q.name) : tl(`world.${w.id}.name`, w.name)}</b><small>${un ? `${worldStars(w.id)}/${w.maxStars} ★` : T('menu.locked', { n: w.starsToUnlock })}</small>`;
     el.onclick = () => { worldIdx = i; const first = w.levels.find((L) => !levelUnlocked(L)) || w.levels[0]; selectLevel(w.levels.find((L) => L.id === cur.id) ? cur : (levelUnlocked(first) ? first : w.levels[0])); };
     return el;
   }));
@@ -296,7 +318,7 @@ function renderMenu() {
        <small class="dish">${level.dishes.length > 4 ? T('n.dishes', { n: level.dishes.length }) : level.dishes.map(dishName).join(' · ')}</small>
        <div class="tags">${tags}</div>
        <small>${T('menu.card.meta', { sec: level.seconds, n: level.count, money: level.moneyTargets[0] })}${learned ? ` · ${T('menu.card.learned', { a: learned, b: level.dishes.length })}` : ''}</small>`
-    : `<b>🔒 ${level.name}</b><small>${worldUnlocked(level.world) ? T('menu.lockLevel', { world: tl(`world.${W.id}.name`, W.name), n: level.n - 1 }) : T('menu.lockWorld', { n: W.starsToUnlock, world: tl(`world.${WORLDS[worldIdx - 1].id}.name`, WORLDS[worldIdx - 1].name) })}</small>`;
+    : `<b>🔒 ${level.name}</b><small>${worldUnlocked(level.world) ? T('menu.lockLevel', { world: tl(`world.${W.id}.name`, W.name), n: level.n - 1 }) : (() => { const J = journeyWorlds(); const pw = J[J.indexOf(W) - 1]; return T('menu.lockWorld', { n: W.starsToUnlock, world: pw ? tl(`world.${pw.id}.name`, pw.name) : '' }); })()}</small>`;
   const lvName = `${tl(`world.${level.world}.name`, worldById(level.world).name)} ${level.n}`;
   $('btnStart').disabled = !un; $('btnStart').textContent = un ? (st ? T('menu.replay', { name: lvName }) : T('menu.enter', { name: lvName })) : '🔒 ' + T('menu.notOpen');
   // nâng cấp bếp
@@ -341,7 +363,9 @@ function selectLevel(L) { if (!L) return; level = L; worldIdx = Math.max(0, WORL
 renderMenu();
 $('btnStart').onclick = () => { if (!levelUnlocked(level)) return; levelOnPov(level) ? startLevelPov(level) : start(false, 'level'); }; $('btnRetry').onclick = () => playMode === 'puzzle' ? (lastPuzzle.kinds[0] === 'pov' ? startPov(lastPuzzle.rounds) : startPuzzle(lastPuzzle.kinds, lastPuzzle.rounds)) : playMode === 'level' && levelOnPov(level) ? startLevelPov(level) : start(botMode, playMode);
 $('btnNext').onclick = () => {
-  const n = nextLevel(level); if (n) selectLevel(n); else { const w = WORLDS[WORLDS.indexOf(worldById(level.world)) + 1]; if (w) selectLevel(w.levels[0]); }
+  const n = nextLevel(level); if (n) selectLevel(n); else { const J = journeyWorlds(); const w = J[J.indexOf(worldById(level.world)) + 1]; if (w) selectLevel(w.levels[0]); }
+  // sang tỉnh mới lần đầu → chuyến xe trước, rồi mới vô bếp
+  const pv = provinceOf(level.world); if (pv?.piece && provinceUnlocked(pv.id) && !tripSeen(pv.id)) { $('result').classList.add('hidden'); markTrip(pv.id); playTrip(pv.piece, { sfx, onDone: () => { levelOnPov(level) ? startLevelPov(level) : start(false, 'level'); } }); return; }
   levelOnPov(level) ? startLevelPov(level) : start(false, 'level');
 };
 $('btnBot').onclick = () => start(true);
@@ -430,4 +454,4 @@ requestAnimationFrame(frame);
 if (import.meta.env.PROD && 'serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/claude\.ai/.test(location.host)) {
   navigator.serviceWorker.register('./sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const nw = reg.installing; nw?.addEventListener('statechange', () => { if (nw.state === 'installed' && navigator.serviceWorker.controller) toast(T('menu.newVersion'), 3000); }); }); }).catch(() => {});
 }
-window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, counterMove, tick, startPuzzle, D, recipeFor };
+window.__qb = { get world() { return world; }, get puzzle() { return puzzle; }, get pov() { return pov; }, view, start, botDecide, counterMove, tick, startPuzzle, D, recipeFor, playTrip, tripRunning };
