@@ -47,7 +47,7 @@ Số 6★ là đề xuất — chỉnh ở một chỗ (`PACE.recipeStars` hoặ
 | **M0** | Đã xong (19–20/09) | J1–J9 juice · nhịp thật (pace) · hết dán ghép · i18n phần 1 · tên KJ Phở Real · demo roadtrip chốt | — | — |
 | **M1** ✅ | Nền tảng nội dung | P1 phần 2 (i18n đủ) · P6: schema `dishes/`, chuyển 21 món sang bản chung, `stations.json`, `add_dish.mjs` | 3 phiên | Duyệt 21 công thức chung |
 | **M2** ✅ (còn 'khen' + bản đồ tổng) | Hành trình | P2: 5 mảnh bản đồ, đường + quán mỗi mảnh, gắn vào game thay lưới world, chủ quán + màn xin vô quán, cảnh mở đầu văn phòng, cơ chế sao mở tỉnh | 3 phiên | Duyệt thoại chủ quán, tên quán |
-| **M3** | Học & thưởng | P5 học món cho mọi món · P3 sổ tay 3 mốc sao · **công thức nấu thật** 21 món (nghiên cứu mạng, ghi nguồn) · nút in/lưu · chia sẻ ảnh | 3 phiên | Duyệt 21 công thức thật + chuyện |
+| **M3** ✅ | Học & thưởng | P5 học món cho mọi món · P3 sổ tay 3 mốc sao · **công thức nấu thật** 21 món (nghiên cứu mạng, ghi nguồn) · nút in/lưu · chia sẻ ảnh | 3 phiên | Duyệt 21 công thức thật + chuyện |
 | **M4** | Chơi cho ra game | P4: loại khách, thưởng hàng loạt, 2 nâng cấp đổi cách chơi, nối sự kiện vào quầy · P6b mini-game theo tỉnh · vật kỷ niệm | 3 phiên | Chơi thử, chỉnh PACE |
 | **M5** | Mở rộng món đợt 1 | mì Quảng, cao lầu, hủ tiếu Nam Vang, bún thang, bún chả cá (0 trạm mới) qua `add_dish.mjs`; level cho tỉnh Quảng Nam / Nha Trang | 2 phiên | Duyệt 5 món |
 | **M6** | Playtest | P7: 3 người ngoài × 10 phút, log local, sửa theo kết quả | 1 phiên + Kent | Tìm 3 người, ngồi nhìn |
@@ -78,10 +78,10 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 - *Nghiệm thu:* 129 level còn nguyên id; tiến độ cũ giữ; Kent đi hết HN → Miền Tây trên điện thoại không kẹt; mỗi chuyến ≤ 12 s.
 
 ### M3 — Học & thưởng
-- [ ] P5: màn "Học món" = level 1 của mỗi món nhưng chủ quán chỉ tay (bàn tay + mũi tên mực, chữ ≤ 3 từ), chờ người chơi làm xong từng bước. Bỏ qua được. *Nghiệm thu:* tô đầu < 60 s cho người mới (đo ở M6).
-- [ ] P3: sổ tay 3 mốc sao (bảng §1). `src/data/codex/<dish>.json` + `dishes/<id>.recipe.vi.md` + `.en.md`.
-- [ ] Công thức nấu thật 21 món: mỗi món ≥ 2 nguồn tiếng Việt uy tín, viết lại bằng lời mình, mẫu cố định (*Nguyên liệu 4 người · Nước dùng / phần nấu lâu · Sơ chế · Ráp · Ăn kèm · Mẹo · Nguồn*), `[cần Kent duyệt]`. Bản en dịch từ vi.
-- [ ] Thẻ "Mở công thức!" cuối ca khi đủ sao; nút in / lưu PDF; nút chia sẻ ảnh 1080×1350.
+- [x] **(20/09, 1be85a1)** P5: hướng dẫn bằng tay ở **Phở 1** (`pov.tutStart/tutTick`): vòng đỏ quanh vật cần kéo + vòng xanh ở đích + mũi tên mực + nhãn ≤3 từ, theo `counterMove` nên đúng mọi bước, hết khi bưng tô đầu, bỏ qua được, chỉ chạy lần đầu (`tutSeen`). *Chưa:* áp cho level 1 của MỖI món (chỉ cần `tutorial: true` ở level muốn — data). Nghiệm thu <60 s đo ở M6.
+- [x] **(20/09, 297ad83)** P3: `src/codex.js` — tab 📖 Sổ tay, 3 mốc: trang (bưng sạch / ≥1★) · thứ tự ráp bản chung (≥1★) · công thức thật (≥6★ `RECIPE_STARS`). Dữ liệu nằm chung trong `dishes/<id>.json` (`codex`, `real.vi/en`) thay vì file md riêng — một file một món.
+- [x] **(20/09)** Công thức nấu thật 21 món (4 agent nghiên cứu song song, ≥2 nguồn/món: Điện máy XANH, VnExpress Cooking, Bách hoá XANH, Savoury Days, Cookpad, Hướng Nghiệp Á Âu…), mẫu cố định, vi + en, `real.review = 'cần Kent duyệt'`. Test `tests/codex.test.js` kiểm 21/21 đủ mục + URL.
+- [x] **(20/09)** Thẻ 'Mở sổ tay' / 'Mở công thức nấu thật' cuối ca (`progress.codexNew`, chạm mở trang); nút In / lưu PDF (`@media print`); Chia sẻ ảnh 1080×1350 canvas → Web Share API / tải PNG. *Chưa kiểm trên Android thật.*
 - *Nghiệm thu:* 21/21 món có codex + recipe vi/en (test); đủ 6★ ở món → trang công thức thật mở đúng; ảnh chia sẻ tải được trên Android.
 
 ### M4 — Chơi cho ra game
