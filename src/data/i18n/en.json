@@ -1002,5 +1002,16 @@
   "unlock.codex": "Notebook page: {name}",
   "unlock.codex.sub": "tap 📖 Notebook to read",
   "unlock.recipe": "Real recipe unlocked: {name}",
-  "unlock.recipe.sub": "{n}★ reached — cook it at home"
+  "unlock.recipe.sub": "{n}★ reached — cook it at home",
+  "tut.bowl": "Bowl",
+  "tut.noodles": "Noodles",
+  "tut.z.pot": "pot",
+  "tut.z.sink": "sink",
+  "tut.z.prep": "board",
+  "tut.z.fryer": "fryer",
+  "tut.z.microwave": "microwave",
+  "tut.z.burner": "stove",
+  "tut.z.slot": "bowl",
+  "tut.z.ticket": "ticket",
+  "tut.z.trash": "trash"
 }

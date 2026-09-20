@@ -4,7 +4,7 @@ import { World } from './game/world.js';
 import { View, loadModels } from './game/view.js';
 import { SURVIVAL, DECOR, UPGRADES, WORLDS, ALL_DISHES, kitchenFor, levelById, nextLevel, worldById, KITCHEN_VARIANTS } from './config.js';
 import { REGULARS, recapLine } from './data/customers.js';
-import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner, codexNew } from './game/progress.js';
+import { progress, bestStars, recordLevel, recordPlay, recordSurvival, pointsAvailable, hasDecor, buyDecor, setPractice, resetProgress, currentLevel, levelUnlocked, worldUnlocked, worldStars, totalStars, upgradeLevel, upgradeCost, buyUpgrade, upgradeUnlocked, playerMods, unlocksAfter, provinceUnlocked, provinceStars, tripSeen, markTrip, journeyWorlds, introSeen, markIntro, ownerMet, markOwner, codexNew, tutSeen, markTut } from './game/progress.js';
 import { PROVINCES, QUAN, provinceOf, prevProvince } from './data/regions.js';
 import { playTrip, tripRunning } from './trip.js';
 import { playIntro, playOwner, sceneRunning } from './scene.js';
@@ -251,6 +251,7 @@ function startLevelPov(L) {
     arrivals: povArrivals(L), simplify: L.simplify, constraints: con,
     goal: L.goal, moneyTargets: L.moneyTargets, events: L.events, seconds: L.seconds, rush: L.rush,
     burners: mods.burners || 1, patience: L.patience, sfx,
+    tutorial: L.id === 'pho-1' && !tutSeen(), onTutorialDone: () => markTut(), onTutorialSkip: () => markTut(),
     onDone: (r) => showResult(r), onQuit: () => { $('menu').classList.remove('hidden'); },
   });
   pov.start();

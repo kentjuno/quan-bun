@@ -78,6 +78,8 @@ export function codexNew(dishes, open, full) {
   for (const d of dishes) { const k = data.codex[d] || 0; if (k < 1 && open(d)) { data.codex[d] = 1; out.push({ kind: 'codex', id: d }); } if ((data.codex[d] || 0) < 2 && full(d)) { data.codex[d] = 2; out.push({ kind: 'recipe', id: d }); } }
   if (out.length) save(); return out;
 }
+export function tutSeen() { return !!data.tut; }
+export function markTut() { data.tut = 1; save(); }
 export function introSeen() { return !!data.intro; }
 export function markIntro() { data.intro = 1; save(); }
 /** Level mở khi level trước trong world đã ≥1★ (level 1 luôn mở nếu world mở). */

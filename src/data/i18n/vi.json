@@ -615,5 +615,16 @@
   "unlock.codex": "Mở sổ tay: {name}",
   "unlock.codex.sub": "chạm 📖 Sổ tay để xem",
   "unlock.recipe": "Mở công thức nấu thật: {name}",
-  "unlock.recipe.sub": "đủ {n}★ — nấu ở nhà được rồi"
+  "unlock.recipe.sub": "đủ {n}★ — nấu ở nhà được rồi",
+  "tut.bowl": "Tô",
+  "tut.noodles": "Sợi",
+  "tut.z.pot": "nồi",
+  "tut.z.sink": "bồn",
+  "tut.z.prep": "thớt",
+  "tut.z.fryer": "chảo",
+  "tut.z.microwave": "lò",
+  "tut.z.burner": "bếp",
+  "tut.z.slot": "tô",
+  "tut.z.ticket": "phiếu",
+  "tut.z.trash": "rác"
 }

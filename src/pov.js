@@ -3,7 +3,7 @@
 import { D, label, labelL, soupName, tokenMatches, recipeFor } from './game/recipes.js';
 import { t as T } from './i18n.js';
 import { iconUrl } from './game/icons.js';
-import { Counter, povOk } from './game/counter.js';
+import { Counter, povOk, counterMove } from './game/counter.js';
 import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt, trashArt, potArt } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES, PAN_GAP, PAN_MAX1, PAN_ROW_GAP } from './data/counter-layout.js';
 export { povOk };
@@ -44,9 +44,41 @@ export class Pov {
     });
     if (!this.C.dishes.length) return o.onDone(this.C.result());
     this.build(); this.el.classList.remove('hidden'); this.C.spawn(); this.render(); this.loop();
+    if (o.tutorial) this.tutStart();
     if (typeof location !== 'undefined' && new URLSearchParams(location.search).get('fps') === '1') this.fpsMeter();
   }
-  stop() { cancelAnimationFrame(this._raf); this.el.classList.add('hidden'); this.el.onpointerdown = null; }
+  stop() { cancelAnimationFrame(this._raf); this.el.classList.add('hidden'); this.el.onpointerdown = null; this.tutEnd(); }
+
+  // ---------- P5 — hướng dẫn BẰNG TAY (level đầu): vòng + mũi tên mực từ vật cần kéo tới đích, chữ ≤ 3 từ, theo bot ----------
+  // Bước = counterMove(C) (đúng thứ bot sẽ làm) → tìm phần tử nguồn/đích trong DOM → vẽ overlay cố định. Hết khi bưng xong tô đầu. Bỏ qua được.
+  tutStart() {
+    const t = document.createElement('div'); t.id = 'pvTut'; t.innerHTML = `<svg class="tt-svg"><defs><marker id="ttArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#26190f"/></marker></defs><path class="tt-line" d=""/></svg><i class="tt-ring a"></i><i class="tt-ring b"></i><div class="tt-label"></div><button class="tt-skip">${T('trip.skip')}</button>`;
+    document.body.appendChild(t); this.tut = { el: t, key: '' };
+    t.querySelector('.tt-skip').onclick = () => { this.tutEnd(); this.o.onTutorialSkip?.(); };
+  }
+  tutEnd() { if (!this.tut) return; this.tut.el.remove(); this.tut = null; }
+  tutTick() {
+    const C = this.C; if (C.done >= 1 || C.over) { this.tutEnd(); this.o.onTutorialDone?.(); return; }
+    const m = counterMove(C); const t = this.tut; const el = t.el;
+    if (!m || this.drag) { el.classList.add('off'); return; }
+    const srcSel = `.dragsrc[data-k="${m.src.kind}"]${m.src.tok != null ? `[data-t="${m.src.tok}"]` : ''}${m.src.i != null ? `[data-i="${m.src.i}"]` : ''}`;
+    const dstSel = m.zone.kind === 'ticket' ? `.tk[data-i="${m.zone.id}"]` : `.drop[data-zone="${m.zone.kind}"]${m.zone.i != null ? `[data-i="${m.zone.i}"]` : ''}`;
+    const a = this.el.querySelector(srcSel) || this.el.querySelector(`.dragsrc[data-k="${m.src.kind}"]`); const b = this.el.querySelector(dstSel) || this.el.querySelector(`.drop[data-zone="${m.zone.kind}"]`);
+    if (!a || !b) { el.classList.add('off'); return; }
+    el.classList.remove('off');
+    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    const ax = ra.left + ra.width / 2, ay = ra.top + ra.height / 2, bx = rb.left + rb.width / 2, by = rb.top + rb.height / 2;
+    const key = `${srcSel}>${dstSel}|${Math.round(ax)},${Math.round(ay)},${Math.round(bx)},${Math.round(by)}`;
+    if (key === t.key) return; t.key = key;
+    const ring = (r, i) => { i.style.left = `${r.left - 6}px`; i.style.top = `${r.top - 6}px`; i.style.width = `${r.width + 12}px`; i.style.height = `${r.height + 12}px`; };
+    ring(ra, el.querySelector('.tt-ring.a')); ring(rb, el.querySelector('.tt-ring.b'));
+    const dx = bx - ax, dy = by - ay; const len = Math.hypot(dx, dy) || 1; const ux = dx / len, uy = dy / len; const sa = Math.min(ra.width, ra.height) / 2 + 8, sb = Math.min(rb.width, rb.height) / 2 + 10;
+    const x1 = ax + ux * sa, y1 = ay + uy * sa, x2 = bx - ux * sb, y2 = by - uy * sb; const cx = (x1 + x2) / 2 - uy * 40, cy = (y1 + y2) / 2 + ux * 40;
+    el.querySelector('.tt-line').setAttribute('d', `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
+    const lab = el.querySelector('.tt-label'); const tok = m.src.tok || C.token(m.src);
+    const what = m.src.kind === 'madebowl' ? T('tut.bowl') : m.src.kind === 'basket' ? T('tut.noodles') : tok ? labelL(tok).replace(/\s*\(.*\)$/, '') : '';
+    lab.textContent = `${what} → ${T(`tut.z.${m.zone.kind}`)}`; lab.style.left = `${Math.min(innerWidth - 12, Math.max(12, cx))}px`; lab.style.top = `${cy}px`;
+  }
   finish(r) { this.stop(); this.o.onDone(r); }
   msg(t, cls = '') { const m = $('pvMsg'); if (!m) return; m.textContent = t; m.className = 'pv-msg ' + cls; if (cls === 'bad') { this.el.classList.add('shake'); setTimeout(() => this.el.classList.remove('shake'), 320); } }
 
@@ -472,7 +504,7 @@ export class Pov {
       this._tap = { key, t: now };
       const ghost = document.createElement('div'); ghost.className = 'pv-ghost'; ghost.innerHTML = (el.querySelector('.pv-ghosticon img,.pv-ghosticon .emo') || el.querySelector('img,.emo'))?.outerHTML || '•'; document.body.appendChild(ghost);
       const hl = document.createElement('div'); hl.className = 'pv-hl'; document.body.appendChild(hl);
-      drag = { el, ghost, hl, zones: measure(), x0: e.clientX, y0: e.clientY,
+      this.drag = true; drag = { el, ghost, hl, zones: measure(), x0: e.clientX, y0: e.clientY,
                px: e.clientX, tx: -1e9, ty: -1e9, tt: 0, tilt: 0, zone: null, moved: false };
       el.classList.add('lift');
       root.classList.add('dragging');   // đang kéo mới hiện viền chỗ thả (CSS), lúc thường để tranh sạch
@@ -511,7 +543,7 @@ export class Pov {
       else drag.hl.classList.remove('on');
     };
     const end = (e) => {
-      if (!drag) return; const d = drag; drag = null; clearTimeout(d.hold);
+      if (!drag) return; const d = drag; drag = null; this.drag = false; clearTimeout(d.hold);
       d.hl.remove(); d.el.classList.remove('lift');
       root.classList.remove('dragging'); root.querySelectorAll('.drop.over').forEach((z) => z.classList.remove('over'));
       // Dò lại ngay tại điểm nhả: lúc kéo chỉ dò mỗi 3px nên cú vẩy nhanh có thể còn ô cũ.
@@ -689,6 +721,6 @@ export class Pov {
     requestAnimationFrame(tick);
   }
   loop() { let last = performance.now();
-    const tick = (now) => { if (this.C.over) return; const dt = Math.min(0.1, (now - last) / 1000); last = now; this.C.update(dt); this.render(); this._raf = requestAnimationFrame(tick); };
+    const tick = (now) => { if (this.C.over) return; const dt = Math.min(0.1, (now - last) / 1000); last = now; this.C.update(dt); this.render(); if (this.tut) this.tutTick(); this._raf = requestAnimationFrame(tick); };
     this._raf = requestAnimationFrame(tick); }
 }
