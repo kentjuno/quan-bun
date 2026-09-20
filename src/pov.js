@@ -1,6 +1,6 @@
 // QUẦY POV — lớp vẽ + kéo thả. Mọi luật bếp nằm ở game/counter.js (Counter), file này chỉ hiển thị và chuyển thao tác thành `C.drop(src, zone)`.
 // Điều khiển: KÉO vật tới chỗ, hoặc CHẠM ĐÔI để nó tự bay tới đích hợp lý nhất (Kent: kéo chính xác trên điện thoại khó).
-import { D, label, labelL, soupName, tokenMatches, recipeFor } from './game/recipes.js';
+import { D, label, labelL, soupName, dishLabel, tokenMatches, recipeFor } from './game/recipes.js';
 import { t as T } from './i18n.js';
 import { iconUrl } from './game/icons.js';
 import { Counter, povOk, counterMove } from './game/counter.js';
@@ -34,13 +34,15 @@ export class Pov {
     const o = this.o;
     this.C = new Counter({
       dishes: o.dishes, rounds: o.rounds ?? 8, arrivals: o.arrivals, simplify: o.simplify, constraints: o.constraints,
-      goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1, seconds: o.seconds, rush: o.rush,
+      goal: o.goal, moneyTargets: o.moneyTargets, burners: o.burners ?? 1, seconds: o.seconds, rush: o.rush, events: o.events,
       patience: o.patience ?? 90, gap: o.gap ?? 16, weights: o.weights,
       ev: { onSfx: (k) => o.sfx?.[k]?.(), onMsg: (m, c) => this.msg(m, c), onEnd: (r) => this.finish(r),
         onServe: (t, r) => this.msg(T('pov.served', { name: t.name, say: r.say, sec: r.sec.toFixed(0), quality: T(r.quality === 100 ? 'pov.quality.perfect' : r.quality >= 60 ? 'pov.quality.ok' : 'pov.quality.sloppy') }), r.quality === 100 ? 'good' : 'mid'),
         onExpire: (t) => this.msg(T('pov.left', { name: t.name }), 'bad'), onSpoil: () => this.msg(T('pov.spoil'), 'bad'),
         onCombo: (n, m) => this.banner(T('pov.combo', { m }), 'combo', n), onComboBreak: (n) => this.banner(T('pov.comboBreak'), 'break'),
-        onRush: (on, r) => this.rushUI(on, r) },
+        onRush: (on, r) => this.rushUI(on, r),
+        onBonus: (kind, k) => this.banner(T(`pov.bonus.${kind}`, { k }), 'bonus'),
+        onEvent: (kind) => this.banner(T(`pov.ev.${kind}`), 'ev') },
     });
     if (!this.C.dishes.length) return o.onDone(this.C.result());
     this.build(); this.el.classList.remove('hidden'); this.C.spawn(); this.render(); this.loop();
@@ -625,7 +627,8 @@ export class Pov {
     // tô đang ráp khớp phiếu này (tiền tố thứ tự) → số bước đã vào
     const doneSteps = (t) => Math.max(0, ...C.slots.filter(Boolean)
       .filter((b) => b.placed.every((tok, i) => t.steps[i] === tok)).map((b) => b.placed.length));
-    const key = C.tickets.map((t) => `${t.id}:${t.regular ? 1 : 0}:${hint ? doneSteps(t) : 0}`).join('|');
+    const peek = C.nextUp();
+    const key = C.tickets.map((t) => `${t.id}:${t.kind}:${t.dish}:${t.regular ? 1 : 0}:${hint ? doneSteps(t) : 0}`).join('|') + '#' + peek.map((p) => `${p.dish || '?'}:${Math.ceil(p.in / 5)}`).join(',');
     if (key !== this._tkKey) {
       this._tkKey = key;
       this._seenTk ??= new Set();
@@ -636,13 +639,14 @@ export class Pov {
         // tối đa 7 icon: 7 × 3.8cqw ≈ 108px vừa lòng thẻ 112px, 8 thì tràn
         const icons = hint ? t.steps.map((tok, i) => ({ tok, i })).filter(({ tok }) => !/^@/.test(tok) && tok !== 'base-ready' && iconUrl(tok.replace(/^bowl-hot:/, '')))
           .slice(0, 7).map(({ tok, i }) => `<img class="${i < k ? 'on' : ''}" src="${iconUrl(tok.replace(/^bowl-hot:/, ''))}" alt="" draggable="false" title="${label(tok)}">`).join('') : '';
-        return `<div class="tk drop${t.regular ? ' reg' : ''}${isNew ? ' new' : ''}" data-zone="ticket" data-i="${t.id}">`
+        return `<div class="tk drop k-${t.kind || 'local'}${t.regular ? ' reg' : ''}${isNew ? ' new' : ''}${t.changed ? ' changed' : ''}" data-zone="ticket" data-i="${t.id}">`
+          + `<i class="tk-kind">${T(`pov.kind.${t.kind || 'local'}`)}</i>`
           + `<img class="tk-clip" src="${fx('clip')}" alt="" draggable="false" onerror="this.remove()">`
           + `<img class="tk-face" src="${faceArt(t.regular, t.id)}" alt="" draggable="false" onerror="this.remove()">`
           + `<b>${t.name}</b><span>${D.recipes[t.dish].name}</span>`
           + (icons ? `<div class="tk-ing">${icons}</div>` : '')
           + `<i class="bar"><u></u></i></div>`;
-      }).join('');
+      }).join('') + peek.map((p) => `<div class="tk peek"><b>${T('pov.peek')}</b><span>${p.dish ? dishLabel(p.dish) : '…'}</span><small>${T('pov.peek.in', { s: p.in })}</small></div>`).join('');
       if (fresh && C.time > 0.5) this.o.sfx?.arrive?.();
     }
     for (const t of C.tickets) {

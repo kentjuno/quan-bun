@@ -7,6 +7,16 @@ import { POT, SOUP, SHELF_TOPPING, PRICES } from '../config.js';
 import { REGULARS, lineFor } from '../data/customers.js';
 import { comboMult } from '../data/pace.js';
 
+/** P4 — LOẠI KHÁCH thấy được trên phiếu. `pat`/`tip` nhân vào kiên nhẫn / tiền boa.
+ *  Du khách: dễ tính, boa thường · Người địa phương: ít kiên nhẫn hơn nhưng boa đậm và chê ra tiếng · Khách sộp: boa gấp ba, chờ rất ít. */
+export const TICKET_KINDS = {
+  tourist: { pat: 1.15, tip: 1.0 },
+  local: { pat: 0.9, tip: 1.5 },
+  vip: { pat: 0.6, tip: 3.0 },
+};
+/** Thưởng hàng loạt (P4 §2): chuẩn bị sẵn đầu ca · hai tô lên phiếu trong 3 giây. */
+export const BONUS = { ready: 40, double: 25, doubleWindow: 3 };
+
 const isBroth = (t) => /^broth:|-broth-ready$|^porridge-ready$/.test(t);
 const BOWLISH = /bowl|^tray$|tray-paper|^dia-|mam-dan|chao-ap-ca|serving-plate|banh-trang/;
 /** Mọi món đều chơi được ở quầy POV: mỗi transform phải rơi vào một trạm có chỗ thả. */
@@ -40,7 +50,14 @@ export class Counter {
     this.seconds = Number.isFinite(o.seconds) ? o.seconds : null;
     // Giờ cao điểm (data/pace.js PACE.rush): tới mốc `at` của ca thì khách còn lại tới dày gấp đôi trong `len` giây, tiền ×mult.
     this.rush = o.rush || null; this.rushUntil = 0; this._rushed = false;
-    this.maxTickets = c?.tickets ?? o.maxTickets ?? 3;   // số phiếu treo cùng lúc — càng nhiều càng làm song song được
+    // Sự kiện của level (worlds.js `events`) — trước 20/09 quầy POV bỏ qua hoàn toàn (P4 §4).
+    this.events = (o.events || []).map((e) => ({ ...e, fired: false }));
+    this.rainUntil = 0;
+    // Thưởng hàng loạt: `ready` chấm một lần trước khi khách thứ hai tới; `lastServeAt` để bắt tô đôi.
+    this.bonus = { ready: false, readyBy: 0, doubles: 0, total: 0 }; this.lastServeAt = -99;
+    this.maxTickets = c?.tickets ?? o.maxTickets ?? 3;
+    this.twinPot = !!c?.twinPot;        // nâng cấp "Nồi trụng đôi": thả sợi một lần ra hai rọ
+    this.peek = c?.peek || 0;           // nâng cấp "Bảng gọi món": xem trước n khách kế   // số phiếu treo cùng lúc — càng nhiều càng làm song song được
     this.time = 0; this.spawned = 0; this.done = 0; this.over = false; this.results = [];
     this.nextSpawn = 1;
     // ---- level (docs/PLAN-WORLDS.md): mục tiêu riêng, tiền, chuỗi tô đúng ----
@@ -107,8 +124,11 @@ export class Counter {
     let reg = arr?.regular ? REGULARS.find((x) => x.id === arr.regular) : null;
     if (reg && this.tickets.some((t) => t.regular === reg.id || t.name === reg.name)) reg = null;   // khách quen đang đứng chờ thì không hiện thêm phiếu nữa
     const w = reg ? { name: reg.name, regular: reg.id } : this.who(d);
-    const t = { id: this.spawned++, dish: d, ...w, steps: this.recs[d].assembly, born: this.time,
-      pat: arr?.patience || this.patience, tipMult: reg?.tipMult || 1, mistakes: 0, taps: 0 };
+    // P4: loại khách hiện trên phiếu. VIP từ sự kiện; 'tourist' từ lịch khách; còn lại là người địa phương.
+    const kind = arr?.vip ? 'vip' : arr?.type === 'tourist' ? 'tourist' : 'local';
+    const K = TICKET_KINDS[kind];
+    const t = { id: this.spawned++, dish: d, ...w, kind, steps: this.recs[d].assembly, born: this.time,
+      pat: Math.max(6, Math.round((arr?.patience || this.patience) * K.pat)), tipMult: (reg?.tipMult || 1) * K.tip, mistakes: 0, taps: 0 };
     this.tickets.push(t); this.ev.onSpawn?.(t); return t;
   }
   /** Tô đã bỏ `placed` còn khớp phiếu nào đang treo? */
@@ -192,7 +212,10 @@ export class Counter {
       this.hot.push({ input: tok, output: t.output, left: t.time, total: t.time }); this.ev.onSfx?.('splash'); return this.ok(`${L(tok)}: ${T('st.blanching')}`);
     }
     const i = this.baskets.findIndex((b) => !b); if (i < 0) return this.err(T('err.noBasket'));
-    this.baskets[i] = { input: tok, output: t.output, left: t.time, total: t.time, hold: 0, state: 'blanching', action: t.action };
+    const mk = () => ({ input: tok, output: t.output, left: t.time, total: t.time, hold: 0, state: 'blanching', action: t.action });
+    this.baskets[i] = mk();
+    // Nồi trụng đôi (P4 §3): một lần thả ra hai rọ — hai tô song song, không phải chờ lượt
+    if (this.twinPot) { const j = this.baskets.findIndex((b) => !b); if (j >= 0) this.baskets[j] = mk(); }
     this.ev.onSfx?.('splash'); return this.ok(`${L(tok)}: ${actName(t.action, 'trụng')}`);   // vi-src
   }
   toSink(src, tok) {
@@ -316,7 +339,10 @@ export class Counter {
     const hadStreak = this.streak;
     if (t.mistakes) this.streak = 0; else { this.streak++; this.bestStreak = Math.max(this.bestStreak, this.streak); }
     const mult = comboMult(this.streak) * (this.rushUntil ? this.rush.mult : 1);
-    const gain = Math.round((price + tip) * mult);
+    let gain = Math.round((price + tip) * mult);
+    // P4 §2 — hai tô lên phiếu trong 3 giây: thưởng "ĐÔI"
+    if (!t.mistakes && this.time - this.lastServeAt <= BONUS.doubleWindow) { gain += BONUS.double; this.bonus.doubles++; this.bonus.total += BONUS.double; this.ev.onBonus?.('double', BONUS.double); }
+    this.lastServeAt = this.time;
     this.money += gain; this.tips += tip;
     if (t.mistakes && hadStreak >= 2) this.ev.onComboBreak?.(hadStreak);
     else if (this.streak >= 2) this.ev.onCombo?.(this.streak, comboMult(this.streak));
@@ -349,10 +375,13 @@ export class Counter {
         this.ev.onRush?.(true, this.rush);
       } else if (this.rushUntil && this.time >= this.rushUntil) { this.rushUntil = 0; this.ev.onRush?.(false, this.rush); }
     }
+    this.runEvents();
+    this.checkReadyBonus();
+    const raining = this.time < this.rainUntil;
     if (this.arrivals.length) {
       // khách tới theo lịch; quầy chỉ treo 3 phiếu nên người tới sớm phải đợi chỗ trống
-      while (this.spawned < this.rounds && this.tickets.length < this.maxTickets && this.time >= this.arrivals[this.spawned].t) this.spawn(null, this.arrivals[this.spawned]);
-    } else if (this.time >= this.nextSpawn && this.tickets.length < this.maxTickets && this.spawned < this.rounds) { this.spawn(); this.nextSpawn = this.time + this.gap; }
+      while (!raining && this.spawned < this.rounds && this.tickets.length < this.maxTickets && this.time >= this.arrivals[this.spawned].t) this.spawn(null, this.arrivals[this.spawned]);
+    } else if (!raining && this.time >= this.nextSpawn && this.tickets.length < this.maxTickets && this.spawned < this.rounds) { this.spawn(); this.nextSpawn = this.time + this.gap; }
     const tickJob = (j) => { if (j && j.left > 0) { j.left = Math.max(0, j.left - dt); if (j.left === 0) this.ev.onSfx?.('done'); } };
     for (const b of this.baskets) { if (!b) continue; tickJob(b);
       if (b.left === 0 && b.state !== 'rinsed') { b.state = b.state === 'blanching' ? 'hot' : b.state === 'reblanching' ? 'hot2' : b.state; }
@@ -367,6 +396,63 @@ export class Counter {
       if (p.left === 0 && !this.noStack && this.burner.ready.length < this.stackMax) { this.burner.ready.push({ name: p.name, output: p.output, items: p.items }); this.burner.pots[i] = null; } });
     for (const t of [...this.tickets]) if (this.time - t.born >= t.pat) this.expire(t);
   }
+  /** P4 §4 — SỰ KIỆN của level chạy ở quầy: đoàn khách · khách sộp · mưa · khách đổi ý.
+   *  Mốc `at` là % giờ ca (level không có `seconds` thì bỏ qua — chế độ Luyện/Survival không có sự kiện). */
+  runEvents() {
+    if (!this.events.length || this.seconds == null) return;
+    for (const e of this.events) {
+      if (e.fired || this.time < this.seconds * (e.at ?? 0.5)) continue;
+      e.fired = true;
+      if (e.kind === 'tour') {
+        // đoàn n người tới cùng lúc: chèn vào lịch ngay bây giờ (rounds tăng theo)
+        const n = e.n || 4; const add = Array.from({ length: n }, (_, k) => ({ t: +(this.time + k * 0.5).toFixed(2), type: 'tourist', patience: this.patience, group: 'tour' }));
+        this.arrivals.splice(this.spawned, 0, ...add); this.rounds += n;
+      } else if (e.kind === 'vip') {
+        const a = this.arrivals[this.spawned];
+        if (a) { a.vip = true; a.t = Math.min(a.t, +(this.time + 1).toFixed(2)); }
+        else { this.arrivals.splice(this.spawned, 0, { t: +(this.time + 1).toFixed(2), type: 'office', vip: true, patience: this.patience }); this.rounds++; }
+      } else if (e.kind === 'rain') {
+        // vắng `len` giây (mặc định 40) rồi khách dồn lại: nửa khoảng cách còn lại
+        const len = e.len || 40; this.rainUntil = this.time + len;
+        for (let i = this.spawned; i < this.arrivals.length; i++) { const a = this.arrivals[i]; if (a.t > this.rainUntil) a.t = +(this.rainUntil + (a.t - this.rainUntil) / 2).toFixed(2); else a.t = this.rainUntil; }
+      } else if (e.kind === 'change-order') {
+        // một phiếu đang treo đổi món: chỉ đổi khi CHƯA có tô nào ráp dở khớp phiếu đó.
+        // Chưa có phiếu nào đổi được (khách chưa tới) → chờ, thử lại khung sau cho tới hết 90 % ca.
+        const busy = new Set(this.slots.filter(Boolean).flatMap((b) => this.fits(b.placed).map((t) => t.id)));
+        const t = this.tickets.find((x) => !busy.has(x.id) && this.dishes.length > 1);
+        if (!t) { if (this.time < this.seconds * 0.9) e.fired = false; continue; }
+        const alt = this.dishes.filter((d) => d !== t.dish);
+        const nd = alt[Math.floor(this.rnd() * alt.length)]; t.dish = nd; t.steps = this.recs[nd].assembly; t.changed = true; t.born = Math.max(t.born, this.time - t.pat * 0.5);
+      }
+      this.ev.onEvent?.(e.kind, e);
+    }
+  }
+  /** P4 §2 — chuẩn bị sẵn trước khi khách thứ hai tới: rọ đã thả · tô đã trụng · nước đã nấu (tuỳ món cần gì). */
+  checkReadyBonus() {
+    if (this.bonus.ready || this.over) return;
+    const deadline = this.arrivals.length > 1 ? this.arrivals[1].t : 20;
+    if (this.time > deadline) { this.bonus.ready = true; return; }      // trễ rồi — chấm một lần, không thưởng
+    const needBasket = Object.values(this.recs).some((r) => r.transforms.some((t) => t.station === 'pot' && /noodle/.test(t.output)));
+    const needBowl = Object.values(this.recs).some((r) => r.transforms.some((t) => t.action === 'blanch-bowl'));
+    const needSoup = !!Object.keys(this.soups).length && !this.sim?.soupReady;
+    const okBasket = !needBasket || this.baskets.filter(Boolean).length >= Math.min(2, this.baskets.length);
+    const okBowl = !needBowl || this.hot.length >= 1;
+    const okSoup = !needSoup || this.burner.ready.length + this.burner.pots.filter(Boolean).length >= 1;
+    if (okBasket && okBowl && okSoup && (needBasket || needBowl || needSoup)) {
+      this.bonus.ready = true; this.money += BONUS.ready; this.bonus.total += BONUS.ready; this.ev.onBonus?.('ready', BONUS.ready);
+    }
+  }
+
+  /** Bảng gọi món (P4 §3): khách kế tiếp sẽ gọi gì — [{ dish, in }] (in = còn mấy giây nữa tới). */
+  nextUp() {
+    if (!this.peek || !this.arrivals.length) return [];
+    const out = [];
+    for (let i = this.spawned; i < Math.min(this.arrivals.length, this.spawned + this.peek); i++) {
+      const a = this.arrivals[i]; out.push({ dish: a.dish || null, in: Math.max(0, +(a.t - this.time).toFixed(0)), vip: !!a.vip });
+    }
+    return out;
+  }
+
   /** Còn bao nhiêu phần trăm kiên nhẫn (để vẽ thanh). */
   patienceOf(t) { return Math.max(0, 1 - (this.time - t.born) / t.pat); }
 
@@ -404,7 +490,11 @@ export class Counter {
  */
 /** Nước đi kế tiếp của bot. Phiếu đầu kẹt (đang chờ nồi/thớt) thì quay sang phiếu khác — làm song song như người thật. */
 export function counterMove(C) {
-  for (const t of C.tickets) { const m = moveFor(C, t); if (m) return m; }
+  // P4: bot ưu tiên phiếu đang ráp dở (đừng bỏ tô giữa chừng), rồi tới phiếu sắp hết kiên nhẫn (khách sộp chờ ít nhất).
+  const busy = new Set(C.slots.filter(Boolean).flatMap((b) => C.fits(b.placed).map((t) => t.id)));
+  const left = (t) => t.pat - (C.time - t.born);
+  const order = [...C.tickets].sort((a, b) => (busy.has(b.id) - busy.has(a.id)) || (left(a) - left(b)));
+  for (const t of order) { const m = moveFor(C, t); if (m) return m; }
   return null;
 }
 function moveFor(C, t) {

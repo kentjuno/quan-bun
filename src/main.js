@@ -245,7 +245,9 @@ function startLevelPov(L) {
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.add('hidden'); $('card').classList.remove('show');
   armBackGuard();
   const mods = playerMods(); const con = { ...(L.constraints || {}) };
-  if (mods.potSlots && !con.potSlots) con.potSlots = mods.potSlots;      // nâng cấp Nồi trụng
+  if (mods.bowlSlots > 3 && !con.slots) con.bowlSlots = mods.bowlSlots;   // nâng cấp Chồng tô nóng
+  if (mods.peek && !con.peek) con.peek = mods.peek;                       // nâng cấp Bảng gọi món (P4)
+  if (mods.twinPot) con.twinPot = true;                                   // nâng cấp Nồi trụng đôi (P4)
   pov = new Pov({
     dishes: L.dishes, weights: weightsFor(L.dishes), level: L,
     arrivals: povArrivals(L), simplify: L.simplify, constraints: con,

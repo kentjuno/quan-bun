@@ -626,5 +626,20 @@
   "tut.z.burner": "bếp",
   "tut.z.slot": "tô",
   "tut.z.ticket": "phiếu",
-  "tut.z.trash": "rác"
+  "tut.z.trash": "rác",
+  "pov.kind.tourist": "DU KHÁCH",
+  "pov.kind.local": "KHÁCH QUEN PHỐ",
+  "pov.kind.vip": "KHÁCH SỘP",
+  "pov.bonus.ready": "SẴN SÀNG +{k}k",
+  "pov.bonus.double": "ĐÔI +{k}k",
+  "pov.ev.tour": "ĐOÀN KHÁCH TỚI",
+  "pov.ev.vip": "KHÁCH SỘP TỚI",
+  "pov.ev.rain": "MƯA — VẮNG KHÁCH",
+  "pov.ev.change-order": "KHÁCH ĐỔI Ý",
+  "pov.peek": "SẮP TỚI",
+  "pov.peek.in": "còn {s}s",
+  "upgrade.menu-board.name": "Bảng gọi món",
+  "upgrade.menu-board.desc": "Thấy trước khách kế tiếp (phiếu mờ) để lên kế hoạch",
+  "upgrade.twin-pot.name": "Nồi trụng đôi",
+  "upgrade.twin-pot.desc": "Thả sợi một lần ra hai rọ — làm hai tô song song"
 }

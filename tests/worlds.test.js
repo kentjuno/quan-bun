@@ -238,8 +238,9 @@ describe('tiến trình: sao mở level/world, nâng cấp theo sao', () => {
   });
   it('mọi nâng cấp đều mở bán được trong world đầu (60★) và đổi đúng thông số bếp', () => {
     expect(UPGRADES.every((u) => u.unlockStars <= 60)).toBe(true);
-    const m = modsFor({ burners: 2, seats: 2, 'bowl-stack': 2, shoes: 1, fire: 1 }, 0);
+    const m = modsFor({ burners: 2, seats: 2, 'bowl-stack': 2, 'menu-board': 1, 'twin-pot': 1 }, 0);
     expect(m.burners).toBe(3); expect(m.seats).toBe(5); expect(m.bowlSlots).toBe(5);
-    expect(m.speedMult).toBeCloseTo(1.12); expect(m.heatMult).toBeCloseTo(0.85);
+    // P4: hai nâng cấp đổi CÁCH CHƠI thay cho hai cái đổi số (lửa lớn / dép êm chỉ có tác dụng ở bếp 3D cũ)
+    expect(m.peek).toBe(1); expect(m.twinPot).toBe(true);
   });
 });

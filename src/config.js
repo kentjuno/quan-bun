@@ -88,12 +88,13 @@ export const UPGRADES = [
   { id: 'bowl-stack', name: 'Nồi trụng', icon: '🍜', desc: 'Chồng tô nóng trữ trong nồi: 3 → 4 → 5', unlockStars: 8, levels: [180, 320], apply: (m, lv) => { m.bowlSlots = 3 + lv; } },
   { id: 'seats', name: 'Thêm bàn', icon: '🪑', desc: 'Bàn cho khách: 3 → 4 → 5', unlockStars: 14, levels: [300, 550], apply: (m, lv) => { m.seats = 3 + lv; } },
   { id: 'burners', name: 'Bếp lò', icon: '🔥', desc: 'Số lò đun nước: 1 → 2 → 3', unlockStars: 20, levels: [220, 420], apply: (m, lv) => { m.burners = 1 + lv; } },
-  { id: 'fire', name: 'Lửa lớn', icon: '♨️', desc: 'Nước lèo nóng nhanh hơn 15 % mỗi cấp', unlockStars: 26, levels: [200, 380], apply: (m, lv) => { m.heatMult = 1 - 0.15 * lv; } },
-  { id: 'shoes', name: 'Dép bếp êm', icon: '🩴', desc: 'Đi lại nhanh hơn 12 % mỗi cấp', unlockStars: 32, levels: [260, 480], apply: (m, lv) => { m.speedMult = 1 + 0.12 * lv; } },
+  // P4 §3 — hai nâng cấp ĐỔI CÁCH CHƠI (không phải đổi số): thấy trước khách kế · trụng hai rọ một lần.
+  { id: 'menu-board', name: 'Bảng gọi món', icon: '📋', desc: 'Thấy trước khách kế tiếp (phiếu mờ) để lên kế hoạch', unlockStars: 26, levels: [220], apply: (m) => { m.peek = 1; } },
+  { id: 'twin-pot', name: 'Nồi trụng đôi', icon: '🍲', desc: 'Thả sợi một lần ra hai rọ — làm hai tô song song', unlockStars: 32, levels: [420], apply: (m) => { m.twinPot = true; } },
 ];
 export const DECOR_PATIENCE = 0.06;   // mỗi món trang trí: khách kiên nhẫn thêm 6 %
-/** Thông số bếp sau nâng cấp/trang trí: { bowlSlots, burners, heatMult, seats, speedMult, patienceMult }. */
-export function modsFor(upLevels = {}, decorCount = 0) { const m = { bowlSlots: 3, burners: 1, heatMult: 1, seats: 3, speedMult: 1, patienceMult: 1 + DECOR_PATIENCE * decorCount }; for (const u of UPGRADES) if (upLevels[u.id]) u.apply(m, Math.min(u.levels.length, upLevels[u.id])); return m; }
+/** Thông số bếp sau nâng cấp/trang trí: { bowlSlots, burners, heatMult, seats, speedMult, peek, twinPot, patienceMult }. */
+export function modsFor(upLevels = {}, decorCount = 0) { const m = { bowlSlots: 3, burners: 1, heatMult: 1, seats: 3, speedMult: 1, peek: 0, twinPot: false, patienceMult: 1 + DECOR_PATIENCE * decorCount }; for (const u of UPGRADES) if (upLevels[u.id]) u.apply(m, Math.min(u.levels.length, upLevels[u.id])); return m; }
 
 // Trang trí quán mua bằng điểm (view.js dựng). Chỉ là "áo" — không ảnh hưởng chơi.
 export const DECOR = [

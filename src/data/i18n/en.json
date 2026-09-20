@@ -1013,5 +1013,20 @@
   "tut.z.burner": "stove",
   "tut.z.slot": "bowl",
   "tut.z.ticket": "ticket",
-  "tut.z.trash": "trash"
+  "tut.z.trash": "trash",
+  "pov.kind.tourist": "TOURIST",
+  "pov.kind.local": "LOCAL",
+  "pov.kind.vip": "BIG TIPPER",
+  "pov.bonus.ready": "PREPPED +{k}k",
+  "pov.bonus.double": "DOUBLE +{k}k",
+  "pov.ev.tour": "TOUR GROUP",
+  "pov.ev.vip": "BIG TIPPER",
+  "pov.ev.rain": "RAIN — QUIET",
+  "pov.ev.change-order": "ORDER CHANGED",
+  "pov.peek": "NEXT UP",
+  "pov.peek.in": "in {s}s",
+  "upgrade.menu-board.name": "Order board",
+  "upgrade.menu-board.desc": "See the next customer (ghost ticket) and plan ahead",
+  "upgrade.twin-pot.name": "Twin blanching pot",
+  "upgrade.twin-pot.desc": "One drop fills two baskets — build two bowls at once"
 }

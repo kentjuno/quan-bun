@@ -803,6 +803,15 @@
       #pvTut .tt-ring.b { border-style: dashed; border-color: #2a7a9a; box-shadow: 0 0 0 3px #fffdf5; } @keyframes ttPulse { from { transform: scale(1); } to { transform: scale(1.07); } }
       #pvTut .tt-label { position: absolute; transform: translate(-50%, -50%) rotate(-3deg); background: #fffdf5; border: 3px solid #26190f; border-radius: 10px; padding: 4px 12px; font-size: 20px; font-weight: 700; color: #26190f; white-space: nowrap; box-shadow: 3px 4px 0 rgba(38,25,15,.35); }
       #pvTut .tt-skip { position: absolute; right: 10px; bottom: calc(env(safe-area-inset-bottom) + 10px); pointer-events: auto; font: 700 14px "Patrick Hand", cursive; background: rgba(255,253,245,.9); color: #26190f; border: 3px solid #26190f; border-radius: 10px; padding: 4px 12px; box-shadow: 0 3px 0 #26190f; margin: 0; }
+      /* ===== P4 — loại khách trên phiếu · phiếu xem trước · banner thưởng ===== */
+      #pov .tk .tk-kind { position: absolute; left: 4px; top: 2px; font-size: 2.6cqw; font-style: normal; font-weight: 900; letter-spacing: .02em; padding: 0 4px; border-radius: 6px; background: #eadfcd; color: #4a3a28; border: 1.5px solid rgba(38,25,15,.45); z-index: 2; }
+      #pov .tk.k-tourist { border-color: #2a7a9a; } #pov .tk.k-tourist .tk-kind { background: #cfe8f2; color: #17556b; }
+      #pov .tk.k-local { border-color: #7a5a3a; }
+      #pov .tk.k-vip { border-color: #e2b23a; box-shadow: 0 0 0 2px rgba(226,178,58,.55), 0 4px 10px rgba(30,20,10,.3); } #pov .tk.k-vip .tk-kind { background: #ffe9a8; color: #8a6412; }
+      #pov .tk.changed { animation: tkChanged 1.2s ease-out 2; } @keyframes tkChanged { 50% { background: #ffe9a8; } }
+      #pov .tk.peek { opacity: .45; filter: grayscale(.4); border-style: dashed; pointer-events: none; }
+      #pov .tk.peek small { font-size: 2.6cqw; opacity: .8; }
+      #pov .pv-banner.bonus { color: #2f8a3a; } #pov .pv-banner.ev { color: #2a7a9a; }
       .hidden { display: none !important; }
       @media (prefers-reduced-motion: reduce) { .timer.done, .ripple { animation: none; } }
     </style>
