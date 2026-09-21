@@ -26,9 +26,9 @@ describe('bếp theo quán', () => {
     }
   });
 
-  it('ghi đè zones chỉ đổi ô được ghi, giữ nguyên ô khác', () => {
-    const base = sceneFor('pho');
-    for (const q of ['x', 'y', 'w', 'h']) expect(base.zones.pot[q]).toBeCloseTo(ZONES.pot[q], 1);
+  it('quán không bật graph vẫn dùng toạ độ đo tay cũ', () => {
+    const s = sceneFor('cha-ca');
+    expect(s.zones.pot).toEqual(ZONES.pot);
   });
 
   it('quán kiểu phòng trống: tranh ở room/, 5 đồ tĩnh thành sprite, rơi về tranh nguyên tấm', () => {
@@ -53,18 +53,25 @@ describe('bếp theo quán', () => {
 import { KITCHEN, zonesFrom, layersFrom, moveObj } from '../src/data/scene-graph.js';
 
 describe('scene graph', () => {
-  it('ô thả suy từ object khớp đúng toạ độ đo tay cũ', () => {
+  it('ô thả nằm gọn trong object mang nó', () => {
     const z = zonesFrom();
-    for (const k of ['pot', 'sink', 'burner']) {
-      for (const q of ['x', 'y', 'w', 'h']) expect(z[k][q]).toBeCloseTo(ZONES[k][q], 1);
+    for (const o of KITCHEN.filter((x) => x.zone)) {
+      const b = z[o.zone];
+      expect(b.x).toBeGreaterThanOrEqual(o.x);
+      expect(b.y).toBeGreaterThanOrEqual(o.y);
+      expect(b.x + b.w).toBeLessThanOrEqual(o.x + o.w + 0.01);
+      expect(b.y + b.h).toBeLessThanOrEqual(o.y + o.h + 0.01);
+      expect(b.w).toBeGreaterThan(8);   // đủ to cho ngón tay
+      expect(b.h).toBeGreaterThan(5);
     }
   });
 
   it('dời object thì ô thả đi theo — không phải canh lại', () => {
-    const moved = moveObj(KITCHEN, 'pot-blanch', { y: 27.5 + 6 });
-    const z = zonesFrom(moved);
-    expect(z.pot.y).toBeCloseTo(ZONES.pot.y + 6, 1);
-    expect(z.pot.x).toBeCloseTo(ZONES.pot.x, 1);   // chỉ đổi cái mình đổi
+    const base = zonesFrom();
+    const pot = KITCHEN.find((o) => o.id === 'pot-blanch');
+    const z = zonesFrom(moveObj(KITCHEN, 'pot-blanch', { y: pot.y + 6 }));
+    expect(z.pot.y).toBeCloseTo(base.pot.y + 6, 1);
+    expect(z.pot.x).toBeCloseTo(base.pot.x, 1);   // chỉ đổi cái mình đổi
     expect(z.sink).toEqual(zonesFrom().sink);
   });
 

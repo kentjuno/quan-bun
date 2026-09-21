@@ -25,16 +25,18 @@ export const OB = 'art/ob/';
  *             không phải cả cái nồi. Bỏ trống = cả object.
  */
 export const KITCHEN = [
-  // Hộp (x, y, w, h) đo thẳng từ ảnh đã cắt — `src/data/ob-boxes.json`, sinh bởi scripts/objs_boxes.py.
-  // `hit` là ô thả nằm TRONG object (%, so với chính nó): chỉ lòng nồi / lòng bồn / mặt bếp mới nhận thả.
-  { id: 'counter-back', art: `${OB}counter-back.webp`, layer: 'mid', x: -4.65, y: 45.37, w: 106.14, h: 12.55 },
-  { id: 'pot-blanch', art: `${OB}pot-blanch.webp`, layer: 'mid', x: 5.98, y: 27.5, w: 32.17, h: 18.93,
-    zone: 'pot', hit: { x: 14.05, y: -18.49, w: 77.71, h: 58.11 } },
-  { id: 'sink', art: `${OB}sink.webp`, layer: 'mid', x: 36.65, y: 26.36, w: 26.58, h: 20.38,
-    zone: 'sink', hit: { x: 3.2, y: 8.05, w: 94.06, h: 73.6 } },
-  { id: 'stove', art: `${OB}stove.webp`, layer: 'mid', x: 52.37, y: 28.58, w: 52.88, h: 16.96,
-    zone: 'burner', hit: { x: 15.38, y: -0.47, w: 43.49, h: 79.6 } },
-  { id: 'counter-front', art: `${OB}counter-front.webp`, layer: 'fg', x: -5.55, y: 70.64, w: 111.11, h: 18.72 },
+  // Object GEN RIÊNG (scripts/ob_sheet.py — cả bộ vẽ trong một bản để chung góc, chung hướng sáng),
+  // KHÔNG còn cắt ra từ tranh bếp cũ. Vị trí do mình đặt, không phải đo theo tranh:
+  //   x, y, w, h = % khung · h tính theo đúng tỉ lệ ảnh để không bị méo
+  //   hit = ô thả nằm trong object (%, so với chính nó): chỉ lòng nồi / lòng bồn / mặt bếp mới nhận thả
+  { id: 'counter-back', art: `${OB}counter-back.webp`, layer: 'mid', x: -2, y: 40, w: 104, h: 36.1 },
+  { id: 'pot-blanch', art: `${OB}pot-blanch.webp`, layer: 'mid', x: 4, y: 25.5, w: 30, h: 18.1,
+    zone: 'pot', hit: { x: 14, y: 6, w: 72, h: 55 } },
+  { id: 'sink', art: `${OB}sink.webp`, layer: 'mid', x: 36, y: 25.5, w: 22, h: 18.6,
+    zone: 'sink', hit: { x: 10, y: 30, w: 80, h: 45 } },
+  { id: 'stove', art: `${OB}stove.webp`, layer: 'mid', x: 55, y: 26.5, w: 44, h: 16.9,
+    zone: 'burner', hit: { x: 8, y: 15, w: 60, h: 60 } },
+  { id: 'counter-front', art: `${OB}counter-front.webp`, layer: 'fg', x: -5, y: 62, w: 110, h: 39.9 },
 ];
 
 const abs = (o) => {
