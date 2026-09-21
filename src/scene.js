@@ -4,7 +4,7 @@ import { QUAN } from './data/regions.js';
 import { REGULARS } from './data/customers.js';
 import { faceArt } from './game/art.js';
 import { t as T, tl } from './i18n.js';
-import { speak } from './data/player.js';
+import { speak, player } from './data/player.js';
 
 let cur = null;
 export const sceneRunning = () => !!cur;
@@ -15,7 +15,9 @@ function end(root, onDone) { if (!cur) return; cur = null; root.classList.add('o
 export function playIntro({ onDone, sfx } = {}) {
   if (cur) { onDone?.(); return; }
   const N = 4; let i = 0;
-  const root = mount(`<div class="sc-slides">${Array.from({ length: N }, (_, k) => `<img class="sc-img" src="art/intro/intro-${k + 1}.webp" alt="" draggable="false" onerror="this.classList.add('noart')">`).join('')}</div>
+  // Bản nữ dùng bộ ảnh art/intro/f/ (Kent 21/09). Thiếu ảnh thì tự rơi về bộ gốc.
+  const dir = player().gender === 'f' ? 'art/intro/f/' : 'art/intro/';
+  const root = mount(`<div class="sc-slides">${Array.from({ length: N }, (_, k) => `<img class="sc-img" src="${dir}intro-${k + 1}.webp" data-alt="art/intro/intro-${k + 1}.webp" alt="" draggable="false" onerror="if (this.src.indexOf(this.dataset.alt) < 0) this.src = this.dataset.alt; else this.classList.add('noart')">`).join('')}</div>
     <div class="sc-cap"><p></p><small>${T('scene.tap')}</small></div><button class="sc-skip ghost small">${T('trip.skip')}</button>`, 'intro');
   const imgs = root.querySelectorAll('.sc-img'); const cap = root.querySelector('.sc-cap p');
   const show = () => { imgs.forEach((im, k) => im.classList.toggle('on', k === i)); cap.textContent = T(`intro.${i + 1}`); root.querySelector('.sc-cap').classList.remove('in'); void cap.offsetWidth; root.querySelector('.sc-cap').classList.add('in'); try { sfx?.place?.(); } catch {} };

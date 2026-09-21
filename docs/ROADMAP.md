@@ -101,6 +101,7 @@ Tổng còn lại ≈ 19–20 phiên. **Không nhảy cóc M6 → M7.**
 - *Nghiệm thu:* 130 test xanh, bot 3★ đủ 163 level, 0 khách bỏ đi.
 
 ### M6 — Playtest
+- [x] **(21/09)** Bộ mở đầu bản NỮ: `art/intro/f/intro-{1..4}.webp`, chọn Nữ thì thấy bộ đó (thiếu ảnh tự rơi về bộ gốc).
 - [x] **(20/09)** P5b: mở app = **setup (ngôn ngữ → tên + xưng hô) → mở đầu 4 tấm → menu**; chủ quán gọi tên người chơi (`{you}`), giới tính đổi xưng hô (`{a|b}`) — `src/setup.js`, `src/data/player.js`, `tests/player.test.js`.
 - [x] `?log=1` ghi sự kiện local, nút xuất JSON — `src/playlog.js` + hộp log trong *Cách chơi · tuỳ chọn* (`tests/playlog.test.js`).
 - [ ] Kent: 3 người ngoài, 10 phút, không giải thích; ghi phút tô đầu / phút bỏ / câu nói đầu / có mở sổ tay không.

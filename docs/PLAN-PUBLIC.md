@@ -195,6 +195,8 @@ Mọi thoại 12 quán + 6 bong bóng chuyến xe đã viết lại có `{you}`;
 
 **Tên hiện ở:** thoại chủ quán · thẻ kết quả cuối ca (`Kent · Phở 1 — …`) · ảnh chia sẻ sổ tay ("Kent nấu"). *Để dành:* bảng hiệu quán riêng ở M7/M8.
 
+**Bộ ảnh nữ (21/09).** Chọn *Nữ* → mở đầu dùng `public/art/intro/f/intro-{1..4}.webp` (4 tấm gen lại bằng Flow, cùng nhân vật: nữ hai mươi mấy, kính tròn viền mảnh, tóc buộc đuôi ngựa, sơ mi trắng xắn tay). Nam / Không nói → bộ gốc `public/art/intro/`. Thiếu ảnh thì `onerror` tự rơi về bộ gốc nên không bao giờ bể màn. Prompt + script ở `scripts/_introf_prep.py`, ảnh gốc `art/raw/intro-f/`.
+
 **Nghiệm thu.** `tests/player.test.js` (6): mọi quán/mảnh bản đồ có `call`, mọi thoại `{…}` giải hết, tên bị dọn sạch (cắt 16 ký tự, bỏ thẻ HTML). Đã soi Chromium: setup → intro → menu → "Bỏ việc đi học nấu ăn hả Kent?".
 
 ---
