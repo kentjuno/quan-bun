@@ -10,3 +10,4 @@ pwa_build_status.json
 .claude/
 
 _dupfix.json
+_smoke.mjs
