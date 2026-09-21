@@ -128,6 +128,7 @@ export class Pov {
     const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
 
     this.el.style.setProperty('--pv-bg', `url(${S.src})`);   // nền ngoài khung = chính tranh, làm mờ
+    this.el.style.setProperty('--pv-obj-filter', S.tint || 'none');   // sprite đồ đạc bắt sáng theo phòng
     this.el.innerHTML = `
       <div class="pv-stage scene" id="pvStage">
         <img class="pv-scene" src="${S.src}" data-alt="${S.fallback}" alt="" draggable="false"

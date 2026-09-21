@@ -10,9 +10,18 @@ import { SCENE, ZONES } from './counter-layout.js';
 
 /** world id → { src?, zones?, baked? }. Không có mục = dùng bếp gốc. */
 export const SHOP_SCENES = {
-  pho: {}, 'mon-kho': {}, 'cha-ca': {}, 'hai-phong': {}, 'bun-rieu': {},
-  'bun-bo': { room: true },
-  chao: {}, 'khai-vi': {}, 'mi-quang': {}, 'bun-cha-ca': {}, 'hu-tieu': {}, 'bun-thang': {},
+  pho: { room: true, tint: 'sepia(.15) saturate(1.05) brightness(.97)' },
+  'mon-kho': { room: true, tint: 'brightness(1.02)' },
+  'cha-ca': { room: true, tint: 'sepia(.26) saturate(1.05) brightness(.86)' },
+  'hai-phong': { room: true, tint: 'hue-rotate(8deg) saturate(.95) brightness(.95)' },
+  'bun-rieu': { room: true, tint: 'saturate(.9) brightness(.94)' },
+  'bun-bo': { room: true, tint: 'sepia(.22) saturate(1.12) brightness(.9) hue-rotate(-10deg)' },
+  chao: { room: true, tint: 'saturate(1.05) brightness(1.01)' },
+  'khai-vi': { room: true, tint: 'hue-rotate(4deg) brightness(1.01)' },
+  'mi-quang': { room: true, tint: 'sepia(.18) brightness(.96)' },
+  'bun-cha-ca': { room: true, tint: 'saturate(.98) brightness(1.02)' },
+  'hu-tieu': { room: true, tint: 'sepia(.2) saturate(1.1) brightness(.9)' },
+  'bun-thang': { room: true, tint: 'saturate(.92) brightness(.97)' },
 };
 
 /** Tranh + toạ độ trạm cho một quán. `fallback` = ảnh gốc để pov.js rơi về khi thiếu file. */
@@ -24,5 +33,6 @@ export function sceneFor(worldId) {
     src: s.src || (room ? `art/scene/room/${worldId}.webp` : `art/scene/${worldId}.webp`),
     baked: s.baked || (room ? [] : SCENE.baked),   // phòng trống → 5 thứ kia là sprite
     zones: s.zones ? { ...ZONES, ...s.zones } : ZONES,
+    tint: s.tint || null,   // lọc màu cho sprite đồ đạc bắt sáng theo phòng (khỏi nhìn như dán ghép)
     fallback: room ? `art/scene/${worldId}.webp` : SCENE.src };
 }
