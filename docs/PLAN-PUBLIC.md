@@ -179,6 +179,28 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
 ---
 
+## P5d — SCENE GRAPH: bếp ráp bằng object rời (Kent 21/09)
+
+> *"nếu mình chia thành các layer objects thì mình chỉ cần generate các objects rồi ráp vô thôi, để đâu cũng được mà không sợ bị sai vị trí hay bị chèn ảnh. ví dụ bàn prep đi, mình gen mấy cái bàn như z cho từng map. khi có di chuyển nó lên xuống, vẫn là nó. theo tui thấy là có mấy lớp như background, midground, foreground."*
+
+**Luật cốt lõi: OBJECT CHÍNH LÀ Ô THẢ.** `src/data/scene-graph.js` khai mỗi món đồ một hộp `{x, y, w, h}` (% khung) + `zone` + `hit` (ô thả nằm trong object). `zonesFrom()` **suy ra** ZONES từ hộp object — dời cái bếp xuống 6% thì ô thả xuống theo, không phải dò lại toạ độ. Hết hẳn vòng lặp "gen tranh mới → đo lại zones".
+
+**Ba lớp** (`layersFrom()` xếp bg → mid → fg):
+- `bg` — tường + sàn, ảnh riêng từng quán: `public/art/scene/bg/<world>.webp` (`scripts/scene_bg.py` bóc từ tranh phòng trống).
+- `mid` — đồ cố định: quầy sau, nồi trụng, bồn rửa, bếp lò (`public/art/ob/*.webp`, cắt từ tranh cũ bằng `scripts/scene_objects.py`, nền magenta).
+- `fg` — mặt quầy ráp nằm trước mặt người chơi.
+- Đồ "rời" (chồng tô, khay sợi, thùng rác, lò vi sóng, chảo chiên) vẫn là sprite theo ô thả, chỉ hiện khi level cần.
+
+**Hộp object đo bằng máy**, không ước lượng: `scripts/objs_boxes.py` cắt nền magenta mà GIỮ khung, lấy bbox alpha rồi quy về % khung bếp → `src/data/ob-boxes.json`. Ô thả suy ra khớp đúng ZONES đo tay cũ (test `tests/scenes.test.js`).
+
+**Thứ tự vẽ:** `.pv-ob.mid` z-index 1 · `.pv-ob.fg` z-index 2 · mọi ô chơi được (`.pv-z`) z-index 3 — đồ đạc không bao giờ che khay/phiếu.
+
+**Đang bật ở:** Phở Cậu Hai, Bún Bò Thím Bảy. Quán chưa có nền riêng thì rơi về tranh phòng trống, rồi tới tranh nguyên tấm.
+
+**Việc còn lại:** 10 tranh nền còn lại · biến thể object theo quán (quầy gỗ cho Huế / Chợ Lớn, bếp than, bàn prep riêng từng map như Kent nói) · ánh sáng: object đang mang ambient của bếp gốc, `tint` chỉ kéo được một phần.
+
+---
+
 ## P5c — Bếp riêng cho từng quán (Kent 21/09: "mỗi tỉnh thành đi qua mình vẫn xài chung 1 khung cửa hàng")
 
 **Vấn đề.** `art/scene.webp` dùng chung cho cả 12 quán: đi từ Hà Nội tới Miền Tây mà cái bếp y hệt nhau.
