@@ -13,36 +13,46 @@ PUB = os.path.join(R, "public", "art", "ob"); os.makedirs(PUB, exist_ok=True)
 ST  = os.path.join(R, "_sheet_status.json")
 
 # Goc nhin + net ve: PHAI giong het nhau o moi ban ve thi rap moi khop
-VIEW = ("Everything is drawn from exactly the same viewpoint: a cook standing at a kitchen counter, "
-        "looking straight ahead and slightly down, about fifteen degrees, no wide-angle distortion. "
-        "Light always comes from the upper left, soft. "
-        "Ink line art with warm marker and watercolour wash, brown ink outline, hand-drawn illustration, "
-        "flat even colours, no heavy shading. ")
-BG = ("The background is a flat solid MAGENTA #FF00FF and nothing else: no floor, no wall, no table, no shadow "
+VIEW = ("EVERY object is drawn completely FLAT and STRAIGHT ON, like a cut-paper prop for a 2D side-view game: "
+        "a pure front elevation, NO perspective, NO vanishing point, no three-quarter view, no receding side, "
+        "no visible top surface, nothing turned at an angle. Imagine each object pressed flat against the page "
+        "like a paper cut-out or a sticker. Light comes from the upper left, soft, no cast shadow. "
+        "Ink line art with warm marker and watercolour wash, brown ink outline, flat even colours, no heavy shading. ")
+BG = ("Never write anything: no numbers, no labels, no captions, no letters. "
+      "The background is a flat solid MAGENTA #FF00FF and nothing else: no floor, no wall, no table, no shadow "
       "on the magenta, no frame, no text, no labels, no numbers, no people, no hands. "
       "Every object floats separately with clear magenta space all around it, nothing touching or overlapping.")
 
 SHEETS = {
  # ten sheet: (aspect, so cot, danh sach (ten object, mo ta))
  "kit": ("IMAGE_ASPECT_RATIO_SQUARE", 3, [
-   ("pot-blanch", "a tall wide aluminium stock pot with two side handles, full of water, standing on a low black gas ring"),
-   ("sink", "a small square stainless steel sink with a tall curved chrome tap, on a plain metal cabinet"),
-   ("stove", "a black four-burner gas stove top with round cast-iron grates and four control knobs at the front"),
-   ("trash", "a round brushed metal kitchen bin with a mesh rim, empty"),
-   ("bowl-stack", "a neat stack of eight plain white ceramic noodle bowls"),
-   ("noodle-tray", "a rectangular stainless steel tray holding a coil of fresh white rice noodles"),
+   ("pot-blanch", "a tall wide aluminium stock pot with two side handles, seen from the front, the water surface showing as a simple flat oval at the top"),
+   ("sink", "a stainless steel sink unit seen from the front: a plain metal cabinet with a square basin in its top, the basin shown as a simple flat rectangle, and a tall curved chrome tap behind it"),
+   ("stove", "a black gas stove seen from the front: a flat black panel with four round cast-iron burner grates shown as plain circles in a row, and four control knobs below them"),
+   ("trash", "a round brushed metal kitchen bin with a mesh rim, seen from the front, its opening shown as a simple flat ellipse"),
+   ("bowl-stack", "a neat stack of eight plain white ceramic noodle bowls seen from the front, straight on"),
+   ("noodle-tray", "a rectangular stainless steel tray holding a coil of fresh white rice noodles, seen from the front, the tray shown as a plain rectangle"),
  ]),
  "furni": ("IMAGE_ASPECT_RATIO_PORTRAIT", 1, [
-   ("counter-back", "a long straight stainless steel back counter, seen straight on, with three plain metal cabinet doors under it and an empty flat top"),
-   ("counter-front", "a long straight pale cream stone work counter, seen straight on and slightly from above, completely empty, with a plain wooden front panel"),
+   ("counter-back", "a long low stainless steel counter seen dead straight on as a plain wide rectangle: three plain metal cabinet doors in a row and a thin darker strip along the top edge, nothing else"),
+   ("counter-front", "a long low counter seen dead straight on as a plain wide rectangle: a plain pale wooden front panel with a thin cream stone strip along the top edge, nothing else"),
  ]),
  "tops": ("IMAGE_ASPECT_RATIO_PORTRAIT", 1, [
-   ("prep-top", "a wide empty pale cream stone work surface, a kitchen counter top seen from above at a steep angle, a long rectangle running left to right, nothing on it"),
-   ("prep-top-wood", "a wide empty dark polished teak work surface, a kitchen counter top seen from above at a steep angle, a long rectangle running left to right, nothing on it"),
+   ("prep-top", "a wide empty pale cream stone table top seen from DIRECTLY ABOVE, drawn as one plain flat rectangle running left to right, no legs, no front panel, no thickness, nothing on it"),
+   ("prep-top-wood", "a wide empty dark polished teak table top seen from DIRECTLY ABOVE, drawn as one plain flat rectangle running left to right, no legs, no front panel, no thickness, nothing on it"),
+ ]),
+ "trays": ("IMAGE_ASPECT_RATIO_SQUARE", 2, [
+   ("noodle-tray", "a shallow rectangular stainless steel tray seen from the front, holding a neat coil of fresh white rice noodles"),
+   ("basket-noodle", "a small round wire noodle blanching basket with a long straight handle, seen from the front, holding a nest of white noodles"),
+   ("basket", "an empty small round wire noodle blanching basket with a long straight handle, seen from the front"),
+   ("tray-empty", "an empty shallow rectangular stainless steel tray seen from the front, nothing in it"),
+ ]),
+ "tray1": ("IMAGE_ASPECT_RATIO_SQUARE", 1, [
+   ("noodle-tray", "one shallow rectangular stainless steel tray seen from the front, holding a neat coil of fresh white rice noodles, drawn large in the middle of the picture"),
  ]),
  "furni-wood": ("IMAGE_ASPECT_RATIO_PORTRAIT", 1, [
-   ("counter-back-wood", "a long straight dark teak wood back counter, seen straight on, with three carved wooden cabinet doors under it and an empty flat top"),
-   ("counter-front-wood", "a long straight dark polished teak work counter, seen straight on and slightly from above, completely empty, with a plain wooden front panel"),
+   ("counter-back-wood", "a long low dark teak counter seen dead straight on as a plain wide rectangle: three carved wooden cabinet doors in a row and a thin darker strip along the top edge, nothing else"),
+   ("counter-front-wood", "a long low dark teak counter seen dead straight on as a plain wide rectangle: a plain dark wooden front panel with a thin polished strip along the top edge, nothing else"),
  ]),
 }
 
