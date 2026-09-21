@@ -12,8 +12,8 @@ describe('bếp theo quán', () => {
   it('sceneFor trả đủ toạ độ trạm và ảnh riêng', () => {
     for (const w of Object.keys(QUAN)) {
       const s = sceneFor(w);
-      expect(s.src).toBe(`art/scene/${w}.webp`);
-      expect(s.fallback).toBe(SCENE.src);
+      expect(s.src).toMatch(new RegExp(`art/scene/(room/)?${w}\\.webp$`));
+      expect(s.fallback).toBeTruthy();
       expect(Object.keys(s.zones).sort()).toEqual(Object.keys(ZONES).sort());
     }
   });
@@ -29,7 +29,18 @@ describe('bếp theo quán', () => {
   it('ghi đè zones chỉ đổi ô được ghi, giữ nguyên ô khác', () => {
     const base = sceneFor('pho');
     expect(base.zones.pot).toEqual(ZONES.pot);
-    const fake = { ...SHOP_SCENES };
-    expect(fake).toBeTruthy();
+  });
+
+  it('quán kiểu phòng trống: tranh ở room/, 5 đồ tĩnh thành sprite, rơi về tranh nguyên tấm', () => {
+    for (const [w, s] of Object.entries(SHOP_SCENES)) {
+      const sc = sceneFor(w);
+      if (s.room) {
+        expect(sc.src).toBe(`art/scene/room/${w}.webp`);
+        expect(sc.baked).toEqual([]);
+        expect(sc.fallback).toBe(`art/scene/${w}.webp`);
+      } else {
+        expect(sc.baked).toEqual(SCENE.baked);
+      }
+    }
   });
 });
