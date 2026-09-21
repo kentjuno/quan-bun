@@ -1,5 +1,5 @@
 // Quán Bún PWA — cache-first cho tài nguyên build (tên file có hash), network-first cho trang; mở offline được sau lần tải đầu.
-const VERSION = 'qb-' + (self.registration ? self.registration.scope : '') + '-v93';
+const VERSION = 'qb-' + (self.registration ? self.registration.scope : '') + '-v94';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });

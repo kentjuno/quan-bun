@@ -285,6 +285,9 @@
       /* sprite trạm: object riêng nằm đúng ô, không phải hình vẽ dính trong nền */
       .pv-stage .pv-obj { position: relative; width: 100%; height: 100%; display: flex;
         align-items: flex-end; justify-content: center; cursor: grab; }
+      /* scene graph: đồ đạc của bếp là ảnh rời, xếp lớp bg → mid → fg (data/scene-graph.js) */
+      .pv-stage .pv-ob { position: absolute; object-fit: fill; pointer-events: none; }
+      .pv-stage .pv-ob.mid { z-index: 1; } .pv-stage .pv-ob.fg { z-index: 2; }
       /* --pv-obj-filter: lọc màu theo bếp của quán (data/scenes.js `tint`) để sprite bắt sáng giống căn phòng */
       .pv-stage .pv-obj .pv-objimg, .pv-stage .pv-z.trash .pv-objimg { position: absolute; inset: 0; width: 100%; height: 100%;
         object-fit: contain; filter: var(--pv-obj-filter, none) drop-shadow(0 3px 4px rgba(40,28,16,.45)); }

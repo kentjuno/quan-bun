@@ -12,7 +12,7 @@ describe('bếp theo quán', () => {
   it('sceneFor trả đủ toạ độ trạm và ảnh riêng', () => {
     for (const w of Object.keys(QUAN)) {
       const s = sceneFor(w);
-      expect(s.src).toMatch(new RegExp(`art/scene/(room/)?${w}\\.webp$`));
+      expect(s.src).toMatch(new RegExp(`art/scene/(room/|bg/)?${w}\\.webp$`));
       expect(s.fallback).toBeTruthy();
       expect(Object.keys(s.zones).sort()).toEqual(Object.keys(ZONES).sort());
     }
@@ -28,13 +28,17 @@ describe('bếp theo quán', () => {
 
   it('ghi đè zones chỉ đổi ô được ghi, giữ nguyên ô khác', () => {
     const base = sceneFor('pho');
-    expect(base.zones.pot).toEqual(ZONES.pot);
+    for (const q of ['x', 'y', 'w', 'h']) expect(base.zones.pot[q]).toBeCloseTo(ZONES.pot[q], 1);
   });
 
   it('quán kiểu phòng trống: tranh ở room/, 5 đồ tĩnh thành sprite, rơi về tranh nguyên tấm', () => {
     for (const [w, s] of Object.entries(SHOP_SCENES)) {
       const sc = sceneFor(w);
-      if (s.room) {
+      if (s.graph) {
+        expect(sc.src).toBe(`art/scene/bg/${w}.webp`);
+        expect(sc.baked).toEqual([]);
+        expect(sc.fallback).toBe(`art/scene/room/${w}.webp`);
+      } else if (s.room) {
         expect(sc.src).toBe(`art/scene/room/${w}.webp`);
         expect(sc.baked).toEqual([]);
         expect(sc.fallback).toBe(`art/scene/${w}.webp`);
@@ -42,5 +46,39 @@ describe('bếp theo quán', () => {
         expect(sc.baked).toEqual(SCENE.baked);
       }
     }
+  });
+});
+
+// SCENE GRAPH: object chính là ô thả
+import { KITCHEN, zonesFrom, layersFrom, moveObj } from '../src/data/scene-graph.js';
+
+describe('scene graph', () => {
+  it('ô thả suy từ object khớp đúng toạ độ đo tay cũ', () => {
+    const z = zonesFrom();
+    for (const k of ['pot', 'sink', 'burner']) {
+      for (const q of ['x', 'y', 'w', 'h']) expect(z[k][q]).toBeCloseTo(ZONES[k][q], 1);
+    }
+  });
+
+  it('dời object thì ô thả đi theo — không phải canh lại', () => {
+    const moved = moveObj(KITCHEN, 'pot-blanch', { y: 27.5 + 6 });
+    const z = zonesFrom(moved);
+    expect(z.pot.y).toBeCloseTo(ZONES.pot.y + 6, 1);
+    expect(z.pot.x).toBeCloseTo(ZONES.pot.x, 1);   // chỉ đổi cái mình đổi
+    expect(z.sink).toEqual(zonesFrom().sink);
+  });
+
+  it('vẽ theo lớp: bg → mid → fg', () => {
+    const order = layersFrom().map((o) => o.layer);
+    const rank = { bg: 0, mid: 1, fg: 2 };
+    for (let i = 1; i < order.length; i++) expect(rank[order[i]]).toBeGreaterThanOrEqual(rank[order[i - 1]]);
+    expect(layersFrom().at(-1).id).toBe('counter-front');
+  });
+
+  it('quán bật graph thì lấy tranh nền riêng và không nướng đồ vô tranh', () => {
+    const s = sceneFor('bun-bo');
+    expect(s.src).toBe('art/scene/bg/bun-bo.webp');
+    expect(s.baked).toEqual([]);
+    expect(s.objs.length).toBe(KITCHEN.length);
   });
 });

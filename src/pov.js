@@ -133,6 +133,7 @@ export class Pov {
       <div class="pv-stage scene" id="pvStage">
         <img class="pv-scene" src="${S.src}" data-alt="${S.fallback}" alt="" draggable="false"
              onerror="if (this.dataset.alt &amp;&amp; this.src.indexOf(this.dataset.alt) &lt; 0) { this.src = this.dataset.alt; } else { this.closest('.pv-stage').classList.remove('scene'); this.remove(); }">
+        ${(S.objs || []).map((o) => `<img class="pv-ob ${o.layer}" src="${o.art}" alt="" draggable="false" style="left:${o.x}%;top:${o.y}%;width:${o.w}%;height:${o.h}%" onerror="this.remove()">`).join('')}
         <div class="pv-hud" style="${z('hudL')}"><span id="pvMoney">0k</span><i>${T('hud.money')}</i><b class="pv-streak" id="pvStreak"></b></div>
         <div class="pv-hud r" style="${z('hudR')}">
           <div class="pv-clock" id="pvClock"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" cx="18" cy="18" r="15.5"/></svg><u id="pvTime">0</u></div>
