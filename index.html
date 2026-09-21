@@ -289,6 +289,8 @@
       .pv-stage .pv-ob { position: absolute; object-fit: fill; pointer-events: none;
         filter: var(--pv-obj-filter, none) drop-shadow(0 4px 6px rgba(40,28,16,.22)); }
       .pv-stage .pv-ob.mid { z-index: 1; } .pv-stage .pv-ob.fg { z-index: 2; }
+      /* mặt bàn ráp tô: bóng hắt LÊN để tách khỏi quầy sau, không thì hai mảng sáng dính vào nhau */
+      .pv-stage .pv-ob.fg { filter: var(--pv-obj-filter, none) drop-shadow(0 -5px 7px rgba(40,28,16,.32)); }
       /* đồ chơi được (ô thả, khay, phiếu…) luôn nằm TRÊN đồ đạc của bếp */
       .pv-stage .pv-z { z-index: 3; }
       /* --pv-obj-filter: lọc màu theo bếp của quán (data/scenes.js `tint`) để sprite bắt sáng giống căn phòng */

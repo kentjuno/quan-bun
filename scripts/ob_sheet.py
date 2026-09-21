@@ -50,6 +50,10 @@ SHEETS = {
  "tray1": ("IMAGE_ASPECT_RATIO_SQUARE", 1, [
    ("noodle-tray", "one shallow rectangular stainless steel tray seen from the front, holding a neat coil of fresh white rice noodles, drawn large in the middle of the picture"),
  ]),
+ "kit2": ("IMAGE_ASPECT_RATIO_SQUARE", 2, [
+   ("pot-blanch", "a TALL narrow aluminium stock pot, clearly taller than it is wide, with two small side handles, seen from the front, the water surface showing as a simple flat oval at the top"),
+   ("noodle-tray", "a shallow rectangular stainless steel tray seen from the front, a little wider than tall, holding a neat coil of fresh white rice noodles"),
+ ]),
  "furni-wood": ("IMAGE_ASPECT_RATIO_PORTRAIT", 1, [
    ("counter-back-wood", "a long low dark teak counter seen dead straight on as a plain wide rectangle: three carved wooden cabinet doors in a row and a thin darker strip along the top edge, nothing else"),
    ("counter-front-wood", "a long low dark teak counter seen dead straight on as a plain wide rectangle: a plain dark wooden front panel with a thin polished strip along the top edge, nothing else"),
