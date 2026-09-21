@@ -3,6 +3,7 @@
 import { QUAN } from './data/regions.js';
 import { REGULARS } from './data/customers.js';
 import { faceArt } from './game/art.js';
+import { sceneFor } from './data/scenes.js';
 import { t as T, tl } from './i18n.js';
 import { speak, player } from './data/player.js';
 
@@ -43,6 +44,8 @@ export function playOwner(worldId, { onDone, sfx } = {}) {
   cur = { finish: () => end(root, onDone) };
   root.querySelector('.sc-skip').onclick = (e) => { e.stopPropagation(); cur.finish(); };
   root.onclick = () => { i++; if (i >= lines.length) cur.finish(); else show(); };
+  // nền màn xin vô quán = bếp của chính quán đó (thiếu ảnh thì giữ bếp gốc trong CSS)
+  const bg = sceneFor(worldId).src; const pre = new Image(); pre.onload = () => { root.style.backgroundImage = `url(${bg})`; }; pre.src = bg;
   setTimeout(() => { root.classList.add('open'); try { sfx?.arrive?.(); } catch {} }, 50);
   setTimeout(show, 500);
   return cur;

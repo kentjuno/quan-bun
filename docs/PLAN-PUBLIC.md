@@ -179,6 +179,21 @@ Tổng ≈ 14–15 phiên. **Không làm P8 trước P7.**
 
 ---
 
+## P5c — Bếp riêng cho từng quán (Kent 21/09: "mỗi tỉnh thành đi qua mình vẫn xài chung 1 khung cửa hàng")
+
+**Vấn đề.** `art/scene.webp` dùng chung cho cả 12 quán: đi từ Hà Nội tới Miền Tây mà cái bếp y hệt nhau.
+
+**Cách làm.** Mỗi quán một tranh `public/art/scene/<world>.webp`, gen bằng `scripts/shop_scenes.py` (Flow `edit-image` từ chính tranh gốc): **giữ NGUYÊN góc máy và vị trí/kích thước mọi thiết bị**, chỉ thay căn phòng — tường, sàn, ánh sáng, đồ trang trí. Nhờ vậy `ZONES` không đổi, không phải đo lại, không sợ lệch ô bấm; đồ tĩnh đã nướng vào tranh (`SCENE.baked`) cũng giữ nguyên chỗ.
+
+- `src/data/scenes.js`: `SHOP_SCENES` (world id → `{ src?, zones?, baked? }`) + `sceneFor(worldId)`. Quán nào vẽ lệch thì **ghi đè vài ô trong `zones`** — không cần sửa code.
+- `pov.js` lấy tranh + toạ độ qua `sceneFor(this.o.level?.world)`; thiếu file thì `onerror` rơi về `art/scene.webp`, game chạy y cũ.
+- Màn "xin vô quán" (`playOwner`) cũng lấy nền là bếp của chính quán đó.
+- Chất riêng từng quán: Phở Cậu Hai = Hà Nội cũ tường vàng vôi; Thím Bảy = Huế sơn son thếp vàng, ớt khô treo; Chú Chín = Chợ Lớn đỏ vàng, bàn thờ nhỏ; Bà Mua = Hội An tường vàng đèn lồng; Cô Hai = Nha Trang tường vôi trắng, giàn phơi cá; v.v.
+
+**Nghiệm thu.** `tests/scenes.test.js` (4): mọi quán có mục, `sceneFor` trả đủ toạ độ, quán lạ rơi về bếp gốc.
+
+---
+
 ## P5b — Mở app: setup → intro → vô quán (Kent 20/09: "nó bị ngược á")
 
 **Trước đây sai:** mở app ra thẳng menu, cốt truyện chỉ chạy khi bấm Bắt đầu level đầu — người chơi thấy lưới level trước khi biết mình là ai.

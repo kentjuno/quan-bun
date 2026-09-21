@@ -6,6 +6,7 @@ import { iconUrl } from './game/icons.js';
 import { Counter, povOk, counterMove } from './game/counter.js';
 import { dishArt, dishArtAt, dishStage, faceArt, fx, hand, stationArt, basketArt, st, panArt, dishStepArt, trashArt, potArt } from './game/art.js';
 import { POUR, BOWL, SCENE, ZONES, PAN_GAP, PAN_MAX1, PAN_ROW_GAP } from './data/counter-layout.js';
+import { sceneFor } from './data/scenes.js';
 import { ev as logEv } from './playlog.js';
 export { povOk };
 
@@ -95,7 +96,8 @@ export class Pov {
     const soupHere = !!Object.keys(C.soups).length && !C.sim?.soupReady;
     this.has = { pot: need('pot'), sink: need('sink'), prep: need('prep'), fryer: need('fryer'), microwave: need('microwave'),
       stovetop: need('stovetop'), burner: soupHere || need('stovetop'), ready: !!Object.keys(C.soups).length };
-    const z = (k) => { const b = ZONES[k]; return `left:${b.x}%;top:${b.y}%;width:${b.w}%;height:${b.h}%`; };
+    const S = sceneFor(this.o.level?.world);   // bếp riêng của quán (data/scenes.js); thiếu ảnh thì rơi về bếp gốc
+    const z = (k) => { const b = S.zones[k]; return `left:${b.x}%;top:${b.y}%;width:${b.w}%;height:${b.h}%`; };
     // Khay là sprite nên có bao nhiêu món thì xếp bấy nhiêu khay, chia đều cả dải.
     // Trước đây bám theo khay vẽ trong tranh nên Hải Phòng (14 món / 9 khay) đồn 6 món lên một khay.
     // Quá PAN_MAX1 khay thì chia hai hàng: 14 món một hàng là mỗi khay 20px trên máy 412px,
@@ -116,7 +118,7 @@ export class Pov {
     // Đồ có sprite riêng thì vẽ to đầy ô; icon nhỏ giữ lại (ẩn) để làm cái bay theo ngón tay.
     // Đồ TĨNH đã nướng vào tranh (scripts/bake_scene.py, SCENE.baked): không vẽ sprite nữa, chỉ giữ ô bấm.
     // Chồng tô / khay sợi: chỉ khi level có ĐÚNG 1 loại (tranh vẽ 1 cái); nhiều loại thì vẫn sprite.
-    const baked = new Set(SCENE.baked || []);
+    const baked = new Set(S.baked || []);
     const bakedOne = (zk) => baked.has(zk) && (zk === 'stack' ? C.bowlItems : C.noodleItems).length === 1;
     const src = (it, zk) => { const st = stationArt(it); const hide = !!zk && bakedOne(zk);
       return st
@@ -125,11 +127,11 @@ export class Pov {
     const zone = (k, inner, cls = '') => `<div class="pv-z ${cls}" style="${z(k)}">${inner}</div>`;
     const dropz = (k, name, inner, cls = '') => `<div class="pv-z drop ${cls}" data-zone="${name}" style="${z(k)}">${inner}</div>`;
 
-    this.el.style.setProperty('--pv-bg', `url(${SCENE.src})`);   // nền ngoài khung = chính tranh, làm mờ
+    this.el.style.setProperty('--pv-bg', `url(${S.src})`);   // nền ngoài khung = chính tranh, làm mờ
     this.el.innerHTML = `
       <div class="pv-stage scene" id="pvStage">
-        <img class="pv-scene" src="${SCENE.src}" alt="" draggable="false"
-             onerror="this.closest('.pv-stage').classList.remove('scene');this.remove()">
+        <img class="pv-scene" src="${S.src}" data-alt="${S.fallback}" alt="" draggable="false"
+             onerror="if (this.dataset.alt &amp;&amp; this.src.indexOf(this.dataset.alt) &lt; 0) { this.src = this.dataset.alt; } else { this.closest('.pv-stage').classList.remove('scene'); this.remove(); }">
         <div class="pv-hud" style="${z('hudL')}"><span id="pvMoney">0k</span><i>${T('hud.money')}</i><b class="pv-streak" id="pvStreak"></b></div>
         <div class="pv-hud r" style="${z('hudR')}">
           <div class="pv-clock" id="pvClock"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" cx="18" cy="18" r="15.5"/></svg><u id="pvTime">0</u></div>
