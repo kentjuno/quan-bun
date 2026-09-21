@@ -29,15 +29,20 @@ export const KITCHEN = [
   // KHÔNG còn cắt ra từ tranh bếp cũ. Vị trí do mình đặt, không phải đo theo tranh:
   //   x, y, w, h = % khung · h tính theo đúng tỉ lệ ảnh để không bị méo
   //   hit = ô thả nằm trong object (%, so với chính nó): chỉ lòng nồi / lòng bồn / mặt bếp mới nhận thả
-  { id: 'counter-back', art: `${OB}counter-back.webp`, layer: 'mid', x: -2, y: 40, w: 104, h: 36.1 },
+  { id: 'counter-back', art: `${OB}counter-back.webp`, layer: 'mid', x: -2, y: 41, w: 104, h: 36.1 },
   { id: 'pot-blanch', art: `${OB}pot-blanch.webp`, layer: 'mid', x: 4, y: 25.5, w: 30, h: 18.1,
     zone: 'pot', hit: { x: 14, y: 6, w: 72, h: 55 } },
   { id: 'sink', art: `${OB}sink.webp`, layer: 'mid', x: 36, y: 25.5, w: 22, h: 18.6,
     zone: 'sink', hit: { x: 10, y: 30, w: 80, h: 45 } },
   { id: 'stove', art: `${OB}stove.webp`, layer: 'mid', x: 55, y: 26.5, w: 44, h: 16.9,
     zone: 'burner', hit: { x: 8, y: 15, w: 60, h: 60 } },
-  { id: 'counter-front', art: `${OB}counter-front.webp`, layer: 'fg', x: -5, y: 62, w: 110, h: 39.9 },
+  // Mặt bàn ráp tô: nhìn từ TRÊN xuống (Kent: "ví dụ bàn prep đi"), không phải cái hộp nhìn nghiêng.
+  { id: 'prep-top', art: `${OB}prep-top.webp`, layer: 'fg', x: -4, y: 58, w: 108, h: 42 },
 ];
+
+/** Bản gỗ: cùng bộ object, đổi chất liệu hai mặt bàn — cho Huế, Chợ Lớn, Lã Vọng… */
+export const KITCHEN_WOOD = KITCHEN.map((o) =>
+  ['counter-back', 'prep-top'].includes(o.id) ? { ...o, art: `${OB}${o.id}-wood.webp` } : o);
 
 const abs = (o) => {
   const h = o.hit;

@@ -8,7 +8,7 @@
 // Kiểu SCENE GRAPH là đích đến (Kent 21/09): object chính là vùng bấm, dời object thì ô thả đi theo.
 // Thiếu ảnh → tự rơi về art/scene.webp (pov.js onerror), game vẫn chạy y cũ.
 import { SCENE, ZONES } from './counter-layout.js';
-import { KITCHEN, zonesFrom, layersFrom } from './scene-graph.js';
+import { KITCHEN, KITCHEN_WOOD, zonesFrom, layersFrom } from './scene-graph.js';
 
 /** world id → { src?, zones?, baked? }. Không có mục = dùng bếp gốc. */
 export const SHOP_SCENES = {
@@ -17,7 +17,7 @@ export const SHOP_SCENES = {
   'cha-ca': { room: true, tint: 'sepia(.26) saturate(1.05) brightness(.86)' },
   'hai-phong': { room: true, tint: 'hue-rotate(8deg) saturate(.95) brightness(.95)' },
   'bun-rieu': { room: true, tint: 'saturate(.9) brightness(.94)' },
-  'bun-bo': { room: true, graph: true, tint: 'sepia(.22) saturate(1.12) brightness(.9) hue-rotate(-10deg)' },
+  'bun-bo': { room: true, graph: true, objs: KITCHEN_WOOD, tint: 'sepia(.22) saturate(1.12) brightness(.9) hue-rotate(-10deg)' },
   chao: { room: true, tint: 'saturate(1.05) brightness(1.01)' },
   'khai-vi': { room: true, tint: 'hue-rotate(4deg) brightness(1.01)' },
   'mi-quang': { room: true, tint: 'sepia(.18) brightness(.96)' },

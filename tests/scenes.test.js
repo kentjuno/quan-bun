@@ -50,7 +50,7 @@ describe('bếp theo quán', () => {
 });
 
 // SCENE GRAPH: object chính là ô thả
-import { KITCHEN, zonesFrom, layersFrom, moveObj } from '../src/data/scene-graph.js';
+import { KITCHEN, KITCHEN_WOOD, zonesFrom, layersFrom, moveObj } from '../src/data/scene-graph.js';
 
 describe('scene graph', () => {
   it('ô thả nằm gọn trong object mang nó', () => {
@@ -79,7 +79,7 @@ describe('scene graph', () => {
     const order = layersFrom().map((o) => o.layer);
     const rank = { bg: 0, mid: 1, fg: 2 };
     for (let i = 1; i < order.length; i++) expect(rank[order[i]]).toBeGreaterThanOrEqual(rank[order[i - 1]]);
-    expect(layersFrom().at(-1).id).toBe('counter-front');
+    expect(layersFrom().at(-1).id).toBe('prep-top');
   });
 
   it('quán bật graph thì lấy tranh nền riêng và không nướng đồ vô tranh', () => {
@@ -87,5 +87,21 @@ describe('scene graph', () => {
     expect(s.src).toBe('art/scene/bg/bun-bo.webp');
     expect(s.baked).toEqual([]);
     expect(s.objs.length).toBe(KITCHEN.length);
+  });
+});
+
+describe('biến thể object theo quán', () => {
+  it('bản gỗ chỉ đổi hai mặt bàn, mọi thứ khác y nguyên', () => {
+    const wood = Object.fromEntries(KITCHEN_WOOD.map((o) => [o.id, o]));
+    for (const o of KITCHEN) {
+      const w = wood[o.id];
+      expect({ ...w, art: null }).toEqual({ ...o, art: null });   // hộp và ô thả không đổi
+      if (['counter-back', 'prep-top'].includes(o.id)) expect(w.art).toMatch(/-wood\.webp$/);
+      else expect(w.art).toBe(o.art);
+    }
+  });
+
+  it('đổi bộ object không làm lệch ô thả', () => {
+    expect(zonesFrom(KITCHEN_WOOD)).toEqual(zonesFrom(KITCHEN));
   });
 });

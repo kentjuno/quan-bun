@@ -36,6 +36,10 @@ SHEETS = {
    ("counter-back", "a long straight stainless steel back counter, seen straight on, with three plain metal cabinet doors under it and an empty flat top"),
    ("counter-front", "a long straight pale cream stone work counter, seen straight on and slightly from above, completely empty, with a plain wooden front panel"),
  ]),
+ "tops": ("IMAGE_ASPECT_RATIO_PORTRAIT", 1, [
+   ("prep-top", "a wide empty pale cream stone work surface, a kitchen counter top seen from above at a steep angle, a long rectangle running left to right, nothing on it"),
+   ("prep-top-wood", "a wide empty dark polished teak work surface, a kitchen counter top seen from above at a steep angle, a long rectangle running left to right, nothing on it"),
+ ]),
  "furni-wood": ("IMAGE_ASPECT_RATIO_PORTRAIT", 1, [
    ("counter-back-wood", "a long straight dark teak wood back counter, seen straight on, with three carved wooden cabinet doors under it and an empty flat top"),
    ("counter-front-wood", "a long straight dark polished teak work counter, seen straight on and slightly from above, completely empty, with a plain wooden front panel"),

@@ -58,17 +58,17 @@ export const hand = (name) => `${BASE}hand-${name}.webp`;
  * vì vẽ chồng tô cho cái mẹt thì sai hơn là không vẽ.
  */
 export const STATION_ART = {
-  'pho-bowl': `${BASE}st-bowl-stack.webp`,
-  'soup-bowl': `${BASE}st-bowl-stack.webp`,
-  'dry-bowl': `${BASE}st-bowl-stack.webp`,
-  'extra-bowl': `${BASE}st-bowl-stack.webp`,
-  'pho-noodle': `${BASE}st-noodle-tray.webp`,
-  'bun': `${BASE}st-noodle-tray.webp`,
-  'bun-to': `${BASE}st-noodle-tray.webp`,
-  'banh-da': `${BASE}st-noodle-tray.webp`,
-  'mi-quang': `${BASE}st-noodle-tray.webp`,
-  'cao-lau': `${BASE}st-noodle-tray.webp`,
-  'hu-tieu': `${BASE}st-noodle-tray.webp`,
+  'pho-bowl': `${BASE}ob/bowl-stack.webp`,
+  'soup-bowl': `${BASE}ob/bowl-stack.webp`,
+  'dry-bowl': `${BASE}ob/bowl-stack.webp`,
+  'extra-bowl': `${BASE}ob/bowl-stack.webp`,
+  'pho-noodle': `${BASE}ob/noodle-tray.webp`,
+  'bun': `${BASE}ob/noodle-tray.webp`,
+  'bun-to': `${BASE}ob/noodle-tray.webp`,
+  'banh-da': `${BASE}ob/noodle-tray.webp`,
+  'mi-quang': `${BASE}ob/noodle-tray.webp`,
+  'cao-lau': `${BASE}ob/noodle-tray.webp`,
+  'hu-tieu': `${BASE}ob/noodle-tray.webp`,
 };
 export const stationArt = (tok) => STATION_ART[tok] || null;
 
@@ -110,5 +110,5 @@ export function dishStepArt(dish, placed) {
 }
 
 /** Thùng rác — trước là emoji 🗑️ nên mỗi máy vẽ một kiểu. */
-export const trashArt = () => `${BASE}st-trash.webp`;
+export const trashArt = () => `${BASE}ob/trash.webp`;   // object gen riêng (scripts/ob_sheet.py)
 
