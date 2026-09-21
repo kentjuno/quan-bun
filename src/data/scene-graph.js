@@ -37,7 +37,7 @@ export const KITCHEN = [
   { id: 'stove', art: `${OB}stove.webp`, layer: 'mid', x: 55, y: 26.5, w: 44, h: 16.9,
     zone: 'burner', hit: { x: 8, y: 15, w: 60, h: 60 } },
   // Mặt bàn ráp tô: nhìn từ TRÊN xuống (Kent: "ví dụ bàn prep đi"), không phải cái hộp nhìn nghiêng.
-  { id: 'prep-top', art: `${OB}prep-top.webp`, layer: 'fg', x: -4, y: 58, w: 108, h: 42 },
+  { id: 'prep-top', art: `${OB}prep-top.webp`, layer: 'fg', x: -9, y: 57, w: 118, h: 45.9 },
 ];
 
 /** Bản gỗ: cùng bộ object, đổi chất liệu hai mặt bàn — cho Huế, Chợ Lớn, Lã Vọng… */
