@@ -11,3 +11,4 @@ pwa_build_status.json
 
 _dupfix.json
 _smoke.mjs
+*.bak-*
