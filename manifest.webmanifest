@@ -1,0 +1,26 @@
+{
+  "name": "KJ Phở Real",
+  "short_name": "KJ Phở Real",
+  "description": "A kitchen road trip through Việt Nam",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#2e2420",
+  "theme_color": "#e84a3b",
+  "lang": "vi",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
