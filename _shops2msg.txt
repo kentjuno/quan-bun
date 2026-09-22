@@ -1,0 +1,8 @@
+Bep rieng cho 9 quan con lai (du 12 quan)
+
+mon-kho, cha-ca, hai-phong, bun-rieu, chao, khai-vi, mi-quang,
+bun-cha-ca, bun-thang. Cung cach lam: Flow edit-image tu art/scene.webp,
+giu nguyen goc may + vi tri moi thiet bi, chi thay can phong.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

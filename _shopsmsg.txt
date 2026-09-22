@@ -1,0 +1,17 @@
+Bep rieng cho tung quan (code + 3 quan dau)
+
+Kent: "moi tinh thanh di qua minh van xai chung 1 khung cua hang".
+
+- src/data/scenes.js: SHOP_SCENES (world id -> {src?, zones?, baked?})
+  + sceneFor(worldId). Anh public/art/scene/<world>.webp.
+- pov.js lay tranh + toa do tram qua sceneFor(level.world); thieu file
+  thi onerror roi ve art/scene.webp nen khong bao gio be man.
+- scene.js: man xin vo quan lay nen la bep cua chinh quan do.
+- scripts/shop_scenes.py gen tranh bang Flow edit-image tu tranh goc:
+  giu nguyen goc may + vi tri moi thiet bi, chi thay can phong.
+- Da gen: pho, bun-bo, hu-tieu.
+
+tests/scenes.test.js (4) - 144 test xanh.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

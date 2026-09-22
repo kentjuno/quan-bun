@@ -1,0 +1,8 @@
+Lop ve: do choi duoc luon nam tren do dac; tint ap cho ca object
+
+.pv-z z-index 3 (truoc day khay topping bi counter-back che mat).
+.pv-ob nhan --pv-obj-filter + bong do nhe.
+docs/PLAN-PUBLIC.md: them muc P5d mo ta scene graph.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

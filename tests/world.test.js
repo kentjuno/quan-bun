@@ -177,7 +177,7 @@ describe('nhiều món (ca 2–4)', () => {
     run(w, 320);
     expect(served.sort()).toEqual(['bun-bo-hue', 'bun-rieu-cua', 'pho-dac-biet', 'pho-tai-nam']);
     expect(w.mistakes).toBe(0);
-    expect(placed['bun-rieu-cua']).toEqual(['bowl-hot:soup-bowl', 'noodle-drained:bun', 'ca-chua', 'bo-tai', 'dau-hu', 'tom', 'crab-broth-ready', 'hanh-la']);
+    expect(placed['bun-rieu-cua']).toEqual(['bowl-hot:soup-bowl', 'noodle-drained:bun', 'ca-chua', 'bo-tai', 'dau-hu', 'tom', 'crab-broth-ready', 'hanh-la', 'top-mo', 'hanh-phi']);
     expect(placed['bun-bo-hue']).toEqual(['bowl-hot:soup-bowl', 'noodle-drained:bun-to', 'thit-luoc', 'bap-bo', 'nam', 'cha-lua', 'cha-re', 'hanh-tay', 'rau-ram', 'hanh-la', 'bun-bo-broth-ready']);
     expect(placed['pho-dac-biet']).toContain('bo-vien-ready');
     expect(w.stations.some((s) => s.id === 'burner')).toBe(true);

@@ -1,0 +1,7 @@
+Mat ban prep rong het khung
+
+x -9 -> w 118: ban chay het be ngang, khong con ho san hai ben.
+Chinh mot con so, o tha tu theo - dung cai loi cua scene graph.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

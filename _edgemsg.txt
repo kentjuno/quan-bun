@@ -1,0 +1,8 @@
+Mat ban rap to co bong hat len, noi + khay soi gen lai
+
+- .pv-ob.fg do bong NGUOC LEN: tach mat ban khoi quay sau.
+- Gen lai noi trung (cao hon be ngang) va khay soi trong cung mot ban
+  (sheet kit2) nen hai mon chung ti le.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

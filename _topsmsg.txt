@@ -1,0 +1,13 @@
+Mat ban rap to nhin tu tren xuong + bo object ban go
+
+- prep-top thay counter-front o lop fg: mat ban nhin tu tren (dung y
+  Kent "vi du ban prep di"), khong con cai hop nghieng lam mat rap to
+  chi con mot dai mong.
+- KITCHEN_WOOD: cung bo object, doi hai mat ban sang go - Thim Bay dung
+  ban nay. Test: doi bo object KHONG lam lech o tha.
+- Do roi (thung rac, chong to, khay soi) cung chuyen sang art/ob/*.
+
+151 test xanh.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

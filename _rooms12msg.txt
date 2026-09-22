@@ -1,0 +1,11 @@
+Ca 12 quan chuyen sang bep theo lop (room + tint)
+
+Moi quan: tranh phong trong art/scene/room/<id>.webp + 5 do tinh la
+sprite chung st-*.webp + mot bo loc sang rieng (tint) de sprite bat sang
+theo can phong. Thieu tranh phong nao thi quan do tu roi ve tranh nguyen
+tam cu, khong be man.
+
+Them lop sang: pov.js dat --pv-obj-filter, CSS ap cho .pv-objimg.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

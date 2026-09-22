@@ -1,0 +1,14 @@
+M6 - log playtest ?log=1 (P7 phan model)
+
+src/playlog.js: ghi su kien vao localStorage, khong server, khong gui
+di dau. boot / level.start / serve (to dau co co first) / level.end /
+level.quit / mini.start / mini.end / codex.open / tut.done / tut.skip /
+lang; `at` = giay ke tu luc mo app.
+
+Hop log trong "Cach choi . tuy chon" (chi hien khi ?log=1): dong tom
+tat + Xuat log (JSON co summary) + Xoa log.
+
+tests/playlog.test.js (4) - 134 test xanh. i18n lint sach.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

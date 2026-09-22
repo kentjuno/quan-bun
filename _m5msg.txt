@@ -1,0 +1,22 @@
+M5 — 5 mon moi, 4 quan, 163 level (0 tram moi)
+
+Mon: mi Quang, cao lau, hu tieu Nam Vang, bun thang, bun cha ca.
+Moi mon co cong thuc game (dishes/*.json), cong thuc nau that vi+en
+co nguon, codex; tat ca `review: can Kent duyet`.
+
+- src/data/game-extras.js: tu dien rieng cho mon game (soi mi-quang,
+  cao-lau, hu-tieu; cot cot-mi-quang, cot-hu-tieu; 2 hanh dong chan).
+  KHONG sua sim-data.js - do la du lieu quan that cua Kent.
+- worlds.js: 4 world moi (mi-quang 10, bun-cha-ca 8, hu-tieu 8,
+  bun-thang 8) -> 163 level, du title/new/hint vi + en.
+- regions.js: Da Nang va Nha Trang het "sap mo"; Ha Noi them bun thang,
+  Sai Gon them hu tieu; 4 chu quan moi.
+- config.js: GAME_DISHES + DISH_PRICES; serve() lay gia tu cong thuc.
+- pace.js: do lai POV_SECONDS cho 5 mon; bot van 3 sao du 163 level.
+- art: 17 anh moi (5 icon, 2 noi, 5 mon x dry/wet).
+- docs: ROADMAP M4/M5 xong, PLAN-PUBLIC DA LAM cho P4 va P6.
+
+130 test xanh.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

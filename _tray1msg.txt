@@ -1,0 +1,7 @@
+Gen lai rieng khay soi (sheet kit2 ve ra hai cai noi)
+
+Ban kit2 gen chung noi + khay soi thi Flow ve hai cai noi, nen khay soi
+thanh cai noi thu hai trong bep. Gen rieng bang sheet tray1.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

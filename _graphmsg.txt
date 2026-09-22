@@ -1,0 +1,21 @@
+Scene graph: bep rap bang object roi, object CHINH LA o tha
+
+Kent: "chia thanh cac layer objects thi minh chi can generate cac
+objects roi rap vo thoi, de dau cung duoc ma khong so sai vi tri.
+theo tui thay la co may lop nhu background, midground, foreground".
+
+- src/data/scene-graph.js: KITCHEN = danh sach object {id, art, layer,
+  x,y,w,h, zone?, hit?}. zonesFrom() SUY ra o tha tu hop object nen doi
+  object la o tha di theo. layersFrom() xep bg -> mid -> fg.
+- Hop do thang tu anh da cat (src/data/ob-boxes.json) -> o tha suy ra
+  khop dung ZONES do tay cu (test).
+- scenes.js: co `graph: true` -> nen la art/scene/bg/<id>.webp (chi tuong
+  + san), do dac la object roi. Thieu nen thi roi ve tranh phong trong.
+- pov.js ve <img class="pv-ob {layer}"> theo hop tung object.
+- scripts/scene_objects.py + scripts/scene_bg.py + scripts/objs_boxes.py.
+- Bat thu o Pho Cau Hai va Thim Bay.
+
+149 test xanh.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

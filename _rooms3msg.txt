@@ -1,0 +1,7 @@
+3 tranh phong trong con lai (bun cha ca, hu tieu, bun thang)
+
+Lan truoc Flow tra 502 cho 3 tam nay nen 3 quan do tam dung tranh
+nguyen tam. Gen lai xong -> du 12 quan chay theo lop.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

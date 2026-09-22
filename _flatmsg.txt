@@ -1,0 +1,17 @@
+Object ve DEP chinh dien - het lech phoi canh
+
+Kent: "no lech banh chanh luon, prompt bro gen anh co van de do". Dung:
+prompt cu bao "cung goc nhin, chuc xuong 15 do" nen moi mon van co diem
+tu rieng, rap vo la venh.
+
+ob_sheet.py doi han brief: moi mon la hinh CAT GIAY - chinh dien thuan,
+KHONG phoi canh, khong diem tu, khong thay mat tren. Mat ban prep thi
+nhin thang TU TREN xuong, la mot mang phang.
+
+Bo cuc xep lai theo kieu 2D: quay sau la mot dai ngang, noi/bon/bep
+DUNG TREN mep quay (day = 40%), mat ban rap to phu nua duoi.
+
+151 test xanh.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

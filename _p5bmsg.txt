@@ -1,0 +1,21 @@
+P5b - mo app: setup (ngon ngu, ten, xung ho) -> intro -> vo quan
+
+Kent: "no bi nguoc a. Dung ra mo app se la intro gioi thieu cot
+truyen, sau do moi vo game." + muon hoi ten/gioi tinh/ngon ngu.
+
+- src/setup.js: man setup lan dau mo app - buoc 1 chon ngon ngu (song
+  ngu), buoc 2 ten + xung ho (Nam/Nu/Khong noi) + Bo qua. Xong moi chay
+  playIntro roi vo menu.
+- enterLevel khong chen mo dau vao giua nua; playOwner giu nguyen.
+- src/data/player.js: ho so trong localStorage (khong gui di dau) +
+  speak(): {you} -> ten (chua co thi lay `call` cua quan), {a|b} -> theo
+  gioi tinh. Gioi tinh CHI doi thoai, khong gen bo nhan vat nu.
+- Thoai 12 quan + 6 bong bong chuyen xe viet lai co {you}; EN co
+  quan.<id>.call / trip.<id>.call. scripts/_sync_vi.mjs dong bo vi.json.
+- Ten hien o: thoai chu quan, the ket qua, anh chia se so tay.
+- playlog them su kien setup / intro.done.
+
+tests/player.test.js (6) - 140 test xanh, i18n lint sach.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

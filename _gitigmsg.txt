@@ -1,0 +1,7 @@
+gitignore: file smoke test tam (_smoke.mjs)
+
+Script Playwright viet ra roi xoa moi lan soi man hinh - dung de no lot
+vo repo.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

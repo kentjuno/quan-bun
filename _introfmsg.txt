@@ -1,0 +1,9 @@
+Bo anh mo dau ban nu
+
+Chon Nu o man setup -> playIntro dung art/intro/f/intro-{1..4}.webp
+(4 tam gen bang Flow, cung mot nhan vat: kinh tron, toc duoi ngua,
+so mi trang xan tay - khop bo cuc 4 tam ban nam).
+Nam / Khong noi giu bo goc. Thieu anh thi onerror roi ve bo goc.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

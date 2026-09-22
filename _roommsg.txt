@@ -1,0 +1,15 @@
+Bep theo LOP: tranh phong trong + sprite chung (thu o quan Thim Bay)
+
+Kent: "do la ly do tui keu lam theo layers thay vi nguyen tam anh".
+
+scenes.js nhan them co `room: true`:
+  - art/scene/<id>.webp      : tranh nguyen tam (do tinh ve san)
+  - art/scene/room/<id>.webp : tranh PHONG TRONG, baked: [] -> thung rac,
+    chong to, khay soi, lo vi song, chao chien la sprite chung st-*.webp
+    do pov.js ve de. Thieu file thi roi ve tranh nguyen tam.
+scripts/empty_rooms.py xoa 5 thu do khoi tranh quan bang Flow edit-image.
+
+145 test xanh.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS

@@ -1,0 +1,17 @@
+Gen object THAT thay vi cat tu tranh cu
+
+Kent: "tinh ra no con lon xon hon do bro khong gen nguyen object ma
+cat ra tu hinh goc". Dung - do cat ra con dinh anh sang va goc nhin
+cua bep xanh goc.
+
+scripts/ob_sheet.py: gen CA BO do trong MOT ban ve (nen magenta) nen
+chung goc nhin, chung huong sang, chung net; roi tach tung mon bang
+connected-component tren alpha. Ba bo: kit, furni, furni-wood.
+
+scene-graph.js: vi tri object gio do minh DAT, khong do theo tranh;
+h tinh theo dung ti le anh de khoi meo.
+
+149 test xanh.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_014awNcPnGks6S8UpACG9mkS
